@@ -1,13 +1,27 @@
-<p align="center">
-    <img src="resources/assets/images/logo/logo.png" width="96" alt="SHM System">
-</p>
+<div align="center">
 
-<h1 align="center">SHM System</h1>
+<img src=".github/assets/logo.png" width="120" alt="SHM System logo">
 
-<p align="center">
-    Membership and finance management for<br>
-    <b>សមាគមសង្គហៈមិត្ត បុគ្គលិក មន្ត្រីរាជការ — ក្រសួងសេដ្ឋកិច្ចនិងហិរញ្ញវត្ថុ</b>
-</p>
+# SHM System
+
+**Membership and finance management for**<br>
+**សមាគមសង្គហៈមិត្ត បុគ្គលិក មន្ត្រីរាជការ — ក្រសួងសេដ្ឋកិច្ចនិងហិរញ្ញវត្ថុ**
+
+<br>
+
+![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.3+-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![Vue.js](https://img.shields.io/badge/Vue.js-2.7-4FC08D?style=for-the-badge&logo=vuedotjs&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-FCM-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
+
+[Features](#features) •
+[Getting started](#getting-started) •
+[Commands](#common-commands) •
+[Guides](#guides) •
+[Deployment](#deployment)
+
+</div>
 
 ---
 
