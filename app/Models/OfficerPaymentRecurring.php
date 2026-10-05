@@ -2,8 +2,6 @@
 
 namespace App\Models;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\Officer;
-use App\Models\OfficerPayable;
 use App\Models\Settings\PaymentTerm;
 use App\Models\Settings\Status;
 use App\Models\Settings\Currency;

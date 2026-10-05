@@ -2,7 +2,6 @@
 
 namespace App\Models;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\UserDevice;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 use CommonService;

@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models\Settings;
-use App\Models\Settings\Department;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Traits\HasRoles;
 use OwenIt\Auditing\Contracts\Auditable;

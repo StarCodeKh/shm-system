@@ -11,7 +11,6 @@ use App\Models\Officer;
 use App\Models\UserDevice;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\User;
 // use App\Authenticatable;
 use Illuminate\Support\Facades\DB;
 use Auth;

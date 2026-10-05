@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Models\Settings;
-use App\Models\Settings\ItemCategory;
-use App\Models\Settings\Account;
 use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model

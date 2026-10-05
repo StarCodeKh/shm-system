@@ -2,8 +2,6 @@
 
 namespace App\Models;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\OfficerIncentive;
-use App\Models\Officer;
 use App\Models\Settings\Status;
 use App\Models\Settings\Currency;
 use Illuminate\Database\Eloquent\Model;

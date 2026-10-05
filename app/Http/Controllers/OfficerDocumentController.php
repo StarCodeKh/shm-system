@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\OfficerDocument;
 use App\Models\Officer;
 use App\Models\Settings\Bank;

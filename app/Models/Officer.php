@@ -1,10 +1,6 @@
 <?php
 
 namespace App\Models;
-use App\Models\CompositionRequest;
-use App\Models\Officer;
-use App\Models\OfficerPayment;
-use App\Models\OfficerPayable;
 use App\Models\Settings\Department;
 use App\Models\Settings\Entity;
 use App\Models\Settings\Status;

@@ -3,16 +3,13 @@
 namespace App\Http\Controllers;
 use App\Models\Income;
 use App\Exports\IncomeExport;
-use App\Models\Officer;
 use App\Models\Settings\Currency;
 use App\Models\Settings\Department;
 use App\Models\Settings\Entity;
 use App\Models\Settings\PaymentMethod;
 use App\Models\Settings\Account;
 use App\Models\Settings\Status;
-use App\Http\Controllers\BaseController;
 use Illuminate\Http\Request;
-use DB;
 use Auth;
 use CommonService;
 use Maatwebsite\Excel\Facades\Excel;

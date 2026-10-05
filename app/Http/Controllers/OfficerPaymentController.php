@@ -9,7 +9,6 @@ use App\Models\Settings\PaymentMethod;
 use App\Models\Settings\Status;
 use App\Models\Settings\Account;
 use App\Models\Settings\Department;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
 use CommonService;

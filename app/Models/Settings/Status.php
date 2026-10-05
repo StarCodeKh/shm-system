@@ -4,7 +4,6 @@ namespace App\Models\Settings;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Traits\HasRoles;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\Settings\PaymentType;
 use App\Models\OfficerPayable;
 use App\Models\OfficerRequest;
 use App\Models\OfficerPaymentRecurring;

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\Officer;
 use App\Models\Settings\Status;
 use Illuminate\Database\Eloquent\Model;
 use DB;

@@ -12,14 +12,12 @@ use App\Models\Settings\RoleUser;
 use App\Models\Settings\Status;
 
 use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
 use DB;
 use Auth;
 use CommonService;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 class UserController extends Controller
 {   
     protected $PERMISSION_ACTION_LIST;

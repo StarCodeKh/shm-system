@@ -2,7 +2,6 @@
 
 namespace App\Models;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\Dashboard;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 class Dashboard extends Model implements Auditable

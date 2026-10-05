@@ -2,7 +2,6 @@
 
 namespace App\Exports;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\Officer;
 use DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;

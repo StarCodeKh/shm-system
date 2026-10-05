@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models\Modules\BudgetMonitoring;
-use App\Models\Modules\BudgetMonitoring\RevProgramDetail;
 use App\Models\Settings\Entity;
 use App\Models\Settings\Account;
 use App\Models\Settings\AccountGroup;

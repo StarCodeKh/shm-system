@@ -1,7 +1,6 @@
 <?php
 namespace App\Models\Settings;
 
-use App\Models\Settings\RoleMenu;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Models\Permission;

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\OfficerIncentive;
 // use App\Exports\OfficerIncentiveExport;
 use App\Imports\OfficerIncentiveImport;

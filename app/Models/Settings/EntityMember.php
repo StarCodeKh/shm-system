@@ -3,7 +3,6 @@
 namespace App\Models\Settings;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Settings\Entity;
 use Auth;
 
 class EntityMember extends Model

@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Notification;
 use App\Models\NotificationType;
-use App\Models\Mobile\UserDevice;
 // use PushNotificationService;
 use App\Notifications\DailyReminderNotification;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
 use Auth;

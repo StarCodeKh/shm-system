@@ -3,8 +3,6 @@
 namespace App\Models\Modules\ProgramManagement;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Modules\ProgramManagement\SubProgram;
-use App\Models\Modules\ProgramManagement\KPIClusterActivity;
 use App\Models\Settings\Entity;
 use App\Models\Settings\EntityMember;
 

@@ -3,7 +3,6 @@
 namespace App\Models\Modules\ProgramManagement;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Modules\ProgramManagement\Program;
 
 class KPIProgram extends Model
 {

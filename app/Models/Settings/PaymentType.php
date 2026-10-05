@@ -4,8 +4,6 @@ namespace App\Models\Settings;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Traits\HasRoles;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\Settings\Status;
-use App\Models\Settings\Currency;
 use DB;
 use CommonService;
 

@@ -3,7 +3,6 @@
 namespace App\Models\Settings;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Settings\AccountType;
 use DB;
 use Spatie\Permission\Traits\HasRoles;
 use CommonService;

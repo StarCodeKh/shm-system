@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 use App\Models\Dashboard;
-use App\Http\Controllers\BaseController;
 use Illuminate\Http\Request;
 use App\Models\Income;
 use App\Models\Expense;

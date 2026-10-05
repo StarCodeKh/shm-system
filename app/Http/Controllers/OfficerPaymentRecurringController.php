@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\OfficerPaymentRecurring;
 use App\Models\Officer;
 use App\Models\Settings\Currency;

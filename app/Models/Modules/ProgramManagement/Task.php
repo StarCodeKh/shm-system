@@ -3,9 +3,6 @@
 namespace App\Models\Modules\ProgramManagement;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Modules\ProgramManagement\ClusterActivity;
-use App\Models\Modules\ProgramManagement\Activity;
-use App\Models\Modules\ProgramManagement\CostingToEntity;
 use App\Models\Settings\Entity;
 use App\Models\Settings\EntityMember;
 use DB;

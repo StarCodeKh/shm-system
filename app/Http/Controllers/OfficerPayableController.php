@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\OfficerPayable;
 use App\Models\OfficerPayment;
 use App\Imports\OfficerPayableImport;

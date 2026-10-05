@@ -2,7 +2,6 @@
 
 namespace App\Models\Settings;
 
-use App\Models\Settings\AccountTypeGroup;
 use Illuminate\Database\Eloquent\Model;
 
 class AccountGroup extends Model

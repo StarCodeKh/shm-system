@@ -7,7 +7,6 @@ use App\Models\coa;
 use App\Models\Settings\AccountType;
 use App\Models\Settings\Account;
 use App\Models\Settings\Status;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
 use CommonService;

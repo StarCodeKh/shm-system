@@ -8,14 +8,12 @@ use App\Models\Settings\Entity;
 use App\Models\Settings\Position;
 use App\Models\Settings\RoleMenu;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
 use DB;
 use Auth;
 use CommonService;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class RoleMenuController extends Controller
 {   
