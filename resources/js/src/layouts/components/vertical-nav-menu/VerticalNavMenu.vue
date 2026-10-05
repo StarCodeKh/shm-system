@@ -108,6 +108,7 @@ import VNavMenuGroup from './VerticalNavMenuGroup.vue'
 import VNavMenuItem from './VerticalNavMenuItem.vue'
 
 import Logo from "../Logo.vue"
+import { storedPermissions, fetchPermissions, filterMenu } from './menuPermissions.js'
 
 export default {
   name: 'v-nav-menu',
@@ -136,13 +137,14 @@ export default {
       swipeEasing       : true
     },
     showShadowBottom    : false,
+    permissions         : storedPermissions(), // what the user may see, refreshed in created()
   }),
   computed: {
     isGroupActive() {
       return (item) => {
         const path        = this.$route.fullPath
         const routeParent = this.$route.meta ? this.$route.meta.parent : undefined
-        let open          = true
+        let open          = false
 
         let func = (item) => {
           if (item.submenu) {
@@ -156,19 +158,10 @@ export default {
         return open
       }
     },
+    // Visible items for this user, with each section header followed by its items.
     menuItemsUpdated() {
-      let clone = this.navMenuItems.slice()
-
-      for(let [index, item] of this.navMenuItems.entries()) {
-        if (item.header && item.items.length && (index || 1)) {
-          let i = clone.findIndex(ix => ix.header === item.header)
-          for(let [subIndex, subItem] of item.items.entries()) {
-            clone.splice(i + 1 + subIndex, 0, subItem)
-          }
-        }
-      }
-
-      return clone
+      return filterMenu(this.navMenuItems, this.permissions)
+        .reduce((list, item) => item.header ? list.concat(item, item.items) : list.concat(item), [])
     },
     isVerticalNavMenuActive: {
       get()    { return this.$store.state.isVerticalNavMenuActive },
@@ -308,6 +301,12 @@ export default {
       this.reduceButton = val
       this.setVerticalNavMenuWidth()
     },
+  },
+  created() {
+    // Refresh permissions so the menu matches the user's current role.
+    fetchPermissions()
+      .then(permissions => { this.permissions = permissions })
+      .catch(() => {})
   },
   mounted() {
     this.setVerticalNavMenuWidth()

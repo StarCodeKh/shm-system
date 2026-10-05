@@ -53,11 +53,11 @@
           <!-- Else: Item -->
           <v-nav-menu-item
             v-else
-            icon-small
+            :icon-small = "!groupItem.icon"
             :index  = "groupIndex + '.' + index"
             :to="groupItem.slug !== 'external' ? groupItem.url : null"
             :href="groupItem.slug === 'external' ? groupItem.url : null"
-            :icon   = "itemIcon(groupIndex + '.' + index)"
+            :icon   = "groupItem.icon || itemIcon(groupIndex + '.' + index)"
             :slug   = "groupItem.slug"
             :target = "groupItem.target">
               <span class="truncate">{{ $t(groupItem.i18n) || groupItem.name }}</span>
