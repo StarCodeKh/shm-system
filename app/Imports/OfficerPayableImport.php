@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Imports;
+use OwenIt\Auditing\Contracts\Auditable;
+use App\Models\OfficerPayable;
+use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use DB;
+use Auth;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
+use Carbon\Carbon;
+class OfficerPayableImport implements ToModel,WithHeadingRow,Auditable
+{
+    use \OwenIt\Auditing\Auditable;
+    /**
+    * @param array $row
+    *
+    * @return \Illuminate\Database\Eloquent\Model|null
+    */
+    public function model(array $row): \Illuminate\Database\Eloquent\Model|array|null
+    {
+        $queryCheck = OfficerPayable::where("id", (int)$row["id"])->first();
+        $data["tables"] = DB::select('show columns from '.env("DB_PREFIX").(new OfficerPayable)->getTable());
+        $str = "";
+        $arr = array();
+        for($i=0; $i < count($data["tables"]); $i++){
+            $field = $data["tables"][$i]->Field;
+            $value = $row[$field] ?? null;
+            if(isset($data["tables"][$i]->Field)){
+                try {
+                    $arr[] = [$data["tables"][$i]->Field => $row[$data["tables"][$i]->Field]];
+                    //code...
+                } catch (\Throwable $th) {
+                    throw $th;
+                }
+            }
+
+            if(in_array($data["tables"][$i]->Field,["issue_date", "request_date", "created_at"])){
+                if (is_numeric($value)) {
+                    // ONLY call this if it's a numeric Excel serial (e.g. 20150)
+                    $date = Date::excelToDateTimeObject($value);
+                } else {
+                    // If it's already a string like '1955-03-02', parse it with Carbon
+                    try {
+                        $date = Carbon::parse($value);
+                    } catch (\Exception $e) {
+                        $date = null; // Handle invalid date strings
+                    }
+                }
+
+                $arr[] = [$data["tables"][$i]->Field => $date ? $date->format('Y-m-d') : null];
+            }
+        }
+
+        if(!$queryCheck){
+            $pushArray = array_merge(array(["created_by" => Auth::user()->id]));
+            $arraySingle = array_merge($arr, $pushArray);
+            $result = call_user_func_array('array_merge', $arraySingle);
+            $dataFields = $result;
+            OfficerPayable::insert($dataFields);
+        }else{
+            $pushArray = array_merge(array(["modified_by" => Auth::user()->id]));
+            $arraySingle = array_merge($arr, $pushArray);
+            $result = call_user_func_array('array_merge', $arraySingle);
+            $dataFields = $result;
+            OfficerPayable::find((int)$row["id"])->update($dataFields);
+        }
+    }
+}

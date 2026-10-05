@@ -1,0 +1,48 @@
+<template>
+  <vx-card no-shadow>
+
+    <div class="mb-base">
+      <h6 class="mb-4">Run Schedule Backup</h6>
+
+      <div class="flex items-center mb-4">
+        <vs-switch v-model="comment" />
+        <span class="ml-4">Between 6:00-12:00PM</span>
+      </div>
+      <div class="flex items-center mb-4">
+        <vs-switch v-model="answer" />
+        <span class="ml-4">Between 21:00-24:00PM</span>
+      </div>
+      <div class="flex items-center mb-4">
+        <vs-switch v-model="everyday" />
+        <span class="ml-4">Every Day</span>
+      </div>
+    </div>
+
+    <!-- Save & Reset Button -->
+    <div class="flex flex-wrap items-center justify-end mt-base">
+      <vs-button class="ml-auto mt-2">រក្សាទុក</vs-button>
+      <vs-button class="ml-4 mt-2" type="border" color="warning">Reset</vs-button>
+    </div>
+
+  </vx-card>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      comment: false,
+      answer: false,
+      everyday: true,
+      news: false,
+      product_update: false,
+      blog: true,
+    }
+  },
+  computed: {
+    activeUserInfo() {
+      return this.$store.state.AppActiveUser
+    },
+  }
+}
+</script>

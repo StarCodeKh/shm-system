@@ -1,0 +1,824 @@
+<template>
+    <div class="form-container">
+        <div class="form-header">
+            <div class="form-title">
+                <i class="fas fa-user-plus"></i>
+                <span>បង្កើតសមាជិកថ្មី</span>
+            </div>
+            <!-- <button class="close-btn" onclick="closeForm()">
+                <i class="fas fa-times"></i>
+            </button> -->
+        </div>
+        <template title="modal" class="modal">
+            <d-file-manager ref="refModelFileManager" @clicked="initPassProps"></d-file-manager>
+        </template>
+        <div class="form-body">
+            <form id="memberForm">
+                <!-- Personal Information Section -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-user"></i>
+                        ព័ត៌មានផ្ទាល់ខ្លួន
+                    </div>
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label>រូបថត <span class="badge">Optional</span></label>
+                            <div class="file-upload-wrapper">
+                                <img v-if="iconThumnail!=null" style="width:100px" class="photo" :src="iconThumnail" />
+                                <vs-input type="hidden" :placeholder="$t('photo')"
+                                    v-model="officer.photo" :value="''"
+                                    class="mt-2 w-full" />
+                                <label for="photo" @click="initOpenFileManager('photo')" class="file-upload-label">
+                                    <i class="fas fa-camera"></i>
+                                    <span>ជ្រើសរើសរូបថត</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ $t('first_name') }} <span class="required">*</span></label>
+                            <div class="input-icon">
+                                <i class="fas fa-user"></i>
+                                <!-- <input type="text" ​name="first_name" :placeholder="$t('first_name')" v-model="officer.first_name" v-validate="'required'"> -->
+                                <vs-input v-validate="'required'" v-model="officer.first_name" :placeholder="$t('first_name')" :name="'first_name'" class="mt-1 w-full" />
+                                <span class="text-danger text-sm" v-show="errors.has('first_name')">{{ $t("required_" +
+                                    'first_name')
+                                }}</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ $t('last_name') }} <span class="required">*</span></label>
+                            <div class="input-icon">
+                                <i class="fas fa-user"></i>
+                                <!-- <input type="text" :placeholder="$t('last_name')" v-model="officer.last_name" required> -->
+                                 <vs-input v-validate="'required'" v-model="officer.last_name" :placeholder="$t('last_name')" :name="'last_name'" class="mt-1 w-full" />
+                                <span class="text-danger text-sm" v-show="errors.has('last_name')">{{ $t("required_" +
+                                    'last_name')
+                                }}</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ $t('latin') }} <span class="required">*</span></label>
+                            <div class="input-icon">
+                                <i class="fas fa-user"></i>
+                                <!-- <input type="text" :placeholder="$t('latin')" v-model="officer.latin" required> -->
+                                 <vs-input v-validate="'required'" v-model="officer.latin" :placeholder="$t('latin')" :name="'latin'" class="mt-1 w-full" />
+                                <span class="text-danger text-sm" v-show="errors.has('latin')">{{ $t("required_" +
+                                    'latin')
+                                }}</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ $t('gender') }} <span class="required">*</span></label>
+                            <v-select
+                                    v-validate="'required'" v-model="officer.gender"
+                                    name="gender" :options="genders"
+                                    :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
+                                    <span class="text-danger text-sm" v-show="errors.has('gender')">{{
+                                        $t("required_" + 'gender')
+                                        }}</span>
+                            <!-- <select required  v-model="officer.gender">
+                                <option value="">ជ្រើសរើសភេទ</option>
+                                <option value="male">ប្រុស (Male)</option>
+                                <option value="female">ស្រី (Female)</option>
+                            </select> -->
+                        </div>
+
+                        <div class="form-group">
+                            <label>ថ្ងៃខែឆ្នាំកំណើត <span class="required">*</span></label>
+                            <!-- <input type="date" v-model="officer.dob" required> -->
+                             <flat-pickr v-validate="'required'" name="dob"
+                                v-model="officer.dob" class="mt-1 w-full" />
+                            <span class="text-danger text-sm" v-show="errors.has('dob')">{{ $t("required_" +
+                                'dob')
+                            }}</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>លេខអត្តសញ្ញាណប័ណ្ណ</label>
+                            <div class="input-icon">
+                                <i class="fas fa-id-card"></i>
+                                <vs-input v-model="officer.identity_no" :placeholder="$t('identity_no')" :name="'identity_no'" class="mt-1 w-full" />
+                                <!-- <input type="text" placeholder="បញ្ចូលលេខអត្តសញ្ញាណប័ណ្ណ" v-model="officer.identity_no" required> -->
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>សញ្ជាតិ</label>
+                            <vs-input v-model="officer.nationality" :placeholder="$t('nationality')" :name="'nationality'" class="mt-1 w-full" />
+                            <!-- <input type="text" placeholder="សញ្ជាតិ" v-model="officer.nationality" required> -->
+                            <!-- <select required>
+                                <option value="">ជ្រើសរើសសញ្ជាតិ</option>
+                                <option value="khmer">ខ្មែរ</option>
+                                <option value="other">ផ្សេងៗ</option>
+                            </select> -->
+                        </div>
+
+                        <!-- <div class="form-group">
+                            <label>សាសនា</label>
+                            <select>
+                                <option value="">ជ្រើសរើសសាសនា</option>
+                                <option value="buddhism">ព្រះពុទ្ធ</option>
+                                <option value="islam">ឥស្ាម</option>
+                                <option value="christianity">គ្រិស្ត</option>
+                                <option value="other">ផ្សេងៗ</option>
+                            </select>
+                        </div> -->
+
+                        <div class="form-group">
+                            <label>ស្ថានភាពរៀបការ</label>
+                            <v-select v-model="officer.married_status"
+                                    name="married_status" :options="marriedStatus"
+                                    :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
+                        </div>
+
+                        <!-- <div class="form-group">
+                            <label>កម្រិតវប្បធម៌</label>
+                            <select>
+                                <option value="">ជ្រើសរើសកម្រិត</option>
+                                <option value="primary">បឋមសិក្សា</option>
+                                <option value="secondary">មធ្យមសិក្សា</option>
+                                <option value="highschool">វិទ្យាល័យ</option>
+                                <option value="bachelor">បរិញ្ញាបត្រ</option>
+                                <option value="master">បរិញ្ញាបត្រជាន់ខ្ពស់</option>
+                                <option value="phd">បណ្ឌិត</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>មុខរបរ</label>
+                            <input type="text" placeholder="បញ្ចូលមុខរបរ">
+                        </div>
+
+                        <div class="form-group">
+                            <label>អាសយដ្ឋានបច្ចុប្បន្ន</label>
+                            <textarea placeholder="បញ្ចូលអាសយដ្ឋាន"></textarea>
+                        </div> -->
+                    </div>
+                </div>
+
+                <!-- Contact Information Section -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-address-book"></i>
+                        ទីកន្លែងបំពេញការងារ និងតួនាទី
+                    </div>
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label>អង្គភាព<span class="required">*</span></label>
+                            <div class="input-icon">
+                                <i class="fas fa-envelope"></i>
+                                <v-select
+                                    v-on:input="onInitChange($event, '', '', apiEntityByDept)"
+                                    v-validate="'required'" v-model="officer.department_id"
+                                    name="department_id" :options="departments"
+                                    :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
+                                    <span class="text-danger text-sm" v-show="errors.has('department_id')">{{
+                                        $t("required_" + 'department_id')
+                                        }}</span>
+                                <!-- <input type="email" placeholder="example@email.com"> -->
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>នាយកដ្ឋាន  <span class="required">*</span></label>
+                            <div class="input-icon">
+                                <i class="fas fa-phone"></i>
+                                <v-select
+                                    v-validate="'required'" v-model="officer.entity_id"
+                                    name="entity_id" :options="entities"
+                                    :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
+                                    <span class="text-danger text-sm" v-show="errors.has('entity_id')">{{
+                                        $t("required_" + 'entity_id')
+                                        }}</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>ងារ</label>
+                            <div class="input-icon">
+                                <i class="fas fa-phone"></i>
+                                <v-select
+                                    v-validate="'required'" v-model="officer.title"
+                                    name="title" :options="titles"
+                                    :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
+                                    <span class="text-danger text-sm" v-show="errors.has('title')">{{
+                                        $t("required_" + 'title')
+                                        }}</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>តួរនាទី</label>
+                            <div class="input-icon">
+                                <i class="fas fa-envelope"></i>
+                                <v-select
+                                    v-validate="'required'" v-model="officer.position"
+                                    name="position" :options="positions"
+                                    :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
+                                    <span class="text-danger text-sm" v-show="errors.has('position')">{{
+                                        $t("required_" + 'position')
+                                        }}</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <!-- Contact Information Section -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-address-book"></i>
+                        ព័ត៌មានទំនាក់ទំនង
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>លេខទូរស័ព្ទ <span class="required">*</span></label>
+                            <div class="input-icon">
+                                <i class="fas fa-phone"></i>
+                                <vs-input v-validate="'required'" v-model="officer.telephone_1" :placeholder="$t('telephone_1')" :name="'telephone_1'" class="mt-1 w-full" />
+                                <span class="text-danger text-sm" v-show="errors.has('telephone_1')">{{ $t("required_" +
+                                    'telephone_1')
+                                }}</span>
+                                <!-- <input type="tel" placeholder="012 xxx xxx" v-model="officer.telephone_1" required> -->
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>អ៊ីមែល</label>
+                            <div class="input-icon">
+                                <i class="fas fa-envelope"></i>
+                                <vs-input v-model="officer.email" :placeholder="$t('email')" :name="'email'" class="mt-1 w-full" />
+                                <!-- <input type="email" placeholder="example@email.com" v-model="officer.email"> -->
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Facebook</label>
+                            <div class="input-icon">
+                                <i class="fab fa-facebook"></i>
+                                <!-- <input type="text" placeholder="Facebook Profile" v-model="officer.social_media_fb"> -->
+                                <vs-input v-model="officer.social_media_fb" :placeholder="$t('social_media_fb')" :name="'social_media_fb'" class="mt-1 w-full" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Telegram</label>
+                            <div class="input-icon">
+                                <i class="fab fa-telegram"></i>
+                                <!-- <input type="text" placeholder="Telegram Username" v-model="officer.social_media_telegram"> -->
+                                 <vs-input v-model="officer.social_media_telegram" :placeholder="$t('social_media_telegram')" :name="'social_media_telegram'" class="mt-1 w-full" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>WhatsApp</label>
+                            <div class="input-icon">
+                                <i class="fab fa-whatsapp"></i>
+                                <!-- <input type="tel" placeholder="WhatsApp Number" v-model="officer.social_media_whatsapp"> -->
+                                <vs-input v-model="officer.social_media_whatsapp" :placeholder="$t('social_media_whatsapp')" :name="'social_media_whatsapp'" class="mt-1 w-full" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>បណ្តាញសង្គមផ្សេងៗ</label>
+                            <!-- <input type="text" placeholder="បញ្ចូលបណ្តាញសង្គមផ្សេង" v-model="officer.social_media_alt"> -->
+                            <vs-input v-model="officer.social_media_alt" :placeholder="$t('social_media_alt')" :name="'social_media_alt'" class="mt-1 w-full" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Contact Section -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-exclamation-circle"></i>
+                        ទំនាក់ទំនងបន្ទាន់
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>ឈ្មោះអ្នកទំនាក់ទំនងបន្ទាន់</label>
+                            <vs-input v-model="officer.emergency_person" :placeholder="$t('emergency_person')" :name="'emergency_person'" class="mt-1 w-full" />
+                            <!-- <input type="text" placeholder="ឈ្មោះអ្នកទំនាក់ទំនង" v-model="officer.emergency_person"> -->
+                        </div>
+
+                        <div class="form-group">
+                            <label>ត្រូវជា</label>
+                            <v-select v-model="officer.emergency_relative"
+                                    name="emergencyRelatives" :options="emergencyRelatives"
+                                    :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>លេខទូរស័ព្ទបន្ទាន់</label>
+                            <!-- <input type="tel" placeholder="012 xxx xxx" v-model="officer.telephone_2"> -->
+                            <vs-input v-model="officer.telephone_2" :placeholder="$t('telephone_2')" :name="'telephone_2'" class="mt-1 w-full" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Information -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        ព័ត៌មានបន្ថែម
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>ចំណុចពិសេស ឬ ការកត់សម្គាល់</label>
+                            <!-- <textarea placeholder="បញ្ចូលព័ត៌មានបន្ថែម..." rows="3" v-model="officer.remark"></textarea> -->
+                             <vs-textarea v-model="officer.remark" :placeholder="$t('remark')" :name="'remark'" class="mt-1 w-full" />
+                        </div>
+
+                        <!-- <div class="form-group full-width">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="agree" required>
+                                <label for="agree">ខ្ញុំយល់ព្រមនឹងលក្ខខណ្ឌ និង គោលការណ៍ឯកជនភាព <span class="required">*</span></label>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+
+                <!-- Status Section -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-exclamation-circle"></i>
+                        ស្ថានភាព
+                    </div>
+                    
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>ថ្ងៃខែចុះឈ្មោះ <span class="required">*</span></label>
+                            <!-- <input type="date" v-model="officer.dob" required> -->
+                                <flat-pickr v-validate="'required'" name="register_date"
+                                v-model="officer.register_date" class="mt-1 w-full" />
+                            <span class="text-danger text-sm" v-show="errors.has('register_date')">{{ $t("required_" +
+                                'register_date')
+                            }}</span>
+                        </div>
+                        <div class="form-group">
+                            <label>តើសមាជិកមានប័ណ្ណបសស? <span class="required">*</span></label>
+                            <v-select
+                                    v-validate="'required'" v-model="officer.is_nssf_member"
+                                    name="is_nssf_member" :options="nssfs"
+                                    :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
+                                    <span class="text-danger text-sm" v-show="errors.has('is_nssf_member')">{{
+                                        $t("required_" + 'is_nssf_member')
+                                        }}</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>ស្ថានភាព <span class="required">*</span></label>
+                            <v-select
+                                    v-validate="'required'" v-model="officer.status"
+                                    name="status" :options="statuses"
+                                    :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
+                                    <span class="text-danger text-sm" v-show="errors.has('status')">{{
+                                        $t("required_" + 'status')
+                                        }}</span>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                        <i class="fas fa-undo"></i>
+                        លុបចោល
+                    </button>
+                    <button type="submit" @click.prevent="submitForm" class="btn btn-primary btn-submit">
+                        <i class="fas fa-save"></i> {{$t("btn_process") }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</template>
+<script>
+// import DataViewSidebar from '@/views/components/ui-elements/data-list/DataViewSidebar.vue'
+import axios from "@/axios.js";
+import apiConfig from "@/apiConfig.js";
+import { ref } from 'vue';
+import flatPickr from 'vue-flatpickr-component';
+import 'flatpickr/dist/flatpickr.css';
+import vSelect from 'vue-select';
+import moduleDataList from "@/store/data-list/moduleDataList.js";
+import DFileManager from '@/views/form-builder/DFileManager.vue';
+
+export default {
+  components: {
+    vSelect,
+    flatPickr,
+    DFileManager
+    // DataViewSidebar
+  },
+  data() {
+    return {
+      api: apiConfig._apiOfficer,
+      apiEntityByDept: apiConfig._apiEntityByDept,
+      selected: [],
+      products: [],
+      itemsPerPage: 4,
+      isMounted: false,
+      officer: [
+        { photo: null},
+        { first_name: null},
+        { last_name: null},
+        { latin: null},
+        { gender: null},
+        { dob: null},
+        { identity_no: null},
+        { register_date: null},
+        { nationality: null},
+        { title: null},
+        { duty: null},
+        { department_id: null},
+        { entity_id: null},
+        { address: null},
+        { email: null},
+        { bank: null},
+        { bank_code: null},
+        { bank_account_no: null},
+        { updated_bank_acc: null},
+        { position: null},
+        { telephone_1: null},
+        { emergency_person: null},
+        { emergency_relative: null},
+        { telephone_2: null},
+        { is_nssf_member: null},
+        { nssf_card_no: null},
+        { order_level: null},
+        { married_status: null},
+        { status: null},
+        { social_media_fb: null},
+        { social_media_telegram: null},
+        { social_media_whatsapp: null},
+        { social_media_alt: null},
+        { remark: null},
+      ],
+        iconExcel: "../images/file-icons/xls.png",
+        iconDoc: "../images/file-icons/doc.png",
+        iconPDF: "../images/file-icons/pdf.png",
+      iconThumnail: null,
+      genders: [],
+      titles: [],
+      entities: [],
+      positions: [],
+      nssfs: [],
+      statuses: [],
+      marriedStatus: [
+        {
+            label: "នៅលីវ",
+            value: "នៅលីវ"
+        },
+        {
+            label: "រៀបការហើយ",
+            value: "រៀបការហើយ"
+        },
+        {
+            label: "លែងលះ",
+            value: "លែងលះ"
+        },
+        {
+            label: "មេម៉ាយ",
+            value: "មេម៉ាយ"
+        },
+      ],
+      emergencyRelatives:[
+        {
+            label: "ឪពុក",
+            value: "ឪពុក"
+        },
+        {
+            label: "ម្តាយ",
+            value: "ម្តាយ"
+        },
+        {
+            label: "ស្វាមី/ភរិយា",
+            value: "ស្វាមី/ភរិយា"
+        },
+        {
+            label: "បងប្អូន",
+            value: "បងប្អូន"
+        },
+        {
+            label: "មិត្តភក្តិ",
+            value: "មិត្តភក្តិ"
+        },
+        {
+            label: "ផ្សេងៗ",
+            value: "ផ្សេងៗ"
+        },
+      ],
+      // Data Sidebar
+      addNewDataSidebar: false,
+      sidebarData: {},
+    }
+  },
+  computed: {
+    validateForm() {
+        return !this.errors.any()
+    },
+    currentPage() {
+      if(this.isMounted) {
+        return this.$refs.table.currentx
+      }
+      return 0
+    },
+    // products() {
+    //   return this.$store.state.dataList.products
+    // },
+    queriedItems() {
+      return this.$refs.table ? this.$refs.table.queriedResults.length : this.products.length
+    }
+  },
+  methods: {
+    clearForm(){
+        this.iconThumnail = null;
+        this.officer.photo = null;
+        this.officer.first_name = null;
+        this.officer.last_name = null;
+        this.officer.latin = null;
+        this.officer.gender = null;
+        this.officer.dob = null;
+        this.officer.identity_no = null;
+        this.officer.register_date = null;
+        this.officer.nationality = null;
+        this.officer.title = null;
+        this.officer.duty = null;
+        this.officer.department_id = null;
+        this.officer.entity_id = null;
+        this.officer.address = null;
+        this.officer.email = null;
+        this.officer.bank = null;
+        this.officer.bank_code = null;
+        this.officer.bank_account_no = null;
+        this.officer.updated_bank_acc = null;
+        this.officer.position = null;
+        this.officer.telephone_1 = null;
+        this.officer.emergency_person = null;
+        this.officer.emergency_relative = null;
+        this.officer.telephone_2 = null;
+        this.officer.is_nssf_member = null;
+        this.officer.nssf_card_no = null;
+        this.officer.order_level = null;
+        this.officer.married_status = null;
+        this.officer.status = null;
+        this.officer.social_media_fb = null;
+        this.officer.social_media_telegram = null;
+        this.officer.social_media_whatsapp = null;
+        this.officer.social_media_alt = null;
+        this.officer.remark = null;
+    },
+    onInitChange($event, _formAttribute, _formName, _apiRequest) {
+        this.entities = [];
+        this.officer.entity_id = null;
+        let _data = {
+            type: "autocomplete",
+            param: $event
+        };
+        // this.form.attribute[_formAttribute] = null;
+        // this.data[_formAttribute] = [];
+    
+        // this.data[_formAttribute].push([
+        //     {
+        //         "label": "sdf",
+        //         "value": "1"
+        //     }
+        // ]);
+        return new Promise((resolve, reject) => {
+            axios.post(_apiRequest, _data)
+                .then((response) => {
+                    this.$vs.notify({
+                        title: 'Message',
+                        text: "Loading...",
+                        iconPack: 'feather',
+                        icon: 'icon-check-circle',
+                        color: 'primary',
+                        position: 'top-right'
+                    });
+                    
+                    switch (_formAttribute) {
+                        case "amount":
+                            this.form.attribute["amount"] = response["data"]["data"];
+                        break;
+                        default:
+                            for (let i = 0; i < response["data"]["data"].length; i++) {
+                                this.entities.push(response["data"]["data"][i]);
+                            }
+                        break;
+                    }
+
+                }).catch((error) => {
+                    reject(error)
+                    this.$vs.notify({
+                        title: 'Message',
+                        text: "មិនអាចដំណើរកាបានទេ,​ សូមត្រួតពិនិត្យពត៌មានឡើងវិញ។",
+                        iconPack: 'feather',
+                        icon: 'icon-check-circle',
+                        color: 'danger',
+                        position: 'top-right'
+                    })
+                    this.$vs.loading.close();
+                })
+        })
+    },
+    initPassProps(props) {
+        switch (props.data.type) {
+            case "xlsx":
+                this.officer.photo = props.data.path;
+                this.iconThumnail = this.iconExcel;
+                break;
+            case "xls":
+                this.officer.photo = props.data.path;
+                this.iconThumnail = this.iconExcel;
+                break;
+            case "doc":
+                this.officer.photo = props.data.path;
+                this.iconThumnail = this.iconDoc;
+                break;
+            case "docx":
+                this.officer.photo = props.data.path;
+                this.iconThumnail = this.iconDoc;
+                break;
+            case "pdf":
+                this.officer.photo = props.data.path;
+                this.iconThumnail = this.iconPDF;
+                break;
+            default:
+                this.officer.photo = props.data.path;
+                this.iconThumnail = props.data.path;
+                break;
+        }
+    },
+    initOpenFileManager(props) {
+        this.$refs.refModelFileManager.initFileManager(props);
+    },
+    addNewData() {
+      this.sidebarData = {}
+      this.toggleDataSidebar(true)
+    },
+    deleteData(id) {
+      this.$store.dispatch("dataList/removeItem", id).catch(err => { console.error(err) })
+    },
+    editData(data) {
+      // this.sidebarData = JSON.parse(JSON.stringify(this.blankData))
+      this.sidebarData = data
+      this.toggleDataSidebar(true)
+    },
+    getOrderStatusColor(status) {
+      if(status == 'on_hold') return "warning"
+      if(status == 'delivered') return "success"
+      if(status == 'canceled') return "danger"
+      return "primary"
+    },
+    getPopularityColor(num) {
+      if(num > 90) return "success"
+      if(num >70) return "primary"
+      if(num >= 50) return "warning"
+      if(num < 50) return "danger"
+      return "primary"
+    },
+    toggleDataSidebar(val=false) {
+      this.addNewDataSidebar = val
+    },
+    getData(){
+        return new Promise((resolve, reject) => {
+            axios.get(this.api+"/form")
+                .then((response) => {
+                    console.log("===========", response.data.data.position);
+                    // this.data = response.data.officers;
+                    // this.paymentMethods = response.data.payment_method_id;
+                    // this.currencies = response.data.currency_id;
+                    this.departments = response.data.data.department_id;
+                    this.positions = response.data.data.position;
+                    this.titles = response.data.data.title;
+                    this.genders = response.data.data.gender;
+                    this.nssfs = response.data.data.is_nssf_member;
+                    this.statuses = response.data.data.status;
+                    // console.log("Payable Form", response.data);
+                    // resolve(response.data);   // return data
+                })
+                .catch((error) => {
+                    console.error(error);
+                    reject(error);            // return error
+                });
+        });
+    },
+    submitForm() {
+        let _data = [
+            {photo: this.officer.photo},    
+            {first_name: this.officer.first_name},
+            {last_name: this.officer.last_name},
+            {latin: this.officer.latin},
+            {gender: this.officer.gender?this.officer.gender.value: null},
+            {dob: this.officer.dob},
+            {identity_no: this.officer.identity_no},
+            {register_date: this.officer.register_date},
+            {nationality: this.officer.nationality},
+            {title: this.officer.title?this.officer.title.value:null},
+            {duty: this.officer.duty},
+            {department_id: this.officer.department_id?this.officer.department_id.value:null},
+            {entity_id: this.officer.entity_id?this.officer.entity_id.value:null},
+            {address: this.officer.address},
+            {email: this.officer.email},
+            {bank: this.officer.bank},
+            {bank_code: this.officer.bank_code},
+            {bank_account_no: this.officer.bank_account_no},
+            {updated_bank_acc: this.officer.updated_bank_acc},
+            {position: this.officer.position?this.officer.position.value:null},
+            {telephone_1: this.officer.telephone_1},
+            {emergency_person: this.officer.emergency_person},
+            {emergency_relative: this.officer.emergency_relative?this.officer.emergency_relative.value:null},
+            {telephone_2: this.officer.telephone_2},
+            {is_nssf_member: this.officer.is_nssf_member?this.officer.is_nssf_member.value:null},
+            {nssf_card_no: this.officer.nssf_card_no},
+            {order_level: this.officer.order_level},
+            {married_status: this.officer.married_status},
+            {status: this.officer.status?this.officer.status.value:null},
+            {social_media_fb: this.officer.social_media_fb},
+            {social_media_telegram: this.officer.social_media_telegram},
+            {social_media_whatsapp: this.officer.social_media_whatsapp},
+            {social_media_alt: this.officer.social_media_alt},
+            {remark: this.officer.remark},
+        ];
+        this.$validator.validateAll().then(result => {
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 100); // ពន្យារពេល ១០០
+            if (result) {
+                this.$vs.loading();
+                return new Promise((resolve, reject) => {
+                    axios.post(this.api, _data)
+                        .then((response) => {
+                            if (response.data.success) {
+                                this.$vs.notify({
+                                    title: 'ការជូនដំណឹង',
+                                    text: response.data.message,
+                                    iconPack: 'feather',
+                                    icon: 'icon-check-circle',
+                                    color: 'primary',
+                                    position: 'top-right'
+                                });
+                                this.clearForm();
+                                this.officer_id = null;
+                                this.paymentHistories = [];
+                                this.$vs.loading.close();
+                                // this.$router.push('/account/expense').catch(() => { })
+                            }else{
+                                this.$vs.notify({
+                                    title: 'ការជូនដំណឹង',
+                                    text: response.data.message,
+                                    iconPack: 'feather',
+                                    icon: 'icon-check-circle',
+                                    color: 'danger',
+                                    position: 'top-right'
+                                })
+                                this.$vs.loading.close();
+                            }
+                        }).catch((error) => {
+                            reject(error)
+                            this.$vs.notify({
+                                title: 'Message',
+                                text: 'Error, while trying to do action or no permission allow!',
+                                iconPack: 'feather',
+                                icon: 'icon-check-circle',
+                                color: 'danger',
+                                position: 'top-right'
+                            })
+                            this.$vs.loading.close();
+                        })
+                    });
+            }else{
+                this.$vs.notify({
+                    title: 'ការជូនដំណឹង',
+                    text: 'ព័ត៌មានពុំទាន់គ្រប់ជ្រុងជ្រោយ',
+                    iconPack: 'feather',
+                    icon: 'icon-check-circle',
+                    color: 'danger',
+                    position: 'top-right'
+                });
+                this.$vs.loading.close();
+            }
+        });
+    }
+  },
+  created() {
+    this.getData();
+    if(!moduleDataList.isRegistered) {
+      this.$store.registerModule('dataList', moduleDataList)
+      moduleDataList.isRegistered = true
+    }
+    this.$store.dispatch("dataList/fetchDataListItems")
+  },
+  mounted() {
+    this.isMounted = true;
+  }
+}
+</script>

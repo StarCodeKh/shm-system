@@ -1,0 +1,776 @@
+<?php 	
+	
+	namespace App\Services;
+	use Spatie\Permission\Models\Permission;
+	use Spatie\Permission\Models\Role;
+	use DB;
+	use Auth;
+	use CommonService;
+	use App\User;
+	class Common{
+		
+		public static function setPermissions(){
+			$permissions = [
+				'create officer',
+				'view officer',
+				'update officer',
+				'delete officer',
+			];
+
+			foreach ($permissions as $permission) {
+				Permission::firstOrCreate(['name' => $permission]);
+			}
+		}
+
+		public static function permission($table){
+			$user = User::find(Auth::user()->id);
+			$permissions = false;
+			if($user->getPermissionsViaRoles()){
+				$allPermissions = $user->getPermissionsViaRoles();
+				foreach ($allPermissions as $permission) {
+					foreach ($permission as $key => $value) {
+						$permissions[$permission->name] = true;//CommonService::enablePermission($permission->name)?true:false;
+					}
+				}
+			}
+			return $permissions;
+		}
+
+		public static function enablePermission($permission){
+			$check = "";
+			$role = Role::find(Auth::user()->role_id);
+			if($role->hasPermissionTo($permission)){
+				$check = true;
+			}else{
+				$check = false;
+			}
+			return boolval($check);
+		}
+
+		public static function getPermissionsViaRoles(){
+			$user = User::find(Auth::user()->id);
+			return $user->getPermissionsViaRoles();
+		}
+
+		public static function getPermissionsViaRolesByUser($roleId){
+			$assignPermissionData = "";
+			$role = Role::findById($roleId);
+			$assignPermissions = $role->permissions;
+			foreach ($assignPermissions as $assignPermission) {
+				$assignPermissionData .= $assignPermission->name . ",";
+				// $permissions[$check->name] = true;
+			}
+			$convertAssignPermission = explode(",", $assignPermissionData);
+
+			$data = array();
+			$permissions = Permission::get();
+			$permission_data = [];
+			foreach($permissions as $permission){
+				if(in_array($permission->name, $convertAssignPermission)){
+					$data[$permission->name] = true;
+				}else{
+					$data[$permission->name] = false;
+				}
+			}
+			return $data; 
+		}
+
+		public static function assignUserToRole(){
+			$user = User::find(Auth::user()->id);
+			$user->assignRole('admin');
+		}
+
+		public static function getAllPermissionData(){
+			$data = array();
+			$query = DB::table("permission_group")->orderBy("name")->get();
+			foreach($query as $row){
+				$permissions = Permission::where("group", $row->id)->orderBy("name")->get();
+				$permission_data = [];
+				foreach($permissions as $permission){
+					$permission_data[] = array(
+						"id" => $permission->id,
+						"name" => $permission->name,
+					);
+				}
+				$data[] = array(
+					"id" => $row->id,
+					"name" => $row->name,
+					"permission" => $permission_data 
+				);
+			}
+			return $data; 
+		}
+		
+		public static function getRoleByUser(){
+			$roles = $user->getRoleNames();
+		}
+
+		public static function givePermissionToUser(){
+			$user = User::find(Auth::user()->id);
+			$user->givePermissionTo($permissions);
+		}
+
+		public static function givePermissionToRole($permission_name){
+			$permission = Permission::findByName($permission_name);
+        	$role->givePermissionTo($permission);
+		}
+
+		public static function convertDataType($case){
+			if($case->Field=='attach' || $case->Field=='file' || $case->Field=='photo' || $case->Field=='image' || $case->Field=='thumbnail'){
+				$type = "file";
+			}elseif($case->Field=='request_title'){
+				$type = "text";
+			}else{
+				switch ($case->Type) {
+					case 'bigint':
+						$type = "number";
+						break;
+					case 'varchar(255)':
+						$type = "select";
+						break;
+					case 'varchar(50)':
+						$type = "select";
+						break;
+					case 'varchar(25)':
+						$type = "hidden";
+						break;
+					case 'datetime':
+						$type = "date";
+						break;
+					case 'date':
+						$type = "date";
+						break;
+					case 'float(20,4)':
+						$type = "number";
+						break;
+					case 'int':
+						$type = "number";
+						break;
+					case 'text':
+						$type = "text";
+						break;
+					case 'longtext':
+						$type = "textarea";
+						break;
+					case 'tinyint':
+						$type = "checkbox";
+						break;
+					case 'tinytext':
+						$type = "checkbox";
+						break;
+					case 'binary(255)':
+						$type = "password";
+						break;
+					case 'mediumtext':
+						$type = "file";
+						break;
+					default:
+						$type = "text";
+						break;
+				}
+			}
+			return $type;
+		}
+
+
+		public static function convertDataTypeWay1($case)
+		{
+			// Normalize field and type
+			$field = strtolower($case->Field);
+			$casetype = strtolower($case->Type);
+			$type = preg_replace('/\(.+\)/', '', $casetype); // remove size/precision
+			// 1. Special file fields
+			$fileFields = ['attach', 'file', 'photo', 'image', 'thumbnail'];
+			if (in_array($field, $fileFields)) {
+				return "file";
+			}
+			// 2. Select/lookup fields by convention
+			if (preg_match('/_id$/', $field) && $field!="user_id"  || preg_match('/_type$/', $field) || preg_match('/_code$/', $field) && $field != "bank_code" || preg_match('/_method$/', $field) || preg_match('/status$/', $field) || preg_match('/department$/', $field) || preg_match('/title$/', $field) && $field != "request_title" || preg_match('/bank$/', $field)) {
+				return "select";
+			}
+						
+			// exceptional_case fields like request_title
+			$excptFields = ["request_title", "title_en", "title_kh"];
+			if(in_array($field, $excptFields)){
+				return "text";
+			}
+
+			$fileFieldHiddens = ['user_id'];
+			if (in_array($field, $fileFieldHiddens)) {
+				return "hidden";
+			}
+			// if (preg_match('/ref_payable_id$/', $field) || preg_match('/user_id$/', $field)) {
+			// 	return "hidden";
+			// }
+			// 3. Datatype mapping
+			switch ($type) {
+				case 'bigint':
+				case 'int':
+					return "number"; // but _id handled above as select
+				case 'varchar':
+					return "text";   // keep simple, unless _id/_type/_code
+				case 'datetime':
+				case 'timestamp':
+				case 'date':
+					return "date";
+				case 'float':
+				case 'double':
+				case 'decimal':
+					return "number";
+				case 'text':
+				case 'longtext':
+				case 'mediumtext':
+					return "textarea";
+				case 'tinyint':
+					return "checkbox"; // often boolean
+				case 'binary':
+				case 'varbinary':
+					return "password"; 
+				default:
+					return "text"; // safe fallback
+			}
+		}
+
+		public static function convertDataTypeFromComlumnBinding($field,$type)
+		{
+			// Normalize field and type
+			$field = $field;
+			$casetype = $type;
+			$type = preg_replace('/\(.+\)/', '', $casetype); // remove size/precision
+			// 1. Special file fields
+			$fileFields = ['attach', 'file', 'photo', 'image', 'thumbnail'];
+			if (in_array($field, $fileFields)) {
+				return "file";
+			}
+			// 2. Select/lookup fields by convention
+			if (preg_match('/_id$/', $field) && $field!="user_id"  || preg_match('/_type$/', $field) || preg_match('/_code$/', $field) && $field != "bank_code" || preg_match('/_method$/', $field) || preg_match('/status$/', $field) || preg_match('/department$/', $field) || preg_match('/title$/', $field) || preg_match('/bank$/', $field)) {
+				return "select";
+			}
+
+			$fileFieldHiddens = ['user_id'];
+			if (in_array($field, $fileFieldHiddens)) {
+				return "hidden";
+			}
+			// if (preg_match('/ref_payable_id$/', $field) || preg_match('/user_id$/', $field)) {
+			// 	return "hidden";
+			// }
+			// 3. Datatype mapping
+			switch ($type) {
+				case 'bigint':
+				case 'int':
+					return "number"; // but _id handled above as select
+				case 'varchar':
+					return "text";   // keep simple, unless _id/_type/_code
+				case 'datetime':
+				case 'timestamp':
+				case 'date':
+					return "date";
+				case 'float':
+				case 'double':
+				case 'decimal':
+					return "number";
+				case 'text':
+				case 'longtext':
+				case 'mediumtext':
+					return "textarea";
+				case 'tinyint':
+					return "checkbox"; // often boolean
+				case 'binary':
+				case 'varbinary':
+					return "password"; 
+				default:
+					return "text"; // safe fallback
+			}
+		}
+
+
+		protected static $customFieldTypes = [
+			'expenses' => [
+				'currency' => 'select',
+				'status'   => 'select',
+			],
+			'users' => [
+				'role'     => 'select',
+			],
+		];
+
+
+		public static function convertDataTypeWay2($case, $tableName = null)
+		{
+			$field = strtolower($case->Field);
+			$type = strtolower($case->Type);
+			$type = preg_replace('/\(.+\)/', '', $type);
+
+			// 1. Check if defined in config
+			if ($tableName && isset(self::$customFieldTypes[$tableName][$field])) {
+				return self::$customFieldTypes[$tableName][$field];
+			}
+
+			// 2. File fields
+			$fileFields = ['attach', 'file', 'photo', 'image', 'thumbnail'];
+			if (in_array($field, $fileFields)) {
+				return "file";
+			}
+
+			// 3. Datatype fallback
+			switch ($type) {
+				case 'int':
+				case 'bigint':
+				case 'decimal':
+				case 'float':
+				case 'double':
+					return "number";
+				case 'date':
+				case 'datetime':
+				case 'timestamp':
+					return "date";
+				case 'text':
+				case 'longtext':
+				case 'mediumtext':
+					return "textarea";
+				case 'tinyint':
+					return "checkbox";
+				default:
+					return "text";
+			}
+		}
+
+
+
+		public static function getSingleOpt($model, $field_name){
+			$query = $model::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+			$data = array();
+			foreach($query as $row){
+				$data[] = array(
+					"label" => (config_language == "en")?$row->name_en:$row->name_kh,
+					"value" => (config_language == "en")?$row->name_en:$row->name_kh,
+				);
+			}
+			return $data;
+		}
+
+		public static function getLen($var){
+			$tmp = explode('.', $var);
+			if(count($tmp)>1){
+				return strlen($tmp[1]);
+			}
+		}
+
+		public static function formatDoubleNum($num){
+			// $n = floor(($num*100))/100;//floor(number_format($num));
+			$n = number_format($num, Common::getLen($num));
+			return $n;
+		}
+
+		public static function getReilFraction(){
+			$Currency = Currency::Where('id',2)->Select('exchange_rate')->first();
+			return $Currency->exchange_rate;
+		}
+
+		public static function getCurrencyDefault($table_field){
+	      $Currency = Currency::Where('is_default',1)->first();
+	      return $Currency->$table_field;
+	    }
+
+		// formatCurrentcy
+		public static function FormatCurrentcy($price){
+			$Currency = Currency::Where('is_default',1)->first();
+			$exchange_rate = $Currency->exchange_rate;
+			$fraction_unit = $Currency->fraction_unit;
+			$total = floatval($price) * ($exchange_rate * $fraction_unit);
+			// $decimal = str_split($total, "3");
+			$decimals = number_format($total,2);
+			// number_format($number, 2, ',', ' ');
+			$result = $Currency->currency_sign.' '.$decimals;
+			return $result;
+		}
+
+		// getMenu
+		public static function getMenus($language_id=1, $menu_type_id=1){
+			$menu = array();
+			$Group_ID = Auth::user()->group_id;
+			$parent_menus = DB::table("group_role as gr")
+				->JOIN('group_role_detail as grd', 'grd.group_role_id', '=', 'gr.id')
+				->JOIN('menu as m','m.menu_code','=','grd.menu_code')
+				->JOIN('menu_description as md','m.id','=','md.menu_id')
+				->WHERE('m.is_active',1)
+				->WHERE('gr.group_id','=',$Group_ID)
+				->WHERE('m.parent_id',0)
+				->WHERE('m.menu_type_id',$menu_type_id)
+				->WHERE('md.language_id',$language_id)
+				->SELECT('grd.menu_id as groupMenu_id','gr.id as grouRole_id','m.fa_icon as fa_icon','m.default as default','m.menu_link as p_menu_link','m.menu_code as menu_code','md.name as parent_menu_name','m.id as parent_menu_id')
+				->OrderBy('m.ordering')
+				->get();
+
+			  foreach ($parent_menus as $parent_menu) {
+			  	 $groupMenu_id = $parent_menu->groupMenu_id;
+            	 $grouRole_id = $parent_menu->grouRole_id;
+
+				$children_menu = array();
+				$children = DB::table("menu as m")
+							->JOIN('menu_description as md','m.id','=','md.menu_id')
+							->JOIN('group_role_detail as grd','grd.menu_id','=','m.id')
+							->WHERE('m.is_active',1)
+							->WHERE('grd.group_role_id','=',$grouRole_id)
+							->WHERE('m.parent_id','=',$groupMenu_id)
+							->WHERE('m.parent_id','>',0)
+							->WHERE('m.parent_id',$parent_menu->parent_menu_id)
+							->WHERE('md.language_id',$language_id)
+							->SELECT('m.menu_code as menu_code','m.menu_link as c_menu_link','md.name as child_menu_name')
+							->OrderBy('m.ordering')
+							->OrderBy('md.name')
+							->get(); 
+
+				foreach ($children as $child) {
+					$children_menu[] = array(
+						'child_menu_name' => $child->child_menu_name,
+						'c_menu_link' => $child->c_menu_link,
+						'menu_code' => $child->menu_code,
+					);
+				}
+
+				$menu[] = array(
+					'parent_menu_name' => $parent_menu->parent_menu_name,
+					'fa_icon' => $parent_menu->fa_icon,
+					'default' => $parent_menu->default,
+					'menu_code' => $parent_menu->menu_code,
+					'p_menu_link' => $parent_menu->p_menu_link,
+					'children_menu' => $children_menu
+				);
+			}
+			// dd($menu);
+			return $menu;
+		}
+		public static function getMenusName($language_id=2,$menu_code){
+			
+			$data = DB::table("menu_description as md")
+							->join("menu as m",'m.id','=','md.menu_id')			  				
+							->WHERE('m.menu_code',$menu_code)							
+							->WHERE('md.language_id',$language_id)
+							->SELECT('md.name','md.menu_id')							
+							->get();
+			if(sizeof($data)>0)
+				return $data[0]->name; 
+			else return '';
+		}
+		public static function getMenusTitle($language_id=2,$menu_code){
+			
+			$data = DB::table("menu_description as md")
+							->join("menu as m",'m.id','=','md.menu_id')			  				
+							->WHERE('m.menu_code',$menu_code)							
+							->WHERE('md.language_id',$language_id)
+							->SELECT('md.name','md.meta_description','md.menu_id')							
+							->get();
+			if(sizeof($data)>0)
+				if($data[0]->meta_description!='')
+					return $data[0]->meta_description; 
+				else
+					return $data[0]->name; 
+
+			else return '';
+		}
+		
+		public static function getLanguage(){
+			$lang = DB::table("language")->Where('is_delete',0)->Where('is_active',1)->OrderBy('order_level','ASC')->get();
+			return $lang;
+		}
+
+		// substring formart
+		public static function substrTime($time){
+			$newTime = date(DEFAULT_TIME_FORMAT,strtotime($time));
+	        //$replace = str_replace(':', '', $time);
+	        //$newTime = substr($replace,0,4);
+	        return $newTime;
+	    }
+	    public static function substrTimeInput($time){
+			//$newTime = date(DEFAULT_TIME_FORMAT,strtotime($time));
+	        $replace = str_replace(':', '', $time);
+	        $newTime = substr($replace,0,4);
+	        return $newTime;
+	    }
+	    
+	    // substring formart
+		public static function FormatDate($datetime){
+			$newDate = date("d-M-Y", strtotime($datetime));
+	        return $newDate;
+	    }
+	    public static function FormatDateTime($datetime){
+			$newDate = date(DATE_TIME_FORMAT, strtotime($datetime));
+	        return $newDate;
+	    }
+	    public static function FormatDateSql(){
+	        return config_date_format;
+		}
+		public static function GetNumberOfMonth($startDate, $endDate){
+			$date1 = $startDate;
+			$date2 = $endDate;
+			// $d1=new DateTime($date2); 
+			// $d2=new DateTime($date1);                                  
+			// $Months = $d2->diff($d1); 
+			// dd($Months);
+			// $howeverManyMonths = (($Months->y) * 12) + ($Months->m);
+			// return $howeverManyMonths;
+			// $date1 = '2020-08-01';
+			// $date2 = '2020-08-01';
+			$ts1 = strtotime($date1);
+			$ts2 = strtotime($date2);
+
+			$year1 = date('Y', $ts1);
+			$year2 = date('Y', $ts2);
+
+			$month1 = date('m', $ts1);
+			$month2 = date('m', $ts2);
+
+			$diff = (($year2 - $year1) * 12) + ($month2 - $month1) + 1;
+			// dd($diff);
+			return $diff;
+		}
+
+	    public static function SumTime ($time1, $time2) {
+			$t1=explode(":",$time1);
+			$t2=explode(":",$time2);
+			//dd($t2);
+			$hours=$t1[0]+$t2[0];
+			$minutes=$t1[1]+$t2[1];
+			if($minutes > 59){
+				$minutes=$minutes-60;
+				$hours++;
+			}
+			if($minutes < 10){
+				$minutes = "0".$minutes;
+			}
+			if($minutes == 0){
+				$minutes = "00";
+			}
+			if($hours < 10){
+				$hours = "0".$hours;
+			}
+			if($hours == 0){
+				$hours = "00";
+			}
+			$sum=$hours.':'.$minutes;
+			return $sum;
+		}
+		public static function TotalTimeFormat($time) {
+			//echo $time;
+			if(TOTAL_TIME_FORMAT=='H:i') return $time;
+			else return str_replace(':','',$time);
+			
+		}
+
+		//////////////////////////////////////////////////////////////////////
+		//PARA: Date Should In YYYY-MM-DD Format
+		//RESULT FORMAT:
+		// '%y Year %m Month %d Day %h Hours %i Minute %s Seconds'        =>  1 Year 3 Month 14 Day 11 Hours 49 Minute 36 Seconds
+		// '%y Year %m Month %d Day'                                    =>  1 Year 3 Month 14 Days
+		// '%m Month %d Day'                                            =>  3 Month 14 Day
+		// '%d Day %h Hours'                                            =>  14 Day 11 Hours
+		// '%d Day'                                                        =>  14 Days
+		// '%h Hours %i Minute %s Seconds'                                =>  11 Hours 49 Minute 36 Seconds
+		// '%i Minute %s Seconds'                                        =>  49 Minute 36 Seconds
+		// '%h Hours                                                    =>  11 Hours
+		// '%a Days                                                        =>  468 Days
+		//////////////////////////////////////////////////////////////////////
+		public static function dateDifference($date_1 , $date_2 , $differenceFormat = '%a' )
+		{
+		    $datetime1 = date_create($date_1);
+		    $datetime2 = date_create($date_2);
+		   
+		    $interval = date_diff($datetime1, $datetime2);
+		   
+		    return $interval->format($differenceFormat);
+		   
+		} 		
+
+		// $uploaded_date = $row['upload_time'];
+		// $currently_date = $create_date;
+
+		public static function RealtimeCheckDate($uploaded_date){
+			$currently_date = date('Y-m-d H:i:s');
+			
+			$diff = abs(strtotime($currently_date) - strtotime($uploaded_date)); 
+			$years   = floor($diff / (365*60*60*24)); 
+			$months  = floor(($diff - $years * 365*60*60*24) / (30*60*60*24)); 
+			$days    = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
+			$hours   = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24 - $days*60*60*24)/ (60*60));
+			$minutes = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24 - $days*60*60*24 - $hours*60*60)/ 60); 
+			$seconds = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24 - $days*60*60*24 - $hours*60*60 - $minutes*60)); 
+			if($years == 0 && $months == 0 && $days == 0 && $hours == 0 && $minutes == 0) {
+				return $seconds." seconds ago.";
+			}elseif($years == 0 && $months == 0 && $days == 0 && $hours == 0) {
+				return $minutes." Minutes and ".$seconds." seconds ago.";
+			}elseif($years == 0 && $months == 0 && $days == 0) {
+				return $hours." hours and ".$minutes." minutes ago.";
+			}elseif($years == 0 && $months == 0) {
+				return $days." days and ".$hours." hours ago.";
+			}elseif($years == 0) {
+				return $months." months and ".$days." days ago.";
+			}else{
+				return $years." years and ".$months." months ago.";
+			}
+		}
+		
+	/*
+		 * strTime formate must be h:m AM
+		 */
+		public static function getTime($strTime){
+			$text = explode(":",$strTime);
+			$subText = explode(" ", $text[1]);
+			$hour = (int)$text[0];
+			$minute = (int)$subText[0];
+			$format = strtoupper($subText[1]);
+			if($format == "PM" && $hour != 12){
+				$hour += 12;
+			}
+			$time = array(
+					'hour'=> $hour,
+					'minute'=> $minute
+			);
+			return $time;
+		}
+		//utc Duration 
+		public static function utcTimeDuration($location_id)
+		{
+		    
+        	$localTime = DB::table('flight_location as l')
+        					->join('utctimezone as t','l.utctimezone_id','=','t.id')
+        					->select('value')
+        					->where('l.id',$location_id)
+        					->get();
+		   	foreach ($localTime as $d) {
+		   		return $d->value;
+		   	}
+		    
+		} 
+		//convert time 
+		public static function ConvertTime($d='date',$contvert_to='LC', $location_id, $date,$time) {
+			$duration = helpers::utcTimeDuration($location_id);
+          	$nowtime = $date.' '.$time;
+
+          	if(($d=='date')&&($date==''||$date=='0000-00-00')) return '';
+	        else if(($d=='time')&&($time==''||$time=='00:00:00')) return '';
+
+          	if((DEFAULT_UTC_TIME==1)&&($contvert_to=='UTC')){
+          		if($d=='date') return date(DEFAULT_DATE_FORMAT,strtotime($date));
+          		else return date(DEFAULT_TIME_FORMAT,strtotime($time));
+          	}else{
+	          	$new_datetime = date('Y-m-d H:i:s', strtotime($nowtime . " $duration hours"));
+		       	
+		        $new_date = date(DEFAULT_DATE_FORMAT,strtotime($new_datetime));
+		        $new_time = date(DEFAULT_TIME_FORMAT,strtotime($new_datetime));
+
+		        if($d=='date') return $new_date;
+		        else return $new_time;
+		        
+          	}
+		}
+		//check day or night time 
+		public static function CheckDayNight($time){
+			$day_time = strtotime(DAY_TIME);
+            $night_time = strtotime(NIGHT_TIME);
+
+            $time = substr($time, 0,2).':'.substr($time, 2,2);
+            $this_time = strtotime($time);
+            
+            if(($this_time>=$night_time)||($this_time<$day_time)) return '<i class="fa fa-moon-o"></i><span style="display:none;">0</span>';
+            else return '<i class="fa fa-sun-o"></i><span style="display:none;">1</span>';
+		}
+		//convert time from second
+		public static function ConvertTimeSecond($seconds){			
+			$h=0;
+			$i=0;
+			$s=0;
+			if($seconds>=3600){
+				$h = floor($seconds/3600);
+				$seconds = $seconds - (3600*$h);
+
+				if($seconds>=60){
+					$i = floor(($seconds/60));
+				}
+				if($h<10) $h='0'.$h;
+				if($i<10) $i='0'.$i;
+				$time = $h.':'.$i;
+			}else if($seconds>=60){
+				$i = floor(($seconds/60));				
+				if($i<10) $i='0'.$i;
+				$time = '00:'.$i;
+			}else{
+				$time = '00:00';
+			}
+
+	        return $time;
+	  }
+
+	  public function convertToKhmerNumber($number){
+		// $khmerNumber = [
+		//    '1' => '១',
+		//    '2' => '២',
+		//    '3' => '៣',
+		//    '4' => '៤',
+		//    '5' => '៥',
+		//    '6' => '៦',
+		//    '7' => '៧',
+		//    '8' => '៨',
+		//    '9' => '៩',
+		//    '0' => '០',
+		//    '' => '០',
+		//    'null' => '០'
+		//  ];
+		//  $arrNumbers = str_split($number);
+		//  $newKhmerNumber = '';
+		//  foreach ($arrNumbers as $number){
+		// 	$newKhmerNumber .= $khmerNumber[$number];
+		//  }
+		//  return $newKhmerNumber;
+		return $data;
+		}
+
+		public static function getFilter($obj){
+			$filter = array(
+				"data" => $obj,
+				// "offset" => isset($obj["offset"]) ? $obj["offset"] : config_offset,
+				"limit" => isset($obj["limit"]) ? $obj["limit"] : config_limit,
+				"sort" => isset($obj["sort"]) ? $obj["sort"] : config_sort,
+				"order" => isset($obj["order"]) ? $obj["order"] : config_order,
+				"page_number" => isset($obj["page_number"]) ? $obj["page_number"] : config_order,
+				"search_field" => isset($obj["search_field"]) ? $obj["search_field"] : "",
+			);
+			return $filter;
+		}
+
+		public static function queryTable($db_table, $filter, $flag){
+			$query = $db_table::orderBy($filter["sort"], $filter["order"]);
+			$whereClause = $query;
+			$whereClause->whereNotIn("status", [4])->orWhereNull("status");
+			if($flag != 1 && $flag != 2){
+				$whereClause->limit($filter["limit"]);
+				$whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
+			}
+			if($flag != 2){
+				if($filter["search_field"]){
+					$arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
+					$dataFields = $arraySingle;
+					foreach($dataFields as $key => $field){
+						if (array_key_exists($key, $dataFields)) {
+						$whereClause->Where($key, $dataFields[$key]);
+						}
+					}
+				}
+			}
+			return $whereClause;
+		}
+
+		public static function optVals($db_table, $filter, $flag){
+			$data = array();
+			$whereClause = Common::queryTable($db_table, $filter, $flag); // Flag == 1 mean if query result limit by qty
+			$queryResult = collect($whereClause->get());
+			foreach($queryResult as $row){
+				$data[] = array(
+					"label" => (config_language=="en")?$row->name_en:$row->name_kh,
+					"value" => $row->id,
+				);
+			}
+			return $data;
+		}
+	}
+?>

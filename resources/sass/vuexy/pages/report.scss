@@ -1,0 +1,302 @@
+// body{
+//     /* text-align: justify; */
+//     font-size: 10.5pt;
+//     font-family: 'Khmer MEF1';
+// }
+// @font-face {
+//     font-family: 'FK1';
+//     src: url('/fonts/FK1.ttf');
+//   }
+  
+//   @font-face {
+//     font-family: 'FK2';
+//     src: url('/fonts/FK2.ttf');
+//   }
+  
+//   @font-face {
+//     font-family: 'Khmer MEF1';
+//     src: url('/fonts/KHMERMEF1.ttf');
+//   }
+  
+//   @font-face {
+//     font-family: 'Khmer MEF2';
+//     src: url('/fonts/KHMERMEF2.ttf');
+//   }
+// .font-mef1{
+//     font-family: 'Khmer MEF1';
+// }
+// .font-mef2{
+//     font-family: 'Khmer MEF2';
+// }
+// .font-fk1{
+//     font-family: 'FK1';
+// }
+// .font-fk2{
+//     font-family: 'FK2';
+// }
+
+@font-face {
+    font-family: 'Khmer OS Battambang Regular';
+    src: url('/fonts/Khmer OS Battambang Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Khmer OS Battambang Regular';
+    src: url('/fonts/Khmer OS Battambang Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Khmer OS Battambang Regular';
+    src: url('/fonts/Khmer OS Battambang Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Khmer OS Battambang Regular';
+    src: url('/fonts/Khmer OS Battambang Regular.ttf');
+}
+
+.font-mef1 {
+    font-family: 'Khmer OS Battambang Regular';
+}
+
+.font-mef2 {
+    font-family: 'Khmer OS Battambang Regular';
+}
+
+.font-fk1 {
+    font-family: 'Khmer OS Battambang Regular';
+}
+
+.font-fk2 {
+    font-family: 'Khmer OS Battambang Regular';
+}
+.container{
+    font-family: 'Khmer OS Battambang Regular';
+    // font-size: 10.5pt;
+    font-size: 10pt;
+    margin: 0 auto;
+    clear: both;
+    width: 80%;
+    // width: 90%;
+    line-height: 28px;
+}
+.container-inner{
+    font-family: 'Khmer OS Battambang Regular';
+    font-size: 10.5pt;
+    margin: 0 auto;
+    clear: both;
+    width: 85%;
+    line-height: 30px;
+}
+// .rotate-screen{
+//     // -ms-transform: rotate(270deg); /* IE 9 */
+//     // transform: rotate(270deg);
+//     // writing-mode:tb-rl;
+//     // transform: rotate(-90deg);
+//     // transform-origin: top left;
+//     display: block;
+//     transform-origin: top left;
+//     /* Note: for a CLOCKWISE rotation, use the commented-out
+//         transform instead of this one. */
+//     transform: rotate(-90deg) translate(-100%);
+//     /* transform: rotate(90deg) translate(0, -100%); */
+//     margin-top: 0%;
+
+//     /* Not vital, but possibly a good idea if the element you're rotating contains
+//         text and you want a single long vertical line of text and the pre-rotation
+//         width of your element is small enough that the text wraps: */
+//     white-space: nowrap;
+// }
+// .clearfix{
+//     padding: 0;
+//     margin: 0;
+//     clear: both;
+// }
+// .pull-right{
+//     float: right;
+// }
+// .objective, .reference, .description{
+//     padding-bottom: 15px;
+// }
+// ul.list{
+//     list-style: none;
+//     padding: 0;
+//     margin: 0;
+// }
+// ul.list li{
+//     padding: 0;
+//     margin: 0;
+// }
+// .italic{
+//     font-style: italic;
+// }
+// .text-indent{
+//     text-indent: 40px;
+// }
+
+@media print {
+    footer {
+        position: relative;
+        bottom: 0pt;
+        left: 0pt;
+        right: 0pt;
+        text-align: center;
+    }  
+    #page-number::after {
+        counter-increment: pages; 
+        content: counter(page) " of " counter(pages); 
+    }
+
+    // #page-number { content: counter(page) }
+
+    // @page {
+    //     counter-increment: page;
+    //     counter-reset: page 1;
+    //     @top-right {
+    //         content: "Page " counter(page) " of " counter(pages);
+    //     }
+    // }
+
+    // @page { counter-increment: page }
+
+    @page { counter-increment: page }
+    @page:first { counter-reset: page 9 }
+
+    article{
+        display: block;
+        page-break-inside: avoid;
+    }
+    
+    .rotate-screen{
+        @page rotated { size : landscape }  
+    }
+    .hidden-space, span.hidden-space{
+        visibility: hidden;
+    }
+    .donotprint{
+        display: none;
+    }
+    .margin-print{
+        margin-top: 200px;
+    }
+    .consolidate-payroll-container{
+        margin-top: 0px !important;
+    }
+    .print-move-header-from-top{
+        margin-top: 175px;
+    }
+    .line-height-tr{
+        line-height: 35px;
+    }
+    .container-inner{
+        width: 95%;
+    }
+}
+
+table.table tr th.border-dash{
+    border-bottom: 1px dashed;
+}
+#invoice-page{
+    color: #000000;
+    text-align: justify;
+}
+#invoice-page table th{
+    font-weight: normal;
+    // font-family: 'Khmer MEF2';
+    font-family: "Khmer OS Battambang";
+}
+#invoice-page table tr td, #invoice-page table tr th{
+    font-size: 8pt;
+    border: 1px solid #000000;
+}
+.font-mef1{
+    font-family: "Khmer OS Battambang";
+    // font-family: 'Khmer MEF1';
+}
+.font-mef2{
+    font-family: "Khmer OS Battambang";
+    // font-family: 'Khmer MEF2';
+}
+.font-fk1{
+    font-family: 'FK1';
+}
+.font-fk2{
+    font-family: 'FK2';
+}
+.container{
+    margin: 0 auto;
+    width: 680px;
+    // width: 700px;
+}
+.clearfix{
+    padding: 0;
+    margin: 0;
+    clear: both;
+}
+span.pull-right, .pull-right{
+    float: right;
+}
+span.pull-left, .pull-left{
+    float: left;
+}
+.space{
+    padding: 0 20px;
+}
+.objective{
+    margin-top: 10px;
+}
+.reference, .description{
+    padding-bottom: 10px;
+    margin-right: -12px;
+}
+ul.list{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+ul.list li{
+    padding: 0;
+    margin: 0;
+    margin-right: -64px;
+}
+.italic{
+    font-style: italic;
+}
+li.text-indent, .text-indent{
+    text-indent: 65px;
+}
+.table{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.list-box{
+    float: left;
+    width: 10%;
+}
+// .hidden-space{
+//     visibility: hidden;
+// }
+.padding-bottom-p{
+    padding-bottom: 5px;
+}
+.paragraph-move-left{
+    margin-left: 65px;
+}
+.paragraph-list{
+    float: left;
+    width: 89%;
+}
+.col-2{
+    float: left;
+    width: 18%;
+    line-height: 25px;
+    font-size: 7pt;
+}
+.col-22{
+    float: left;
+    width: 28%;
+    line-height: 25px;
+    font-size: 7pt;
+}
+// Customer ################

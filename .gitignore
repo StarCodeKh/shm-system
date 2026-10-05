@@ -1,0 +1,68 @@
+# ---------------------------------------------
+# Laravel
+# ---------------------------------------------
+/vendor/
+/node_modules/
+/public/hot
+/public/storage
+/storage/*.key
+/storage/temp/
+/storage/firebase/
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/framework/testing/*
+!/storage/framework/*/.gitignore
+/storage/logs/*
+!/storage/logs/.gitignore
+.env
+.env.*
+!.env.example
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+*.log
+
+# Compiled assets (built with `npm run prod`)
+/public/js/
+
+# User uploads
+/public/upload/
+
+# ---------------------------------------------
+# Secrets
+# ---------------------------------------------
+*service-account-key.json
+*.pem
+*.key
+
+# ---------------------------------------------
+# Local files, backups and data dumps
+# ---------------------------------------------
+/document/
+*.sql
+*.bak
+*.bak/
+*.zip
+* - Copy*
+* - Backup*
+*-backup*
+*backup-*
+test.txt
+system.bat
+/htaccess
+/-.htaccess
+/public/phpinfo.php
+
+# ---------------------------------------------
+# OS / editor
+# ---------------------------------------------
+.DS_Store
+._*
+Thumbs.db
+.idea/
+.vscode/
+*.swp
