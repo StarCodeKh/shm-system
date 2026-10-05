@@ -27,6 +27,8 @@ use Mpdf\Config\FontVariables;
 
 class ReportController extends Controller
 {
+    private const REPORT_MAX_ROWS = 20000;
+
     protected $PERMISSION_ACTION_SALE_REPORT;
     public $path = "admin/setting";
     protected $db_table;
@@ -39,493 +41,183 @@ class ReportController extends Controller
         $this->PERMISSION_ACTION_SALE_REPORT = "report_sale";
     }
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Printable PDF reports, served by POST /api/v1/report/{type}.
+     * To add a report, add an entry here; the list page and viewer pick it up automatically.
      */
-    public function showSalesReport(Request $request)
+    protected function reports(): array
     {
-        if(isset(CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT]) && CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT] == true){
-            $data = [
-                'detail' => $request->all(),
-                'title' => 'Monthly Sales Report',
-                'date' => now()->format('F Y'),
-                'sales' => [
-                    ['product' => 'Laptop', 'amount' => 1200],
-                    ['product' => 'Mouse', 'amount' => 25],
-                    ['product' => 'Keyboard', 'amount' => 75],
+        return [
+            'officers' => [
+                'title' => 'របាយការណ៍សមាជិក',
+                'description' => 'បញ្ជីសមាជិកទាំងអស់ រួមទាំងចំនួនប្រុស និងស្រី',
+                'icon' => 'UsersIcon',
+                'color' => '#7367F0',
+                'field_api' => '/api/v1/officer/payable/get_field',
+                'fields' => fn () => Officer::dataFields(),
+                'rows' => fn ($filter) => Officer::getData($filter),
+                'summary' => fn ($filter) => [
+                    'សមាជិកសរុប' => Officer::getTotal($filter),
+                    'ប្រុស' => Officer::getTotalOfficerByGender($filter, 'male'),
+                    'ស្រី' => Officer::getTotalOfficerByGender($filter, 'female'),
                 ],
-                'total' => 1300
-            ];
-
-            // Load mPDF
-            $mpdf = new \Mpdf\Mpdf([
-                'mode' => 'utf-8',
-                'format' => 'A4',
-                'orientation' => 'P',
-                'tempDir' => storage_path('temp'),
-                'default_font' => 'khmeros',
-                'showImageErrors' => true,
-            ]);
-            $input = $request->all();
-            $data["data"] = $input;
-            $data["logo"] = public_path(config_logo);
-            $view = View::make('reports.sale', ['data' => $data]);
-            $html = $view->render();
-            // Write HTML to PDF
-            $mpdf->WriteHTML($html);
-            // Output: stream to browser
-            return response($mpdf->Output('khmer-report.pdf', 'S'), 200)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'inline; filename="khmer-report.pdf"');
-        }else{
-            $status = 500;
-            $boolen = false;
-            $data["message"] = trans('common.msg_no_permission_access');
-            return response()->json($data, $status);
-        }
-    }
-    public function incomeReport(Request $request){
-        if(isset(CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT]) && CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT] == true){
-            $defaultConfig = (new ConfigVariables())->getDefaults();
-            $fontDirs = $defaultConfig['fontDir'];
-
-            $defaultFontConfig = (new FontVariables())->getDefaults();
-            $fontData = $defaultFontConfig['fontdata'];
-            // Load mPDF
-            $mpdf = new \Mpdf\Mpdf([
-                'mode' => 'utf-8',
-                'format' => 'A4',
-                'orientation' => 'L', // P = Portrait, L = Landscape
-                'tempDir' => storage_path('temp'),
-                 'fontDir' => array_merge($fontDirs, [
-                    storage_path('fonts'),
-                ]),
-                'fontdata' => $fontData + [
-                    'KantumruyPro' => [
-                        'R' => 'Battambang-Regular.ttf',
-                        'B' => 'Battambang-Regular.ttf',
-                    ],
-                ],
-                // 'default_font' => 'KantumruyPro',
-                'default_font' => 'khmeros',
-                'showImageErrors' => true,
-            ]);
-            $input = $request->all();
-            $data["dataFields"] = Income::dataFields();
-            $filter = array(
-                "sort" => "id",
-                "order" => "asc",
-                "page_number" => 1,
-                "limit" => 100,
-                "search_field" => isset($input["data"])?$input["data"]:null
-            );
-            $data["incomes"] = Income::getData($filter);
-            $data["data"] = $input;
-            $data["logo"] = public_path('\images\logo.png');
-            $view = View::make('reports.income', ['data' => $data]);
-            $html = $view->render();
-            // Write HTML to PDF
-            $mpdf->WriteHTML($html);
-            // Output: stream to browser
-            return response($mpdf->Output('khmer-report.pdf', 'S'), 200)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'inline; filename="khmer-report.pdf"');
-        }else{
-            $status = 500;
-            $boolen = false;
-            $data["message"] = trans('common.msg_no_permission_access');
-            return response()->json($data, $status);
-        }
-    }
-    public function expenseReport(Request $request){
-        if(isset(CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT]) && CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT] == true){
-            $defaultConfig = (new ConfigVariables())->getDefaults();
-            $fontDirs = $defaultConfig['fontDir'];
-
-            $defaultFontConfig = (new FontVariables())->getDefaults();
-            $fontData = $defaultFontConfig['fontdata'];
-            // Load mPDF
-            $mpdf = new \Mpdf\Mpdf([
-                'mode' => 'utf-8',
-                'format' => 'A4',
-                'orientation' => 'L', // P = Portrait, L = Landscape
-                'tempDir' => storage_path('temp'),
-                 'fontDir' => array_merge($fontDirs, [
-                    storage_path('fonts'),
-                ]),
-                'fontdata' => $fontData + [
-                    'KantumruyPro' => [
-                        'R' => 'Battambang-Regular.ttf',
-                        'B' => 'Battambang-Regular.ttf',
-                    ],
-                ],
-                // 'default_font' => 'KantumruyPro',
-                'default_font' => 'khmeros',
-                'showImageErrors' => true,
-            ]);
-            $input = $request->all();
-            $data["dataFields"] = Expense::dataFields();
-            $filter = array(
-                "sort" => "id",
-                "order" => "asc",
-                "page_number" => 1,
-                "limit" => 100,
-                "search_field" => isset($input["data"])?$input["data"]:null
-            );
-            $data["expenses"] = Expense::getData($filter);
-            $data["data"] = $input;
-            $data["logo"] = public_path('\images\logo.png');
-            $view = View::make('reports.expense', ['data' => $data]);
-            $html = $view->render();
-            // Write HTML to PDF
-            $mpdf->WriteHTML($html);
-            // Output: stream to browser
-            return response($mpdf->Output('khmer-report.pdf', 'S'), 200)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'inline; filename="khmer-report.pdf"');
-        }else{
-            $status = 500;
-            $boolen = false;
-            $data["message"] = trans('common.msg_no_permission_access');
-            return response()->json($data, $status);
-        }
-    }
-    public function officerIncentiveReport(Request $request){
-        if(isset(CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT]) && CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT] == true){
-            $defaultConfig = (new ConfigVariables())->getDefaults();
-            $fontDirs = $defaultConfig['fontDir'];
-
-            $defaultFontConfig = (new FontVariables())->getDefaults();
-            $fontData = $defaultFontConfig['fontdata'];
-            // Load mPDF
-            $mpdf = new \Mpdf\Mpdf([
-                'mode' => 'utf-8',
-                'format' => 'A4',
-                'orientation' => 'L', // P = Portrait, L = Landscape
-                'tempDir' => storage_path('temp'),
-                 'fontDir' => array_merge($fontDirs, [
-                    storage_path('fonts'),
-                ]),
-                'fontdata' => $fontData + [
-                    'KantumruyPro' => [
-                        'R' => 'Battambang-Regular.ttf',
-                        'B' => 'Battambang-Regular.ttf',
-                    ],
-                ],
-                // 'default_font' => 'KantumruyPro',
-                'default_font' => 'khmeros',
-                'showImageErrors' => true,
-            ]);
-            $input = $request->all();
-            $data["dataFields"] = OfficerIncentive::dataFields();
-            $filter = array(
-                "sort" => "id",
-                "order" => "asc",
-                "page_number" => 1,
-                "limit" => 100,
-                "search_field" => isset($input["data"])?$input["data"]:null
-            );
-            $data["officerIncentives"] = OfficerIncentive::getOfficerReports($filter);
-            // dd($data["officerIncentives"]);
-            $data["data"] = $input;
-            $data["logo"] = public_path('\images\logo.png');
-            // dd($data);
-            $view = View::make('reports.officer_incentive', ['data' => $data]);
-            $html = $view->render();
-            // Write HTML to PDF
-            $mpdf->WriteHTML($html);
-            // Output: stream to browser
-            return response($mpdf->Output('khmer-report.pdf', 'S'), 200)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'inline; filename="khmer-report.pdf"');
-        }else{
-            $status = 500;
-            $boolen = false;
-            $data["message"] = trans('common.msg_no_permission_access');
-            return response()->json($data, $status);
-        }
-    }
-    public function officersReport(Request $request){
-        if(isset(CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT]) && CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT] == true){
-            // $data = [
-            //     'detail' => $request->all(),
-            //     'title' => 'Monthly Sales Report',
-            //     'date' => now()->format('F Y'),
-            //     'sales' => [
-            //         ['product' => 'Laptop', 'amount' => 1200],
-            //         ['product' => 'Mouse', 'amount' => 25],
-            //         ['product' => 'Keyboard', 'amount' => 75],
-            //     ],
-            //     'total' => 1300
-            // ];
-            $defaultConfig = (new ConfigVariables())->getDefaults();
-            $fontDirs = $defaultConfig['fontDir'];
-
-            $defaultFontConfig = (new FontVariables())->getDefaults();
-            $fontData = $defaultFontConfig['fontdata'];
-            // Load mPDF
-            $mpdf = new \Mpdf\Mpdf([
-                'mode' => 'utf-8',
-                'format' => 'A4',
-                'orientation' => 'L', // P = Portrait, L = Landscape
-                'tempDir' => storage_path('temp'),
-                 'fontDir' => array_merge($fontDirs, [
-                    storage_path('fonts'),
-                ]),
-                'fontdata' => $fontData + [
-                    'KantumruyPro' => [
-                        'R' => 'Battambang-Regular.ttf',
-                        'B' => 'Battambang-Regular.ttf',
-                    ],
-                ],
-                // 'default_font' => 'KantumruyPro',
-                'default_font' => 'khmeros',
-                'showImageErrors' => true,
-            ]);
-            $input = $request->all();
-            $data["dataFields"] = Officer::dataFields();
-            $filter = array(
-                "sort" => "id",
-                "order" => "asc",
-                "page_number" => 1,
-                "limit" => 100,
-                "search_field" => isset($input["data"])?$input["data"]:null
-            );
-            $data["officers"] = Officer::getData($filter);
-            $data["summary"] = array(
-                "total" => Officer::getTotal($filter),
-                "male" => Officer::getTotalOfficerByGender($filter, "male"),
-                "female" => Officer::getTotalOfficerByGender($filter, "female"),
-            );
-            $data["data"] = $input;
-            $data["logo"] = public_path('\images\logo.png');
-            $view = View::make('reports.officer', ['data' => $data]);
-            $html = $view->render();
-            // Write HTML to PDF
-            $mpdf->WriteHTML($html);
-            // Output: stream to browser
-            return response($mpdf->Output('khmer-report.pdf', 'S'), 200)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'inline; filename="khmer-report.pdf"');
-        }else{
-            $status = 500;
-            $boolen = false;
-            $data["message"] = trans('common.msg_no_permission_access');
-            return response()->json($data, $status);
-        }
+            ],
+            'income' => [
+                'title' => 'របាយការណ៍ចំណូល',
+                'description' => 'ចំណូលទាំងអស់តាមគណនី និងអង្គភាព',
+                'icon' => 'TrendingUpIcon',
+                'color' => '#28C76F',
+                'field_api' => '/api/v1/income/get_field',
+                'fields' => fn () => Income::dataFields(),
+                'rows' => fn ($filter) => Income::getData($filter),
+            ],
+            'expense' => [
+                'title' => 'របាយការណ៍ចំណាយ',
+                'description' => 'ចំណាយទាំងអស់តាមគណនី និងអង្គភាព',
+                'icon' => 'TrendingDownIcon',
+                'color' => '#EA5455',
+                'field_api' => '/api/v1/expense/get_field',
+                'fields' => fn () => Expense::dataFields(),
+                'rows' => fn ($filter) => Expense::getData($filter),
+            ],
+            'officer_incentive' => [
+                'title' => 'របាយការណ៍បើកផ្តល់ប្រាក់ឧបត្ថម្ភ',
+                'description' => 'ប្រាក់ឧបត្ថម្ភដែលបានផ្តល់ជូនសមាជិក',
+                'icon' => 'GiftIcon',
+                'color' => '#FF9F43',
+                'field_api' => '/api/v1/officer/incentive/get_field',
+                'fields' => fn () => OfficerIncentive::dataFields(),
+                'rows' => fn ($filter) => OfficerIncentive::getOfficerReports($filter),
+            ],
+            'officers_payment' => [
+                'title' => 'របាយការណ៍បង់ប្រាក់',
+                'description' => 'សមាជិកដែលបានបង់ប្រាក់រួច',
+                'icon' => 'CheckCircleIcon',
+                'color' => '#00CFE8',
+                'field_api' => '/api/v1/officer/payment/get_field',
+                'fields' => fn () => OfficerPayment::dataFields(),
+                'rows' => fn ($filter) => OfficerPayment::getOfficerPaymentReports($filter),
+            ],
+            'officers_payable' => [
+                'title' => 'របាយការណ៍មិនទាន់បង់ប្រាក់',
+                'description' => 'សមាជិកដែលមិនទាន់បង់ប្រាក់',
+                'icon' => 'ClockIcon',
+                'color' => '#F35588',
+                'field_api' => '/api/v1/officer/payable/get_field',
+                'fields' => fn () => OfficerPayable::dataFields(),
+                'rows' => fn ($filter) => OfficerPayable::getOfficerPayables($filter),
+            ],
+            'officers_request' => [
+                'title' => 'របាយការណ៍សំណើ',
+                'description' => 'សំណើរបស់សមាជិក',
+                'icon' => 'FileTextIcon',
+                'color' => '#4A5F9D',
+                'field_api' => '/api/v1/officer/request/get_field',
+                'fields' => fn () => OfficerRequest::dataFields(),
+                'rows' => fn ($filter) => OfficerRequest::getOfficerRequestReports($filter),
+            ],
+        ];
     }
 
-    public function officersPayableReport(Request $request){
-        if(isset(CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT]) && CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT] == true){
-            // $data = [
-            //     'detail' => $request->all(),
-            //     'title' => 'Monthly Sales Report',
-            //     'date' => now()->format('F Y'),
-            //     'sales' => [
-            //         ['product' => 'Laptop', 'amount' => 1200],
-            //         ['product' => 'Mouse', 'amount' => 25],
-            //         ['product' => 'Keyboard', 'amount' => 75],
-            //     ],
-            //     'total' => 1300
-            // ];
-            $defaultConfig = (new ConfigVariables())->getDefaults();
-            $fontDirs = $defaultConfig['fontDir'];
+    /**
+     * List the available reports for the report menu page.
+     */
+    public function types()
+    {
+        $reports = collect($this->reports())->map(fn ($report, $key) => [
+            'key' => $key,
+            'title' => $report['title'],
+            'description' => $report['description'],
+            'icon' => $report['icon'],
+            'color' => $report['color'],
+            'field_api' => $report['field_api'],
+        ])->values();
 
-            $defaultFontConfig = (new FontVariables())->getDefaults();
-            $fontData = $defaultFontConfig['fontdata'];
-            // Load mPDF
-            $mpdf = new \Mpdf\Mpdf([
-                'mode' => 'utf-8',
-                'format' => 'A4',
-                'orientation' => 'L', // P = Portrait, L = Landscape
-                'tempDir' => storage_path('temp'),
-                 'fontDir' => array_merge($fontDirs, [
-                    storage_path('fonts'),
-                ]),
-                'fontdata' => $fontData + [
-                    'KantumruyPro' => [
-                        'R' => 'Battambang-Regular.ttf',
-                        'B' => 'Battambang-Regular.ttf',
-                    ],
-                ],
-                // 'default_font' => 'KantumruyPro',
-                'default_font' => 'khmeros',
-                'showImageErrors' => true,
-            ]);
-            $input = $request->all();
-            $data["dataFields"] = OfficerPayable::dataFields();
-            $filter = array(
-                "sort" => "id",
-                "order" => "asc",
-                "page_number" => 1,
-                "limit" => 100,
-                "search_field" => isset($input["data"])?$input["data"]:null
-            );
-            $data["officerPayables"] = OfficerPayable::getOfficerPayables($filter);
-            $data["data"] = $input;
-            $data["logo"] = public_path('\images\logo.png');
-            $view = View::make('reports.officer_payable', ['data' => $data]);
-            $html = $view->render();
-            // Write HTML to PDF
-            $mpdf->WriteHTML($html);
-            // Output: stream to browser
-            return response($mpdf->Output('khmer-report.pdf', 'S'), 200)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'inline; filename="khmer-report.pdf"');
-        }else{
-            $status = 500;
-            $boolen = false;
-            $data["message"] = trans('common.msg_no_permission_access');
-            return response()->json($data, $status);
-        }
+        return response()->json($reports);
     }
 
-    public function officersPaymentReport(Request $request){
-        if(isset(CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT]) && CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT] == true){
-            // $data = [
-            //     'detail' => $request->all(),
-            //     'title' => 'Monthly Sales Report',
-            //     'date' => now()->format('F Y'),
-            //     'sales' => [
-            //         ['product' => 'Laptop', 'amount' => 1200],
-            //         ['product' => 'Mouse', 'amount' => 25],
-            //         ['product' => 'Keyboard', 'amount' => 75],
-            //     ],
-            //     'total' => 1300
-            // ];
-            $defaultConfig = (new ConfigVariables())->getDefaults();
-            $fontDirs = $defaultConfig['fontDir'];
-
-            $defaultFontConfig = (new FontVariables())->getDefaults();
-            $fontData = $defaultFontConfig['fontdata'];
-            // Load mPDF
-            $mpdf = new \Mpdf\Mpdf([
-                'mode' => 'utf-8',
-                'format' => 'A4',
-                'orientation' => 'L', // P = Portrait, L = Landscape
-                'tempDir' => storage_path('temp'),
-                 'fontDir' => array_merge($fontDirs, [
-                    storage_path('fonts'),
-                ]),
-                'fontdata' => $fontData + [
-                    'KantumruyPro' => [
-                        'R' => 'Battambang-Regular.ttf',
-                        'B' => 'Battambang-Regular.ttf',
-                    ],
-                ],
-                // 'default_font' => 'KantumruyPro',
-                'default_font' => 'khmeros',
-                'showImageErrors' => true,
-            ]);
-            $input = $request->all();
-            $data["dataFields"] = OfficerPayment::dataFields();
-            $filter = array(
-                "sort" => "id",
-                "order" => "asc",
-                "page_number" => 1,
-                "limit" => 10,
-                "search_field" => isset($input["data"])?$input["data"]:null
-            );
-            $data["officerPayments"] = OfficerPayment::getOfficerPaymentReports($filter);
-            $data["data"] = $input;
-            $data["logo"] = public_path('\images\logo.png');
-            $view = View::make('reports.officer_payment', ['data' => $data]);
-            $html = $view->render();
-            // Write HTML to PDF
-            $mpdf->WriteHTML($html);
-            // Output: stream to browser
-            return response($mpdf->Output('khmer-report.pdf', 'S'), 200)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'inline; filename="khmer-report.pdf"');
-        }else{
-            $status = 500;
-            $boolen = false;
-            $data["message"] = trans('common.msg_no_permission_access');
-            return response()->json($data, $status);
+    /**
+     * Render one report as a PDF. Pass download=1 to get it as an attachment.
+     */
+    public function generate(Request $request, string $type)
+    {
+        if (empty(CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT])) {
+            return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
         }
+
+        $report = $this->reports()[$type] ?? abort(404);
+        $filter = [
+            'sort' => 'id',
+            'order' => 'asc',
+            'page_number' => 1,
+            'limit' => self::REPORT_MAX_ROWS,
+            'search_field' => $request->input('data') ?: null,
+        ];
+
+        $rows = $report['rows']($filter);
+        $summary = isset($report['summary'])
+            ? $report['summary']($filter)
+            : ['ចំនួនសរុប' => count($rows)];
+
+        $html = View::make('reports.table', [
+            'title' => $report['title'],
+            'color' => $report['color'],
+            'fields' => $report['fields'](),
+            'rows' => $rows,
+            'summary' => $summary,
+            'truncated' => count($rows) >= self::REPORT_MAX_ROWS,
+            'logo' => public_path('images/logo.png'),
+        ])->render();
+
+        // Large reports produce a big HTML string; mPDF needs more regex, memory and time to lay it out.
+        ini_set('pcre.backtrack_limit', '50000000');
+        ini_set('memory_limit', '1024M');
+        set_time_limit(300);
+
+        $mpdf = $this->makePdf();
+        $mpdf->SetTitle($report['title']);
+        $mpdf->SetHTMLFooter(View::make('reports.footer')->render());
+
+        // mPDF's Khmer shaper emits harmless warnings on some malformed text; don't let them abort the report.
+        set_error_handler(fn ($severity, $message, $file) => str_contains($file, '/mpdf/'), E_WARNING | E_NOTICE);
+        try {
+            $mpdf->WriteHTML($html);
+            $pdf = $mpdf->Output('', 'S');
+        } finally {
+            restore_error_handler();
+        }
+
+        $filename = $type.'-report-'.date('Y-m-d').'.pdf';
+        $disposition = $request->boolean('download') ? 'attachment' : 'inline';
+
+        return response($pdf, 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', $disposition.'; filename="'.$filename.'"');
     }
 
-    public function officersRequestReport(Request $request){
-        if(isset(CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT]) && CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT] == true){
-            $data = [
-                'detail' => $request->all(),
-                'title' => 'Monthly Sales Report',
-                'date' => now()->format('F Y'),
-                'sales' => [
-                    ['product' => 'Laptop', 'amount' => 1200],
-                    ['product' => 'Mouse', 'amount' => 25],
-                    ['product' => 'Keyboard', 'amount' => 75],
+    protected function makePdf(string $orientation = 'L'): Mpdf
+    {
+        $fontDirs = (new ConfigVariables())->getDefaults()['fontDir'];
+        $fontData = (new FontVariables())->getDefaults()['fontdata'];
+
+        return new Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'orientation' => $orientation,
+            'tempDir' => storage_path('temp'),
+            'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
+            'fontdata' => $fontData + [
+                // mPDF font keys must be lowercase; useOTL is required for Khmer shaping.
+                'battambang' => [
+                    'R' => 'Khmer OS Battambang Regular.ttf',
+                    'useOTL' => 0xFF,
                 ],
-                'total' => 1300
-            ];
-
-            // Load mPDF
-            $mpdf = new \Mpdf\Mpdf([
-                'mode' => 'utf-8',
-                'format' => 'A4',
-                'orientation' => 'P',
-                'tempDir' => storage_path('temp'),
-                'default_font' => 'khmeros',
-                'showImageErrors' => true,
-            ]);
-            $input = $request->all();
-            $data["dataFields"] = OfficerRequest::dataFields();
-            $filter = array(
-                "sort" => "id",
-                "order" => "asc",
-                "page_number" => 1,
-                "limit" => config_limit,
-                "search_field" => isset($input["data"])?$input["data"]:null
-            );
-            $data["officers"] = OfficerRequest::getOfficerRequestReports($filter);
-            $data["data"] = $input;
-            $data["logo"] = public_path(config_logo);
-            // $html = '
-            //     <html>
-            //     <head>
-            //         <meta charset="utf-8">
-            //         <style>
-            //             body {
-            //                 font-family: "khmeros";
-            //                 font-size: 14pt;
-            //                 line-height: 1.8;
-            //             }
-            //             .title {
-            //                 text-align: center;
-            //                 font-weight: bold;
-            //                 font-size: 18pt;
-            //             }
-            //         </style>
-            //     </head>
-            //     <body>
-            //         <div class="title">របាយការណ៍លក់</div>
-            //         <p>នេះគឺជារបាយការណ៍លក់ប្រចាំខែ។ ទិន្នន័យត្រូវបានបង្ហាញជាភាសាខ្មែរ។</p>
-            //         <p><strong>ផលិតផល:</strong> កុំព្យូទ័រ</p>
-            //         <p><strong>តម្លៃ:</strong> $1200</p>
-            //     </body>
-            //     </html>
-            // ';
-            $view = View::make('reports.officer_request', ['data' => $data]);
-            $html = $view->render();
-            // Write HTML to PDF
-            $mpdf->WriteHTML($html);
-            // Output: stream to browser
-            return response($mpdf->Output('khmer-report.pdf', 'S'), 200)
-                ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'inline; filename="khmer-report.pdf"');
-            // $mpdf->Output('khmer-report.pdf', 'I');
-            // Generate PDF from Blade view
-            // $pdf = PDF::loadView('reports.sale', $data);
-
-            // Return inline PDF (display in browser)
-            // return $pdf->stream('sales-report.pdf');
-        }else{
-            $status = 500;
-            $boolen = false;
-            $data["message"] = trans('common.msg_no_permission_access');
-            return response()->json($data, $status);
-        }
+            ],
+            'default_font' => 'battambang',
+            'margin_top' => 12,
+            'margin_bottom' => 18,
+            'margin_footer' => 8,
+            'simpleTables' => true,
+        ]);
     }
 
     public function incentiveByEntity(Request $request)

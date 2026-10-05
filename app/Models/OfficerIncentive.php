@@ -175,9 +175,9 @@ class OfficerIncentive extends Model implements Auditable
           $field = array_key_first($filter["search_field"][$i]);
           if (array_key_exists($field, $dataFields)) {
             if(isset($filter["search_field"][$i][$field]["value"])){
-              $whereClause->Where("oi".$field, 'Like', '%'.$filter["search_field"][$i][$field]["value"].'%');
+              $whereClause->Where("oi.".$field, 'Like', '%'.$filter["search_field"][$i][$field]["value"].'%');
             }else{
-              $whereClause->Where("oi".$field, 'Like', '%'.$filter["search_field"][$i][$field].'%');
+              $whereClause->Where("oi.".$field, 'Like', '%'.$filter["search_field"][$i][$field].'%');
             }
           }
         }

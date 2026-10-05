@@ -1,280 +1,196 @@
 <template>
-    <div id="demo-basic-card">
-        <div class="vx-row">
-
-            <div class="vx-col w-full sm:w-1/2 lg:w-1/3 mb-base">
-                <vx-card>
-                    <h5 class="mb-2">របាយការណ៍ចំណូល</h5>
-                    <div class="flex justify-between flex-wrap">
-                        <img :src="iconIncome" width="80px"/>
-                        <!-- <vs-button class="mt-4 default mr-2 shadow-lg" type="gradient" @click="viewReportProgram()"
-                            color="#7367F0" gradient-color-secondary="#CE9FFC">{{ $t("Download") }}</vs-button> -->
-                        <vs-button class="mt-4 default" type="border" color="#30c974"
-                            @click="viewAccountType('income')">{{ $t("View") }}</vs-button>
-                    </div>
-                </vx-card>
+    <div class="report-list">
+        <div class="flex flex-wrap items-end justify-between mb-6">
+            <div class="mb-3 mr-4">
+                <h3 class="mb-1">គ្រប់គ្រងរបាយការណ៍</h3>
+                <p class="text-grey">ជ្រើសរើសរបាយការណ៍ដើម្បីមើល ត្រង និងទាញយកជា PDF</p>
             </div>
-            <div class="vx-col w-full sm:w-1/2 lg:w-1/3 mb-base">
-                <vx-card>
-                    <h5 class="mb-2">របាយការណ៍ចំណាយ</h5>
-                    <div class="flex justify-between flex-wrap">
-                        <img :src="iconExpense" width="80px"/>
-                        <!-- <vs-button class="mt-4 default mr-2 shadow-lg" type="gradient" @click="viewReportProgram()"
-                            color="#7367F0" gradient-color-secondary="#CE9FFC">{{ $t("Download") }}</vs-button> -->
-                        <vs-button class="mt-4 default" type="border" color="#30c974"
-                            @click="viewAccountType('expense')">{{ $t("View") }}</vs-button>
-                    </div>
-                </vx-card>
-            </div>
-
-            <div class="vx-col w-full sm:w-1/2 lg:w-1/3 mb-base">
-                <vx-card>
-                    <h5 class="mb-2">របាយការណ៍សមាជិក</h5>
-                    <div class="flex justify-between flex-wrap">
-                        <img :src="iconMember" width="80px"/>
-                        <!-- <vs-button class="mt-4 default mr-2 shadow-lg" type="gradient" @click="viewReportProgram()"
-                            color="#7367F0" gradient-color-secondary="#CE9FFC">{{ $t("Download") }}</vs-button> -->
-                        <vs-button class="mt-4 default" type="border" color="#30c974"
-                            @click="viewAccountType('officers')">{{ $t("View") }}</vs-button>
-                    </div>
-                </vx-card>
-            </div>
-
-            <div class="vx-col w-full sm:w-1/2 lg:w-1/3 mb-base">
-                <vx-card>
-                    <h5 class="mb-2">របាយការណ៍បើកផ្តល់ប្រាក់ឧបត្ថម្ភ</h5>
-                    <div class="flex justify-between flex-wrap">
-                        <img :src="iconIncentive" width="80px"/>
-                        <!-- <vs-button class="mt-4 default mr-2 shadow-lg" type="gradient" @click="viewReportProgram()"
-                            color="#7367F0" gradient-color-secondary="#CE9FFC">{{ $t("Download") }}</vs-button> -->
-                        <vs-button class="mt-4 default" type="border" color="#30c974"
-                            @click="viewAccountType('officer_incentive')">{{ $t("View") }}</vs-button>
-                    </div>
-                </vx-card>
-            </div>
-
-            <div class="vx-col w-full sm:w-1/2 lg:w-1/3 mb-base">
-                <vx-card>
-                    <h5 class="mb-2">របាយការណ៍បង់ប្រាក់</h5>
-                    <div class="flex justify-between flex-wrap">
-                        <img :src="iconPayable" width="80px"/>
-                        <!-- <vs-button class="mt-4 default mr-2 shadow-lg" type="gradient" @click="viewReportProgram()"
-                            color="#7367F0" gradient-color-secondary="#CE9FFC">{{ $t("Download") }}</vs-button> -->
-                        <vs-button class="mt-4 default" type="border" color="#30c974"
-                            @click="viewAccountType('officers_payment')">{{ $t("View") }}</vs-button>
-                    </div>
-                </vx-card>
-            </div>
-
-            <div class="vx-col w-full sm:w-1/2 lg:w-1/3 mb-base">
-                <vx-card>
-                    <h5 class="mb-2">របាយការណ៍មិនទាន់បង់ប្រាក់</h5>
-                    <div class="flex justify-between flex-wrap">
-                        <img :src="iconPayable" width="80px"/>
-                        <!-- <vs-button class="mt-4 default mr-2 shadow-lg" type="gradient" @click="viewReportProgram()"
-                            color="#7367F0" gradient-color-secondary="#CE9FFC">{{ $t("Download") }}</vs-button> -->
-                        <vs-button class="mt-4 default" type="border" color="#30c974"
-                            @click="viewAccountType('officers_payable')">{{ $t("View") }}</vs-button>
-                    </div>
-                </vx-card>
-            </div>
-
-            <div class="vx-col w-full sm:w-1/2 lg:w-1/3 mb-base">
-                <vx-card>
-                    <h5 class="mb-2">របាយការណ៍សំណើរ</h5>
-                    <div class="flex justify-between flex-wrap">
-                        <img :src="iconRequest" width="80px"/>
-                        <!-- <vs-button class="mt-4 default mr-2 shadow-lg" type="gradient" @click="viewReportProgram()"
-                            color="#7367F0" gradient-color-secondary="#CE9FFC">{{ $t("Download") }}</vs-button> -->
-                        <vs-button class="mt-4 default" type="border" color="#30c974"
-                            @click="viewAccountType('officers_request')">{{ $t("View") }}</vs-button>
-                    </div>
-                </vx-card>
-            </div>
-
+            <vs-input
+                v-model="keyword"
+                icon-pack="feather"
+                icon="icon-search"
+                placeholder="ស្វែងរករបាយការណ៍..."
+                class="mb-3 report-search" />
         </div>
 
+        <!-- Loading -->
+        <div v-if="loading" class="vx-row">
+            <div v-for="n in 6" :key="n" class="vx-col w-full sm:w-1/2 lg:w-1/3 mb-base">
+                <div class="report-card report-card--skeleton"></div>
+            </div>
+        </div>
+
+        <!-- Error -->
+        <vx-card v-else-if="error" class="text-center py-8">
+            <feather-icon icon="AlertTriangleIcon" svgClasses="h-10 w-10 text-danger" />
+            <p class="mt-3 mb-4">មិនអាចទាញយកបញ្ជីរបាយការណ៍បានទេ។</p>
+            <vs-button color="primary" type="border" @click="loadReports">ព្យាយាមម្តងទៀត</vs-button>
+        </vx-card>
+
+        <!-- Reports -->
+        <div v-else class="vx-row">
+            <div v-for="report in filteredReports" :key="report.key" class="vx-col w-full sm:w-1/2 lg:w-1/3 mb-base">
+                <div class="report-card" :style="{ '--accent': report.color }" @click="openReport(report)">
+                    <div class="flex items-start justify-between">
+                        <div class="report-card__icon" :style="{ backgroundColor: report.color + '1f', color: report.color }">
+                            <feather-icon :icon="report.icon" svgClasses="h-6 w-6" />
+                        </div>
+                        <vx-tooltip text="ទាញយក PDF" position="top">
+                            <div class="report-card__download" @click.stop="download(report)">
+                                <feather-icon icon="DownloadIcon" svgClasses="h-5 w-5" />
+                            </div>
+                        </vx-tooltip>
+                    </div>
+                    <h5 class="mt-4 mb-2">{{ report.title }}</h5>
+                    <p class="report-card__desc">{{ report.description }}</p>
+                    <div class="report-card__footer">
+                        <span>មើលរបាយការណ៍</span>
+                        <feather-icon icon="ArrowRightIcon" svgClasses="h-4 w-4" />
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="!filteredReports.length" class="vx-col w-full text-center text-grey py-8">
+                រកមិនឃើញរបាយការណ៍ "{{ keyword }}"
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
-import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-import { videoPlayer } from 'vue-video-player'
-import VxTimeline from "@/components/timeline/VxTimeline.vue"
-import 'video.js/dist/video-js.css'
-
+import axios from "@/axios.js";
+import { downloadReport } from "./reportApi.js";
 
 export default {
     data() {
         return {
-            // card 1
-            card_1: {},
-            card_2: {},
-            card_3: {},
-            card_4: {},
-            card_5: {},
-            card_6: {},
-            card_7: {},
-            card_8: {},
-
-            chatLog: [],
-            chatMsgInput: '',
-
-            card_9: {},
-
-            timelineData: [
-                {
-                    color: "primary",
-                    icon: "PlusIcon",
-                    title: "New Task Added",
-                    desc: "Bonbon macaroon jelly beans gummi bears jelly lollipop apple",
-                    time: "25 Days Ago"
-                },
-                {
-                    color: "warning",
-                    icon: "AlertCircleIcon",
-                    title: "Task Update Found",
-                    desc: "Cupcake gummi bears soufflé caramels candy",
-                    time: "15 Days Ago"
-                },
-                {
-                    color: "success",
-                    icon: "CheckIcon",
-                    title: "Task Finished",
-                    desc: "Candy ice cream cake. Halvah gummi bears",
-                    time: "20 mins ago"
-                }
-            ],
-
-            name: '',
-            email: '',
-            msg: '',
-
-            playerOptions: {},
-            settings: { // perfectscrollbar settings
-                maxScrollbarLength: 60,
-                wheelSpeed: .60,
-            },
-            iconIncome: "./images/file-icons/icon-income.png",
-            iconExpense: "./images/file-icons/icon-expense.png",
-            iconMember: "./images/file-icons/pie-chart.png",
-            iconIncentive: "./images/file-icons/incentive.png",
-            iconPayable: "./images/file-icons/chart.png",
-            iconRequest: "./images/file-icons/request.png",
-        }
+            reports: [],
+            keyword: "",
+            loading: true,
+            error: false,
+        };
     },
-    components: {
-        VuePerfectScrollbar,
-        videoPlayer,
-        VxTimeline
-    },
-    methods: {
-        viewAccountType(type_report) {
-            this.$router.push('/report/'+type_report).catch(() => { });
+    computed: {
+        filteredReports() {
+            const keyword = this.keyword.trim().toLowerCase();
+            if (!keyword) return this.reports;
+            return this.reports.filter((report) =>
+                (report.title + " " + report.description).toLowerCase().includes(keyword)
+            );
         },
-        viewReportProgram() {
-            this.$router.push('/report/program').catch(() => { });
-        },
-        viewReportPIP() {
-            this.$router.push('/report/pip').catch(() => { });
-        },
-        viewReportPB() {
-            this.$router.push('/report/pb').catch(() => { });
-        },
-        viewReportBSP() {
-            this.$router.push('/report/bsp').catch(() => { });
-        },
-        viewReportQuarterly() {
-            this.$router.push('/report/quarterly').catch(() => { });
-        },
-        viewReportIncome() {
-            this.$router.push('/report/income').catch(() => { });
-        },
-        viewReportCreditMovement() {
-            this.$router.push('/report/credit-movement').catch(() => { });
-        },
-    },
-    mounted() {
-        this.$refs.chatLogPS.$el.scrollTop = this.$refs.chatLog.scrollHeight;
     },
     created() {
-        // Card 1
-        this.$http.get("/api/users/pixinvent/product/1")
-            .then((response) => { this.card_1 = response.data })
-            .catch((error) => { console.log(error) })
-
-        // Card 2
-        this.$http.get("/api/users/pixinvent/product/sales/1")
-            .then((response) => { this.card_2 = response.data })
-            .catch((error) => { console.log(error) })
-
-        // Card 3
-        this.$http.get("/api/users/pixinvent/product/goals/1")
-            .then((response) => { this.card_3 = response.data })
-            .catch((error) => { console.log(error) })
-
-        // Card 4
-        this.$http.get("/api/users/89")
-            .then((response) => { this.card_4 = response.data })
-            .catch((error) => { console.log(error) })
-
-        // Card 5
-        this.$http.get("/api/users/58")
-            .then((response) => { this.card_5 = response.data })
-            .catch((error) => { console.log(error) })
-
-        // Card 6
-        this.$http.get("/api/users/16")
-            .then((response) => { this.card_6 = response.data })
-            .catch((error) => { console.log(error) })
-
-        // Card 7
-        this.$http.get("/api/place/18")
-            .then((response) => { this.card_7 = response.data })
-            .catch((error) => { console.log(error) })
-
-        // Card 8
-        this.$http.get("/api/place/76/weather")
-            .then((response) => { this.card_8 = response.data })
-            .catch((error) => { console.log(error) })
-
-        // Chat Log
-        this.$http.get("/api/chat/demo-1/log")
-            .then((response) => { this.chatLog = response.data })
-            .catch((error) => { console.log(error) })
-
-        // Card 9
-        this.$http.get("/api/item/12/review")
-            .then((response) => { this.card_9 = response.data })
-            .catch((error) => { console.log(error) })
-
-        // Player Options
-        this.$http.get("/api/card/card-basic/player-option")
-            .then((response) => { this.playerOptions = response.data })
-            .catch((error) => { console.log(error) })
-    }
-}
+        this.loadReports();
+    },
+    methods: {
+        async loadReports() {
+            this.loading = true;
+            this.error = false;
+            try {
+                const response = await axios.get("/api/v1/report/types");
+                this.reports = response.data;
+            } catch (e) {
+                this.error = true;
+            }
+            this.loading = false;
+        },
+        openReport(report) {
+            this.$router.push({ name: "report", params: { report_type: report.key } });
+        },
+        async download(report) {
+            this.$vs.loading();
+            try {
+                await downloadReport(report.key);
+            } catch (message) {
+                this.$vs.notify({ title: "Message", text: message, iconPack: "feather", icon: "icon-alert-circle", color: "danger" });
+            }
+            this.$vs.loading.close();
+        },
+    },
+};
 </script>
 
-<style lang="scss">
-#demo-basic-card {
-    .overlay-card {
-        .vx-card__collapsible-content {
-            max-height: 485px;
+<style lang="scss" scoped>
+.report-search {
+    width: 280px;
+    max-width: 100%;
+}
+
+.report-card {
+    position: relative;
+    height: 100%;
+    min-height: 210px;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    background: #fff;
+    box-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.08);
+    border-top: 3px solid var(--accent);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 30px 0 rgba(34, 41, 47, 0.15);
+
+        .report-card__footer {
+            color: var(--accent);
         }
     }
 
-    .chat-card-log {
-        height: 360px;
+    &__icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 0.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-        .chat-sent-msg {
-            background-color: #f2f4f7 !important;
+    &__download {
+        padding: 0.5rem;
+        border-radius: 50%;
+        color: #9aa0ac;
+        transition: background 0.2s ease, color 0.2s ease;
+
+        &:hover {
+            background: rgba(var(--vs-primary), 0.1);
+            color: rgba(var(--vs-primary), 1);
         }
     }
 
-    .card-video {
-        .video-js {
-            height: 370px;
+    &__desc {
+        color: #8a90a0;
+        font-size: 0.9rem;
+        flex-grow: 1;
+    }
+
+    &__footer {
+        margin-top: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-weight: 600;
+        color: #626262;
+        transition: color 0.2s ease;
+    }
+
+    &--skeleton {
+        border-top-color: #eee;
+        cursor: default;
+        background: linear-gradient(90deg, #f3f4f7 25%, #e9ebf0 37%, #f3f4f7 63%);
+        background-size: 400% 100%;
+        animation: report-skeleton 1.4s ease infinite;
+
+        &:hover {
+            transform: none;
         }
     }
-}</style>
+}
+
+@keyframes report-skeleton {
+    0% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+}
+</style>

@@ -21,6 +21,7 @@ return [
     "account_code"=> "កូដគណនី",
     "issue_date"=> "ថ្ងៃត្រូវទូទាត់",
     "amount"=> "ទឹកប្រាក់",
+    "due_date"=> "ថ្ងៃផុតកំណត់",
     "currency_id"=> "រូបបីយវត្ថុ",
     "exchange_rate"=> "អត្រាប្តូរប្រាក់",
     "payment_method_id"=> "វិធីសាស្ត្របង់ប្រាក់",

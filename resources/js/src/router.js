@@ -1353,20 +1353,6 @@ const router = new Router({
                 // Incentives Report
                 // =============================================================================
                 {
-                    path: '/report/:report_type',
-                    name: 'report',
-                    component: () => import('@/views/pages/reports/ReportViewer.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គ្រប់គ្រងរបាយការណ៍', url: '/report'},
-                            { title: 'របាយការណ៍', active: true },
-                        ],
-                        // pageTitle: 'របាយការណ៍',
-                        rule: 'editor'
-                    },
-                },
-                {
                     path: '/report/incentive',
                     name: 'report-incentive',
                     component: () => import('@/views/pages/reports/IncentiveReport.vue'),
@@ -1545,6 +1531,21 @@ const router = new Router({
                             { title: 'របាយការណ៍សង្ខេបចំណូល ចំណាយ', active: true },
                         ],
                         pageTitle: 'របាយការណ៍',
+                        rule: 'editor'
+                    },
+                },
+                // Generic PDF reports (must come after the fixed /report/* pages above)
+                {
+                    path: '/report/:report_type',
+                    name: 'report',
+                    component: () => import('@/views/pages/reports/ReportViewer.vue'),
+                    meta: {
+                        breadcrumb: [
+                            { title: 'ទំព័រដើម', url: '/' },
+                            { title: 'គ្រប់គ្រងរបាយការណ៍', url: '/report'},
+                            { title: 'របាយការណ៍', active: true },
+                        ],
+                        // pageTitle: 'របាយការណ៍',
                         rule: 'editor'
                     },
                 },

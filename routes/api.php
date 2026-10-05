@@ -409,14 +409,6 @@ Route::prefix('v1')->middleware(['auth:api', 'global_site', 'cors'])->group(func
 
     // Report
     Route::prefix('report')->controller(ReportController::class)->group(function () {
-        Route::post('income', 'incomeReport');
-        Route::post('expense', 'expenseReport');
-        Route::post('officer_incentive', 'officerIncentiveReport');
-        Route::post('officers_request', 'officersRequestReport');
-        Route::post('officers_payment', 'officersPaymentReport');
-        Route::post('officers_payable', 'officersPayableReport');
-        Route::post('officers', 'officersReport');
-        Route::post('sales', 'showSalesReport');
         Route::get('summary', 'summary');
         Route::get('summary_income_outcome', 'summaryIncomeOutcome');
         Route::get('income_by_sector', 'incomeBySector');
@@ -427,6 +419,10 @@ Route::prefix('v1')->middleware(['auth:api', 'global_site', 'cors'])->group(func
         Route::post('convert/convert_annex_lm_to_excel', 'convertAnnexLMToExcel');
         Route::post('convert/convert_annex_bank_to_excel', 'convertAnnexBankToExcel');
         Route::post('convert/convert_annex_gdnt_excel', 'convertAnnexGDNTToExcel');
+
+        // PDF reports: officers, income, expense, officer_incentive, officers_payment, ...
+        Route::get('types', 'types');
+        Route::post('{type}', 'generate')->where('type', '[a-z_]+');
     });
 
     // File manager

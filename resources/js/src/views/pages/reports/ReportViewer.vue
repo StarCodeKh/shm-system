@@ -1,383 +1,252 @@
 <template>
-    <div>
-        <div class="flex flex-wrap items-center justify-between">
-            <div class="mr-3">
-                <h3>{{ $t(reportTitle) }}</h3>
-            </div>
-
-            <div class="items-center pt-4 pb-3">
-                <div class="vx-row mr-1">
-                    <div @click="isHidden = !isHidden" class="btn-add-new p-3 mr-2 rounded-sm cursor-pointer text-right flex items-center justify-center
-                        text-lg font-medium text-base text-primary border border-solid border-default">
-                        <feather-icon icon="FilterIcon" svgClasses="h-4 w-4" />
+    <div class="report-viewer">
+        <!-- Toolbar -->
+        <vx-card class="mb-4">
+            <div class="flex flex-wrap items-center justify-between">
+                <div class="flex items-center mr-4 my-1">
+                    <div class="toolbar-btn mr-3" @click="$router.push('/report')">
+                        <feather-icon icon="ArrowLeftIcon" svgClasses="h-5 w-5" />
                     </div>
-                    <!-- <div @click="initDowlonadElsx" class="btn-add-new p-3 mr-2 rounded-sm cursor-pointer text-right flex items-center justify-center
-                        text-lg font-medium text-base text-dander border border-solid border-default">
-                        <feather-icon icon="DownloadIcon" svgClasses="h-4 w-4" />
-                    </div> -->
+                    <div v-if="report" class="report-icon mr-3" :style="{ backgroundColor: report.color + '1f', color: report.color }">
+                        <feather-icon :icon="report.icon" svgClasses="h-5 w-5" />
+                    </div>
+                    <div>
+                        <h4 class="mb-0">{{ report ? report.title : reportType }}</h4>
+                        <small class="text-grey">
+                            {{ activeFilterCount ? `បានត្រង ${activeFilterCount} លក្ខខណ្ឌ` : "ទិន្នន័យទាំងអស់" }}
+                        </small>
+                    </div>
+                </div>
+
+                <div class="flex items-center my-1">
+                    <vx-tooltip text="តម្រង" position="top">
+                        <div class="toolbar-btn mr-2" :class="{ 'is-active': showFilter }" @click="showFilter = !showFilter">
+                            <feather-icon icon="FilterIcon" svgClasses="h-5 w-5" />
+                        </div>
+                    </vx-tooltip>
+                    <vx-tooltip text="ផ្ទុកឡើងវិញ" position="top">
+                        <div class="toolbar-btn mr-2" @click="generate">
+                            <feather-icon icon="RefreshCwIcon" svgClasses="h-5 w-5" />
+                        </div>
+                    </vx-tooltip>
+                    <vx-tooltip text="បើកក្នុងផ្ទាំងថ្មី" position="top">
+                        <div class="toolbar-btn mr-2" :class="{ 'is-disabled': !pdfUrl }" @click="openInNewTab">
+                            <feather-icon icon="ExternalLinkIcon" svgClasses="h-5 w-5" />
+                        </div>
+                    </vx-tooltip>
+                    <vs-button icon-pack="feather" icon="icon-download" :disabled="!pdfBlob" @click="download">
+                        ទាញយក PDF
+                    </vs-button>
                 </div>
             </div>
+        </vx-card>
 
+        <!-- Filters -->
+        <transition name="fade">
+            <div v-show="showFilter && formAttributes.length" class="mb-4">
+                <d-search
+                    :data="fieldData"
+                    :dataInfo="{}"
+                    :api="''"
+                    :formAttributes="formAttributes"
+                    :rowDisplay="'4grid'"
+                    @searchQuery="applyFilters" />
+            </div>
+        </transition>
+
+        <!-- Report -->
+        <div class="report-frame">
+            <div v-if="loading" class="report-frame__state">
+                <div class="report-spinner"></div>
+                <p class="mt-4">កំពុងរៀបចំរបាយការណ៍...</p>
+                <small class="text-grey">របាយការណ៍ធំអាចចំណាយពេលបន្តិច</small>
+            </div>
+            <div v-else-if="error" class="report-frame__state">
+                <feather-icon icon="AlertTriangleIcon" svgClasses="h-10 w-10 text-danger" />
+                <p class="mt-3 mb-4">{{ error }}</p>
+                <vs-button type="border" @click="generate">ព្យាយាមម្តងទៀត</vs-button>
+            </div>
+            <iframe v-else-if="pdfUrl" :src="pdfUrl" title="Report"></iframe>
         </div>
-        <template v-if="!isHidden">
-            <d-search v-if="!dataAttributes.hideSearchBar" @searchQuery="searchQuery" @clicked="initTableData"
-                :data="dataTables" :api="api" :formAttributes="formAttributes" :rowDisplay="'4grid'"
-                :dataInfo="dataInfo"></d-search>
-        </template>
-        <div v-if="!pdfUrl">Loading Report...</div>
-        <embed
-        v-else
-        :src="pdfUrl"
-        type="application/pdf"
-        width="100%"
-        height="600px"
-        />
     </div>
 </template>
 
 <script>
-import Vue from "vue";
 import axios from "@/axios.js";
-import apiConfig from "@/apiConfig.js"
-import { ref } from 'vue';
-import DSearch from '@/views/form-builder/DSearch.vue';
+import DSearch from "@/views/form-builder/DSearch.vue";
+import { fetchReport, saveBlob } from "./reportApi.js";
+
 export default {
-  data() {
-    return {
-      title: "Report Viewer",
-      api: "",
-      apiGetField: apiConfig._apiGetOfficerField,
-      apiGetFieldIncome: apiConfig._apiGetIncomeField,
-      apiGetFieldExpense: apiConfig._apiGetExpenseField,
-      apiGetExpenseField: apiConfig._apiGetExpenseField,
-      apiGetOfficerPaymentField: apiConfig._apiGetOfficerPaymentField,
-      apiGetOfficerRequestField: apiConfig._apiGetOfficerRequestField,
-      pdfUrl: null,
-      isHidden: false,
-      dataTables:{},
-      dataInfo: {},
-      reportTitle: null,
-      dataAttributes: {
-        tableStyle: 1,
-        page_number: 1,
-        offset: 0,
-        dataGrid: "row",
-        actionButton: [
-            // {
-            //     icon: "DollarSignIcon",
-            //     path: "/module/budget-arrangement/budget-ceiling/list",
-            //     method: "View"
-            // }
-        ]
-      },
-      formAttributes: [
-          // {
-          //   name: "account_type_group_id",
-          //   type: "select",
-          //   required: true,
-          //   options: []
-          // },
-          // {
-          //   name: "code",
-          //   type: "text",
-          //   required: true
-          // },
-          // {
-          //   name: "name_en",
-          //   type: "text",
-          //   required: true
-          // },
-          // {
-          //   name: "name_kh",
-          //   type: "text",
-          //   required: true
-          // },
-          // {
-          //   name: "order_level",
-          //   type: "number",
-          //   required: false
-          // },
-          // {
-          //   name: "description",
-          //   type: "textarea",
-          //   required: false
-          // },
-      ],
-      rowDisplay: "2grid", //1grid, 2grid, 3grid, 4grid
-    };
-  },
-  async mounted() {
-    let _search_criteria = {
-      sort: "id",
-      order: "",
-      page_number: this.dataAttributes.page_number
-    }
-    await this.getDataTable(_search_criteria);
-  },
-  components: {
-    DSearch,
-  },
-  created(){
-        
-  },
-  methods: {
-    async loadPdf() {
-      let data = {
-
-      };
-      try {
-        const token = localStorage.getItem('accessToken'); // e.g., Bearer token
-        const response = await fetch('/api/v1/report/sales', {
-          method: 'POST',
-          data: {},
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            // Only if using API routes
-            // 'X-Requested-With': 'XMLHttpRequest'
-          },
-          // If using Sanctum SPA auth, skip Authorization and use withCredentials
-          // credentials: 'include'
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('PDF fetch failed:', errorText);
-          this.$vs.notify({
-            title: 'Message',
-            text: "Error, while trying to do action or no permission allow!",
-            iconPack: 'feather',
-            icon: 'icon-check-circle',
-            color: 'danger'
-          })
-          // alert('Failed to load PDF: ' + response.status);
-          return;
-        }
-
-        const blob = await response.blob();
-        this.pdfUrl = URL.createObjectURL(blob);
-      } catch (error) {
-        console.error('Error loading PDF:', error);
-        alert('Network error or PDF generation failed.');
-      }
+    components: {
+        DSearch,
     },
-    async getDataTable(_search_criteria) {
-      this.$vs.loading();
-      let _params = {};
-      if (_search_criteria.search_field) {
-        let _formAttribute = this.formAttributes;
-        this.dataFields = [];
-        this.formAttributes.forEach(_formAttribute => {
-          if (_search_criteria.search_field[_formAttribute["name"]]) {
-            let _d = {
-              [_formAttribute["name"]]: _search_criteria.search_field[_formAttribute["name"]]
+    data() {
+        return {
+            report: null,
+            formAttributes: [],
+            fieldData: {},
+            filters: [],
+            showFilter: false,
+            loading: false,
+            error: null,
+            pdfBlob: null,
+            pdfUrl: null,
+            filename: "",
+        };
+    },
+    computed: {
+        reportType() {
+            return this.$route.params.report_type;
+        },
+        activeFilterCount() {
+            return this.filters.length;
+        },
+    },
+    watch: {
+        reportType: {
+            immediate: true,
+            handler() {
+                this.init();
+            },
+        },
+    },
+    beforeDestroy() {
+        this.clearPdf();
+    },
+    methods: {
+        async init() {
+            this.report = null;
+            this.filters = [];
+            this.formAttributes = [];
+            this.showFilter = false;
+            this.generate();
+
+            try {
+                const types = await axios.get("/api/v1/report/types");
+                this.report = types.data.find((report) => report.key === this.reportType) || null;
+                if (this.report && this.report.field_api) {
+                    const fields = await axios.get(this.report.field_api);
+                    this.fieldData = fields.data || {};
+                    this.formAttributes = (fields.data && fields.data.form_attributes) || [];
+                }
+            } catch (e) {
+                // The report still works without its title or filter fields.
             }
-            this.dataFields.push(_d);
-          }
-        });
-        _params = {
-          sort: _search_criteria.sort,
-          order: _search_criteria.order,
-          page_number: _search_criteria.page_number,
-          search_field: this.dataFields,
-        };
-      } else {
-        _params = {
-          sort: _search_criteria.sort,
-          order: _search_criteria.order,
-          page_number: _search_criteria.page_number,
-        };
-      }
-      try {
-        const token = localStorage.getItem('accessToken'); // e.g., Bearer token
-        let _report_type = this.$route.params.report_type;
-        this.reportTitle = _report_type;
-        switch (_report_type) {
-          case "officers":
-            this.getFields(this.apiGetField);
-            break;
-          case "income":
-            this.getFields(this.apiGetFieldIncome);
-            break;
-          case "expense":
-            this.getFields(this.apiGetFieldExpense);
-            break;
-          case "officer_incentive":
-            this.getFields(this.apiGetExpenseField);
-            break;
-          case "officers_payment":
-            this.getFields(this.apiGetOfficerPaymentField);
-            break;
-          case "officers_payable":
-            this.getFields(this.apiGetOfficerPaymentField);
-            break;
-          case "officers_request":
-            this.getFields(this.apiGetOfficerRequestField);
-            break;
-        
-          default:
-            break;
-        }
-        
-        const response = await fetch('/api/v1/report/'+_report_type, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-            // Only if using API routes
-            // 'X-Requested-With': 'XMLHttpRequest'
-          },
-          body: JSON.stringify({
-            data: this.dataFields,
-          })
-          // If using Sanctum SPA auth, skip Authorization and use withCredentials
-          // credentials: 'include'
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('PDF fetch failed:', errorText);
-          this.$vs.notify({
-            title: 'Message',
-            text: "Error, while trying to do action or no permission allow!",
-            iconPack: 'feather',
-            icon: 'icon-check-circle',
-            color: 'danger'
-          })
-          this.$vs.loading.close();
-          // alert('Failed to load PDF: ' + response.status);
-          return;
-        }
-
-        const blob = await response.blob();
-        this.pdfUrl = URL.createObjectURL(blob);
-      } catch (error) {
-        console.error('Error loading PDF:', error);
-        alert('Network error or PDF generation failed.');
-        this.$vs.loading.close();
-      }
-      this.$vs.loading.close();
-      // return new Promise((resolve, reject) => {
-      //   axios.post("/api/v1/report/sales", _params)
-      //     .then((response) => {
-      //       if (response.data) {
-      //         this.data = response.data;
-      //       } else {
-      //         this.data = this.data;
-      //       }
-      //       this.$vs.loading.close();
-      //     }).catch((error) => {
-      //       // reject(error)
-      //     this.$vs.notify({
-      //         title: 'Message',
-      //         text: "Error, while trying to do action or no permission allow!",
-      //         iconPack: 'feather',
-      //         icon: 'icon-check-circle',
-      //         color: 'danger'
-      //     });
-      //     this.$vs.loading.close();
-      //   })
-      // })
-    },
-    getFields(apiGetField){
-      return new Promise(() => {
-                axios.get(apiGetField)
-              .then((response) => {
-                  if (response.data) {
-                    this.dataTables = response.data;
-                    this.formAttributes = response.data.form_attributes;
-                  } else {
-                    this.data = this.data;
-                  }
-                  // this.isVisible = response.data.is_display;
-                  this.$vs.loading.close();
-              }).catch(() => {
-                  this.$vs.notify({
-                      title: 'Message',
-                      text: "Error, while trying to do action or no permission allow!",
-                      iconPack: 'feather',
-                      icon: 'icon-check-circle',
-                      color: 'danger'
-                  });
-                  this.$vs.loading.close();
-              })
-      })
-    },
-    getData() {
-      let _search_criteria = {
-        sort: "id",
-        order: "",
-        page_number: this.dataAttributes.page_number
-      }
-      this.getDataTable(_search_criteria);
-    },
-    initTableData(searchQuery) {
-      this.$vs.loading();
-      let _search_criteria = {
-          sort: "id",
-          order: "",
-          page_number: searchQuery.pageNum,
-          search_field: searchQuery.searchFields
-      }
-      this.getDataTable(_search_criteria);
-    },
-    initDowlonadElsx(){
-        let _params = {};
-        return new Promise((resolve, reject) => {
-            axios({
-                url: '/api/v1/setting/account_type/export',
-                method: 'GET',
-                responseType: 'blob', // Important: binary data
-                // headers: {
-                // 'Authorization': 'Bearer ' + localStorage.getItem('token') // if using tokens
-                // }
-            })
-            .then((response) => {
-                    const url = window.URL.createObjectURL(new Blob([response.data]));
-                    const link = document.createElement('a');
-                    const contentDisposition = response.headers['content-disposition'];
-                    const filename = contentDisposition
-                    ? contentDisposition.split('filename=')[1].split(';')[0].replace(/"/g, '')
-                    : 'AccountType.xlsx';
-
-                    link.href = url;
-                    link.setAttribute('download', filename);
-                    document.body.appendChild(link);
-                    link.click();
-                    link.remove();
-                    window.URL.revokeObjectURL(url);
-                    
-                    this.$vs.loading.close();
-                }).catch((error) => {
-                // reject(error)
-                this.$vs.notify({
-                    title: 'Message',
-                    text: "Error, while trying to do action or no permission allow!",
-                    iconPack: 'feather',
-                    icon: 'icon-check-circle',
-                    color: 'danger'
+        },
+        async generate() {
+            this.loading = true;
+            this.error = null;
+            try {
+                const { blob, filename } = await fetchReport(this.reportType, this.filters);
+                this.clearPdf();
+                this.pdfBlob = blob;
+                this.pdfUrl = URL.createObjectURL(blob);
+                this.filename = filename;
+            } catch (message) {
+                this.error = message;
+            }
+            this.loading = false;
+        },
+        applyFilters({ formAttribute }) {
+            this.filters = this.formAttributes
+                .filter((field) => {
+                    const value = formAttribute[field.name];
+                    return value !== undefined && value !== null && value !== "";
                 })
-                this.$vs.loading.close();
-            })
-        })
+                .map((field) => ({ [field.name]: formAttribute[field.name] }));
+            this.generate();
+        },
+        download() {
+            if (this.pdfBlob) saveBlob(this.pdfBlob, this.filename);
+        },
+        openInNewTab() {
+            if (this.pdfUrl) window.open(this.pdfUrl, "_blank");
+        },
+        clearPdf() {
+            if (this.pdfUrl) URL.revokeObjectURL(this.pdfUrl);
+            this.pdfUrl = null;
+            this.pdfBlob = null;
+        },
     },
-    searchQuery(_search_fields) {
-      let _search_params = {
-        sort: "id",
-        order: "",
-        page_number: this.current_page,
-        search_field: _search_fields.formAttribute,
-        dataInfo: _search_fields.dataInfo
-      }
-      this.getDataTable(_search_params);
-    },
-    initTableData(){
-
-    }
-  },
-  unmounted() {
-    if (this.pdfUrl) {
-      URL.revokeObjectURL(this.pdfUrl);
-    }
-  }
 };
 </script>
+
+<style lang="scss" scoped>
+.toolbar-btn {
+    padding: 0.6rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e4e6ec;
+    color: #626262;
+    cursor: pointer;
+    display: flex;
+    transition: all 0.2s ease;
+
+    &:hover,
+    &.is-active {
+        color: rgba(var(--vs-primary), 1);
+        border-color: rgba(var(--vs-primary), 1);
+        background: rgba(var(--vs-primary), 0.08);
+    }
+
+    &.is-disabled {
+        opacity: 0.4;
+        pointer-events: none;
+    }
+}
+
+.report-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.report-frame {
+    height: calc(100vh - 280px);
+    min-height: 520px;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.08);
+
+    iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+
+    &__state {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+    }
+}
+
+.report-spinner {
+    width: 44px;
+    height: 44px;
+    border: 4px solid rgba(var(--vs-primary), 0.15);
+    border-top-color: rgba(var(--vs-primary), 1);
+    border-radius: 50%;
+    animation: report-spin 0.8s linear infinite;
+}
+
+@keyframes report-spin {
+    to { transform: rotate(360deg); }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.2s ease;
+}
+.fade-enter,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>
