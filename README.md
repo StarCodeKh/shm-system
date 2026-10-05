@@ -1,97 +1,142 @@
 <p align="center">
-    <img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400">
-    <br>
-    <img src="/resources/assets/images/logo/logo.png" width="78" height="auto" width="400">
-    <br>
+    <img src="resources/assets/images/logo/logo.png" width="96" alt="SHM System">
 </p>
+
+<h1 align="center">SHM System</h1>
 
 <p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
+    Membership and finance management for<br>
+    <b>សមាគមសង្គហៈមិត្ត បុគ្គលិក មន្ត្រីរាជការ — ក្រសួងសេដ្ឋកិច្ចនិងហិរញ្ញវត្ថុ</b>
 </p>
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Members (សមាជិក)** — registration, documents, requests, import / export
+- **Payments** — monthly payables, recurring payments, payment history
+- **Incentives (ប្រាក់ឧបត្ថម្ភ)** — incentive records and official letters / annexes to banks, GDNT and LM
+- **Finance** — income, expenses, chart of accounts, bank accounts
+- **Budget modules** — program management, budget arrangement (ceiling, PIP), budget monitoring
+- **Reports (របាយការណ៍)** — Khmer PDF reports with filters and download
+- **Notifications** — in-app and mobile push (Firebase Cloud Messaging)
+- **Mobile API** — login with OTP and dashboard endpoints under `/api/v1/mobile`
+- **Access control** — roles and permissions, audit log
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Tech stack
 
-## Learning Laravel 7 && Vuexy Admin Dashboard 4.1
+| Layer | Technology |
+|---|---|
+| Backend | PHP 8.3+, Laravel 13, Laravel Passport (API auth), Spatie Permission |
+| Frontend | Vue 2.7, Vuesax / Vuexy, Laravel Mix (webpack) |
+| Database | MySQL (tables use the `tbl_` prefix) |
+| PDF / Excel | mPDF, Maatwebsite Excel |
+| Push | Firebase (kreait/laravel-firebase) |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Requirements
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP 8.3 or newer, with `mbstring`, `gd`, `zip`, `pdo_mysql`
+- Composer 2
+- MySQL 8 (or MariaDB 10.6+)
+- Node.js and npm
 
-### One Image
-![Images](/resources/assets/images/preview.gif)
+## Getting started
 
-### Two Image
-![Images](/resources/assets/images/attachment.png)
+```bash
+git clone https://github.com/StarCodeKh/shm-system.git
+cd shm-system
 
-### Three Image
-![Images](/resources/assets/images/attachment_.png)
+composer install
+npm install
 
-#### Links
-[Documentation](https://pixinvent.com/demo/vuexy-vuejs-admin-dashboard-template/documentation/development/laravelIntegration.html#folder-structure)
-[Vuexy](https://pixinvent.com/demo/vuexy-vuejs-admin-dashboard-template/landing)
-[Demo](https://pixinvent.com/demo/vuexy-vuejs-admin-dashboard-template/demo-1/dashboard/analytics)
+cp .env.example .env
+php artisan key:generate
+php artisan passport:keys
+```
 
-## Laravel Sponsors
+1. **Database** — create a database (default name `shm`), set the `DB_*` values in `.env`, then import the latest SQL dump from the team. Migrations only cover part of the schema, so start from a dump.
+2. **Firebase** — put the service account JSON in the project root as `service-account-key.json`, and a copy in `storage/firebase/firebase_credentials.json`. Fill in the `FIREBASE_*` and `FCM_*` values in `.env`.
+3. **Run** — in two terminals:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+```bash
+php artisan serve      # http://127.0.0.1:8000
+npm run watch          # rebuilds the frontend on change
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-- [We Are The Robots Inc.](https://watr.mx/)
-- [Understand.io](https://www.understand.io/)
-- [Abdel Elrafa](https://abdelelrafa.com)
-- [Hyper Host](https://hyper.host)
-- [Appoly](https://www.appoly.co.uk)
-- [OP.GG](https://op.gg)
+> Secrets (`.env`, `service-account-key.json`, `storage/firebase/`, `storage/oauth-*.key`) are git-ignored. Never commit them.
 
-## Contributing
+## Common commands
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Build frontend once (development) |
+| `npm run watch` | Build and watch for changes |
+| `npm run prod` | Minified production build |
+| `php artisan route:list --except-vendor` | List API routes |
+| `php artisan optimize:clear` | Clear config, route and view caches |
+| `php artisan schedule:work` | Run the scheduler locally |
 
-## Code of Conduct
+## Scheduled jobs
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Defined in `app/Console/Kernel.php`:
 
-## Security Vulnerabilities
+| Command | When |
+|---|---|
+| `payables:generate` | 1st of each month, 01:00 — creates monthly payables |
+| `payments:dispatch` | Hourly, 02:00–23:00 — queues pending payments |
+| `queue:work --queue=payments,default` | Every minute — processes queued jobs |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+On a server, add one cron entry:
+
+```cron
+* * * * * cd /path/to/shm-system && php artisan schedule:run >> /dev/null 2>&1
+```
+
+## Project structure
+
+```
+app/
+  Http/Controllers/     API controllers (Settings/, Modules/ for budget modules)
+  Models/               Eloquent models
+  Console/Commands/     Scheduled commands
+config/pdf.php          PDF font settings
+resources/
+  assets/fonts/         All fonts (self-hosted, no CDN)
+  js/src/               Vue app — router.js, apiConfig.js, views/pages/
+  sass/vuexy/_fonts.scss  Font declarations and CSS variables
+  views/reports/        PDF report templates
+routes/
+  api.php               API routes (/api/auth, /api/v1, /api/v1/mobile)
+  web.php               Single-page app entry
+```
+
+## Guides
+
+### Fonts
+
+All fonts are local in `resources/assets/fonts` and declared once in `resources/sass/vuexy/_fonts.scss`. Use the CSS variables instead of font names:
+
+```css
+font-family: var(--font-base);      /* UI — Kantumruy Pro */
+font-family: var(--font-document);  /* letters — Khmer OS Battambang */
+```
+
+Other variables: `--font-heading`, `--font-mef1`, `--font-mef2`, `--font-fk1`, `--font-fk2`, `--font-mono`. PDF fonts are set in `config/pdf.php`.
+
+### Adding a PDF report
+
+Add an entry to `reports()` in `app/Http/Controllers/ReportController.php` (title, icon, color, columns, query). It then appears on the **/report** page and is served at `POST /api/v1/report/{key}`. No new route or template is needed.
+
+## Deployment
+
+```bash
+composer install --no-dev --optimize-autoloader
+npm ci && npm run prod
+php artisan config:cache && php artisan route:cache && php artisan view:cache
+```
+
+Copy these to the server by hand: `.env`, `service-account-key.json`, `storage/firebase/firebase_credentials.json`, the Passport keys in `storage/`, and the `public/upload/` folder. Point the web server at `public/`.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Proprietary. All rights reserved by សមាគមសង្គហៈមិត្ត បុគ្គលិក មន្ត្រីរាជការ, Ministry of Economy and Finance.
