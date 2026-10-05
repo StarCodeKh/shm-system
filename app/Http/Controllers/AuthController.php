@@ -7,8 +7,6 @@ use OTPService;
 use App\User;
 use App\Models\Mobile\OTP;
 use App\Models\Mobile\UserDevice;
-use App\Models\Settings\RoleMenu;
-use Illuminate\Validation\Validator;
 
 class AuthController extends Controller
 {

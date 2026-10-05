@@ -12,14 +12,11 @@ use App\Models\Settings\RoleUser;
 use App\Models\Settings\Status;
 
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use App\User;
 use DB;
 use Auth;
-use DateTime;
 use CommonService;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;

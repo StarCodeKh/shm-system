@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Settings;
 use App\Exports\AccountTypeExport;
 use App\Models\Settings\AccountType;
-use App\Models\Settings\AccountTypeGroup;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;

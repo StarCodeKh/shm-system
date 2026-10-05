@@ -5,7 +5,6 @@ namespace App\Imports;
 use App\Models\Modules\BudgetArrangement\CeilingEntity;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use DB;
 use Auth;
 
 class CeilingEntityImport implements ToModel,WithHeadingRow

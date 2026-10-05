@@ -3,8 +3,6 @@
 namespace App\Helper\Controllers;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Bus\DispatchesCommands;
-use Illuminate\Http\Request;
-use Auth;
 
 abstract class HelperController extends BaseController
 {

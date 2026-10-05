@@ -5,8 +5,6 @@ namespace App\Imports;
 use App\Models\Settings\Entity;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Facades\Excel;
-use DB;
 use Auth;
 
 class EntityImport implements ToModel,WithHeadingRow

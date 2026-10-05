@@ -2,16 +2,9 @@
 
 namespace App\Exports;
 use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Income;
-use DB;
-use Spatie\Permission\Traits\HasRoles;
-use CommonService;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\SkipsUnknownSheets;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\ToModel;
 class IncomeExport implements FromCollection, WithHeadings,Auditable
 {
   use \OwenIt\Auditing\Auditable;
@@ -21,7 +14,7 @@ class IncomeExport implements FromCollection, WithHeadings,Auditable
       "sort" => "id",
       "order" => "asc",
       "page_number" => 1,
-      "limit" => 1000000000000000000000,
+      "limit" => PHP_INT_MAX,
       "search_field" => array()
     );
     $whereClause = "";

@@ -9,16 +9,11 @@ use App\Models\Settings\Department;
 use App\Models\Settings\Entity;
 use App\Models\Settings\PaymentMethod;
 use App\Models\Settings\Account;
-use App\Models\Settings\AccountType;
-use App\Models\Settings\AccountGroup;
 use App\Models\Settings\Status;
 use App\Http\Controllers\BaseController;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use App\User;
 use DB;
 use Auth;
-use DateTime;
 use CommonService;
 use Maatwebsite\Excel\Facades\Excel;
 

@@ -16,13 +16,8 @@ use App\Models\Settings\Account;
 use App\Models\Settings\Department;
 use App\Models\Settings\Entity;
 use Illuminate\Http\Request;
-use App\Notifications\DailyReminderNotification;
 use Auth;
-use DB;
-use App\User;
-use App\Models\UserDevice;
 use CommonService;
-use App\Services\PushNotificationService;
 use Maatwebsite\Excel\Facades\Excel;
 class OfficerIncentiveController extends Controller
 {

@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Auth;
 use DB;
 use CommonService;
-use Maatwebsite\Excel\Facades\Excel;
 class StatusController extends Controller
 {
     /**

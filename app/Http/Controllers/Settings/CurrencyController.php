@@ -3,15 +3,9 @@
 namespace App\Http\Controllers\Settings;
 use App\Models\Settings\Currency;
 
-use Symfony\Component\Debug\Exception;
-use Symfony\Component\Debug\Exception\FatalThrowableError;
 use App\Http\Controllers\Controller;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use App\User;
-use DB;
 use Auth;
-use DateTime;
 use CommonService;
 
 class CurrencyController extends Controller

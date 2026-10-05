@@ -4,8 +4,6 @@ namespace App\Imports;
 
 use App\Models\Income;
 use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithMultipleSheets;
-use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use DB;
 // class IncomeImport implements ToModel,WithHeadingRow

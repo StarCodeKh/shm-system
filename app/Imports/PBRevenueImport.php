@@ -5,7 +5,6 @@ namespace App\Imports;
 use App\Models\Modules\BudgetArrangement\PBRevenue;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use DB;
 use Auth;
 class PBRevenueImport implements ToModel,WithHeadingRow
 {

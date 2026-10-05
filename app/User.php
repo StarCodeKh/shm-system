@@ -2,7 +2,6 @@
 
 namespace App;
 use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Settings\Entity;
@@ -10,7 +9,6 @@ use App\Models\Settings\RoleUser;
 use App\Models\Settings\Status;
 use App\Models\Officer;
 use App\Models\UserDevice;
-use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\User;

@@ -2,9 +2,6 @@
 
 namespace App\Models\Settings;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Settings\AccountGroup;
-use DB;
-use CommonService;
 
 class Account extends Model
 {

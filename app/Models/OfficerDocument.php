@@ -2,12 +2,8 @@
 
 namespace App\Models;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\CompositionRequest;
 use App\Models\Officer;
 use App\Models\Settings\Status;
-use App\Models\Settings\Currency;
-use App\Models\Settings\Entity;
-use App\Models\Settings\PaymentMethod;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 use CommonService;

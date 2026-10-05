@@ -2,7 +2,6 @@
 
 namespace App\Models\Settings;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\CompositionRequest;
 use App\Models\Settings\PaymentType;
 use App\Models\OfficerPayable;
 use Illuminate\Database\Eloquent\Model;

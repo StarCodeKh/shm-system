@@ -2,18 +2,10 @@
 
 namespace App\Models;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\CompositionRequest;
 use App\Models\UserDevice;
-use App\Models\OfficerPaymentRecurring;
-use App\Models\Officer;
-use App\Models\Settings\Entity;
-use App\Models\Settings\Status;
-use App\Models\Settings\Currency;
 use Illuminate\Database\Eloquent\Model;
 use DB;
-use Auth;
 use CommonService;
-use Carbon;
 use App\User;
 class UserDevice extends Model implements Auditable
 {

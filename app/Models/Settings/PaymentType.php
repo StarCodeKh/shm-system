@@ -6,9 +6,7 @@ use Spatie\Permission\Traits\HasRoles;
 use OwenIt\Auditing\Contracts\Auditable;
 use App\Models\Settings\Status;
 use App\Models\Settings\Currency;
-use App\User;
 use DB;
-use Auth;
 use CommonService;
 
 class PaymentType extends Model implements Auditable

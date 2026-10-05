@@ -13,13 +13,11 @@ use App\Models\Settings\Status;
 use App\Models\Settings\Account;
 use Illuminate\Http\Request;
 use App\Notifications\DailyReminderNotification;
-use Auth;
 use DB;
 use App\User;
 use App\Models\UserDevice;
 use CommonService;
 use App\Services\PushNotificationService;
-use App\Models\OfficerIncentive;
 
 class OfficerDocumentController extends Controller
 {

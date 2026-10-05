@@ -8,18 +8,12 @@ use App\Models\Mobile\UserDevice;
 // use PushNotificationService;
 use App\Notifications\DailyReminderNotification;
 use App\Http\Controllers\Controller;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use App\User;
-use DB;
 use Auth;
-use DateTime;
 use CommonService;
 // use App\Services\NotificationService;
 use App\Services\PushNotificationService;
-use App\Services\PushNotification;
-use Illuminate\Support\Facades\Http;
-use Kreait\Firebase\Factory;
 use App\Models\Settings\Status;
 class NotificationController extends Controller
 {

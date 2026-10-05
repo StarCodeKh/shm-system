@@ -2,13 +2,6 @@
 
 namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
-use App\User;
-use DB;
-use Auth;
-use DateTime;
-use CommonService;
 
 class BaseController extends Controller
 {

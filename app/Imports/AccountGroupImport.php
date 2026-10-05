@@ -5,8 +5,6 @@ namespace App\Imports;
 use App\Models\Settings\AccountGroup;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use DB;
-use Auth;
 
 class AccountGroupImport implements ToModel,WithHeadingRow
 {

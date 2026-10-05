@@ -2,14 +2,9 @@
 
 namespace App\Models;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\CompositionRequest;
 use App\Models\coa;
-use App\Models\Officer;
-use App\Models\Settings\Entity;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Settings\Status;
-use App\Models\Settings\AccountType;
-use App\Models\Settings\Currency;
 use DB;
 use CommonService;
 class coa extends Model implements Auditable

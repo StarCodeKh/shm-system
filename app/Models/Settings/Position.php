@@ -4,9 +4,7 @@ namespace App\Models\Settings;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Traits\HasRoles;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\User;
 use DB;
-use Auth;
 use CommonService;
 
 class Position extends Model implements Auditable

@@ -8,12 +8,8 @@ use App\Models\Settings\AccountType;
 use App\Models\Settings\Account;
 use App\Models\Settings\Status;
 use App\Http\Controllers\Controller;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use App\User;
-use DB;
 use Auth;
-use DateTime;
 use CommonService;
 use Maatwebsite\Excel\Facades\Excel;
 

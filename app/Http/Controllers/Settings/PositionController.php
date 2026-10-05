@@ -4,12 +4,8 @@ namespace App\Http\Controllers\Settings;
 use App\Models\Settings\Position;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use App\User;
-use DB;
 use Auth;
-use DateTime;
 use CommonService;
 class PositionController extends Controller
 {

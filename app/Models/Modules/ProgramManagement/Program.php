@@ -8,7 +8,6 @@ use App\Models\Modules\ProgramManagement\SubProgram;
 use App\Models\Modules\ProgramManagement\KPIProgram;
 use App\Models\Settings\Entity;
 use App\Models\Settings\EntityMember;
-use DB;
 
 class Program extends Model
 {

@@ -2,10 +2,7 @@
 
 namespace App\Models;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\CompositionRequest;
 use App\Models\FileManager;
-use App\Models\Officer;
-use App\Models\Settings\Entity;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 use CommonService;

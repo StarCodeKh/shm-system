@@ -8,7 +8,6 @@ use App\Models\Modules\ProgramManagement\SubProgram;
 use App\Models\Modules\ProgramManagement\ClusterActivity;
 use App\Models\Modules\ProgramManagement\Activity;
 use App\Models\Settings\Entity;
-use App\Models\Settings\EntityMember;
 use Illuminate\Http\Request;
 use Auth;
 use DB;

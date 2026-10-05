@@ -5,7 +5,6 @@ namespace App\Models\Modules\BudgetArrangement;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Modules\ProgramManagement\Program;
 use App\Models\Modules\ProgramManagement\SubProgram;
-use App\Models\Modules\ProgramManagement\ClusterActivity;
 use DB;
 use CommonService;
 

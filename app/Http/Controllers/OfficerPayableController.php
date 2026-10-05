@@ -13,15 +13,9 @@ use App\Models\Settings\PaymentType;
 use App\Models\Settings\Status;
 use App\Models\Settings\Account;
 use App\Models\Settings\Department;
-use App\Models\OfficerPaymentRecurring;
-use App\User;
-use App\Models\UserDevice;
 use Illuminate\Http\Request;
-use DB;
 use Auth;
-use DateTime;
 use CommonService;
-use App\Notifications\DailyReminderNotification;
 use App\Services\PushNotificationService;
 use Maatwebsite\Excel\Facades\Excel;
 

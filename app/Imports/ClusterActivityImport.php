@@ -5,7 +5,6 @@ namespace App\Imports;
 use App\Models\Modules\ProgramManagement\ClusterActivity;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use DB;
 use Auth;
 class ClusterActivityImport implements ToModel,WithHeadingRow
 {

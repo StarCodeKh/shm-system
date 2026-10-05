@@ -2,7 +2,6 @@
 
 namespace App\Models\Mobile;
 use Illuminate\Database\Eloquent\Model;
-use DB;
 class UserDevice extends Model
 {
     protected $table = 'user_device';

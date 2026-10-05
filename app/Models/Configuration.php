@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use CommonService;
 class Configuration extends Model
 {
     protected $table = 'config';

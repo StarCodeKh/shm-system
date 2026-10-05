@@ -4,14 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\OfficerPaymentRecurring;
-use App\Models\OfficerPayable;
 use App\Models\Officer;
 use App\Models\Settings\Currency;
 use App\Models\Settings\PaymentTerm;
 use App\Models\Settings\Status;
 use Illuminate\Http\Request;
-use Auth;
-use DB;
 use CommonService;
 class OfficerPaymentRecurringController extends Controller
 {

@@ -1,15 +1,9 @@
 <?php
 
 namespace App\Models\Modules\BudgetMonitoring;
-use App\Models\Modules\ProgramManagement\Program;
-use App\Models\Settings\Entity;
 use App\Models\Settings\Account;
 use App\Models\Settings\AccountGroup;
-use App\Models\Modules\ProgramManagement\SubProgram;
-use App\Models\Modules\ProgramManagement\ClusterActivity;
-use App\Models\Modules\ProgramManagement\Activity;
 use Illuminate\Database\Eloquent\Model;
-use DB;
 
 class RevProgramDetail extends Model
 {

@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Models\Settings\ItemCategory;
-use Symfony\Component\Debug\Exception;
-use Symfony\Component\Debug\Exception\FatalThrowableError;
 use Illuminate\Http\Request;
 use Auth;
 use DB;

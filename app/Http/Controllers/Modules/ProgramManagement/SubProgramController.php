@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Modules\ProgramManagement\SubProgram;
 use App\Models\Modules\ProgramManagement\Program;
 use App\Models\Settings\Entity;
-use App\Models\Settings\EntityMember;
 use Illuminate\Http\Request;
 use CommonService;
 use Auth;

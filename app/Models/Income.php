@@ -2,9 +2,7 @@
 
 namespace App\Models;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\CompositionRequest;
 use App\Models\Income;
-use App\Models\Officer;
 use App\Models\Settings\Department;
 use App\Models\Settings\Entity;
 use App\Models\Settings\PaymentMethod;

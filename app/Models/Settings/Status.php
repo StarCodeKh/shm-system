@@ -9,9 +9,7 @@ use App\Models\OfficerPayable;
 use App\Models\OfficerRequest;
 use App\Models\OfficerPaymentRecurring;
 use App\Models\Notification;
-use App\User;
 use DB;
-use Auth;
 use CommonService;
 
 class Status extends Model implements Auditable

@@ -5,10 +5,8 @@ use App\Models\Settings\Department;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Traits\HasRoles;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\User;
 use DB;
 use Auth;
-use CommonService;
 
 class Entity extends Model implements Auditable
 {

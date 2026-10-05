@@ -8,10 +8,7 @@ use DB;
 use Spatie\Permission\Traits\HasRoles;
 use CommonService;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\SkipsUnknownSheets;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\ToModel;
 class AccountType extends Model implements Auditable, FromCollection, WithHeadings
 {
   use \OwenIt\Auditing\Auditable, HasRoles;

@@ -2,9 +2,7 @@
 
 namespace App\Models;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\CompositionRequest;
 use App\Models\Expense;
-use App\Models\Officer;
 use App\Models\Settings\Entity;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Settings\Status;

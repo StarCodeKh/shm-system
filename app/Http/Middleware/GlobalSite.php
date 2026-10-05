@@ -1,19 +1,9 @@
 <?php
 namespace App\Http\Middleware;
 
-use Illuminate\Http\Request;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 use DB;
-use App\user;
-use Validator;
-use Auth;
-use Session;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Contracts\Auth\Registrar;
-use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 
 
 class GlobalSite

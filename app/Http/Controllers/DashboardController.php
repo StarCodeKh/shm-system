@@ -3,19 +3,12 @@
 namespace App\Http\Controllers;
 use App\Models\Dashboard;
 use App\Http\Controllers\BaseController;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use App\Models\Settings\Currency;
-use App\Models\Settings\Department;
 use App\Models\Income;
 use App\Models\Expense;
 use App\User;
-use DB;
-use Auth;
-use DateTime;
 use CommonService;
 use Exception;
-use Maatwebsite\Excel\Facades\Excel;
 
 
 class DashboardController extends BaseController

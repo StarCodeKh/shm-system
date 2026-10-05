@@ -1,18 +1,9 @@
 <?php
 
 namespace App\Exports;
-use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\Settings\AccountTypeGroup;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Settings\AccountType;
-use DB;
-use Spatie\Permission\Traits\HasRoles;
-use CommonService;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\SkipsUnknownSheets;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\ToModel;
 class AccountTypeExport implements FromCollection, WithHeadings
 {
   public function collection(): \Illuminate\Support\Enumerable

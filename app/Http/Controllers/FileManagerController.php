@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Incentive;
 use App\Models\FileManager;
 
 use App\Imports\ObjectiveImport;
@@ -46,16 +45,10 @@ use App\Imports\UserImport;
 // use Excel;
 use Maatwebsite\Excel\Facades\Excel;
 use File;
-use Input;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use App\User;
-use DB;
 use Auth;
-use DateTime;
 use CommonService;
-use Spatie\Permission\Models\Permission;
 
 class FileManagerController extends Controller
 {

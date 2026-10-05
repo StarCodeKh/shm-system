@@ -2,7 +2,6 @@
 namespace App\Models\Settings;
 
 use App\Models\Settings\RoleMenu;
-use Spatie\Permission\Models\Role;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Models\Permission;

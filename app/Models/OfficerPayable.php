@@ -2,10 +2,8 @@
 
 namespace App\Models;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\CompositionRequest;
 use App\Models\OfficerPayment;
 use App\Models\OfficerPayable;
-use App\Models\OfficerPaymentRecurring;
 use App\Models\Officer;
 use App\Models\Settings\Account;
 use App\Models\Settings\Entity;
@@ -15,9 +13,7 @@ use App\Models\Settings\Currency;
 use App\Models\Settings\PaymentMethod;
 use Illuminate\Database\Eloquent\Model;
 use DB;
-use Auth;
 use CommonService;
-use Carbon;
 class OfficerPayable extends Model implements Auditable
 {
   use \OwenIt\Auditing\Auditable;
