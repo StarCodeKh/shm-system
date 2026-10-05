@@ -41,7 +41,8 @@ import router from './router'
 import store from './store/store'
 
 // i18n
-import i18n from './i18n/i18n'
+import i18n, { installPhraseTranslation } from './i18n/i18n'
+installPhraseTranslation(Vue)
 
 // Vuesax Admin Filters
 import './filters/filters'

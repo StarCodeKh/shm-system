@@ -1,46 +1,106 @@
 <template>
-  <vs-dropdown vs-custom-content vs-trigger-click class="cursor-pointer">
-    <span class="cursor-pointer flex items-center i18n-locale">
-      <img class="h-4 w-5" :src="i18n_locale_img" :alt="$i18n.locale" />
-      <span class="hidden sm:block ml-2"> {{ $t(getCurrentLocaleData.lang) }} </span>
-    </span>
-    <vs-dropdown-menu class="w-48 i18n-dropdown vx-navbar-dropdown">
-      <vs-dropdown-item @click="updateLocale('kh')"><img class="h-4 w-5 mr-1" src="@assets/images/flags/kh.jpg"
-          alt="kh" /> Khmer</vs-dropdown-item>
-      <vs-dropdown-item @click="updateLocale('en')"><img class="h-4 w-5 mr-1" src="@assets/images/flags/en.png"
-          alt="en" /> English</vs-dropdown-item>
-      <!-- <vs-dropdown-item @click="updateLocale('fr')"><img class="h-4 w-5 mr-1" src="@assets/images/flags/fr.png" alt="fr" /> &nbsp;French</vs-dropdown-item>
-      <vs-dropdown-item @click="updateLocale('de')"><img class="h-4 w-5 mr-1" src="@assets/images/flags/de.png" alt="de" /> &nbsp;German</vs-dropdown-item>
-      <vs-dropdown-item @click="updateLocale('pt')"><img class="h-4 w-5 mr-1" src="@assets/images/flags/pt.png" alt="pt" /> &nbsp;Portuguese</vs-dropdown-item> -->
-    </vs-dropdown-menu>
-  </vs-dropdown>
+  <div class="nav-lang-switch" role="group" :aria-label="$t('nav_language')">
+    <button v-for="lang in languages" :key="lang.code" type="button"
+      :class="{ active: lang.code === $i18n.locale }" :aria-pressed="lang.code === $i18n.locale"
+      :title="lang.name" @click="updateLocale(lang.code)">
+      <img :src="lang.flag" :alt="lang.code" />
+      <span>{{ lang.label }}</span>
+    </button>
+  </div>
 </template>
 
 <script>
+import { setLocale } from '@/i18n/i18n'
+
+const LANGUAGES = [
+  { code: 'kh', label: 'ខ្មែរ', name: 'ភាសាខ្មែរ', flag: require('@assets/images/flags/kh.jpg') },
+  { code: 'en', label: 'EN', name: 'English', flag: require('@assets/images/flags/en.png') },
+]
+
 export default {
-  computed: {
-    i18n_locale_img() {
-      const locale = this.$i18n.locale;
-      if (locale == "kh") return require(`@assets/images/flags/kh.jpg`)
-      else if (locale == "en") return require(`@assets/images/flags/en.png`)
-      else if (locale == "pt") return require(`@assets/images/flags/pt.png`)
-      else if (locale == "fr") return require(`@assets/images/flags/fr.png`)
-      else if (locale == "de") return require(`@assets/images/flags/de.png`)
-      else return require(`@assets/images/flags/en.png`)
-    },
-    getCurrentLocaleData() {
-      const locale = this.$i18n.locale;
-      if (locale == "kh") return { flag: "kh", lang: 'Khmer' }
-      else if (locale == "en") return { flag: "us", lang: 'English' }
-      else if (locale == "pt") return { flag: "br", lang: 'Portuguese' }
-      else if (locale == "fr") return { flag: "fr", lang: 'French' }
-      else if (locale == "de") return { flag: "de", lang: 'German' }
-    },
+  data() {
+    return {
+      languages: LANGUAGES
+    }
   },
   methods: {
     updateLocale(locale) {
-      this.$i18n.locale = locale;
+      if (locale !== this.$i18n.locale) setLocale(this.$i18n, locale)
     },
   }
 }
 </script>
+
+<style lang="scss">
+// Same segmented style as the Dashboard currency switch
+.nav-lang-switch {
+  display: inline-flex;
+  padding: 3px;
+  margin-right: 6px;
+  border-radius: 999px;
+  background: #eef0f4;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: .35rem .8rem;
+    font-family: inherit;
+    font-size: .875rem;
+    color: #626262;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
+    transition: all .2s ease;
+
+    img {
+      width: 18px;
+      height: 13px;
+      border-radius: 2px;
+      object-fit: cover;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, .08);
+      opacity: .6;
+      transition: opacity .2s ease;
+    }
+
+    &:hover:not(.active) {
+      color: #2c2e45;
+    }
+
+    &.active {
+      background: #fff;
+      color: rgba(var(--vs-primary), 1);
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
+
+      img {
+        opacity: 1;
+      }
+    }
+  }
+
+  // Flags only on small screens
+  @media (max-width: 640px) {
+    button {
+      padding: .4rem .6rem;
+
+      span {
+        display: none;
+      }
+    }
+  }
+}
+
+.theme-dark .nav-lang-switch {
+  background: #10163a;
+
+  button {
+    color: #c2c6dc;
+
+    &.active {
+      background: #262c49;
+    }
+  }
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-    <vx-card>
+    <vx-card class="dt-list">
         <!-- Customize Officer -->
         <div class="vx-row" v-if="dataAttributes.enableDashboardOfficer">
             <div class="vx-col w-full md:w-1/3 lg:w-1/3 xl:w-1/3">
@@ -217,86 +217,49 @@
             </div>
         </vs-prompt>
 
-        <div class="flex flex-wrap items-center justify-between">
-            <div class="mr-3">
+        <div class="dt-toolbar">
+            <div class="dt-toolbar__title">
                 <h3>{{ $t(title) }}</h3>
+                <p v-if="dataTables.total !== undefined">{{ $t('dt_records', { n: formatCount(dataTables.total) }) }}</p>
             </div>
 
-            <div class="items-center pt-4 pb-3">
-                <div class="vx-row mr-1">
-                    <div @click="isHidden = !isHidden" class="btn-add-new p-3 mr-2 rounded-sm cursor-pointer text-right flex items-center justify-center
-                        text-lg font-medium text-base text-primary border border-solid border-default">
-                        <feather-icon icon="FilterIcon" svgClasses="h-4 w-4" />
-                    </div>
+            <div class="dt-toolbar__actions">
+                <button type="button" class="dt-btn dt-btn--icon" :class="{ 'is-active': !isHidden }"
+                    :title="$t('dt_filter')" @click="isHidden = !isHidden">
+                    <feather-icon icon="FilterIcon" svgClasses="h-4 w-4" />
+                </button>
 
-                    <template v-if="!dataAttributes.enableToggleForm">
-                        <template
-                            v-if="dataTables.permissions !== undefined && dataTables.model_name !== undefined && dataTables.permissions['create' + '_' + dataTables.model_name]">
-                            <!-- ADD NEW -->
-                            <div class="btn-add-new p-3 mr-1 rounded-sm cursor-pointer text-right flex items-center justify-center text-lg font-medium text-base text-primary border border-solid border-primary"
-                                @click="openForm">
-                                <feather-icon icon="PlusIcon" svgClasses="h-4 w-4" />
-                                <span class="ml-2 text-base text-primary">{{ $t("AddNew") }}</span>
-                            </div>
-                        </template>
-                    </template>
+                <button v-if="can('print')" type="button" class="dt-btn dt-btn--icon" :title="$t('dt_print')" @click="initPrint">
+                    <feather-icon icon="PrinterIcon" svgClasses="h-4 w-4" />
+                </button>
 
-                    <div @click="initPrint"
-                        v-if="dataTables.permissions !== undefined && dataTables.model_name !== undefined && dataTables.permissions['print' + '_' + dataTables.model_name]"
-                        class="btn-add-new p-3 mr-2 rounded-sm cursor-pointer text-right flex items-center justify-center
-                        text-lg font-medium text-base text-dander border border-solid border-default">
-                        <feather-icon icon="PrinterIcon" svgClasses="h-4 w-4" />
-                    </div>
+                <button v-if="can('import')" type="button" class="dt-btn dt-btn--icon" :title="$t('dt_import')"
+                    @click="initImport(dataTables, api)">
+                    <feather-icon icon="UploadIcon" svgClasses="h-4 w-4" />
+                </button>
 
-                    <div @click="initImport(dataTables, api)"
-                        v-if="dataTables.permissions !== undefined && dataTables.model_name !== undefined && dataTables.permissions['import' + '_' + dataTables.model_name]"
-                        class="btn-add-new p-3 mr-2 rounded-sm cursor-pointer text-right flex items-center justify-center
-                        text-lg font-medium text-base text-dander border border-solid border-default">
-                        <feather-icon icon="UploadIcon" svgClasses="h-4 w-4" />
-                    </div>
+                <button v-if="can('download')" type="button" class="dt-btn dt-btn--icon" :title="$t('dt_download')"
+                    @click="initDowlonadElsx">
+                    <feather-icon icon="DownloadIcon" svgClasses="h-4 w-4" />
+                </button>
 
-                    <div @click="initDowlonadElsx"
-                        v-if="dataTables.permissions !== undefined && dataTables.model_name !== undefined && dataTables.permissions['download' + '_' + dataTables.model_name]"
-                        class="btn-add-new p-3 mr-2 rounded-sm cursor-pointer text-right flex items-center justify-center
-                        text-lg font-medium text-base text-dander border border-solid border-default">
-                        <feather-icon icon="DownloadIcon" svgClasses="h-4 w-4" />
-                    </div>
+                <button v-if="can('filemanager')" type="button" class="dt-btn dt-btn--icon" :title="$t('dt_files')"
+                    @click="initOpenFileManager">
+                    <feather-icon icon="FolderIcon" svgClasses="h-4 w-4" />
+                </button>
 
-                    <!-- <div @click="initDownload; activePrompt=true" v-if="dataAttributes.enableDownload" class="btn-add-new p-3 mr-2 rounded-sm cursor-pointer text-right flex items-center justify-center
-                        text-lg font-medium text-base text-dander border border-solid border-default">
-                        <feather-icon icon="DownloadIcon" svgClasses="h-4 w-4" />
-                    </div> -->
+                <button v-if="!dataAttributes.enableToggleForm && can('create')" type="button" class="dt-btn dt-btn--primary"
+                    @click="openForm">
+                    <feather-icon icon="PlusIcon" svgClasses="h-4 w-4" />
+                    <span>{{ $t("AddNew") }}</span>
+                </button>
 
-                    <div @click="initOpenFileManager"
-                        v-if="dataTables.permissions !== undefined && dataTables.model_name !== undefined && dataTables.permissions['filemanager' + '_' + dataTables.model_name]"
-                        class="btn-add-new p-3 mr-2 rounded-sm cursor-pointer text-right flex items-center justify-center
-                        text-lg font-medium text-base text-dander border border-solid border-default">
-                        <feather-icon icon="FolderIcon" svgClasses="h-4 w-4" />
-                        <!-- <input type="file"/> -->
-                    </div>
-
-                    <!-- If has private button -->
-                    <template v-if="dataAttributes.hasPrivateButton">
-                        <!-- ADD NEW -->
-                        <div class="btn-add-new p-3 mr-1 rounded-sm cursor-pointer text-right flex items-center justify-center text-lg font-medium text-base text-primary border border-solid border-primary"
-                            @click="openPrivateForm('')">
-                            <feather-icon icon="PlusIcon" svgClasses="h-4 w-4" />
-                            <span class="ml-2 text-base text-primary">{{ $t("AddNew") }}</span>
-                        </div>
-                    </template>
-
-                    <!-- <div class="btn-add-new p-3 mr-2 rounded-sm cursor-pointer text-right flex items-center justify-center
-                        text-lg font-medium text-base text-primary border border-solid border-default">
-                        <feather-icon icon="LoadingIcon" svgClasses="h-4 w-4" />
-                    </div> -->
-                    <!-- <div class="btn-add-new p-3 mr-1 rounded-sm cursor-pointer text-right flex items-center justify-center text-lg font-medium text-base text-primary border border-solid border-primary"
-                        @click=openForm(1)>
-                        <vx-tooltip color="success" text="បង្កើតគោលបំណង">
-                            <feather-icon icon="PlusIcon" svgClasses="h-4 w-4" />
-                            <span class="ml-2 text-base text-primary">{{ $t("AddNew") }}</span>
-                        </vx-tooltip>
-                    </div> -->
-                </div>
+                <!-- If has private button -->
+                <button v-if="dataAttributes.hasPrivateButton" type="button" class="dt-btn dt-btn--primary"
+                    @click="openPrivateForm('')">
+                    <feather-icon icon="PlusIcon" svgClasses="h-4 w-4" />
+                    <span>{{ $t("AddNew") }}</span>
+                </button>
             </div>
         </div>
 
@@ -314,17 +277,17 @@
                 :data="dataTables.data">
                 <template slot="thead">
                     <!-- 28C76F -->
-                    <vs-th style="background: rgb(96 113 173); color: #ffffff; font-weight: bold;">{{ $t("no") }}</vs-th>
-                    <vs-th style="background: rgb(96 113 173); color: #ffffff; font-weight: bold;" :key="i"
+                    <vs-th>{{ $t("no") }}</vs-th>
+                    <vs-th :key="i" :class="{ 'dt-num': isAmountColumn(header) }"
                         v-for="(header, i) in dataHeaders">{{ $t(header) }}</vs-th>
-                    <vs-th style="background: rgb(96 113 173); color: #ffffff; font-weight: bold;">{{ $t("Action")
+                    <vs-th class="dt-actions-head">{{ $t("Action")
                     }}</vs-th>
                 </template>
                 <template slot-scope="{data}">
                     <tbody :key="indextr" v-for="(tr, indextr) in data">
                         <vs-tr :state="dataAttributes.backgroundColor">
                             <vs-td>{{ calPageIncreaseNumber(dataTables.limit, indextr) }}</vs-td>
-                            <vs-td v-for="header in dataHeaders" :key="header.indextr">
+                            <vs-td v-for="header in dataHeaders" :key="header.indextr" :class="{ 'dt-num': isAmountColumn(header) }">
                                 <template v-if="header == 'photo'">
                                     <img :src="tr[header]" @error="loadErrorImage" style="width: 100px" />
                                 </template>
@@ -342,6 +305,12 @@
                                     <a target="_blank" :href="tr[header]"><img src="/images/attach.png" width="100px"/></a>
                                     <!-- <img :src="tr[header]" @error="loadErrorImage" style="width: 100px" /> -->
                                 </template>
+                                <template v-else-if="header == 'status' && tr[header] && typeof tr[header] === 'object'">
+                                    <span class="dt-badge" :class="'dt-badge--' + statusTone(tr[header])">{{ statusTitle(tr[header]) }}</span>
+                                </template>
+                                <template v-else-if="isAmountColumn(header)">
+                                    <span class="dt-amount">{{ formatAmount(customField(tr, header)) }}</span>
+                                </template>
                                 <template v-else>
                                     <template>{{ customField(tr, header) }}</template>
                                     <!-- <template v-if="header == 'status'">
@@ -353,46 +322,27 @@
                                     </template> -->
                                 </template>
                             </vs-td>
-                            <vs-td style="width: 120px;">
-                                <template v-if="dataAttributes.actionButton">
-                                    <template v-for="rowBtnAction in dataAttributes.actionButton">
-                                        <feather-icon
-                                            v-if="rowBtnAction.allow && dataTables.permissions !== undefined && dataTables.model_name !== undefined && dataTables.permissions[rowBtnAction.permission + '_' + dataTables.model_name]"
-                                            style="cursor: pointer;" :icon="rowBtnAction.icon"
-                                            svgClasses="mr-2 w-5 h-5 hover:text-primary stroke-current"
-                                            @click.stop="initAction(rowBtnAction, tr, rowBtnAction.method)" />
+                            <vs-td class="dt-actions-cell">
+                                <div class="dt-actions">
+                                    <template v-for="(rowBtnAction, bi) in (dataAttributes.actionButton || [])">
+                                        <button :key="'act-' + bi"
+                                            v-if="rowBtnAction.allow && can(rowBtnAction.permission)"
+                                            type="button" class="dt-action" :title="rowBtnAction.title ? $t(rowBtnAction.title) : ''"
+                                            @click.stop="initAction(rowBtnAction, tr, rowBtnAction.method)">
+                                            <feather-icon :icon="rowBtnAction.icon" svgClasses="w-4 h-4" />
+                                        </button>
                                     </template>
-                                </template>
-                                <template v-else>
-                                    <!-- <center>
-                                    <feather-icon style="cursor: pointer;" :key="sindex" icon="EditIcon"
-                                        svgClasses="mr-2 w-5 h-5 hover:text-primary stroke-current"
-                                        @click.stop="initAction(rowBtnAction, tr, 'Edit')" />
-                                </center> -->
-                                    <!-- <feather-icon style="cursor: pointer;" :key="sindex" icon="DollarSignIcon"
-                                svgClasses="mr-2 w-5 h-5 hover:text-primary stroke-current"
-                                @click.stop="initAction(rowBtnAction, tr, 'PrivateForm')" /> -->
-                                </template>
 
-                                <!-- <template v-if="dataAttributes.actionButton">
-                                <feather-icon style="cursor: pointer;" v-for="rowBtnAction in dataAttributes.actionButton"
-                                    :key="rowBtnAction.indextr" :icon="rowBtnAction.icon"
-                                    svgClasses="mr-2 w-5 h-5 hover:text-primary stroke-current"
-                                    @click.stop="viewUrl(rowBtnAction)" />
-                                </template> -->
-                                <template
-                                    v-if="dataTables.permissions !== undefined && dataTables.model_name !== undefined && dataTables.permissions['edit' + '_' + dataTables.model_name]">
-                                    <feather-icon style="cursor: pointer;" icon="EditIcon"
-                                        svgClasses="w-5 h-5 hover:text-primary stroke-current"
-                                        @click.stop="initEdit(tr)" />
-                                </template>
+                                    <button v-if="can('edit')" type="button" class="dt-action dt-action--edit"
+                                        :title="$t('dt_edit')" @click.stop="initEdit(tr)">
+                                        <feather-icon icon="Edit2Icon" svgClasses="w-4 h-4" />
+                                    </button>
 
-                                <template
-                                    v-if="dataTables.permissions !== undefined && dataTables.model_name !== undefined && dataTables.permissions['delete' + '_' + dataTables.model_name]">
-                                    <feather-icon style="cursor: pointer;" v-if="allowDel" icon="TrashIcon"
-                                        svgClasses="w-5 h-5 hover:text-danger stroke-current" class="ml-2"
-                                        @click.stop="initDel(tr.id)" />
-                                </template>
+                                    <button v-if="allowDel && can('delete')" type="button" class="dt-action dt-action--delete"
+                                        :title="$t('dt_delete')" @click.stop="initDel(tr.id, tr)">
+                                        <feather-icon icon="Trash2Icon" svgClasses="w-4 h-4" />
+                                    </button>
+                                </div>
                             </vs-td>
                         </vs-tr>
                     </tbody>
@@ -479,7 +429,7 @@
             </vs-table>
 
             <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 3" :max-items="dataTables.limit"
-                :data="dataTables.data" style="overflow: scroll">
+                :data="dataTables.data" style="overflow-x: auto">
                 <template slot-scope="{data}">
                     <vs-tr>
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
@@ -587,7 +537,7 @@
             </vs-table>
 
             <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 4" :max-items="dataTables.limit"
-                :data="dataTables.data" style="overflow: scroll">
+                :data="dataTables.data" style="overflow-x: auto">
                 <template slot-scope="{data}">
                     <vs-tr>
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
@@ -689,7 +639,7 @@
             </vs-table>
 
             <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 5" :max-items="dataTables.limit"
-                :data="dataTables.data" style="overflow: scroll">
+                :data="dataTables.data" style="overflow-x: auto">
 
                 <template slot-scope="{data}">
 
@@ -839,7 +789,7 @@
             </vs-table>
 
             <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 6" :max-items="dataTables.limit"
-                :data="dataTables.data" style="overflow: scroll">
+                :data="dataTables.data" style="overflow-x: auto">
                 <template slot-scope="{data}">
 
                     <vs-tr>
@@ -902,7 +852,7 @@
             </vs-table>
 
             <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 7" :max-items="dataTables.limit"
-                :data="dataTables.data" style="overflow: scroll">
+                :data="dataTables.data" style="overflow-x: auto">
                 <template slot-scope="{data}">
 
                     <vs-tr>
@@ -968,7 +918,7 @@
 
             <!-- Income Form -->
             <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 8" :max-items="dataTables.limit"
-                :data="dataTables.data" style="overflow: scroll">
+                :data="dataTables.data" style="overflow-x: auto">
                 <template slot-scope="{data}">
 
                     <vs-tr>
@@ -1195,7 +1145,7 @@
 
             <!-- Expense Form  -->
             <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 9" :max-items="dataTables.limit"
-                :data="dataTables.data" style="overflow: scroll">
+                :data="dataTables.data" style="overflow-x: auto">
                 <template slot-scope="{data}">
 
                     <vs-tr>
@@ -1421,7 +1371,7 @@
             </vs-table>
 
             <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 10" :max-items="dataTables.limit"
-                :data="dataTables.data" style="overflow: scroll">
+                :data="dataTables.data" style="overflow-x: auto">
                 <template slot-scope="{data}">
                     <vs-tr>
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
@@ -1528,7 +1478,7 @@
             </vs-table>
 
             <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 11" :max-items="dataTables.limit"
-                :data="dataTables.data" style="overflow: scroll">
+                :data="dataTables.data" style="overflow-x: auto">
                 <template slot-scope="{data}">
 
                     <vs-tr>
@@ -1790,8 +1740,9 @@
             </vs-table>
         </div>
 
-        <div class="my-5">
-            ចំនួនសរុប: {{ dataTables.total }}<vs-pagination :total="calPaginNumber(dataTables.total / dataTables.limit)"
+        <div class="dt-footer">
+            <span class="dt-footer__info">{{ $t('dt_showing', pageRange) }}</span>
+            <vs-pagination :total="calPaginNumber(dataTables.total / dataTables.limit)"
                 v-model="current_page"></vs-pagination>
             <!-- <p class="mb-3">Current Page: {{ current_page }}</p>
             <vs-button @click="current_page++">Increment</vs-button>
@@ -1954,6 +1905,15 @@ export default {
         DFileUploader,
         StatisticsCardLine
     },
+    computed: {
+        pageRange() {
+            const total = Number(this.dataTables.total) || 0
+            const limit = Number(this.dataTables.limit) || 10
+            const from = total ? (this.current_page - 1) * limit + 1 : 0
+            const to = Math.min(this.current_page * limit, total)
+            return { from: this.formatCount(from), to: this.formatCount(to), total: this.formatCount(total) }
+        },
+    },
     methods: {
         loadErrorImage(event) {
             event.target.src = this.notFoundFile;
@@ -2105,13 +2065,29 @@ export default {
             }
             this.$emit('clicked', _search_params);
         },
-        initDel(id) {
+        initDel(id, row) {
             this.dataId = id;
+            this.confirmDelete(row);
+        },
+        // Best human-readable name for a row, in the current language
+        rowLabel(row) {
+            if (!row) return ''
+            const en = this.$i18n.locale === 'en'
+            const candidates = en
+                ? [row.title_en, row.name_en, row.title_kh, row.name_kh]
+                : [row.title_kh, row.name_kh, row.title_en, row.name_en]
+            const fullName = [row.first_name, row.last_name].filter(Boolean).join(' ')
+            return [...candidates, row.title, row.name, fullName, row.username].find(v => typeof v === 'string' && v.trim()) || ''
+        },
+        confirmDelete(row) {
+            const name = this.rowLabel(row)
             this.$vs.dialog({
                 type: 'confirm',
                 color: 'danger',
-                title: `Confirm`,
-                text: 'តើអ្នកពិតជាចង់ធ្វើការលុបទិន្នន័យនេះជារៀងរហូត?',
+                title: this.$t('dt_delete_title'),
+                text: name ? this.$t('dt_delete_text_named', { name }) : this.$t('dt_delete_text'),
+                acceptText: this.$t('dt_delete'),
+                cancelText: this.$t('dt_cancel'),
                 accept: this.acceptAlert
             })
         },
@@ -2169,13 +2145,7 @@ export default {
             }
             if (method == "Delete") {
                 this.dataId = data.id;
-                this.$vs.dialog({
-                    type: 'confirm',
-                    color: 'danger',
-                    title: `Confirm`,
-                    text: 'តើអ្នកពិតជាចង់ធ្វើការលុបទិន្នន័យនេះជារៀងរហូត?',
-                    accept: this.acceptAlert
-                })
+                this.confirmDelete(data);
             }
             if (method == "Indicator") {
                 this.$refs.refModalForm.initForm(data);
@@ -2261,6 +2231,31 @@ export default {
                 this.selectedFormat = "xlsx"
         },
         // Customize on Data Display
+        can(action) {
+            const { permissions, model_name } = this.dataTables
+            return Boolean(permissions && model_name && permissions[action + '_' + model_name])
+        },
+        statusTitle(status) {
+            return (this.$i18n.locale === 'en' ? status.title_en : status.title_kh) || status.title_kh || status.title_en
+        },
+        statusTone(status) {
+            const title = String(status.title_en || '').toLowerCase()
+            if (/approv|complet|active|paid|success/.test(title) && !/inactive/.test(title)) return 'success'
+            if (/review|pending|draft|progress/.test(title)) return 'warning'
+            if (/cancel|delet|reject|inactive|unpaid|fail/.test(title)) return 'danger'
+            return 'neutral'
+        },
+        isAmountColumn(column) {
+            return /(^|_)(amount|total|price|balance|salary)(_|$)/.test(String(column))
+        },
+        formatAmount(value) {
+            const number = Number(String(value).replace(/,/g, ''))
+            if (value === null || value === '' || isNaN(number)) return value
+            return number.toLocaleString('en-US', { maximumFractionDigits: 2 })
+        },
+        formatCount(value) {
+            return Number(value || 0).toLocaleString('en-US')
+        },
         customField(row, column) {
             switch (column) {
                 case "status":
@@ -2481,5 +2476,311 @@ th.rotate {
             justify-content: center;
         }
     }
+}
+</style>
+<style lang="scss">
+// ---------------------------------------------------------------- Standard list page
+.dt-list {
+  // Toolbar
+  .dt-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+
+    &__title {
+      min-width: 0;
+
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #2c2e45;
+        line-height: 1.4;
+      }
+
+      p {
+        margin-top: 2px;
+        font-size: .82rem;
+        color: #8a8ca5;
+      }
+    }
+
+    &__actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+
+  .dt-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 38px;
+    padding: 0 14px;
+    font-family: inherit;
+    font-size: .9rem;
+    font-weight: 500;
+    border-radius: 10px;
+    border: 1px solid #e3e5ee;
+    background: #fff;
+    color: #5e6078;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
+
+    .feather-icon {
+      display: flex;
+    }
+
+    &:hover {
+      border-color: rgba(var(--vs-primary), .5);
+      color: rgb(var(--vs-primary));
+    }
+
+    &--icon {
+      width: 38px;
+      padding: 0;
+
+      &.is-active {
+        color: rgb(var(--vs-primary));
+        border-color: rgba(var(--vs-primary), .5);
+        background: rgba(var(--vs-primary), .08);
+      }
+    }
+
+    &--primary {
+      color: #fff;
+      border-color: rgb(var(--vs-primary));
+      background: rgb(var(--vs-primary));
+      box-shadow: 0 6px 14px -6px rgba(var(--vs-primary), .7);
+
+      &:hover {
+        color: #fff;
+        filter: brightness(.95);
+      }
+    }
+  }
+
+  // Table
+  .vs-con-table {
+    background: transparent;
+
+    .vs-con-tbody {
+      background: #fff !important;
+      border: 1px solid #eceef4 !important;
+      border-radius: 12px;
+      overflow: auto;
+    }
+
+    table.vs-table {
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    .vs-table--thead th,
+    thead th {
+      padding: 12px 14px !important;
+      background: #f6f7fb !important;
+      color: #5e6078 !important;
+      font-size: .8rem;
+      font-weight: 600 !important;
+      border: none !important;
+      border-bottom: 1px solid #eceef4 !important;
+      white-space: nowrap;
+
+      .vs-table-text {
+        text-transform: none;
+        font-weight: 600;
+        justify-content: flex-start;
+      }
+    }
+
+    tr td {
+      padding: 12px 14px !important;
+      border: none !important;
+      border-bottom: 1px solid #f1f2f6 !important;
+      color: #3f4157;
+      font-size: .9rem;
+      vertical-align: middle;
+    }
+
+    tbody:last-child tr td {
+      border-bottom: none !important;
+    }
+
+    tr.tr-values {
+      transition: background .15s;
+
+      &:hover {
+        background: #fafbfd !important;
+        transform: none !important;
+      }
+    }
+  }
+
+  // Cells
+  .dt-amount {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .dt-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    font-size: .78rem;
+    font-weight: 600;
+    white-space: nowrap;
+    border-radius: 999px;
+
+    &::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    &--success { color: #1f9d55; background: rgba(40, 199, 111, .12); }
+    &--warning { color: #d97706; background: rgba(255, 159, 67, .15); }
+    &--danger  { color: #d93b3b; background: rgba(234, 84, 85, .12); }
+    &--neutral { color: #5e6078; background: #f1f2f6; }
+  }
+
+  .dt-actions-cell {
+    width: 1%;
+    white-space: nowrap;
+  }
+
+  .dt-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dt-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: #f4f5f9;
+    color: #6e7091;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+
+    .feather-icon {
+      display: flex;
+    }
+
+    &:hover {
+      color: rgb(var(--vs-primary));
+      background: rgba(var(--vs-primary), .12);
+    }
+
+    &--edit:hover {
+      color: #2f6fed;
+      background: rgba(47, 111, 237, .12);
+    }
+
+    &--delete:hover {
+      color: rgb(var(--vs-danger));
+      background: rgba(var(--vs-danger), .12);
+    }
+  }
+
+  // Alignment: text left, amounts right, actions right
+  .vs-con-table {
+    thead th,
+    .vs-table--thead th {
+      text-align: left !important;
+
+      .vs-table-text {
+        display: flex !important;
+        justify-content: flex-start;
+      }
+
+      &.dt-num,
+      &.dt-actions-head {
+        text-align: right !important;
+
+        .vs-table-text {
+          justify-content: flex-end;
+        }
+      }
+    }
+
+    td.dt-num {
+      text-align: right;
+    }
+
+    .dt-actions-cell .dt-actions {
+      justify-content: flex-end;
+    }
+
+    // Row number column stays narrow
+    thead th:first-child,
+    tr td:first-child {
+      width: 1%;
+      white-space: nowrap;
+      color: #8a8ca5;
+    }
+  }
+
+  // Footer
+  .dt-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px;
+
+    &__info {
+      font-size: .85rem;
+      color: #8a8ca5;
+    }
+
+    .con-vs-pagination {
+      flex: 0 0 auto;
+      width: auto;
+      margin: 0 0 0 auto;
+    }
+
+    .vs-pagination--nav {
+      justify-content: flex-end;
+    }
+  }
+}
+
+.theme-dark .dt-list {
+  .dt-toolbar__title h3 { color: #fff; }
+  .dt-btn:not(.dt-btn--primary),
+  .dt-action {
+    color: #c2c6dc;
+    border-color: #414561;
+    background: #262c49;
+  }
+  .vs-con-table .vs-con-tbody {
+    background: #262c49 !important;
+    border-color: #414561 !important;
+  }
+  .vs-con-table thead th {
+    background: #10163a !important;
+    color: #c2c6dc !important;
+  }
+  .vs-con-table tr td {
+    color: #c2c6dc;
+    border-color: #414561 !important;
+  }
 }
 </style>

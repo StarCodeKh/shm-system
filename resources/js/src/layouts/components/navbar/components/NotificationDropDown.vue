@@ -1,64 +1,42 @@
 <template>
   <!-- NOTIFICATIONS -->
   <vs-dropdown vs-custom-content vs-trigger-click class="cursor-pointer">
-    <feather-icon icon="BellIcon" class="cursor-pointer mt-1 sm:mr-6 -mr-1" :badge="countNot" />
-    <vs-dropdown-menu class="notification-dropdown dropdown-custom vx-navbar-dropdown">
-      <div class="notification-top text-center p-5 bg-primary text-white">
-        <h3 class="text-white">{{ countNot }} New</h3>
-        <p class="opacity-75">Notifications</p>
+    <button type="button" class="nav-icon-btn" :title="$t('nav_notifications')">
+      <feather-icon icon="BellIcon" svgClasses="h-5 w-5" :class="{ 'nav-bell--ring': countNot }" />
+      <span v-if="countNot" class="nav-badge">{{ countNot > 99 ? '99+' : countNot }}</span>
+    </button>
+
+    <vs-dropdown-menu class="nav-notify-menu dropdown-custom vx-navbar-dropdown">
+      <div class="nav-notify-menu__header">
+        <h4>{{ $t('nav_notifications') }}</h4>
+        <span v-if="countNot" class="nav-notify-menu__count">{{ $t('nav_new', { n: countNot }) }}</span>
       </div>
-      <VuePerfectScrollbar ref="mainSidebarPs" class="scroll-area--nofications-dropdown p-0 mb-10" :settings="settings" :key="$vs.rtl">
-        <ul class="bordered-items">
-          <li v-for="ntf in unreadNotifications" :key="ntf.id" class="flex justify-between px-4 py-4 notification cursor-pointer">
-            <div class="flex items-start">
-              <!-- <feather-icon :icon="ntf.icon" :svgClasses="[`text-${ntf.category}`, 'stroke-current mr-1 h-6 w-6']"></feather-icon> -->
-              <div class="mx-2">
-                <span class="font-medium block notification-title" :class="[`text-${ntf.notifiable_type.category}`]">{{ ntf.title }}</span>
-                <small>{{ ntf.message }}</small>
-              </div>
+
+      <VuePerfectScrollbar v-if="unreadNotifications.length" ref="mainSidebarPs" class="nav-notify-menu__list"
+        :settings="settings" :key="$vs.rtl">
+        <ul>
+          <li v-for="ntf in unreadNotifications" :key="ntf.id" class="nav-notify-item" @click="openNotification(ntf)">
+            <span class="nav-notify-item__icon">
+              <feather-icon icon="BellIcon" svgClasses="h-4 w-4" />
+            </span>
+            <div class="nav-notify-item__body">
+              <p class="nav-notify-item__title">{{ ntf.data && ntf.data.title }}</p>
+              <p class="nav-notify-item__text">{{ ntf.data && ntf.data.message }}</p>
+              <p class="nav-notify-item__time">{{ elapsedTime(ntf.created_at) }}</p>
             </div>
-            <small class="mt-1 whitespace-no-wrap">{{ elapsedTime(ntf.created_at) }}</small>
           </li>
         </ul>
       </VuePerfectScrollbar>
-      <div v-if="countNot" class="
-        checkout-footer
-        fixed
-        bottom-0
-        rounded-b-lg
-        text-primary
-        w-full
-        p-2
-        font-semibold
-        text-center
-        border
-        border-b-0
-        border-l-0
-        border-r-0
-        border-solid
-        d-theme-border-grey-light
-        cursor-pointer">
-        <span class="show-notification-title" @click="initViewNotification()">បង្ហាញការជូនដំណឹងទាំងអស់</span>
+
+      <div v-else class="nav-notify-menu__empty">
+        <span><feather-icon icon="BellOffIcon" svgClasses="h-6 w-6" /></span>
+        <p class="font-semibold">{{ $t('nav_no_notifications') }}</p>
+        <small>{{ $t('nav_all_caught_up') }}</small>
       </div>
-      <div v-else class="
-        checkout-footer
-        fixed
-        bottom-0
-        rounded-b-lg
-        text-danger
-        w-full
-        p-2
-        font-semibold
-        text-center
-        border
-        border-b-0
-        border-l-0
-        border-r-0
-        border-solid
-        d-theme-border-grey-light
-        cursor-pointer">
-        <span class="show-notification-title">ពុំមានការជូនដំណឹងទេ!</span>
-      </div>
+
+      <button type="button" class="nav-notify-menu__footer" @click="initViewNotification()">
+        {{ $t('nav_view_all') }}
+      </button>
     </vs-dropdown-menu>
   </vs-dropdown>
 </template>
@@ -66,8 +44,9 @@
 <script>
   import axios from "@/axios.js"
   import apiConfig from "@/apiConfig.js"
-  import { ref } from 'vue';
   import VuePerfectScrollbar from 'vue-perfect-scrollbar'
+
+  const REFRESH_MS = 60 * 1000
 
   export default {
     components: {
@@ -76,157 +55,241 @@
     data() {
       return {
         api: apiConfig._apiUnreadNotification,
-        data: {},
-        page_number: 1,
-        unreadNotifications: [
-            {
-              "id": 4,
-              "type": "App\\Notifications\\DailyReminderNotification",
-              "notifiable_id": 1,
-              "notifiable_type": "App\\User",
-              "data": {
-                  "title": "Daily Reminder",
-                  "message": "Don’t forget to check your tasks today!",
-                  "action_url": "http://localhost/dashboard",
-                  "image": null
-              },
-              "read_at": null,
-              "created_at": "2025-08-31T08:48:32.000000Z",
-              "updated_at": "2025-08-31T08:48:32.000000Z"
-              // index    : 0,
-              // title    : 'សំណើរផ្លាស់ប្តូរគណនីយ ពីក្រសួងអប់រំ យុវជននិងកីឡា',
-              // message      : 'ស្នើសុំដោះដូមន្ត្រីចំនួន ២រូប',
-              // icon     : 'MessageSquareIcon',
-              // time     : this.randomDate({sec: 10}),
-              // category : 'primary'
-            },
-            // { index    : 1,
-            //   title    : 'សំណើរផ្លាស់ប្តូរគណនីយ',
-            //   msg      : 'ស្នើសុំដោះដូមន្ត្រីចំនួន ២រូប',
-            //   icon     : 'PackageIcon',
-            //   time     : this.randomDate({sec: 40}),
-            //   category : 'success'
-            // },
-            // { index    : 2,
-            //   title    : 'សំណើរផ្លាស់ប្តូរគណនីយ!',
-            //   msg      : 'ស្នើសុំដោះដូមន្ត្រីចំនួន ២រូប',
-            //   icon     : 'AlertOctagonIcon',
-            //   time     : this.randomDate({min: 1}),
-            //   category : 'danger'
-            // },
-            // { index    : 3,
-            //   title    : 'សំណើរផ្លាស់ប្តូរគណនីយ',
-            //   msg      : 'ស្នើសុំដោះដូមន្ត្រីចំនួន ២រូប',
-            //   icon     : 'MailIcon',
-            //   time     : this.randomDate({min: 6}),
-            //   category : 'primary'
-            // },
-            // { index    : 4,
-            //   title    : 'សំណើរផ្លាស់ប្តូរគណនីយ',
-            //   msg      : 'ស្នើសុំដោះដូមន្ត្រីចំនួន ២រូប',
-            //   icon     : 'CalendarIcon',
-            //   time     : this.randomDate({hr: 2}),
-            //   category : 'warning'
-            // },
-        ],
+        unreadNotifications: [],
         countNot: 0,
+        poller: null,
         settings: {
           maxScrollbarLength: 60,
           wheelSpeed: .60,
         },
       }
     },
-    created(){
-      // if(this.unreadNotifications.length > 0){
-      //   this.countNot = this.unreadNotifications.length
-      // }else{
-      //   this.countNot = 0
-      // }
+    created() {
       this.getData();
+      this.poller = setInterval(this.getData, REFRESH_MS)
+    },
+    beforeDestroy() {
+      clearInterval(this.poller)
     },
     methods: {
-      getDataTable(_search_criteria) {
-        return new Promise((resolve, reject) => {
-          axios.get(this.api)
-              .then((response) => {
-                this.unreadNotifications = response.data.unread_notifications;
-                this.countNot = response.data.unread_count;
-                this.$vs.loading.close();
-              }).catch((error) => {
-              // reject(error)
-              this.$vs.notify({
-                title: 'Message',
-                text: "Error, while trying to do action or no permission allow!",
-                iconPack: 'feather',
-                icon: 'icon-check-circle',
-                color: 'danger'
-              })
-              this.$vs.loading.close();
-          })
-        })
-      },
       getData() {
-        let _search_criteria = {
-          sort: "",
-          order: "",
-          page_number: this.page_number,
-          search_field: ""
-        }
-        this.getDataTable(_search_criteria);
+        return axios.get(this.api)
+          .then((response) => {
+            this.unreadNotifications = response.data.unread_notifications || [];
+            this.countNot = response.data.unread_count || 0;
+          }).catch(() => {
+            // Background refresh: keep the last known list rather than toasting every minute
+          })
+      },
+      openNotification(ntf) {
+        const url = ntf.data && ntf.data.action_url
+        // Only follow in-app paths; absolute URLs from older notifications fall back to the list
+        if (url && url.startsWith('/')) this.$router.push(url).catch(() => { })
+        else this.initViewNotification()
       },
       initViewNotification(){
         this.$router.push("/nofication").catch(() => { });
       },
       elapsedTime(startTime) {
-        let x        = new Date(startTime)
-        let now      = new Date()
-        var timeDiff = now - x
-        timeDiff    /= 1000
+        const seconds = Math.max(0, Math.floor((new Date() - new Date(startTime)) / 1000))
+        const minutes = Math.floor(seconds / 60)
+        const hours = Math.floor(minutes / 60)
+        const days = Math.floor(hours / 24)
+        const years = Math.floor(days / 365)
 
-        var seconds = Math.round(timeDiff)
-        timeDiff    = Math.floor(timeDiff / 60)
-
-        var minutes = Math.round(timeDiff % 60)
-        timeDiff    = Math.floor(timeDiff / 60)
-
-        var hours   = Math.round(timeDiff % 24)
-        timeDiff    = Math.floor(timeDiff / 24)
-
-        var days    = Math.round(timeDiff % 365)
-        timeDiff    = Math.floor(timeDiff / 365)
-
-        var years   = timeDiff
-
-        if (years > 0) {
-          return years + (years > 1 ? ' Years ' : ' Year ') + 'ago'
-        } else if (days > 0) {
-          return days + (days > 1 ? ' Days ' : ' Day ') + 'ago'
-        } else if (hours > 0) {
-          return hours + (hours > 1 ? ' Hrs ' : ' Hour ') + 'ago'
-        } else if (minutes > 0) {
-          return minutes + (minutes > 1 ? ' Mins ' : ' Min ') + 'ago'
-        } else if (seconds > 0) {
-          return seconds + (seconds > 1 ? ' sec ago' : 'just now')
-        }
-
-        return 'Just Now'
+        if (years > 0) return this.$t('time_years_ago', { n: years })
+        if (days > 0) return this.$t('time_days_ago', { n: days })
+        if (hours > 0) return this.$t('time_hours_ago', { n: hours })
+        if (minutes > 0) return this.$t('time_minutes_ago', { n: minutes })
+        return this.$t('time_just_now')
       },
-      // Method for creating dummy notification time
-      randomDate({ hr, min, sec }) {
-        let date = new Date()
-
-        if (hr) date.setHours(date.getHours() - hr)
-        if (min) date.setMinutes(date.getMinutes() - min)
-        if (sec) date.setSeconds(date.getSeconds() - sec)
-
-        return date
-      }
     }
   }
 </script>
 
 <style lang="scss">
-  span.show-notification-title{
-    font-family: var(--font-base);
+.nav-badge {
+  position: absolute;
+  top: 4px;
+  right: 3px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  font-size: .65rem;
+  font-weight: 700;
+  line-height: 17px;
+  text-align: center;
+  color: #fff;
+  border-radius: 9px;
+  background: rgb(var(--vs-danger));
+  box-shadow: 0 0 0 2px #fff;
+}
+
+.nav-bell--ring {
+  animation: nav-bell-ring 2.4s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+@keyframes nav-bell-ring {
+  0%, 80%, 100% { transform: rotate(0); }
+  84% { transform: rotate(14deg); }
+  88% { transform: rotate(-12deg); }
+  92% { transform: rotate(8deg); }
+  96% { transform: rotate(-4deg); }
+}
+
+.nav-notify-menu {
+  .vs-dropdown--custom {
+    padding: 0;
+    width: 360px;
+    max-width: calc(100vw - 32px);
+    overflow: hidden;
   }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid #eef0f5;
+
+    h4 {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+  }
+
+  &__count {
+    padding: 2px 10px;
+    font-size: .75rem;
+    font-weight: 600;
+    border-radius: 999px;
+    color: rgb(var(--vs-primary));
+    background: rgba(var(--vs-primary), .12);
+  }
+
+  &__list {
+    position: relative;
+    max-height: 340px;
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px;
+    text-align: center;
+    color: #8a8ca5;
+
+    span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      margin-bottom: 10px;
+      border-radius: 50%;
+      background: #f4f5f9;
+    }
+
+    p {
+      color: #2c2e45;
+    }
+  }
+
+  &__footer {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    font-family: inherit;
+    font-size: .875rem;
+    font-weight: 600;
+    color: rgb(var(--vs-primary));
+    border: none;
+    border-top: 1px solid #eef0f5;
+    background: transparent;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(var(--vs-primary), .05);
+    }
+  }
+}
+
+.nav-notify-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background .15s;
+
+  & + & {
+    border-top: 1px solid #f2f3f7;
+  }
+
+  &:hover {
+    background: #f8f9fb;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    color: rgb(var(--vs-primary));
+    background: rgba(var(--vs-primary), .12);
+
+    .feather-icon {
+      display: flex;
+    }
+  }
+
+  &__body {
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: .875rem;
+    font-weight: 600;
+    color: #2c2e45;
+  }
+
+  &__text {
+    font-size: .8rem;
+    color: #6e7091;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  &__time {
+    margin-top: 2px;
+    font-size: .72rem;
+    color: #a3a5bb;
+  }
+}
+
+.theme-dark {
+  .nav-badge {
+    box-shadow: 0 0 0 2px #10163a;
+  }
+  .nav-notify-menu__header,
+  .nav-notify-menu__footer {
+    border-color: #414561;
+  }
+  .nav-notify-menu__empty span {
+    background: #262c49;
+  }
+  .nav-notify-menu__empty p,
+  .nav-notify-item__title {
+    color: #fff;
+  }
+  .nav-notify-item:hover {
+    background: #262c49;
+  }
+}
 </style>

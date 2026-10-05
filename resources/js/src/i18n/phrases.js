@@ -1,0 +1,151 @@
+/*=========================================================================================
+  File Name: phrases.js
+  Description: Translations for fixed text that is written inline in the code
+               (route titles/breadcrumbs in router.js, $vs.notify / $vs.dialog messages).
+
+  Keyed by the exact source text, so existing code keeps working unchanged.
+  Each entry gives the text per locale; a missing locale falls back to the source text.
+  Use it through `$tt(text)` (see i18n.js). New screens should prefer i18nData keys + $t().
+==========================================================================================*/
+
+export default {
+  // ------------------------------------------------------------- Route titles & breadcrumbs
+  'ទំព័រដើម': { en: 'Home' },
+  'ផ្ទាំងគ្រប់គ្រង': { en: 'Dashboard' },
+  'Dashboard': { kh: 'ផ្ទាំងគ្រប់គ្រង' },
+  'គណនី': { en: 'Accounts' },
+  'ទម្រង់': { en: 'Form' },
+  'ទម្រង់បំពេញ': { en: 'Entry Form' },
+  'ទម្រង់បង្កើត': { en: 'Create Form' },
+  'របាយការណ៍': { en: 'Reports' },
+  'បញ្ជី': { en: 'List' },
+  'តារាង': { en: 'Table' },
+  'លម្អិត': { en: 'Details' },
+  'ពត៌មានលម្អិត': { en: 'Details' },
+  'List View': { kh: 'បញ្ជី' },
+  'User View': { kh: 'ព័ត៌មានអ្នកប្រើប្រាស់' },
+  'View': { kh: 'មើល' },
+  'Tabs': { kh: 'ផ្ទាំង' },
+  'Components': { kh: 'សមាសភាគ' },
+  'ការកំណត់': { en: 'Settings' },
+  'ការជូនដំណឹង': { en: 'Notifications' },
+  'ឃាំ្លងឯកសារ': { en: 'File Manager' },
+
+  // Users & access
+  'អ្នកប្រើប្រាស់': { en: 'Users' },
+  'រាយនាមអ្នកប្រើប្រាស់': { en: 'User List' },
+  'ទិន្នន័យអ្នកប្រើប្រាស់': { en: 'User Details' },
+  'សិទ្ធិ': { en: 'Roles' },
+  'រាយឈ្មោះសិទ្ធិ': { en: 'Role List' },
+  'កំណត់ហេតុ': { en: 'Audit Log' },
+  'កំណត់ហេតុប្រើប្រាស់': { en: 'Usage Log' },
+
+  // Members
+  'គ្រប់គ្រងសមាជិក': { en: 'Member Management' },
+  'បញ្ជីសមាជិក': { en: 'Member List' },
+  'បង្កើតសមាជិក': { en: 'Add Member' },
+  'រាយនាមមន្ត្រី': { en: 'Officer List' },
+  'ការផ្លាស់ប្តូរសមាសភាព': { en: 'Membership Changes' },
+  'រាយនាមមន្ត្រីផ្លាស់ប្តូរសមាសភាព': { en: 'Officers with Membership Changes' },
+  'បញ្ជីសំណើរ': { en: 'Requests' },
+  'រាយនាមបញ្ជីសំណើរ': { en: 'Request List' },
+  'សំណើរ': { en: 'Request' },
+
+  // Payments & allowances
+  'គ្រប់គ្រងការបង់ប្រាក់': { en: 'Payment Management' },
+  'ការបង់ប្រាក់': { en: 'Payments' },
+  'វិធីបង់ប្រាក់': { en: 'Payment Methods' },
+  'គ្រប់គ្រងប្រាក់ឧបត្ថម្ភ': { en: 'Allowance Management' },
+  'ការគ្រប់គ្រងប្រាក់ឧបត្ថម្ភ': { en: 'Allowance Management' },
+  'បង្កើតប្រាក់ឧបត្ថម្ភ': { en: 'Create Allowance' },
+  'តារាងបើកផ្តល់ប្រាក់ឧបត្ថម្ភ': { en: 'Allowance Disbursement Table' },
+  'បញ្ជីសមាជិកបើកប្រាក់ឧបត្ថម្ភ': { en: 'Members Receiving Allowances' },
+
+  // Finance
+  'ការគ្រប់គ្រងចំណូល': { en: 'Income Management' },
+  'ការចំណាយ': { en: 'Expenses' },
+  'តារាងគណនី': { en: 'Chart of Accounts' },
+  'ក្រុមគណនីយ': { en: 'Account Groups' },
+  'ប្រភេទគណនី': { en: 'Account Types' },
+  'គណនីធនាគារ': { en: 'Bank Accounts' },
+  'ការគណនាពន្ធ': { en: 'Tax Calculation' },
+  'តារាងផ្នែក': { en: 'Departments' },
+  'រៀបចំទិន្នន័យ': { en: 'Data Setup' },
+
+  // Budget
+  'រៀបចំថវិកា': { en: 'Budget Preparation' },
+  'តាមដានអនុវត្តថវិកា': { en: 'Budget Monitoring' },
+  'ពិដានថវិកា': { en: 'Budget Ceiling' },
+  'កំណត់ពិដានថវិកា': { en: 'Set Budget Ceiling' },
+  'គម្រោងវិនិយោគថវិកា': { en: 'Budget Investment Project' },
+  'រៀបចំគម្រោងវិនិយោគសាធារណៈ': { en: 'Public Investment Program' },
+  'រៀបចំយុទ្ធសាស្ត្រថវិកា': { en: 'Budget Strategic Plan' },
+  'រៀបចំកម្មវិធីចំណូល': { en: 'Income Program' },
+  'រៀបចំកម្មវិធីចំណាយត្រីមាស': { en: 'Quarterly Expense Program' },
+  'ឥណទានច្បាប់ចំណូល': { en: 'Revenue Credit Rules' },
+  'ឥណទានច្បាប់ចំណាយ': { en: 'Expense Credit Rules' },
+  'ចុះលទ្ធផលអនុវត្តចំណូល': { en: 'Record Income Results' },
+  'ចុះលទ្ធផលអនុវត្តចំណាយ': { en: 'Record Expense Results' },
+  'ចុះសលាកបត្រចំណាយ': { en: 'Record Expenditure Certificates' },
+  'ចលនាឥណទាន': { en: 'Credit Movement' },
+  'គ្រប់គ្រងកម្មវិធី': { en: 'Program Management' },
+  'គោលបំណង': { en: 'Objectives' },
+  'កម្មវិធី': { en: 'Programs' },
+  'អនុកម្មវិធី': { en: 'Sub-programs' },
+  'ចង្កោមសកម្មភាព': { en: 'Activity Clusters' },
+  'សកម្មភាព': { en: 'Activities' },
+  'ការងារ': { en: 'Tasks' },
+
+  // Reports
+  'គ្រប់គ្រងរបាយការណ៍': { en: 'Report Management' },
+  'បញ្ជីរបាយការណ៍': { en: 'Report List' },
+  'របាយការណ៍ចំណូល': { en: 'Income Report' },
+  'របាយការណ៍ចំណូល/ចំណាយត្រីមាស': { en: 'Quarterly Income/Expense Report' },
+  'របាយការណ៍សង្ខេបចំណូល ចំណាយ': { en: 'Income & Expense Summary' },
+  'របាយការណ៍ចលនាឥណទាន': { en: 'Credit Movement Report' },
+  'របាយការណ៍កម្មវិធី': { en: 'Program Report' },
+  'របាយការណ៍ផែនការថវិកា': { en: 'Budget Plan Report' },
+  'របាយការណ៍គម្រោងថវិកាប្រចាំឆ្នាំ': { en: 'Annual Budget Report' },
+  'របាយការណ៍គម្រោងវិនិយោគ': { en: 'Investment Project Report' },
+  'របាយការណ៍លម្អិតការបើកផ្តល់ប្រាក់ឧបត្ថម្ភ': { en: 'Allowance Disbursement Details' },
+  'របាយការណ៍ការបើកផ្តល់ប្រាក់ឧបត្ថម្ភ': { en: 'Allowance Disbursement Report' },
+  'របាយការណ៍ប្រាក់ឧបត្ថម្ភតាមវិស័យ': { en: 'Allowances by Sector' },
+  'របាយការណ៍ប្រាក់ឧបត្ថម្ភតាមធនាគារ': { en: 'Allowances by Bank' },
+  'របាយការណ៍ប្រាក់ឧបត្ថម្ភតាមត្រីមាស': { en: 'Allowances by Quarter' },
+  'របាយការណ៍ប្រាក់ឧបត្ថម្ភប្រចាំខែ': { en: 'Monthly Allowance Report' },
+
+  // ------------------------------------------------------------- Toast / dialog messages
+  'Message': { kh: 'សារ' },
+  'Success': { kh: 'ជោគជ័យ' },
+  'Warning': { kh: 'ការព្រមាន' },
+  'Accept': { kh: 'យល់ព្រម' },
+  'Cancel': { kh: 'បោះបង់' },
+  'Error': { kh: 'កំហុស' },
+  'Confirm': { kh: 'បញ្ជាក់' },
+  'Loading...': { kh: 'កំពុងដំណើរការ...' },
+  'Error, while trying to do action or no permission allow!': {
+    kh: 'មិនអាចធ្វើសកម្មភាពនេះបានទេ ឬអ្នកគ្មានសិទ្ធិ។',
+    en: "This action couldn't be completed, or you don't have permission.",
+  },
+  'Error, while trying to do action, please double check criteria form!': {
+    kh: 'មិនអាចធ្វើសកម្មភាពនេះបានទេ។ សូមពិនិត្យលក្ខខណ្ឌស្វែងរកឡើងវិញ។',
+    en: "This action couldn't be completed. Please check the search criteria.",
+  },
+  'Login Attempt': { kh: 'ការចូលប្រើប្រាស់' },
+  'You are already logged in!': { kh: 'អ្នកបានចូលប្រើប្រាស់រួចហើយ។', en: 'You are already signed in.' },
+  'Upload Success': { kh: 'បានផ្ទុកឡើងដោយជោគជ័យ' },
+  'ពត៌មានត្រូវបានលុប.': { en: 'Record deleted.' },
+  'ពត៌មានត្រូវបានបង្កើត.': { en: 'Record created.' },
+  'ពត៌មានត្រូវបានកែប្រែ.': { en: 'Record updated.' },
+  'មិនអាចដំណើរកាបានទេ,​ សូមត្រួតពិនិត្យពត៌មានឡើងវិញ។': { en: "Couldn't complete the action. Please check the information and try again." },
+  'មិនអាចដំណើរកាបានទេ,​ សូមត្រួតពិនិត្យពត៌មានឡើងវិញ!!': { en: "Couldn't complete the action. Please check the information and try again." },
+  'មិនអាចធ្វើបច្ចុប្បន្នភាពបានទេ,​ សូមត្រួតពិនិត្យពត៌មានឡើងវិញ។': { en: "Couldn't update. Please check the information and try again." },
+  'មានបញ្ហា,​ សូមត្រួតពិនិត្យពត៌មានឡើងវិញ។': { en: 'Something went wrong. Please check the information and try again.' },
+  'មានបញ្ហាពេលទាញពត៌មាន!': { en: 'There was a problem loading the data.' },
+  'ការជូនដំណឹង': { en: 'Notifications' },
+  'តើអ្នកពិតជាចង់ធ្វើការលុបទិន្នន័យនេះជារៀងរហូត?': { en: 'Are you sure you want to permanently delete this record?' },
+  'ពត៌មានមិនទាន់បំពេញគ្រប់ សូមពិនិត្យឡើងវិញ!': { en: 'Some information is missing. Please review the form.' },
+  'ព័ត៌មានពុំទាន់គ្រប់ជ្រុងជ្រោយ': { en: 'The information is incomplete.' },
+  'កំពុងទាញយកទិន្នន័យ': { en: 'Loading data' },
+  'កំពុងទាញទិន្នន័យ...': { en: 'Loading data...' },
+}

@@ -16,7 +16,7 @@
                     </div>
                 </div>
                 
-                <div class="truncate">
+                <div class="truncate stat-card-line__body">
                     <h2 class="mb-1 font-bold">{{ statistic }}</h2>
                     <span>{{ statisticTitle }}</span>
                 </div>
@@ -158,7 +158,8 @@ export default{
 </script>
 
 <style lang="scss">
-    .truncate {
+    // Scoped to this card: a bare .truncate rule also pushed down every sidebar label
+    .stat-card-line__body {
         padding-top: 5%;
     }
 </style>

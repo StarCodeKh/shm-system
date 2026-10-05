@@ -1,13 +1,13 @@
 <template>
     <div class="demo-alignment">
-        <vs-popup v-if="dataAttributes.popupFullscreen" fullscreen classContent="popup-example" :title="title"
+        <vs-popup v-if="dataAttributes.popupFullscreen" class="d-modal" :class="sizeClass" classContent="popup-example" :title="popupTitle"
             :active.sync="showModalForm">
             <!-- Modal Indicator Sub Program-->
             <!-- <modal-indicator-sub-program v-if="dataAttributes.hasIndicatorSubPro" :dataInfo="dataInfo"
                 ref="refInitRequest"></modal-indicator-sub-program> -->
 
             <span v-if="!dataAttributes.hideFormData">
-                <d-form @clickForm="initTableData" ref="refModalForm" :data="data" :dataInfo="dataInfo"
+                <d-form @clickForm="initTableData" @cancel="showModalForm = false" ref="refModalForm" :data="data" :dataInfo="dataInfo"
                     :parentDataInfo="parentDataInfo" :formAttributes="formAttributes" :api="api"
                     :rowDisplay="rowDisplay"/>
             </span>
@@ -16,8 +16,8 @@
                 :dataAttributes="dataAttributes"></d-indicator> -->
         </vs-popup>
         
-        <vs-popup v-else classContent="popup-example" :title="title" :active.sync="showModalForm">
-            <d-form @clickForm="initTableData" ref="refModalForm" :data="data" :dataInfo="dataInfo"
+        <vs-popup v-else class="d-modal" :class="sizeClass" classContent="popup-example" :title="popupTitle" :active.sync="showModalForm">
+            <d-form @clickForm="initTableData" @cancel="showModalForm = false" ref="refModalForm" :data="data" :dataInfo="dataInfo"
                 :parentDataInfo="parentDataInfo" :formAttributes="formAttributes" :api="api"
                 :rowDisplay="rowDisplay"/>
             <!-- <d-indicator v-if="dataAttributes.hasIndicator" :dataInfo="dataInfo"
@@ -79,6 +79,24 @@ export default {
                 }
             ]
         }
+    },
+    computed: {
+        // Popup width follows the form: column layout, number of fields, child tables
+        sizeClass() {
+            const fields = (this.formAttributes || []).filter(f => f && f.type !== 'hidden')
+            if (fields.some(f => f.type === 'grid' || f.type === 'text_group')) return 'd-modal--xl'
+            const columns = { '1grid': 1, '2grid': 2, '3grid': 3, '4grid': 4 }[this.rowDisplay] || 2
+            const used = Math.min(columns, Math.max(fields.length, 1))
+            if (used <= 1 || fields.length <= 3) return 'd-modal--sm'
+            return { 2: 'd-modal--md', 3: 'd-modal--lg', 4: 'd-modal--xl' }[used]
+        },
+        // "Create …" for new records, "Edit …" when a record is loaded
+        popupTitle() {
+            const name = this.$te(this.title) ? this.$t(this.title) : this.title
+            return this.dataInfo && this.dataInfo.id
+                ? this.$t('form_edit_title', { name })
+                : this.$t('form_new_title', { name })
+        },
     },
     methods: {
         // To show popup form when create new data

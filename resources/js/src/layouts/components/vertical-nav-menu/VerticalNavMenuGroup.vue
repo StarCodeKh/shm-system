@@ -29,8 +29,8 @@
         <!-- Group Collapse Icon -->
         <feather-icon
           v-show     = "!verticalNavMenuItemsMin"
-          :class     = "[{'rotate90' : openItems}, 'feather-grp-header-arrow']"
-          :icon       = "$vs.rtl ? 'ChevronLeftIcon' : 'ChevronRightIcon'"
+          :class     = "[{'is-open' : openItems}, 'feather-grp-header-arrow']"
+          :icon      = "$vs.rtl ? 'ChevronLeftIcon' : 'ChevronRightIcon'"
           svg-classes= "w-4 h-4" />
 
         <!-- Group Tooltip -->
@@ -73,6 +73,7 @@
 
 <script>
 import VNavMenuItem from './VerticalNavMenuItem.vue'
+import { containsActive } from './menuActive'
 
 export default {
   name  : 'v-nav-menu-group',
@@ -100,23 +101,7 @@ export default {
       }
     },
     isGroupActive() {
-      return (item) => {
-        const path        = this.$route.fullPath
-        let open          = false
-        const routeParent = this.$route.meta ? this.$route.meta.parent : undefined
-
-        let func = (item) => {
-          if (item.submenu) {
-            item.submenu.forEach((item) => {
-              if ((path == item.url || routeParent == item.slug) && item.url) { open = true}
-              else if (item.submenu) { func(item) }
-            })
-          }
-        }
-
-        func(item)
-        return open
-      }
+      return (item) => containsActive(item, this.$route.path)
     },
   },
   watch: {
@@ -124,7 +109,7 @@ export default {
     '$route'() {
       if (this.verticalNavMenuItemsMin) return
 
-      let scrollHeight = this.scrollHeight
+      let scrollHeight = this.$refs.items.scrollHeight
 
       // Collapse Group
       if (this.openItems && !this.open) {

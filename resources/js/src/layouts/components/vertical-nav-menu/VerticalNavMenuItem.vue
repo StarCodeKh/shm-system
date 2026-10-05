@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import { activeMenuUrl } from './menuActive'
+
 export default {
   name: 'v-nav-menu-item',
   props: {
@@ -48,7 +50,7 @@ export default {
       return this.to ? this.$acl.check(this.$router.match(this.to).meta.rule) : true
     },
     activeLink() {
-      return ((this.to == this.$route.path) || (this.$route.meta.parent == this.slug) && this.to) ? true : false
+      return Boolean(this.to) && activeMenuUrl(this.$route.path) === this.to
     }
   }
 }

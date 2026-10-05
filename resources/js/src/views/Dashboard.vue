@@ -3,10 +3,10 @@
         <!-- Toolbar -->
         <div class="dashboard-toolbar">
             <div class="mr-4 mb-3">
-                <h3 class="mb-1">ផ្ទាំងគ្រប់គ្រង</h3>
+                <h3 class="mb-1">{{ $t('Dashboard') }}</h3>
                 <p class="text-grey">
-                    ទិន្នន័យពី {{ formatDate(range.start) }} ដល់ {{ formatDate(range.end) }}
-                    <span v-if="updatedAt"> · ធ្វើបច្ចុប្បន្នភាព {{ updatedAt }}</span>
+                    {{ $t('dash_data_range', { start: formatDate(range.start), end: formatDate(range.end) }) }}
+                    <span v-if="updatedAt"> · {{ $t('dash_updated_at', { time: updatedAt }) }}</span>
                 </p>
             </div>
             <div class="flex flex-wrap items-center mb-3">
@@ -14,13 +14,13 @@
                     v-model="dateRange"
                     :config="dateConfig"
                     class="vs-input dashboard-date mr-3 mb-2"
-                    placeholder="ជ្រើសរើសកាលបរិច្ឆេទ" />
+                    :placeholder="$t('dash_pick_date')" />
                 <div class="currency-switch mr-3 mb-2">
                     <button v-for="c in ['KHR', 'USD']" :key="c" :class="{ active: currency === c }" @click="currency = c">
-                        {{ c === 'KHR' ? '៛ រៀល' : '$ ដុល្លារ' }}
+                        {{ c === 'KHR' ? '៛ ' + $t('dash_riel') : '$ ' + $t('dash_dollar') }}
                     </button>
                 </div>
-                <vx-tooltip text="ផ្ទុកឡើងវិញ" position="top">
+                <vx-tooltip :text="$t('dash_reload')" position="top">
                     <div class="toolbar-btn mb-2" :class="{ spinning: loading }" @click="load">
                         <feather-icon icon="RefreshCwIcon" svgClasses="h-5 w-5" />
                     </div>
@@ -31,8 +31,8 @@
         <!-- Error -->
         <vx-card v-if="error" class="text-center py-8 mb-base">
             <feather-icon icon="AlertTriangleIcon" svgClasses="h-10 w-10 text-danger" />
-            <p class="mt-3 mb-4">មិនអាចទាញយកទិន្នន័យបានទេ។</p>
-            <vs-button type="border" @click="load">ព្យាយាមម្តងទៀត</vs-button>
+            <p class="mt-3 mb-4">{{ $t('dash_load_error') }}</p>
+            <vs-button type="border" @click="load">{{ $t('dash_retry') }}</vs-button>
         </vx-card>
 
         <!-- KPI cards -->
@@ -59,7 +59,7 @@
         <!-- Monthly income vs expense + payment progress -->
         <div class="vx-row">
             <div class="vx-col w-full lg:w-2/3 mb-base">
-                <vx-card title="ចំណូល និង ចំណាយប្រចាំខែ" class="h-full">
+                <vx-card :title="$t('dash_monthly_income_expense')" class="h-full">
                     <div v-if="summary">
                         <vue-apex-charts type="bar" height="300" :options="monthlyOptions" :series="monthlySeries" />
                         <div class="quarter-strip">
@@ -75,21 +75,21 @@
             </div>
 
             <div class="vx-col w-full lg:w-1/3 mb-base">
-                <vx-card title="ការបង់ប្រាក់សមាជិក" class="h-full">
+                <vx-card :title="$t('dash_member_payments')" class="h-full">
                     <template v-if="summary">
                         <vue-apex-charts type="radialBar" height="240" :options="paymentOptions" :series="[payment.percent]" />
                         <div class="flex text-center payment-split">
                             <div class="w-1/2">
-                                <p class="text-grey">បានបង់រួច</p>
+                                <p class="text-grey">{{ $t('dash_paid') }}</p>
                                 <h3 class="text-success">{{ number(payment.paid) }}</h3>
                             </div>
                             <div class="w-1/2">
-                                <p class="text-grey">មិនទាន់បង់</p>
+                                <p class="text-grey">{{ $t('dash_unpaid') }}</p>
                                 <h3 class="text-danger">{{ number(payment.unpaid) }}</h3>
                             </div>
                         </div>
                         <p v-if="payment.unpaidAmount" class="text-center text-grey mt-3">
-                            ប្រាក់មិនទាន់បង់: <b class="text-danger">{{ money(payment.unpaidAmount) }}</b>
+                            {{ $t('dash_unpaid_amount') }}: <b class="text-danger">{{ money(payment.unpaidAmount) }}</b>
                         </p>
                     </template>
                     <div v-else class="skeleton-block" style="height: 330px"></div>
@@ -100,7 +100,7 @@
         <!-- Members -->
         <div class="vx-row">
             <div class="vx-col w-full lg:w-1/2 mb-base">
-                <vx-card title="ស្ថានភាពសមាជិក" class="h-full">
+                <vx-card :title="$t('dash_member_status')" class="h-full">
                     <template v-if="summary">
                         <vue-apex-charts type="donut" height="300" :options="memberStatusOptions" :series="memberStatus.map(s => s.value)" />
                     </template>
@@ -108,8 +108,8 @@
                 </vx-card>
             </div>
             <div class="vx-col w-full lg:w-1/2 mb-base">
-                <vx-card title="សមាជិកថ្មីតាមឆ្នាំ" class="h-full">
-                    <vue-apex-charts v-if="summary" type="bar" height="300" :options="growthOptions" :series="[{ name: 'សមាជិកថ្មី', data: summary.officerStatisticSeries || [] }]" />
+                <vx-card :title="$t('dash_new_members_by_year')" class="h-full">
+                    <vue-apex-charts v-if="summary" type="bar" height="300" :options="growthOptions" :series="[{ name: $t('dash_new_members'), data: summary.officerStatisticSeries || [] }]" />
                     <div v-else class="skeleton-block" style="height: 300px"></div>
                 </vx-card>
             </div>
@@ -118,7 +118,7 @@
         <!-- Incentives + income by entity -->
         <div class="vx-row">
             <div class="vx-col w-full lg:w-1/3 mb-base">
-                <vx-card title="ប្រាក់ឧបត្ថម្ភតាមប្រភេទ" class="h-full">
+                <vx-card :title="$t('dash_allowance_by_type')" class="h-full">
                     <template v-if="summary">
                         <template v-if="incentives.length">
                             <vue-apex-charts type="donut" height="240" :options="incentiveOptions" :series="incentives.map(i => i.amount)" />
@@ -134,19 +134,19 @@
                         </template>
                         <div v-else class="empty-state">
                             <feather-icon icon="GiftIcon" svgClasses="h-8 w-8" />
-                            <p>មិនមានប្រាក់ឧបត្ថម្ភក្នុងរយៈពេលនេះ</p>
+                            <p>{{ $t('dash_no_allowance') }}</p>
                         </div>
                     </template>
                     <div v-else class="skeleton-block" style="height: 300px"></div>
                 </vx-card>
             </div>
             <div class="vx-col w-full lg:w-2/3 mb-base">
-                <vx-card title="ចំណូលតាមស្ថាប័ន (៛)" class="h-full">
+                <vx-card :title="$t('dash_income_by_entity') + ' (៛)'" class="h-full">
                     <template v-if="summary">
-                        <vue-apex-charts v-if="entityIncome.length" type="bar" :height="Math.max(220, entityIncome.length * 42)" :options="entityOptions" :series="[{ name: 'ចំណូល', data: entityIncome.map(e => e.amount) }]" />
+                        <vue-apex-charts v-if="entityIncome.length" type="bar" :height="Math.max(220, entityIncome.length * 42)" :options="entityOptions" :series="[{ name: $t('dash_income'), data: entityIncome.map(e => e.amount) }]" />
                         <div v-else class="empty-state">
                             <feather-icon icon="BarChart2Icon" svgClasses="h-8 w-8" />
-                            <p>មិនមានទិន្នន័យចំណូល</p>
+                            <p>{{ $t('dash_no_income') }}</p>
                         </div>
                     </template>
                     <div v-else class="skeleton-block" style="height: 300px"></div>
@@ -163,7 +163,10 @@ import "flatpickr/dist/flatpickr.css"
 import axios from "@/axios.js"
 import router from "@/router"
 
-const KH_MONTHS = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"]
+const MONTHS = {
+    kh: ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"],
+    en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+}
 const PALETTE = ["#7367F0", "#28C76F", "#FF9F43", "#EA5455", "#00CFE8", "#F35588", "#4A5F9D"]
 const toNumber = (value) => Number(String(value || 0).replace(/,/g, "")) || 0
 
@@ -206,36 +209,37 @@ export default {
             const members = s.totalMember || {}
             return [
                 {
-                    key: "members", label: "សមាជិកសរុប", icon: "UsersIcon", color: "#7367F0",
+                    key: "members", label: this.$t("dash_total_members"), icon: "UsersIcon", color: "#7367F0",
                     value: this.number(members.totalMembers),
-                    sub: `ប្រុស ${this.number(members.totalMales)} · ស្រី ${this.number(members.totalFemales)}`,
+                    sub: `${this.$t("dash_male")} ${this.number(members.totalMales)} · ${this.$t("dash_female")} ${this.number(members.totalFemales)}`,
                     trend: s.officerStatisticSeries || [],
                 },
                 {
-                    key: "income", label: "ចំណូលសរុប", icon: "TrendingUpIcon", color: "#28C76F",
+                    key: "income", label: this.$t("dash_total_income"), icon: "TrendingUpIcon", color: "#28C76F",
                     value: this.money(pick(s.totalIncome, "total_in_khr", "total_in_usd")),
-                    sub: "ចំណូល + ការបង់ប្រាក់សមាជិក", trend: this.trend.income,
+                    sub: this.$t("dash_total_income_sub"), trend: this.trend.income,
                 },
                 {
-                    key: "expense", label: "ចំណាយសរុប", icon: "TrendingDownIcon", color: "#EA5455",
+                    key: "expense", label: this.$t("dash_total_expense"), icon: "TrendingDownIcon", color: "#EA5455",
                     value: this.money(pick(s.totalExpense, "total_in_khr", "total_in_usd")),
-                    sub: "ចំណាយ + ប្រាក់ឧបត្ថម្ភ", trend: this.trend.expense,
+                    sub: this.$t("dash_total_expense_sub"), trend: this.trend.expense,
                 },
                 {
-                    key: "balance", label: "សន្និធិសាច់ប្រាក់", icon: "DollarSignIcon", color: "#FF9F43",
+                    key: "balance", label: this.$t("dash_cash_balance"), icon: "DollarSignIcon", color: "#FF9F43",
                     value: this.money(pick(s.totalRemainingBalance, "remaining_balance_khr", "remaining_balance_usd")),
-                    sub: "ចំណូល − ចំណាយ", trend: this.trend.balance,
+                    sub: this.$t("dash_cash_balance_sub"), trend: this.trend.balance,
                 },
             ]
         },
         monthLabels() {
             const multiYear = new Set(this.trend.months.map(m => m.slice(0, 4))).size > 1
-            return this.trend.months.map(m => KH_MONTHS[Number(m.slice(5, 7)) - 1] + (multiYear ? ` ${m.slice(2, 4)}` : ""))
+            const names = MONTHS[this.$i18n.locale] || MONTHS.en
+            return this.trend.months.map(m => names[Number(m.slice(5, 7)) - 1] + (multiYear ? ` ${m.slice(2, 4)}` : ""))
         },
         monthlySeries() {
             return [
-                { name: "ចំណូល", data: this.trend.income },
-                { name: "ចំណាយ", data: this.trend.expense },
+                { name: this.$t("dash_income"), data: this.trend.income },
+                { name: this.$t("dash_expense"), data: this.trend.expense },
             ]
         },
         monthlyOptions() {
@@ -287,16 +291,16 @@ export default {
                 },
                 fill: { type: "gradient", gradient: { shade: "light", type: "horizontal", gradientToColors: ["#7367F0"], stops: [0, 100] } },
                 stroke: { lineCap: "round" },
-                labels: ["បានបង់"],
+                labels: [this.$t("dash_paid")],
             }
         },
         memberStatus() {
             const m = (this.summary && this.summary.totalMember) || {}
             return [
-                { label: "សកម្ម", value: toNumber(m.activeMembers) },
-                { label: "អសកម្ម", value: toNumber(m.inactiveMembers) },
-                { label: "ចូលនិវត្តន៍", value: toNumber(m.retiredMembers) },
-                { label: "ទទួលមរណភាព", value: toNumber(m.deadMembers) },
+                { label: this.$t("dash_status_active"), value: toNumber(m.activeMembers) },
+                { label: this.$t("dash_status_inactive"), value: toNumber(m.inactiveMembers) },
+                { label: this.$t("dash_status_retired"), value: toNumber(m.retiredMembers) },
+                { label: this.$t("dash_status_deceased"), value: toNumber(m.deadMembers) },
             ]
         },
         memberStatusOptions() {
@@ -311,11 +315,11 @@ export default {
                     pie: {
                         donut: {
                             size: "70%",
-                            labels: { show: true, total: { show: true, label: "សរុប", formatter: () => this.number(this.memberStatus.reduce((a, s) => a + s.value, 0)) } },
+                            labels: { show: true, total: { show: true, label: this.$t("dash_total"), formatter: () => this.number(this.memberStatus.reduce((a, s) => a + s.value, 0)) } },
                         },
                     },
                 },
-                tooltip: { y: { formatter: v => `${this.number(v)} នាក់` } },
+                tooltip: { y: { formatter: v => this.$t("dash_people", { n: this.number(v) }) } },
             }
         },
         growthOptions() {
@@ -327,7 +331,7 @@ export default {
                 grid: { borderColor: "#eef0f4", strokeDashArray: 4 },
                 xaxis: { categories: (this.summary && this.summary.officerStatisticYears) || [], axisBorder: { show: false }, axisTicks: { show: false } },
                 yaxis: { show: false },
-                tooltip: { y: { formatter: v => `${this.number(v)} នាក់` } },
+                tooltip: { y: { formatter: v => this.$t("dash_people", { n: this.number(v) }) } },
             }
         },
         incentives() {

@@ -64,7 +64,7 @@
                 <div
                   class="content-area__heading"
                   :class="{'pr-4 border-0 md:border-r border-solid border-grey-light' : $route.meta.breadcrumb}">
-                  <h2 class="mb-1">{{ routeTitle }}</h2>
+                  <h2 class="mb-1">{{ $tt(routeTitle) }}</h2>
                 </div>
 
                 <!-- BREADCRUMB -->

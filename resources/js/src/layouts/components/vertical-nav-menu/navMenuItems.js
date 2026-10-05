@@ -28,11 +28,11 @@ export default [
   // ---------------------------------------------------------------- System
   {
     header: "System",
-    i18n: "មុខងារប្រព័ន្ធ",
+    i18n: "menu_system",
     items: [
       {
         name: "Members",
-        i18n: "គ្រប់គ្រងសមាជិក",
+        i18n: "menu_members",
         icon: "UsersIcon",
         submenu: [
           {
@@ -130,7 +130,7 @@ export default [
   // ---------------------------------------------------------------- Administration
   {
     header: "Administration",
-    i18n: "រដ្ឋបាល",
+    i18n: "menu_admin",
     items: [
       {
         name: "User",

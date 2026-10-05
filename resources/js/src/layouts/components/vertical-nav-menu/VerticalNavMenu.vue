@@ -13,36 +13,35 @@
       :reduce="reduce"
       v-hammer:swipe.left="onSwipeLeft">
 
-      <div @mouseenter="mouseEnter" @mouseleave="mouseLeave">
+      <div class="nav-shell" @mouseenter="mouseEnter" @mouseleave="mouseLeave">
 
         <!-- Header -->
-        <div class="header-sidebar flex items-end justify-between" slot="header">
+        <div class="header-sidebar nav-brand" :class="{ 'nav-brand--compact': reduce && !isMouseEnter }" slot="header">
 
           <!-- Logo -->
-          <router-link tag="div" class="vx-logo cursor-pointer flex items-center" to="/">
-            <logo class="w-10 mr-4 fill-current text-primary" />
-            <span class="vx-logo-text text-white" v-show="isMouseEnter || !reduce" v-if="title">{{ title }}</span>
+          <router-link to="/" class="nav-brand__link" :title="title">
+            <span class="nav-brand__logo">
+              <logo />
+            </span>
+            <span class="nav-brand__text" v-show="isMouseEnter || !reduce">
+              <span class="nav-brand__title" v-if="title">{{ title }}</span>
+              <span class="nav-brand__subtitle">{{ $t('brand_subtitle') }}</span>
+            </span>
           </router-link>
           <!-- /Logo -->
 
-          <!-- Menu Buttons -->
-          <div>
-            <!-- Close Button -->
-            <template v-if="showCloseButton">
-              <feather-icon icon="XIcon" class="m-0 cursor-pointer" @click="$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', false)" />
-            </template>
+          <!-- Close (small screens) -->
+          <button v-if="showCloseButton" type="button" class="nav-brand__btn"
+            @click="$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', false)">
+            <feather-icon icon="XIcon" svgClasses="h-4 w-4" />
+          </button>
 
-            <!-- Toggle Buttons -->
-            <template v-else-if="!showCloseButton && !verticalNavMenuItemsMin">
-              <feather-icon
-                id="btnVNavMenuMinToggler"
-                class="mr-0 cursor-pointer"
-                :icon="reduce ? 'CircleIcon' : 'DiscIcon'"
-                svg-classes="stroke-current text-primary"
-                @click="toggleReduce(!reduce)" />
-            </template>
-          </div>
-          <!-- /Menu Toggle Buttons -->
+          <!-- Collapse / expand -->
+          <button v-else-if="!verticalNavMenuItemsMin" v-show="isMouseEnter || !reduce" id="btnVNavMenuMinToggler"
+            type="button" class="nav-brand__btn" :class="{ 'is-reduced': reduce }"
+            :title="$t(reduce ? 'brand_expand' : 'brand_collapse')" @click="toggleReduce(!reduce)">
+            <feather-icon icon="ChevronsLeftIcon" svgClasses="h-4 w-4" />
+          </button>
         </div>
         <!-- /Header -->
 
@@ -104,6 +103,7 @@
 
 <script>
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
+import { containsActive } from './menuActive'
 import VNavMenuGroup from './VerticalNavMenuGroup.vue'
 import VNavMenuItem from './VerticalNavMenuItem.vue'
 
@@ -141,22 +141,7 @@ export default {
   }),
   computed: {
     isGroupActive() {
-      return (item) => {
-        const path        = this.$route.fullPath
-        const routeParent = this.$route.meta ? this.$route.meta.parent : undefined
-        let open          = false
-
-        let func = (item) => {
-          if (item.submenu) {
-            item.submenu.forEach((item) => {
-              if (item.url && (path === item.url || routeParent === item.slug)) { open = true }
-              else if (item.submenu) { func(item) }
-            })
-          }
-        }
-        func(item)
-        return open
-      }
+      return (item) => containsActive(item, this.$route.path)
     },
     // Visible items for this user, with each section header followed by its items.
     menuItemsUpdated() {
@@ -320,5 +305,423 @@ export default {
 .vs-sidebar-group, .navigation-header, .vs-sidebar--item, ul.vs-sidebar-group-items li,.content-wrapper, select, textarea, p, article, b, ul, li, button {
   font-family: var(--font-base);
 }
-@import "@sass/vuexy/components/verticalNavMenu.scss"
+@import "@sass/vuexy/components/verticalNavMenu.scss";
+
+// Header keeps its height, the menu scrolls in whatever space is left
+.v-nav-menu {
+  .vs-sidebar--items {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .nav-shell {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .header-sidebar.nav-brand {
+    flex-shrink: 0;
+  }
+
+  .scroll-area-v-nav-menu {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+    padding-bottom: 16px;
+  }
+}
+
+.v-nav-menu .header-sidebar.nav-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 18px 14px 16px 18px;
+  box-shadow: none;
+  border-bottom: 1px solid rgba(255, 255, 255, .12);
+
+  &.nav-brand--compact {
+    justify-content: center;
+    padding-left: 14px;
+  }
+}
+
+.nav-brand {
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    color: #fff;
+  }
+
+  &__logo {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    padding: 3px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, .18), 0 6px 14px rgba(0, 0, 0, .22);
+    transition: transform .25s ease;
+
+    div, img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__link:hover &__logo {
+    transform: rotate(-8deg) scale(1.05);
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.25;
+  }
+
+  &__title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: .01em;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  &__subtitle {
+    margin-top: 2px;
+    font-size: .72rem;
+    color: rgba(255, 255, 255, .7);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    background: rgba(255, 255, 255, .12);
+    cursor: pointer;
+    transition: background .15s ease;
+
+    .feather-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 !important; // Vuexy adds margin-right to every sidebar icon
+      transition: transform .25s ease;
+
+      svg {
+        color: #fff !important;
+      }
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, .22);
+    }
+
+    // Collapsed: point the arrows outward
+    &.is-reduced .feather-icon {
+      transform: rotate(180deg);
+    }
+  }
+}
+// ---------------------------------------------------------------- Menu items (blue sidebar)
+$nav-active-text: #34468a;
+
+.theme-semi-dark .v-nav-menu {
+  .scroll-area-v-nav-menu {
+    > .vs-sidebar--item,
+    > .vs-sidebar-group {
+      padding: 0 12px;
+    }
+  }
+
+  // Section titles
+  .navigation-header {
+    margin: 1.2rem 0 .4rem 1.5rem;
+    font-size: .72rem;
+    font-weight: 500;
+    letter-spacing: .06em;
+    color: rgba(255, 255, 255, .55);
+
+    &:first-child {
+      margin-top: .6rem;
+    }
+  }
+
+  // Links and group headers share one row style: icon box + label, vertically centered
+  .vs-sidebar--item a,
+  .vs-sidebar-group > .group-header {
+    position: relative; // anchors the group arrow to its own row
+    display: flex;
+    align-items: center;
+    min-height: 42px;
+    margin-bottom: 2px;
+    padding: 0 12px;
+    border-radius: 10px;
+    color: rgba(255, 255, 255, .88);
+    transition: background .15s ease, color .15s ease;
+
+    > *:not(.feather-grp-header-arrow) {
+      transform: none !important; // no sideways jump on hover
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, .1);
+    }
+  }
+
+  .vs-sidebar-group > .group-header > span:not(.feather-grp-header-arrow) {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding-right: 20px; // room for the arrow
+  }
+
+  // Fixed-size icon box so every label lines up
+  .vs-sidebar--item a > .feather-icon,
+  .vs-sidebar-group > .group-header > span > .feather-icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-right: 12px !important;
+    border-radius: 8px;
+    transition: background .15s ease;
+
+    .feather {
+      width: 19px;
+      height: 19px;
+      stroke-width: 1.8;
+    }
+  }
+
+  .vs-sidebar--item a span,
+  .vs-sidebar-group > .group-header span {
+    font-size: 14.5px;
+    line-height: 1.5;
+  }
+
+  // Active page: white pill, icon on a soft tinted square
+  .vs-sidebar--item .router-link-active {
+    background: #fff !important;
+    box-shadow: 0 6px 16px -6px rgba(0, 0, 0, .35);
+
+    span,
+    .feather-icon,
+    .feather-icon svg {
+      color: $nav-active-text !important;
+      font-weight: 600;
+    }
+
+    > .feather-icon {
+      background: rgba(52, 70, 138, .1);
+    }
+  }
+
+  // Open group, or group that holds the active page
+  .vs-sidebar-group {
+    &.vs-sidebar-group-open > .group-header,
+    &.vs-sidebar-group-active > .group-header {
+      background: rgba(255, 255, 255, .08) !important;
+      box-shadow: none;
+      border: none;
+    }
+
+    &.vs-sidebar-group-active > .group-header span {
+      color: #fff;
+      font-weight: 500;
+    }
+
+    &.vs-sidebar-group-active > .group-header > span > .feather-icon {
+      background: rgba(255, 255, 255, .14);
+    }
+
+    > .group-header .feather-grp-header-arrow {
+      position: absolute !important;
+      top: 50%;
+      right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      margin: -11px 0 0 !important;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, .1);
+      transform: rotate(0deg);
+      transition: transform .25s ease, background .15s ease;
+
+      .feather {
+        width: 14px;
+        height: 14px;
+        stroke-width: 2.2;
+      }
+
+      &.is-open {
+        transform: rotate(90deg);
+      }
+    }
+
+    > .group-header:hover .feather-grp-header-arrow {
+      background: rgba(255, 255, 255, .2);
+    }
+  }
+
+  // Sub-items hang off a thin guide line under the group icon
+  .vs-sidebar-group-items {
+    width: auto;
+    margin-left: 27px;
+    padding-left: 8px !important;
+    border-left: 1px solid rgba(255, 255, 255, .18);
+
+    .vs-sidebar--item a {
+      min-height: 38px;
+      padding: 0 10px;
+
+      > .feather-icon {
+        width: 26px;
+        height: 26px;
+        margin-right: 10px !important;
+
+        .feather {
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+  }
+}
+// ---------------------------------------------------------------- Motion
+// Row transforms are locked (no Vuexy sideways jump), so motion lives on the svg, pseudo-elements and list items.
+.theme-semi-dark .v-nav-menu {
+  // Light sweep across a link on hover
+  .vs-sidebar--item a {
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: -60%;
+      width: 50%;
+      background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .16), transparent);
+      transform: skewX(-20deg);
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    &:hover::after {
+      animation: nav-shine .7s ease forwards;
+    }
+  }
+
+  // Icons lift and tilt slightly on hover
+  .vs-sidebar--item a,
+  .vs-sidebar-group > .group-header {
+    .feather-icon .feather {
+      transition: transform .25s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    &:hover .feather-icon:not(.feather-grp-header-arrow) .feather {
+      transform: translateY(-1px) scale(1.12) rotate(-6deg);
+    }
+  }
+
+  // Active page: pill settles in and its icon pops
+  .vs-sidebar--item .router-link-active {
+    animation: nav-pill-in .35s cubic-bezier(.22, 1, .36, 1);
+
+    > .feather-icon .feather {
+      animation: nav-icon-pop .45s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    &::after {
+      background: linear-gradient(100deg, transparent, rgba(52, 70, 138, .08), transparent);
+    }
+  }
+
+  // Opening a group: sub-items cascade in
+  .vs-sidebar-group-open > .vs-sidebar-group-items > li {
+    animation: nav-item-in .32s cubic-bezier(.22, 1, .36, 1) both;
+
+    @for $i from 1 through 10 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{($i - 1) * 40}ms;
+      }
+    }
+  }
+
+  // Guide line grows down with the list
+  .vs-sidebar-group-open > .vs-sidebar-group-items {
+    animation: nav-guide-in .35s ease both;
+  }
+
+  // Section titles and top-level rows fade up once when the menu first renders
+  .scroll-area-v-nav-menu > .navigation-header,
+  .scroll-area-v-nav-menu > .vs-sidebar--item,
+  .scroll-area-v-nav-menu > .vs-sidebar-group {
+    animation: nav-item-in .4s cubic-bezier(.22, 1, .36, 1) both;
+
+    @for $i from 1 through 12 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 30}ms;
+      }
+    }
+  }
+}
+
+@keyframes nav-shine {
+  0% { left: -60%; opacity: 0; }
+  20% { opacity: 1; }
+  100% { left: 130%; opacity: 0; }
+}
+
+@keyframes nav-pill-in {
+  from { opacity: .4; transform: scale(.94); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes nav-icon-pop {
+  0% { transform: scale(.6) rotate(-15deg); }
+  60% { transform: scale(1.18) rotate(4deg); }
+  100% { transform: none; }
+}
+
+@keyframes nav-item-in {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes nav-guide-in {
+  from { border-left-color: transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v-nav-menu *,
+  .v-nav-menu *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
 </style>
