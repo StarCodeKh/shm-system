@@ -1,6 +1,5 @@
 #profile-page {
-    // font-family: 'Khmer MEF1';
-    font-family: "Khmer OS Battambang";
+    font-family: var(--font-document);
     .profile-img-container {
         display: flex;
         align-items: center;

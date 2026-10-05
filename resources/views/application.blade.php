@@ -8,6 +8,8 @@
     <!-- <link rel="icon" href="<%= BASE_URL %>favicon.ico"> -->
 
     <title>SHM-System</title>
+    <!-- Fonts are self-hosted, see resources/sass/vuexy/_fonts.scss -->
+    <link rel="preload" href="{{ asset('fonts/KantumruyPro.woff2') }}" as="font" type="font/woff2" crossorigin>
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset(mix('css/main.css')) }}">
     <link rel="stylesheet" href="{{ asset(mix('css/iconfont.css')) }}">
@@ -15,9 +17,6 @@
     <link rel="stylesheet" href="{{ asset(mix('css/vuesax.css')) }}">
     <link rel="stylesheet" href="{{ asset(mix('css/prism-tomorrow.css')) }}">
     <link rel="stylesheet" href="{{ asset(mix('css/app.css')) }}">
-    <style type="text/css">
-      @import url("https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
-    </style>
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ asset('images/logo/favicon.png') }}">
   </head>

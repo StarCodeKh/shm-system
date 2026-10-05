@@ -38,11 +38,11 @@ $black: #22292f;
         TYPOGRAPHY
 =========================================================*/
 
-$font-family-sans-serif:  "Kantumruy Pro" !default;
-$font-family-serif:       "Kantumruy Pro" !default;
+$font-family-sans-serif:  var(--font-base) !default;
+$font-family-serif:       var(--font-document) !default;
 
 //** Default monospace fonts for `<code>`, `<kbd>`, and `<pre>`.
-$font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace !default;
+$font-family-monospace:   var(--font-mono) !default;
 $font-family-base:        $font-family-sans-serif !default;
 
 $font-size-base:          14px !default;
@@ -59,7 +59,7 @@ $h6-font-size:                $font-size-base;
 
 $line-height-base:        1.625rem !default;
 
-$headings-font-family:    'Kantumruy Pro' !default;
+$headings-font-family:    var(--font-heading) !default;
 $headings-font-weight:    500 !default;
 $headings-line-height:    1.2 !default;
 $headings-color:          #2c2c2c;

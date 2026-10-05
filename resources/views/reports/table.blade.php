@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <title>{{ $title }}</title>
     <style>
-        body { font-family: battambang; font-size: 9pt; color: #2b2f3a; }
+        body { font-family: {{ config('pdf.default_font') }}; font-size: 9pt; color: #2b2f3a; }
 
         .header td { border: none; vertical-align: middle; }
         .org { font-size: 12pt; font-weight: bold; color: #283b6e; line-height: 1.7; }

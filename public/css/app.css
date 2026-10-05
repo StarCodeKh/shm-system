@@ -1,6 +1,4 @@
-@import url(https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100;
-
-0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap);/*=========================================================================================
+/*=========================================================================================
   File Name: app.scss
   Description: Write your custom scss
   ----------------------------------------------------------------------------------------
@@ -37,6 +35,74 @@
 /*========================================================
         DARK THEME
 =========================================================*/
+
+/*=========================================================================================
+  File Name: _fonts.scss
+  Description: Every font the app uses, self-hosted (no Google Fonts / CDN).
+  Font files live in resources/assets/fonts and are copied to public/fonts by webpack.mix.js.
+
+  Use the CSS variables below instead of font names, e.g. `font-family: var(--font-base);`.
+  To change a font, edit its variable here, or at runtime:
+    document.documentElement.style.setProperty('--font-base', "'Khmer OS Battambang', sans-serif")
+==========================================================================================*/
+
+@font-face {
+  font-family: "Kantumruy Pro";
+  src: url("/fonts/KantumruyPro.woff2") format("woff2");
+  font-weight: 100 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Kantumruy Pro";
+  src: url("/fonts/KantumruyPro-Italic.woff2") format("woff2");
+  font-weight: 100 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Khmer OS Battambang";
+  src: url("/fonts/KhmerOSBattambang.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Khmer MEF1";
+  src: url("/fonts/KhmerMEF1.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Khmer MEF2";
+  src: url("/fonts/KhmerMEF2.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FK1";
+  src: url("/fonts/FK1.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "FK2";
+  src: url("/fonts/FK2.woff2") format("woff2");
+  font-display: swap;
+}
+
+:root {
+  --font-base: "Kantumruy Pro", "Khmer OS Battambang", sans-serif;
+  --font-heading: var(--font-base);
+  --font-document: "Khmer OS Battambang", serif;
+  --font-mef1: "Khmer MEF1", var(--font-document);
+  --font-mef2: "Khmer MEF2", var(--font-document);
+  --font-fk1: "FK1", var(--font-document);
+  --font-fk2: "FK2", var(--font-document);
+  --font-mono: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
 html {
   font-size: 14px;
   height: 100%;
@@ -46,7 +112,7 @@ html {
 }
 
 body {
-  font-family: "Kantumruy Pro";
+  font-family: var(--font-base);
   font-weight: 400;
   overflow-x: hidden;
   max-width: 100%;
@@ -72,7 +138,7 @@ b,
 ul,
 li,
 button {
-  font-family: "Kantumruy Pro" !important;
+  font-family: var(--font-base) !important;
 }
 
 div.login-font input,
@@ -95,7 +161,7 @@ input,
 footer,
 button,
 span.vs-button-text.vs-button--text {
-  font-family: "Kantumruy Pro" !important;
+  font-family: var(--font-base) !important;
 }
 
 label {
@@ -867,7 +933,7 @@ h6,
 .h4,
 .h5,
 .h6 {
-  font-family: "Kantumruy Pro";
+  font-family: var(--font-heading);
   font-weight: 500;
   line-height: 1.2;
   color: #2c2c2c;
@@ -919,7 +985,7 @@ u {
 }
 
 code {
-  font-family: "Kantumruy Pro";
+  font-family: var(--font-base);
 }
 
 [dir] code {
@@ -4922,7 +4988,7 @@ select,
 textarea {
   width: 100%;
   font-size: 14px;
-  font-family: "Kantumruy Pro", sans-serif;
+  font-family: var(--font-base);
   transition: all 0.3s ease;
 }
 
@@ -5079,7 +5145,7 @@ textarea:focus {
   font-size: 16px;
   font-weight: 600;
   transition: all 0.3s ease;
-  font-family: "Kantumruy Pro", sans-serif;
+  font-family: var(--font-base);
 }
 
 [dir] .btn-submit {
@@ -5772,7 +5838,7 @@ textarea:focus {
 .vs-textarea {
   font-size: 1rem;
   color: inherit;
-  font-family: "Kantumruy Pro";
+  font-family: var(--font-base);
   line-height: 1.6;
 }
 

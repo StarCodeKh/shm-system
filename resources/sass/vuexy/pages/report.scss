@@ -1,77 +1,5 @@
-// body{
-//     /* text-align: justify; */
-//     font-size: 10.5pt;
-//     font-family: 'Khmer MEF1';
-// }
-// @font-face {
-//     font-family: 'FK1';
-//     src: url('/fonts/FK1.ttf');
-//   }
-  
-//   @font-face {
-//     font-family: 'FK2';
-//     src: url('/fonts/FK2.ttf');
-//   }
-  
-//   @font-face {
-//     font-family: 'Khmer MEF1';
-//     src: url('/fonts/KHMERMEF1.ttf');
-//   }
-  
-//   @font-face {
-//     font-family: 'Khmer MEF2';
-//     src: url('/fonts/KHMERMEF2.ttf');
-//   }
-// .font-mef1{
-//     font-family: 'Khmer MEF1';
-// }
-// .font-mef2{
-//     font-family: 'Khmer MEF2';
-// }
-// .font-fk1{
-//     font-family: 'FK1';
-// }
-// .font-fk2{
-//     font-family: 'FK2';
-// }
-
-@font-face {
-    font-family: 'Khmer OS Battambang Regular';
-    src: url('/fonts/Khmer OS Battambang Regular.ttf');
-}
-
-@font-face {
-    font-family: 'Khmer OS Battambang Regular';
-    src: url('/fonts/Khmer OS Battambang Regular.ttf');
-}
-
-@font-face {
-    font-family: 'Khmer OS Battambang Regular';
-    src: url('/fonts/Khmer OS Battambang Regular.ttf');
-}
-
-@font-face {
-    font-family: 'Khmer OS Battambang Regular';
-    src: url('/fonts/Khmer OS Battambang Regular.ttf');
-}
-
-.font-mef1 {
-    font-family: 'Khmer OS Battambang Regular';
-}
-
-.font-mef2 {
-    font-family: 'Khmer OS Battambang Regular';
-}
-
-.font-fk1 {
-    font-family: 'Khmer OS Battambang Regular';
-}
-
-.font-fk2 {
-    font-family: 'Khmer OS Battambang Regular';
-}
 .container{
-    font-family: 'Khmer OS Battambang Regular';
+    font-family: var(--font-document);
     // font-size: 10.5pt;
     font-size: 10pt;
     margin: 0 auto;
@@ -81,7 +9,7 @@
     line-height: 28px;
 }
 .container-inner{
-    font-family: 'Khmer OS Battambang Regular';
+    font-family: var(--font-document);
     font-size: 10.5pt;
     margin: 0 auto;
     clear: both;
@@ -202,26 +130,23 @@ table.table tr th.border-dash{
 }
 #invoice-page table th{
     font-weight: normal;
-    // font-family: 'Khmer MEF2';
-    font-family: "Khmer OS Battambang";
+    font-family: var(--font-document);
 }
 #invoice-page table tr td, #invoice-page table tr th{
     font-size: 8pt;
     border: 1px solid #000000;
 }
 .font-mef1{
-    font-family: "Khmer OS Battambang";
-    // font-family: 'Khmer MEF1';
+    font-family: var(--font-document);
 }
 .font-mef2{
-    font-family: "Khmer OS Battambang";
-    // font-family: 'Khmer MEF2';
+    font-family: var(--font-document);
 }
 .font-fk1{
-    font-family: 'FK1';
+    font-family: var(--font-fk1);
 }
 .font-fk2{
-    font-family: 'FK2';
+    font-family: var(--font-fk2);
 }
 .container{
     margin: 0 auto;

@@ -817,7 +817,7 @@ export default {
 
 <style lang="scss">
 #data-list-list-view {
-  font-family: 'Khmer MEF1';
+  font-family: var(--font-base);
   .vs-con-table {
 
     /*

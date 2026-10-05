@@ -1,43 +1,3 @@
-// @font-face {
-//   font-family: 'FK1';
-//   src: url('./fonts/FK1.ttf');
-// }
-
-// @font-face {
-//   font-family: 'FK2';
-//   src: url('./fonts/FK2.ttf');
-// }
-
-// @font-face {
-//   font-family: 'Khmer MEF1';
-//   src: url('./fonts/KHMERMEF1.ttf');
-// }
-
-// @font-face {
-//   font-family: 'Khmer MEF2';
-//   src: url('./fonts/KHMERMEF2.ttf');
-// }
-
-// @font-face {
-//   font-family: 'Kantumruy Pro Medium';
-//   src: url('/fonts/KantumruyPro-Medium.ttf');
-// }
-
-// @font-face {
-//   font-family: 'Kantumruy Pro Medium';
-//   src: url('/fonts/KantumruyPro-Medium.ttf');
-// }
-
-// @font-face {
-//   font-family: 'Kantumruy Pro Medium';
-//   src: url('/fonts/KantumruyPro-Medium.ttf');
-// }
-
-// @font-face {
-//   font-family: 'Kantumruy Pro Medium';
-//   src: url('/fonts/KantumruyPro-Medium.ttf');
-// }
-
 html {
   font-size: $font-size-base;
   height: 100%;
@@ -56,11 +16,8 @@ body {
   transition: background-color .3s ease;
 }
 .vs-sidebar-group, .navigation-header, .vs-sidebar--item, ul.vs-sidebar-group-items li,.content-wrapper, select, label, textarea, p, article, b, ul, li, button {
-  font-family: "Kantumruy Pro" !important;
+  font-family: var(--font-base) !important;
 }
-// input{
-//   font-family: 'Khmer MEF1';
-// }
 div.login-font input, INPUT[type="password"]{
   font-family: Arial !important;
 }
@@ -69,9 +26,7 @@ h3,
 h4,
 h5,
 h6,select, input, span, label, table tr td, th, input, footer, button, span.vs-button-text.vs-button--text{
-  // font-family: 'Khmer MEF1' !important;
-  // font-family: "Kantumruy Pro Medium" !important;
-  font-family: "Kantumruy Pro" !important;
+  font-family: var(--font-base) !important;
 }
 label{
   font-weight: bold;

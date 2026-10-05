@@ -203,16 +203,10 @@ class ReportController extends Controller
             'mode' => 'utf-8',
             'format' => 'A4',
             'orientation' => $orientation,
-            'tempDir' => storage_path('temp'),
-            'fontDir' => array_merge($fontDirs, [storage_path('fonts')]),
-            'fontdata' => $fontData + [
-                // mPDF font keys must be lowercase; useOTL is required for Khmer shaping.
-                'battambang' => [
-                    'R' => 'Khmer OS Battambang Regular.ttf',
-                    'useOTL' => 0xFF,
-                ],
-            ],
-            'default_font' => 'battambang',
+            'tempDir' => config('pdf.temp_dir'),
+            'fontDir' => array_merge($fontDirs, [config('pdf.font_dir')]),
+            'fontdata' => $fontData + config('pdf.fonts'),
+            'default_font' => config('pdf.default_font'),
             'margin_top' => 12,
             'margin_bottom' => 18,
             'margin_footer' => 8,

@@ -224,7 +224,7 @@ export default {
 
 <style lang="scss" scoped>
 .add-new-data-sidebar {
-font-family: 'Khmer MEF1';
+font-family: var(--font-base);
   ::v-deep .vs-sidebar--background {
     z-index: 52010;
   }

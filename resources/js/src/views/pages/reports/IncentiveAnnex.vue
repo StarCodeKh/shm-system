@@ -460,7 +460,7 @@ export default{
             page-break-after: always;
         }
         .invoice-page {
-            font-family: 'Khmer MEF1';
+            font-family: var(--font-document);
             * {
             visibility: hidden;
             }

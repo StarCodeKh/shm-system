@@ -808,7 +808,7 @@ export default{
     @media print {
         .move-left{margin-left: 0px !important}
         .invoice-page {
-            font-family: 'Khmer MEF1';
+            font-family: var(--font-document);
             * {
             visibility: hidden;
             }

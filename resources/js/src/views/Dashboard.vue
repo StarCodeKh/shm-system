@@ -1281,7 +1281,7 @@ export default{
 
 <style lang="scss">
     .main-dashboard{
-        font-family: 'Khmer MEF2';
+        font-family: var(--font-base);
         font-size: 13px;
     }
     h4{

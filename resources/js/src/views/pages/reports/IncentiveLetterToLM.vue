@@ -325,7 +325,7 @@ export default{
 <style lang="scss">
 @media print {
   .invoice-page {
-    font-family: 'Khmer MEF1';
+    font-family: var(--font-document);
     * {
       visibility: hidden;
     }

@@ -305,7 +305,7 @@ export default{
 </script>
 <style lang="scss">
     .main-dashboard{
-        font-family: 'Khmer MEF2';
+        font-family: var(--font-base);
         font-size: 11.5px;
     }
     h4{

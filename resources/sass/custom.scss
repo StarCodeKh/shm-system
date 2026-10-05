@@ -723,7 +723,7 @@ textarea {
             border: 2px solid #e1e1e1;
             border-radius: 10px;
             font-size: 14px;
-            font-family: 'Kantumruy Pro', sans-serif;
+            font-family: var(--font-base);
             transition: all 0.3s ease;
         }
 
@@ -832,7 +832,7 @@ textarea {
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-family: 'Kantumruy Pro', sans-serif;
+            font-family: var(--font-base);
             // margin-top: 10px;
         }
 

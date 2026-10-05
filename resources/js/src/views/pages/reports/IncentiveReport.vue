@@ -232,7 +232,7 @@ export default {
   padding-top: 10px;
 }
 #data-list-list-view {
-  font-family: 'Khmer MEF1';
+  font-family: var(--font-document);
   .vs-con-table {
 
     /*

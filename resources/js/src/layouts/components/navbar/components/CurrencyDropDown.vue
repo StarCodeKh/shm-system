@@ -61,6 +61,6 @@ export default {
 <style>
   .label-padding{
         padding-right: 10px;
-        font-family: "Kantumruy Pro Medium" !important;
+        font-family: var(--font-base) !important;
   }
 </style>

@@ -319,7 +319,7 @@ export default {
 
 <style lang="scss">
 .vs-sidebar-group, .navigation-header, .vs-sidebar--item, ul.vs-sidebar-group-items li,.content-wrapper, select, textarea, p, article, b, ul, li, button {
-  font-family: 'Khmer MEF1';
+  font-family: var(--font-base);
 }
 @import "@sass/vuexy/components/verticalNavMenu.scss"
 </style>

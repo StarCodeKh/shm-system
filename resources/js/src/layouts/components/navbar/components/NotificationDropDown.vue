@@ -227,6 +227,6 @@
 
 <style lang="scss">
   span.show-notification-title{
-    font-family: "Khmer MEF1";
+    font-family: var(--font-base);
   }
 </style>

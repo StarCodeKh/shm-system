@@ -1,15 +1,24 @@
 <?php
 
+/*
+|--------------------------------------------------------------------------
+| PDF (mPDF) settings
+|--------------------------------------------------------------------------
+| Fonts are read from the same folder the web app uses (resources/assets/fonts).
+| mPDF font keys must be lowercase. Khmer needs 'useOTL' => 0xFF for correct shaping.
+*/
+
 return [
-	'mode'                  => 'utf-8',
-	'format'                => 'A4',
-	'author'                => '',
-	'subject'               => '',
-	'keywords'              => '',
-	'creator'               => 'Laravel Pdf',
-	'display_mode'          => 'fullpage',
-	'tempDir'               => base_path('../temp/'),
-	'pdf_a'                 => false,
-	'pdf_a_auto'            => false,
-	'icc_profile_path'      => ''
+    'temp_dir' => storage_path('temp'),
+
+    'font_dir' => resource_path('assets/fonts'),
+
+    'default_font' => 'battambang',
+
+    'fonts' => [
+        'battambang' => [
+            'R' => 'KhmerOSBattambang.ttf',
+            'useOTL' => 0xFF,
+        ],
+    ],
 ];
