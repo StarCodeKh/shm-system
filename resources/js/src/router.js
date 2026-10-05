@@ -248,7 +248,7 @@ const router = new Router({
                     name: "subprogram",
                     icon: "UserIcon",
                     i18n: "ProgramSubProgram",
-                    component: () => import('./views/pages/modules/program-management/_SubProgram.vue'),
+                    component: () => import('./views/pages/modules/program-management/_Subprogram.vue'),
                     meta: {
                         pageTitle: 'អនុកម្មវិធី',
                         breadcrumb: [
@@ -372,7 +372,7 @@ const router = new Router({
                 {           
                     path: 'module/budget-arrangement/pip',
                     name: 'PIP',
-                    component: () => import('@/views/pages/modules/budget-arrangement/pip/Index.vue'),
+                    component: () => import('@/views/pages/modules/budget-arrangement/pip/index.vue'),
                     meta: {
                         pageTitle: 'រៀបចំគម្រោងវិនិយោគសាធារណៈ',
                         breadcrumb: [
@@ -386,7 +386,7 @@ const router = new Router({
                 {           
                     path: 'module/budget-arrangement/bsp',
                     name: 'BPS',
-                    component: () => import('@/views/pages/modules/budget-arrangement/bsp/Index.vue'),
+                    component: () => import('@/views/pages/modules/budget-arrangement/bsp/index.vue'),
                     meta: {
                         pageTitle: 'រៀបចំយុទ្ធសាស្ត្រថវិកា',
                         breadcrumb: [
@@ -400,7 +400,7 @@ const router = new Router({
                 {           
                     path: 'module/budget-arrangement/pb',
                     name: 'PB',
-                    component: () => import('@/views/pages/modules/budget-arrangement/pb/Index.vue'),
+                    component: () => import('@/views/pages/modules/budget-arrangement/pb/index.vue'),
                     meta: {
                         pageTitle: 'រៀបចំថវិកា',
                         breadcrumb: [
@@ -533,7 +533,7 @@ const router = new Router({
                     {           
                         path: 'report/pip',
                         name: 'ReportPIP',
-                        component: () => import('@/views/pages/modules/budget-arrangement/pip/Index.vue'), //import('@/views/pages/reports/pip/Index.vue'),
+                        component: () => import('@/views/pages/modules/budget-arrangement/pip/index.vue'), //import('@/views/pages/reports/pip/Index.vue'),
                         meta: {
                             pageTitle: 'របាយការណ៍គម្រោងវិនិយោគ',
                             breadcrumb: [
@@ -547,7 +547,7 @@ const router = new Router({
                     {           
                         path: 'report/bsp',
                         name: 'ReportBSP',
-                        component: () => import('@/views/pages/modules/budget-arrangement/bsp/Index.vue'),//import('@/views/pages/reports/bsp/Index.vue'),
+                        component: () => import('@/views/pages/modules/budget-arrangement/bsp/index.vue'),//import('@/views/pages/reports/bsp/Index.vue'),
                         meta: {
                             pageTitle: 'របាយការណ៍ផែនការថវិកា',
                             breadcrumb: [
@@ -561,7 +561,7 @@ const router = new Router({
                     {           
                         path: 'report/pb',
                         name: 'ReportPB',
-                        component: () => import('@/views/pages/modules/budget-arrangement/pb/Index.vue'),//import('@/views/pages/reports/pb/Index.vue'),
+                        component: () => import('@/views/pages/modules/budget-arrangement/pb/index.vue'),//import('@/views/pages/reports/pb/Index.vue'),
                         meta: {
                             pageTitle: 'របាយការណ៍គម្រោងថវិកាប្រចាំឆ្នាំ',
                             breadcrumb: [
@@ -846,7 +846,7 @@ const router = new Router({
                 {
                     path: '/account/payment-method/form',
                     name: 'account-paymentMethod-form',
-                    component: () => import('@/views/pages/account/payment-method/PaymentMethodForm.vue'),
+                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
@@ -875,7 +875,7 @@ const router = new Router({
                 {
                     path: '/account/category/form',
                     name: 'account-category-form',
-                    component: () => import('@/views/pages/account/category/CategoryForm.vue'),
+                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
@@ -904,7 +904,7 @@ const router = new Router({
                 {
                     path: '/account/account/form',
                     name: 'account-account-form',
-                    component: () => import('@/views/pages/account/account/AccountForm.vue'),
+                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
@@ -933,7 +933,7 @@ const router = new Router({
                 {
                     path: '/account/account-group/form',
                     name: 'account-account-group-form',
-                    component: () => import('@/views/pages/account/account-group/AccountGroupForm.vue'),
+                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
@@ -962,7 +962,7 @@ const router = new Router({
                 {
                     path: '/account/account-type/form',
                     name: 'account-account-type-form',
-                    component: () => import('@/views/pages/account/account-type/AccountTypeForm.vue'),
+                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
@@ -991,7 +991,7 @@ const router = new Router({
                 {
                     path: '/account/bank-account/form',
                     name: 'account-bank-account-form',
-                    component: () => import('@/views/pages/account/bank-account/BankAccountForm.vue'),
+                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
@@ -1223,7 +1223,7 @@ const router = new Router({
                 {
                     path: '/setup/department/form',
                     name: 'department-form',
-                    component: () => import('@/views/pages/setup/department/DepartmentForm.vue'),
+                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
@@ -1252,7 +1252,7 @@ const router = new Router({
                 {
                     path: '/setup/circular/form',
                     name: 'circular-form',
-                    component: () => import('@/views/pages/setup/circular/CircularForm.vue'),
+                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
@@ -1310,7 +1310,7 @@ const router = new Router({
                 {
                     path: '/setup/role/form',
                     name: 'role-form',
-                    component: () => import('@/views/pages/setup/role/RoleForm.vue'),
+                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },

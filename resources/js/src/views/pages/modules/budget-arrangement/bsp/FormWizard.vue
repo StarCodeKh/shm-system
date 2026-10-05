@@ -119,7 +119,7 @@ import StepSubprogram from "./_StepSubprogram.vue"
 import StepIndicator from "./_StepIndicator.vue"
 
 import StepEconomicExppb from "./step-budget-package/_StepEconomicExppb.vue"
-import StepKPIProgress from "./step-budget-package/_StepKPIProgress.vue"
+import StepKPIProgress from "@/views/pages/modules/budget-arrangement/bsp/step-budget-package/_StepKPI.vue"
 import StepObjectiveSubProgram from "./step-budget-package/_StepObjectiveSubProgram.vue"
 import StepKPI from "./step-budget-package/_StepKPI.vue"
 // For custom error message

@@ -10,7 +10,7 @@
 <script>
     import FormWizardGeneralTab from "./FormWizardGeneralTab.vue"
     import FormWizardIconTab from "./FormWizardIconTab.vue"
-    import FormWizardValidation from "./FormWizardValidation.vue"
+    import FormWizardValidation from "@/views/pages/incentives/incentive-form-wizard/FormWizardValidation.vue"
 
     export default {
         components: {

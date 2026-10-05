@@ -25,7 +25,7 @@ import apiConfig from "@/apiConfig.js"
 import { ref } from 'vue';
 import DForm from '@/views/form-builder/DForm.vue'
 import DTableList from '@/views/form-builder/DTableList.vue'
-import FormIncomeProgram from './_form_income_program.vue'
+import FormIncomeProgram from '@/views/pages/modules/budget-monitoring/income-expense-arrangement/_form_income_program.vue'
 export default {
   data() {
       return {

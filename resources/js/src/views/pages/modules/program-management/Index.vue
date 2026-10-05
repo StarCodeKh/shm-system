@@ -168,10 +168,6 @@
 
 <script>
 import TableExpandableData from './_TableExpandableData.vue'
-import ModalObjective from './modal/_Objective.vue'
-import ModalProgram from './modal/_Program.vue'
-import ModalSubprogram from './modal/_Subprogram.vue'
-import ModalIndicator from './modal/_Indicator.vue'
 import DModalForm from '@/views/form-builder/DModalForm.vue';
 import axios from "@/axios.js";
 import apiConfig from "@/apiConfig.js";
@@ -673,10 +669,6 @@ export default {
   },
   components: {
     TableExpandableData,
-    ModalObjective,
-    ModalProgram,
-    ModalSubprogram,
-    ModalIndicator,
     DModalForm
   },
   mounted() {

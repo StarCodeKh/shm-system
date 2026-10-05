@@ -33,7 +33,7 @@
 <script>
 import UserSettingsGeneral from "./UserSettingsGeneral.vue"
 import UserSettingsChangePassword from "./UserSettingsChangePassword.vue"
-import UserSettingsInfo from "./UserSettingsInfo.vue"
+import UserSettingsInfo from "@/views/pages/settings/SettingInfo.vue"
 import UserSettingsSocialLinks from "./UserSettingsSocialLinks.vue"
 import UserSettingsNotifications from "./UserSettingsNotifications.vue"
 
