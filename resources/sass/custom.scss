@@ -1131,3 +1131,354 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
     .line-vs-tabs { background: #262c49 !important; }
     .vs-tabs--li .vs-tabs--btn { color: #c2c6dc; }
 }
+
+
+// ================================================================ Selects (vue-select, vs-select, native)
+// One look for every dropdown: rounded field, primary ring when open, floating panel, roomy options.
+$select-search-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+$select-check-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+$select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236e7091' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+
+@mixin select-panel {
+    margin-top: 6px;
+    padding: 6px;
+    border: 1px solid #e9ebf2 !important;
+    border-radius: 14px !important;
+    background: #fff;
+    box-shadow: 0 16px 40px -12px rgba(23, 23, 74, .25), 0 2px 6px rgba(23, 23, 74, .06) !important;
+    animation: select-panel-in .18s cubic-bezier(.22, 1, .36, 1);
+    scrollbar-width: thin;
+}
+
+@mixin select-option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 36px 8px 12px;
+    font-size: 14px;
+    line-height: 1.45;
+    white-space: normal;
+    color: #2c2e45;
+    border-radius: 9px;
+    transition: background .12s ease, color .12s ease;
+}
+
+@mixin select-check {
+    content: '';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    margin-top: -8px;
+    background: currentColor;
+    -webkit-mask: $select-check-icon center / contain no-repeat;
+    mask: $select-check-icon center / contain no-repeat;
+}
+
+@keyframes select-panel-in {
+    from { opacity: 0; transform: translateY(-6px) scale(.98); }
+    to { opacity: 1; transform: none; }
+}
+
+// ---------------------------------------------------------------- vue-select
+.v-select {
+    font-family: inherit;
+
+    .vs__dropdown-toggle {
+        min-height: 44px;
+        padding: 4px 10px 4px 12px;
+        border-radius: 12px;
+        background: #fff;
+        transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    .vs__selected-options {
+        align-items: center;
+        min-width: 0;
+        padding: 0;
+    }
+
+    .vs__selected {
+        margin: 2px 4px 2px 0;
+        padding: 0 2px;
+        border: none;
+        color: #2c2e45;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .vs__search,
+    .vs__search:focus {
+        margin: 0;
+        padding: 0 2px;
+        min-height: 32px;
+        font-size: 14px;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent;
+    }
+
+    .vs__search::placeholder {
+        color: #a3a5bb;
+    }
+
+    .vs__actions {
+        gap: 6px;
+        padding: 0 0 0 6px;
+    }
+
+    .vs__open-indicator {
+        fill: #6e7091;
+        transform: scale(.85);
+        transition: transform .25s cubic-bezier(.4, 0, .2, 1), fill .15s ease;
+    }
+
+    .vs__clear {
+        display: inline-flex;
+        padding: 4px;
+        margin: 0;
+        border-radius: 6px;
+        fill: #9a9cb3;
+        transition: background .15s ease, fill .15s ease;
+
+        &:hover {
+            fill: #dc3545;
+            background: rgba(220, 53, 69, .08);
+        }
+    }
+
+    // Multi-select chips
+    &.vs--multiple .vs__selected {
+        padding: 2px 4px 2px 10px;
+        font-size: 13px;
+        color: rgb(var(--vs-primary));
+        border-radius: 8px;
+        background: rgba(var(--vs-primary), .1);
+
+        .vs__deselect {
+            margin-left: 6px;
+            fill: currentColor;
+            opacity: .7;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    // Open: primary ring, chevron flips, search icon shows the field is now searchable
+    &.vs--open {
+        .vs__dropdown-toggle {
+            border-color: rgb(var(--vs-primary)) !important;
+            border-bottom-color: rgb(var(--vs-primary)) !important;
+            border-radius: 12px;
+            box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
+        }
+
+        .vs__open-indicator {
+            fill: rgb(var(--vs-primary));
+            transform: rotate(180deg) scale(.85);
+        }
+
+        &.vs--single .vs__selected {
+            opacity: .45;
+        }
+    }
+
+    &.vs--open.vs--searchable .vs__selected-options {
+        position: relative;
+        padding-left: 26px;
+
+        &::before {
+            content: '';
+            position: absolute;
+            left: 2px;
+            top: 50%;
+            width: 16px;
+            height: 16px;
+            margin-top: -8px;
+            background: #8a8ca5;
+            -webkit-mask: $select-search-icon center / contain no-repeat;
+            mask: $select-search-icon center / contain no-repeat;
+        }
+    }
+
+    &.vs--disabled {
+        .vs__dropdown-toggle,
+        .vs__search,
+        .vs__open-indicator,
+        .vs__clear {
+            cursor: not-allowed;
+            background: #f5f6fa;
+        }
+    }
+}
+
+.vs__dropdown-menu {
+    @include select-panel;
+    top: 100% !important;
+    max-height: 320px;
+    min-width: 100%;
+    z-index: 52000; // above vs-popup modals
+}
+
+.vs__dropdown-option {
+    @include select-option;
+
+    &--highlight {
+        color: #2c2e45;
+        background: #f3f4f8;
+    }
+
+    &--selected {
+        color: rgb(var(--vs-primary)) !important; // beats Vuexy's `.v-select .vs__dropdown-menu .vs__dropdown-option`
+        font-weight: 600;
+        background: rgba(var(--vs-primary), .08);
+
+        &::after {
+            @include select-check;
+        }
+    }
+
+    &--disabled {
+        color: #b4b6c8;
+        background: transparent;
+    }
+}
+
+.vs__no-options {
+    padding: 16px 12px;
+    font-size: 13px;
+    color: #8a8ca5;
+    text-align: center;
+}
+
+// ---------------------------------------------------------------- Vuesax vs-select
+.con-select {
+    .input-select {
+        height: 44px;
+        padding: 0 38px 0 14px !important;
+        font-size: 14px;
+        border: 1px solid #d8d9e3 !important;
+        border-radius: 12px !important;
+        background: #fff;
+        cursor: pointer;
+        transition: border-color .15s ease, box-shadow .15s ease;
+
+        &:focus {
+            border-color: rgb(var(--vs-primary)) !important;
+            box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
+        }
+    }
+
+    .vs-select--icon {
+        right: 12px !important;
+        color: #6e7091;
+        transition: transform .25s cubic-bezier(.4, 0, .2, 1), color .15s ease;
+    }
+
+    .input-select:focus ~ .vs-select--icon {
+        color: rgb(var(--vs-primary));
+        transform: rotate(180deg);
+    }
+
+    .vs-select--label {
+        margin-bottom: 4px;
+        font-size: .85rem;
+        color: #6e7091;
+    }
+}
+
+.vs-select--options {
+    @include select-panel;
+    z-index: 52000 !important;
+
+    ul {
+        max-height: 320px;
+        overflow-y: auto;
+    }
+
+    li {
+        margin: 0;
+    }
+
+    .vs-select--item {
+        @include select-option;
+        width: 100%;
+        font-family: inherit;
+        text-align: left;
+        border: none !important;
+        background: transparent;
+
+        &:hover,
+        &:focus {
+            color: #2c2e45;
+            background: #f3f4f8 !important;
+            outline: none;
+        }
+
+        &.activex {
+            color: rgb(var(--vs-primary)) !important;
+            font-weight: 600;
+            background: rgba(var(--vs-primary), .08) !important;
+
+            &::after {
+                @include select-check;
+            }
+        }
+    }
+
+    .vs-select--item-icon {
+        display: none; // replaced by the check mark
+    }
+}
+
+// ---------------------------------------------------------------- Native <select>
+select:not([multiple]) {
+    min-height: 44px;
+    padding: 0 38px 0 14px;
+    border: 1px solid #d8d9e3;
+    border-radius: 12px;
+    background: #fff $select-chevron no-repeat right 12px center / 16px 16px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+// ---------------------------------------------------------------- Dark theme
+.theme-dark {
+    .v-select .vs__dropdown-toggle,
+    .con-select .input-select,
+    select {
+        background-color: #10163a;
+        border-color: #414561 !important;
+    }
+
+    .v-select .vs__selected,
+    .vs__dropdown-option,
+    .vs-select--options .vs-select--item {
+        color: #c2c6dc;
+    }
+
+    .vs__dropdown-menu,
+    .vs-select--options {
+        background: #10163a;
+        border-color: #414561 !important;
+    }
+
+    .vs__dropdown-option--highlight,
+    .vs-select--options .vs-select--item:hover {
+        color: #fff;
+        background: #262c49 !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .vs__dropdown-menu,
+    .vs-select--options {
+        animation: none;
+    }
+}

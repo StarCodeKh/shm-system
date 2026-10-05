@@ -45,6 +45,15 @@ export default {
 		dt_edit: 'កែប្រែ',
 		dt_delete: 'លុប',
 		dt_showing: 'បង្ហាញ {from}–{to} ក្នុងចំណោម {total}',
+		// File picker
+		upload_choose: 'ជ្រើសរើសឯកសារ',
+		upload_hint_image: 'JPG ឬ PNG',
+		upload_hint_file: 'PDF, Word, Excel ឬរូបភាព',
+		upload_browse: 'រកមើល',
+		upload_change: 'ប្តូរ',
+		upload_remove: 'ដកចេញ',
+		upload_view: 'មើលឯកសារ',
+		upload_selected: 'បានជ្រើសរើស',
 		// Sidebar brand
 		brand_subtitle: 'ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យ',
 		brand_collapse: 'បង្រួមម៉ឺនុយ',
@@ -992,6 +1001,15 @@ export default {
 		dt_edit: 'Edit',
 		dt_delete: 'Delete',
 		dt_showing: 'Showing {from}–{to} of {total}',
+		// File picker
+		upload_choose: 'Choose a file',
+		upload_hint_image: 'JPG or PNG',
+		upload_hint_file: 'PDF, Word, Excel or image',
+		upload_browse: 'Browse',
+		upload_change: 'Change',
+		upload_remove: 'Remove',
+		upload_view: 'View file',
+		upload_selected: 'Selected',
 		// Sidebar brand
 		brand_subtitle: 'Data Management System',
 		brand_collapse: 'Collapse menu',

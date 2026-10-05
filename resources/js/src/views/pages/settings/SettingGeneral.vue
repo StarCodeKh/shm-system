@@ -330,8 +330,10 @@
           <!-- Form Input Text -->
           <div v-if="formAttribute.type == 'file'" :class="styleClass" dclass="mt-4">
               <label class="mb-2">{{ $t(formAttribute.name) }}</label>
-              <button @click="initOpenFileManager(formAttribute.name)" type="button">Browse File</button>
-              <img @click="initViewFile(form.attribute[formAttribute.name])" style="width:100px" :class="formAttribute.name" @error="loadErrorImage(formAttribute.name)" :src="iconThumnail"/>
+              <d-file-picker class="mt-1" :name="formAttribute.name" :value="form.attribute[formAttribute.name]"
+                  @browse="initOpenFileManager(formAttribute.name)"
+                  @view="initViewFile"
+                  @clear="$set(form.attribute, formAttribute.name, '')" />
               <vs-input type="hidden" :placeholder="$t(formAttribute.name)"
                   v-model="form.attribute[formAttribute.name]" :value="data[formAttribute.name]" class="mt-2 w-full" />
               <!-- <span v-if="formAttribute.required">
@@ -370,11 +372,13 @@ import DForm from '@/views/form-builder/DForm.vue'
 import apiConfig from "@/apiConfig.js"
 import { ref } from 'vue';
 import DFileManager from '@/views/form-builder/DFileManager.vue';
+import DFilePicker from '@/views/form-builder/DFilePicker.vue';
 export default {
   components: {
     DForm,
     vSelect,
-    DFileManager
+    DFileManager,
+    DFilePicker
   },
   data() {
     return {
@@ -806,27 +810,27 @@ this.$vs.notify({
     initPassProps(props){
         switch (props.data.type) {
             case "xlsx":
-                this.form.attribute[props.props] = props.data.path;
+                this.$set(this.form.attribute, props.props, props.data.path);
                 this.iconThumnail = this.iconExcel;
                 break;
             case "xls":
-                this.form.attribute[props.props] = props.data.path;
+                this.$set(this.form.attribute, props.props, props.data.path);
                 this.iconThumnail = this.iconExcel;
                 break;
             case "doc":
-                this.form.attribute[props.props] = props.data.path;
+                this.$set(this.form.attribute, props.props, props.data.path);
                 this.iconThumnail = this.iconDoc;
                 break;
             case "docx":
-                this.form.attribute[props.props] = props.data.path;
+                this.$set(this.form.attribute, props.props, props.data.path);
                 this.iconThumnail = this.iconDoc;
                 break;
             case "pdf":
-                this.form.attribute[props.props] = props.data.path;
+                this.$set(this.form.attribute, props.props, props.data.path);
                 this.iconThumnail = this.iconPDF;
                 break;
             default:
-                this.form.attribute[props.props] = props.data.path;
+                this.$set(this.form.attribute, props.props, props.data.path);
                 this.iconThumnail = props.data.path;
                 break;
         }

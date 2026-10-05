@@ -323,9 +323,11 @@
                 <!-- Form Grid -->
                 <!-- Form Input Text -->
                 <div v-if="formAttribute.type == 'file'" class="vx-col lg:w-1/1 w-full mt-4" dclass="mt-4">
-                    <div class=""><img @click="initViewFile(form.attribute[formAttribute.name])" style="width:100px" :class="formAttribute.name" @error="loadErrorImage(formAttribute.name)" :src="iconThumnail" /></div>
-                    <label class="mb-2">{{ fieldLabel(formAttribute.name) }}</label>
-                    <button @click="initOpenFileManager(formAttribute.name)" type="button">Browse File</button>
+                    <label class="mb-2">{{ fieldLabel(formAttribute.name) }} <span v-if="formAttribute.required">*</span></label>
+                    <d-file-picker class="mt-1" :name="formAttribute.name" :value="form.attribute[formAttribute.name]"
+                        @browse="initOpenFileManager(formAttribute.name)"
+                        @view="initViewFile"
+                        @clear="$set(form.attribute, formAttribute.name, '')" />
                     <vs-input type="hidden" :placeholder="fieldLabel(formAttribute.name)"
                         v-model="form.attribute[formAttribute.name]" :value="data[formAttribute.name]"
                         class="mt-2 w-full" />
@@ -365,6 +367,7 @@ import vSelect from 'vue-select';
 import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
 import DFileManager from '@/views/form-builder/DFileManager.vue';
+import DFilePicker from '@/views/form-builder/DFilePicker.vue';
 import DFormAttribute from '@/views/form-builder/DFormAttribute.vue';
 export default {
     props: {
@@ -420,6 +423,7 @@ export default {
     },
     components: {
         DFileManager,
+        DFilePicker,
         vSelect,
         flatPickr,
         DFormAttribute,
@@ -441,27 +445,27 @@ export default {
         initPassProps(props) {
             switch (props.data.type) {
                 case "xlsx":
-                    this.form.attribute[props.props] = props.data.path;
+                    this.$set(this.form.attribute, props.props, props.data.path);
                     this.iconThumnail = this.iconExcel;
                     break;
                 case "xls":
-                    this.form.attribute[props.props] = props.data.path;
+                    this.$set(this.form.attribute, props.props, props.data.path);
                     this.iconThumnail = this.iconExcel;
                     break;
                 case "doc":
-                    this.form.attribute[props.props] = props.data.path;
+                    this.$set(this.form.attribute, props.props, props.data.path);
                     this.iconThumnail = this.iconDoc;
                     break;
                 case "docx":
-                    this.form.attribute[props.props] = props.data.path;
+                    this.$set(this.form.attribute, props.props, props.data.path);
                     this.iconThumnail = this.iconDoc;
                     break;
                 case "pdf":
-                    this.form.attribute[props.props] = props.data.path;
+                    this.$set(this.form.attribute, props.props, props.data.path);
                     this.iconThumnail = this.iconPDF;
                     break;
                 default:
-                    this.form.attribute[props.props] = props.data.path;
+                    this.$set(this.form.attribute, props.props, props.data.path);
                     this.iconThumnail = props.data.path;
                     break;
             }
@@ -792,6 +796,7 @@ export default {
                 }else if (_formAttribute["type"] == "hidden") {
                     this.form.attribute[_formAttribute["name"]] = data[_formAttribute["name"]];
                 } else if (_formAttribute["type"] == "file") {
+                    this.$set(this.form.attribute, _formAttribute["name"], data[_formAttribute["name"]] || "");
                     switch (_formAttribute["name"]) {
                         case "photo":
                             this.iconThumnail = data[_formAttribute["name"]];
