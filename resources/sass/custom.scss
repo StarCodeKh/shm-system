@@ -2305,3 +2305,807 @@ input.vs-input--input.large {
 .con-select .vs-select--input {
     padding-left: 14px !important;
 }
+
+
+/* --- LIST PAGES: toolbar, buttons, badges, tables, filters, empty states (used by DTableList, audit log, …) --- */
+// ---------------------------------------------------------------- Standard list page
+.dt-list {
+  // Toolbar
+  .dt-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+
+    &__title {
+      min-width: 0;
+
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #2c2e45;
+        line-height: 1.4;
+      }
+
+      p {
+        margin-top: 2px;
+        font-size: .82rem;
+        color: #8a8ca5;
+      }
+    }
+
+    &__actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+
+  .dt-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: var(--input-height, 42px);
+    padding: 0 16px;
+    font-family: inherit;
+    font-size: .9rem;
+    font-weight: 500;
+    border-radius: var(--input-radius, 10px);
+    border: 1px solid var(--input-border, #d8d9e3);
+    background: #fff;
+    color: #5e6078;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
+
+    .feather-icon {
+      display: flex;
+    }
+
+    &:hover {
+      border-color: rgba(var(--vs-primary), .5);
+      color: rgb(var(--vs-primary));
+    }
+
+    &--icon {
+      width: var(--input-height, 42px);
+      padding: 0;
+
+      &.is-active {
+        color: rgb(var(--vs-primary));
+        border-color: rgba(var(--vs-primary), .5);
+        background: rgba(var(--vs-primary), .08);
+      }
+    }
+
+    &--primary {
+      color: #fff;
+      border-color: rgb(var(--vs-primary));
+      background: rgb(var(--vs-primary));
+      box-shadow: 0 6px 14px -6px rgba(var(--vs-primary), .7);
+
+      &:hover {
+        color: #fff;
+        filter: brightness(.95);
+      }
+    }
+  }
+
+  // Table
+  .vs-con-table {
+    background: transparent;
+
+    .vs-con-tbody {
+      background: #fff !important;
+      border: 1px solid #eceef4 !important;
+      border-radius: 12px;
+      overflow: auto;
+    }
+
+    table.vs-table {
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    .vs-table--thead th,
+    thead th {
+      padding: 12px 14px !important;
+      background: #f6f7fb !important;
+      color: #5e6078 !important;
+      font-size: .8rem;
+      font-weight: 600 !important;
+      border: none !important;
+      border-bottom: 1px solid #eceef4 !important;
+      white-space: nowrap;
+
+      .vs-table-text {
+        text-transform: none;
+        font-weight: 600;
+        justify-content: flex-start;
+      }
+    }
+
+    tr td {
+      padding: 12px 14px !important;
+      border: none !important;
+      border-bottom: 1px solid #f1f2f6 !important;
+      color: #3f4157;
+      font-size: .9rem;
+      vertical-align: middle;
+    }
+
+    tbody:last-child tr td {
+      border-bottom: none !important;
+    }
+
+    tr.tr-values {
+      transition: background .15s;
+
+      &:hover {
+        background: #fafbfd !important;
+        transform: none !important;
+      }
+    }
+  }
+
+  // Cells
+  .dt-amount {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .dt-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    font-size: .78rem;
+    font-weight: 600;
+    white-space: nowrap;
+    border-radius: 999px;
+
+    &::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    &--success { color: #1f9d55; background: rgba(40, 199, 111, .12); }
+    &--warning { color: #d97706; background: rgba(255, 159, 67, .15); }
+    &--danger  { color: #d93b3b; background: rgba(234, 84, 85, .12); }
+    &--neutral { color: #5e6078; background: #f1f2f6; }
+    // Any colour: style="--tone: r, g, b"
+    &--tone    { color: rgb(var(--tone)); background: rgba(var(--tone), .12); }
+  }
+
+  .dt-actions-cell {
+    width: 1%;
+    white-space: nowrap;
+  }
+
+  .dt-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dt-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: #f4f5f9;
+    color: #6e7091;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+
+    .feather-icon {
+      display: flex;
+    }
+
+    &:hover {
+      color: rgb(var(--vs-primary));
+      background: rgba(var(--vs-primary), .12);
+    }
+
+    &--edit:hover {
+      color: #2f6fed;
+      background: rgba(47, 111, 237, .12);
+    }
+
+    &--delete:hover {
+      color: rgb(var(--vs-danger));
+      background: rgba(var(--vs-danger), .12);
+    }
+  }
+
+  // Alignment: text left, amounts right, actions right
+  .vs-con-table {
+    thead th,
+    .vs-table--thead th {
+      text-align: left !important;
+
+      .vs-table-text {
+        display: flex !important;
+        justify-content: flex-start;
+      }
+
+      &.dt-num,
+      &.dt-actions-head {
+        text-align: right !important;
+
+        .vs-table-text {
+          justify-content: flex-end;
+        }
+      }
+    }
+
+    td.dt-num {
+      text-align: right;
+    }
+
+    .dt-actions-cell .dt-actions {
+      justify-content: flex-end;
+    }
+
+    // Row number column stays narrow
+    thead th:first-child,
+    tr td:first-child {
+      width: 1%;
+      white-space: nowrap;
+      color: #8a8ca5;
+    }
+  }
+
+  // Footer
+  .dt-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px;
+
+    &__info {
+      font-size: .85rem;
+      color: #8a8ca5;
+    }
+
+    .con-vs-pagination {
+      flex: 0 0 auto;
+      width: auto;
+      margin: 0 0 0 auto;
+    }
+
+    .vs-pagination--nav {
+      justify-content: flex-end;
+    }
+  }
+}
+
+.theme-dark .dt-list {
+  .dt-toolbar__title h3 { color: #fff; }
+  .dt-btn:not(.dt-btn--primary),
+  .dt-action {
+    color: #c2c6dc;
+    border-color: #414561;
+    background: #262c49;
+  }
+  .vs-con-table .vs-con-tbody {
+    background: #262c49 !important;
+    border-color: #414561 !important;
+  }
+  .vs-con-table thead th {
+    background: #10163a !important;
+    color: #c2c6dc !important;
+  }
+  .vs-con-table tr td {
+    color: #c2c6dc;
+    border-color: #414561 !important;
+  }
+}
+
+// ---------------------------------------------------------------- Shared list building blocks
+// Filter grid: every cell is one control high and its control fills it
+.dt-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 240px) minmax(0, 260px);
+  gap: 12px;
+  margin-bottom: 14px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+
+    > .dt-search {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.dt-cell {
+  position: relative;
+  height: var(--input-height, 42px);
+  min-width: 0;
+
+  input,
+  .v-select,
+  .vs__dropdown-toggle {
+    box-sizing: border-box;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+  }
+
+  .v-select input.vs__search {
+    height: auto !important;
+  }
+}
+
+// Search box with a leading icon (wrapper needed: feather-icon carries Tailwind's `relative !important`)
+.dt-search {
+  &__icon {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 14px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    color: #8a8ca5;
+    pointer-events: none;
+
+    .feather-icon {
+      display: flex;
+    }
+  }
+
+  input {
+    padding-left: 40px !important;
+  }
+}
+
+// Chip filters + summary line
+.dt-chipbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  &__summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: .82rem;
+    color: #8a8ca5;
+  }
+
+  @media (max-width: 768px) {
+    &__chips {
+      flex-wrap: nowrap;
+      width: 100%;
+      overflow-x: auto;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    &__summary {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+}
+
+.dt-chip {
+  --tone: var(--vs-primary);
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: .8rem;
+  font-weight: 600;
+  color: #5f6170;
+  border: 1px solid #e6e8ee;
+  border-radius: 999px;
+  background: #fff;
+  cursor: pointer;
+  transition: all .15s ease;
+
+  &__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: rgb(var(--tone));
+  }
+
+  &:hover {
+    border-color: rgba(var(--tone), .45);
+  }
+
+  &.is-active {
+    color: rgb(var(--tone));
+    border-color: rgba(var(--tone), .45);
+    background: rgba(var(--tone), .1);
+  }
+
+  &--clear {
+    height: 28px;
+    padding: 0 10px;
+    font-size: .78rem;
+    color: #6b6d7a;
+    border: 0;
+    background: #f1f2f5;
+
+    .feather-icon {
+      display: flex;
+    }
+
+    &:hover {
+      color: rgb(var(--vs-danger));
+      background: rgba(var(--vs-danger), .1);
+    }
+  }
+}
+
+// Plain-markup table with the same look as the vs-table lists
+.dt-table-wrap {
+  border: 1px solid #eceef4;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.dt-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    padding: 12px 14px;
+    font-size: .8rem;
+    font-weight: 600;
+    text-align: left;
+    color: #5e6078;
+    background: #f6f7fb;
+    border-bottom: 1px solid #eceef4;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 12px 14px;
+    font-size: .9rem;
+    color: #3f4157;
+    border-bottom: 1px solid #f1f2f6;
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  tbody.is-loading {
+    opacity: .55;
+    transition: opacity .2s ease;
+  }
+
+  .is-clickable {
+    cursor: pointer;
+    transition: background .12s ease;
+
+    &:hover,
+    &.is-open {
+      background: #fafbfd;
+    }
+  }
+
+  .dt-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  // Phones: rows become cards; each cell shows its column name from data-label
+  @media (max-width: 768px) {
+    &.dt-table--cards {
+      thead {
+        display: none;
+      }
+
+      tbody,
+      tr,
+      td {
+        display: block;
+      }
+
+      tbody tr {
+        padding: 12px 16px;
+        border-bottom: 1px solid #f1f2f6;
+      }
+
+      td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 4px 0;
+        border: 0;
+        text-align: right;
+
+        &[data-label]::before {
+          content: attr(data-label);
+          flex-shrink: 0;
+          font-size: .75rem;
+          font-weight: 600;
+          color: #8a8ca5;
+          text-align: left;
+        }
+      }
+    }
+  }
+}
+
+// Loading placeholders
+.dt-skeleton td span {
+  display: block;
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f1f2f5 25%, #e7e9ee 50%, #f1f2f5 75%);
+  background-size: 200% 100%;
+  animation: dt-shimmer 1.2s infinite;
+}
+
+@keyframes dt-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+// Empty state (also restyles Vuesax's built-in "No data Available")
+.dt-list .vs-table--not-data {
+  display: table-cell !important;
+  padding: 48px 16px !important;
+  text-align: center;
+  font-size: .9rem;
+  font-weight: 600;
+  color: #8a8ca5;
+}
+
+.dt-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 48px 16px !important;
+  text-align: center;
+  font-size: .85rem;
+  color: #8a8ca5;
+
+  strong {
+    font-size: 1rem;
+    color: #2c2e45;
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    margin-bottom: 8px;
+    border-radius: 16px;
+    color: rgb(var(--vs-primary));
+    background: rgba(var(--vs-primary), .1);
+  }
+}
+
+.dt-list .vs-table--not-data::before {
+  content: '';
+  display: block;
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 10px;
+  border-radius: 16px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2328C76F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='22 12 16 12 14 15 10 15 8 12 2 12'/%3E%3Cpath d='M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z'/%3E%3C/svg%3E") center / 24px no-repeat,
+    rgba(var(--vs-primary), .1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dt-skeleton td span {
+    animation: none;
+  }
+}
+
+.theme-dark {
+  .dt-table-wrap,
+  .dt-chip {
+    background: #10163a;
+    border-color: #414561;
+  }
+
+  .dt-table th {
+    background: #262c49;
+    color: #c2c6dc;
+  }
+
+  .dt-table td {
+    color: #c2c6dc;
+    border-color: #2c3254;
+  }
+
+  .dt-table .is-clickable:hover,
+  .dt-table .is-clickable.is-open {
+    background: #1b2142;
+  }
+
+  .dt-empty strong {
+    color: #fff;
+  }
+}
+
+
+// Filter panel opened from a list toolbar (DSearch)
+.dt-filter-panel {
+  margin-bottom: 16px;
+  padding: 16px 20px 18px;
+  border: 1px solid #eceef4;
+  border-radius: 12px;
+  background: #fafbfd;
+  animation: dt-panel-in .2s ease;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    h4 {
+      font-size: .95rem;
+      font-weight: 700;
+      color: #2c2e45;
+    }
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    color: rgb(var(--vs-primary));
+    background: rgba(var(--vs-primary), .12);
+
+    .feather-icon {
+      display: flex;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .vx-row {
+    margin-top: 4px;
+  }
+}
+
+@keyframes dt-panel-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+
+.theme-dark .dt-filter-panel {
+  background: #1b2142;
+  border-color: #414561;
+
+  &__head h4 {
+    color: #fff;
+  }
+}
+
+
+// List cells: file thumbnails, dates, storage paths
+.dt-list {
+  .dt-file-cell {
+    width: 1%;
+  }
+
+  .dt-file {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid #eceef4;
+    border-radius: 10px;
+    background: #f6f7fb;
+    overflow: hidden;
+    vertical-align: middle;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .25s ease;
+    }
+
+    &:hover img {
+      transform: scale(1.08);
+    }
+
+    &--empty {
+      color: #b0b2bd;
+      background: transparent;
+      border-style: dashed;
+    }
+
+    &__badge {
+      --tone: 92, 99, 120;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      font-size: .6rem;
+      font-weight: 800;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+      color: rgb(var(--tone));
+      background: rgba(var(--tone), .1);
+    }
+  }
+
+  .dt-date {
+    white-space: nowrap;
+    color: #6b6d7a !important;
+    font-size: .85rem !important;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dt-path {
+    max-width: 360px;
+  }
+
+  .dt-path__text {
+    display: block;
+    font-size: .8rem;
+    color: #8a8ca5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.theme-dark .dt-list .dt-file {
+  background: #10163a;
+  border-color: #414561;
+}

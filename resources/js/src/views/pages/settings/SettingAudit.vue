@@ -1,10 +1,6 @@
 <template>
   <vx-card>
-    <div class="mt-5">
-      <vs-tabs alignment="center">
-        <audit></audit>
-      </vs-tabs>
-    </div>
+    <audit />
   </vx-card>
 </template>
 <script>

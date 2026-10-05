@@ -107,47 +107,27 @@
             </div>
 
             <!-- <div id="data-list-list-view" class="data-list-container"> -->
-                <div style="display: none;">{{ paymentHistories | json }}</div>
-                <vs-table multiple v-model="selected" pagination :max-items="itemsPerPage" search :data="paymentHistories">
-                    <template slot="thead">
-                        <vs-th sort-key="category">ឆ្នាំ</vs-th>
-                        <vs-th sort-key="popularity">ចំនួន</vs-th>
-                        <!-- <vs-th style="background: rgb(96 113 173); color: #ffffff; font-weight: bold;">សកម្ម</vs-th> -->
-                    </template>
+                <!-- Empty: no member chosen yet, or no payments recorded -->
+                <div v-if="!historyRows.length" class="payable-history__empty">
+                    <span class="payable-history__empty-icon"><feather-icon icon="InboxIcon" svgClasses="h-6 w-6" /></span>
+                    <strong>{{ $t('payable_history_empty') }}</strong>
+                    <span>{{ officer_id ? $t('payable_history_none') : $t('payable_history_pick') }}</span>
+                </div>
 
-                    <template slot-scope="{data}">
-                        <tbody>
-                            <vs-tr :data="tr" :key="indextr" v-for="(tr, indextr) in data">
-
-                            <vs-td>
-                                <p class="product-name font-medium truncate">{{ tr.payment_date }}</p>
-                            </vs-td>
-
-                            <vs-td>
-                                <p class="product-price">{{ tr.amount }}</p>
-                            </vs-td>
-
-                            <!-- <vs-td>
-                                <vs-progress :percent="Number(tr.popularity)" :color="getPopularityColor(Number(tr.popularity))" class="shadow-md" />
-                            </vs-td>
-
-                            <vs-td>
-                                <vs-chip :color="getOrderStatusColor(tr.order_status)" class="product-order-status">{{ tr.order_status | title }}</vs-chip>
-                            </vs-td>
-
-                            <vs-td>
-                                <p class="product-price">${{ tr.price }}</p>
-                            </vs-td> -->
-
-                            <!-- <vs-td class="whitespace-no-wrap">
-                                <feather-icon icon="EditIcon" svgClasses="w-5 h-5 hover:text-primary stroke-current" @click.stop="editData(tr)" />
-                                <feather-icon icon="TrashIcon" svgClasses="w-5 h-5 hover:text-danger stroke-current" class="ml-2" @click.stop="deleteData(tr.id)" />
-                            </vs-td> -->
-
-                            </vs-tr>
-                        </tbody>
-                    </template>
-                </vs-table>
+                <template v-else>
+                    <ul class="payable-history__list">
+                        <li v-for="(row, i) in historyRows" :key="row.id || i" class="payable-history__item"
+                            :style="{ '--delay': (i * 40) + 'ms' }">
+                            <span class="payable-history__dot"><feather-icon icon="CheckIcon" svgClasses="h-3 w-3" /></span>
+                            <span class="payable-history__date">{{ row.payment_date || '—' }}</span>
+                            <span class="payable-history__amount">{{ formatAmount(row.amount) }}</span>
+                        </li>
+                    </ul>
+                    <div class="payable-history__total">
+                        <span>{{ $t('payable_history_total', { count: historyRows.length }) }}</span>
+                        <strong>{{ formatAmount(historyTotal) }}</strong>
+                    </div>
+                </template>
           </div>
         </div>
     </div>
@@ -172,9 +152,7 @@ export default {
         apiPayable: apiConfig._apiOfficerPayable,
         api: apiConfig._apiOfficerPayableInfo,
         apiOfficerGeneralDataForPayable: apiConfig._apiOfficerGeneralDataForPayable,
-        selected: [],
         paymentHistories: [],
-        itemsPerPage: 4,
         isMounted: false,
         iconThumnail: null,
         officer_id: null,
@@ -214,20 +192,18 @@ export default {
         'v-select': vSelect,
     },
   computed: {
-    currentPage() {
-      if(this.isMounted) {
-        return this.$refs.table.currentx
-      }
-      return 0
+    historyRows() {
+      return Array.isArray(this.paymentHistories) ? this.paymentHistories : []
     },
-    // products() {
-    //   return this.$store.state.dataList.products
-    // },
-    queriedItems() {
-      return this.$refs.table ? this.$refs.table.queriedResults.length : this.payableData.length
-    }
+    historyTotal() {
+      return this.historyRows.reduce((sum, row) => sum + (Number(String(row.amount || 0).replace(/,/g, '')) || 0), 0)
+    },
   },
   methods: {
+    formatAmount(value) {
+      const number = Number(String(value || 0).replace(/,/g, ''))
+      return isNaN(number) ? value : number.toLocaleString('en-US', { maximumFractionDigits: 2 })
+    },
     initPassProps(props) {
         switch (props.data.type) {
             case "xlsx":
@@ -474,22 +450,128 @@ export default {
         }
     }
 
-    .vs-con-table {
-        padding: 8px 12px 12px;
-        background: transparent;
+    &__empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        padding: 40px 20px;
+        text-align: center;
+        font-size: .82rem;
+        color: #8a8ca5;
+
+        strong {
+            font-size: .95rem;
+            color: #2c2e45;
+        }
     }
 
-    .vs-table--thead th {
-        font-size: .78rem;
-        font-weight: 700;
-        color: #6b6d7a;
-        background: #f7f8fa;
+    &__empty-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        height: 52px;
+        margin-bottom: 8px;
+        border-radius: 16px;
+        color: rgb(var(--vs-primary));
+        background: rgba(var(--vs-primary), .1);
     }
+
+    &__list {
+        max-height: 360px;
+        margin: 0;
+        padding: 8px;
+        list-style: none;
+        overflow-y: auto;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        animation: payable-history-in .3s ease both;
+        animation-delay: var(--delay);
+        transition: background .15s ease;
+
+        &:hover {
+            background: #f7f8fa;
+        }
+
+        & + & {
+            border-top: 1px solid #f1f2f5;
+        }
+    }
+
+    &__dot {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 999px;
+        color: rgb(var(--vs-primary));
+        background: rgba(var(--vs-primary), .12);
+
+        .feather-icon {
+            display: flex;
+        }
+    }
+
+    &__date {
+        flex: 1;
+        min-width: 0;
+        font-size: .875rem;
+        color: #4b4d68;
+    }
+
+    &__amount {
+        font-size: .9rem;
+        font-weight: 700;
+        color: #2c2e45;
+        font-variant-numeric: tabular-nums;
+    }
+
+    &__total {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        font-size: .82rem;
+        color: #6b6d7a;
+        border-top: 1px solid #eef0f4;
+        background: #fbfbfd;
+
+        strong {
+            font-size: 1rem;
+            color: rgb(var(--vs-primary));
+            font-variant-numeric: tabular-nums;
+        }
+    }
+}
+
+@keyframes payable-history-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: none; }
 }
 
 .theme-dark .payable-history {
     background: #262c49;
     border-color: #414561;
+
+    &__total {
+        background: #1e2442;
+        border-color: #414561;
+    }
+
+    &__date,
+    &__empty strong,
+    &__amount {
+        color: #fff;
+    }
 
     &__head {
         border-color: #414561;

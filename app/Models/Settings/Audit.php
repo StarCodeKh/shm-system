@@ -59,16 +59,48 @@ class Audit extends Model
 
   public static function checkQuery($filter)
   {
-    $query = Audit::with("user")->orderBy($filter["sort"], $filter["order"]);
+    $order = strtolower((string) $filter["order"]) === "asc" ? "asc" : "desc"; // newest first unless asked
+    $query = Audit::with("user")->orderBy($filter["sort"] ?: "id", $order);
     $whereClause = $query;
     if ($filter["search_field"]) {
-      $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
-      $dataFields = $arraySingle;
-      if (array_key_exists("name_kh", $dataFields) && $dataFields["name_kh"] != null) {
-        $whereClause->Where("name_kh", $dataFields["name_kh"]);
+      $fields = call_user_func_array('array_merge', $filter["search_field"]);
+      $value = function ($key) use ($fields) {
+        if (!array_key_exists($key, $fields)) return null;
+        $v = is_array($fields[$key]) ? ($fields[$key]["value"] ?? null) : $fields[$key];
+        return ($v === null || $v === "") ? null : $v;
+      };
+
+      if ($keyword = $value("keyword")) {
+        $whereClause->where(function ($q) use ($keyword) {
+          $like = '%' . $keyword . '%';
+          $q->where("auditable_type", "like", $like)
+            ->orWhere("event", "like", $like)
+            ->orWhere("ip_address", "like", $like)
+            ->orWhere("url", "like", $like)
+            ->orWhereHas("user", function ($u) use ($like) {
+              $u->where("username", "like", $like);
+            });
+          if (ctype_digit((string) $keyword)) {
+            $q->orWhere("auditable_id", (int) $keyword);
+          }
+        });
       }
-      if (array_key_exists("name_en", $dataFields) && $dataFields["name_en"] != null) {
-        $whereClause->Where("name_en", $dataFields["name_en"]);
+      if ($event = $value("event")) {
+        $whereClause->where("event", $event);
+      }
+      if ($type = $value("auditable_type")) {
+        $whereClause->where("auditable_type", "like", '%' . $type . '%');
+      }
+      if ($user = $value("user")) {
+        $whereClause->whereHas("user", function ($u) use ($user) {
+          $u->where("username", "like", '%' . $user . '%');
+        });
+      }
+      if ($from = $value("date_from")) {
+        $whereClause->whereDate("created_at", ">=", $from);
+      }
+      if ($to = $value("date_to")) {
+        $whereClause->whereDate("created_at", "<=", $to);
       }
     }
     return $whereClause;

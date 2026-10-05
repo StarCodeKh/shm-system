@@ -287,29 +287,29 @@
                     <tbody :key="indextr" v-for="(tr, indextr) in data">
                         <vs-tr :state="dataAttributes.backgroundColor">
                             <vs-td>{{ calPageIncreaseNumber(dataTables.limit, indextr) }}</vs-td>
-                            <vs-td v-for="header in dataHeaders" :key="header.indextr" :class="{ 'dt-num': isAmountColumn(header) }">
-                                <template v-if="header == 'photo'">
-                                    <img :src="tr[header]" @error="loadErrorImage" style="width: 100px" />
-                                </template>
-                                <template v-else-if="header == 'image'">
-                                    <img :src="tr[header]" @error="loadErrorImage" style="width: 100px" />
-                                </template>
-                                <template v-else-if="header == 'thumbnail'">
-                                    <img :src="tr[header]" @error="loadErrorImage" style="width: 100px" />
-                                </template>
-                                <template v-else-if="header == 'attach'">
-                                    <a target="_blank" :href="tr[header]"><img src="/images/attach.png" width="100px"/></a>
-                                    <!-- <img :src="tr[header]" @error="loadErrorImage" style="width: 100px" /> -->
-                                </template>
-                                <template v-else-if="header == 'file'">
-                                    <a target="_blank" :href="tr[header]"><img src="/images/attach.png" width="100px"/></a>
-                                    <!-- <img :src="tr[header]" @error="loadErrorImage" style="width: 100px" /> -->
+                            <vs-td v-for="header in dataHeaders" :key="header.indextr"
+                                :class="{ 'dt-num': isAmountColumn(header), 'dt-date': isDateColumn(header), 'dt-path': header == 'path', 'dt-file-cell': isFileColumn(header) }">
+                                <template v-if="isFileColumn(header)">
+                                    <!-- 44px thumbnail: image preview, or a coloured file-type badge -->
+                                    <a v-if="fileCell(tr, header).url" class="dt-file" :href="fileCell(tr, header).url" target="_blank"
+                                        rel="noopener" :title="fileCell(tr, header).url" @click.stop>
+                                        <img v-if="fileCell(tr, header).isImage && !brokenFiles[fileKey(tr, header)]"
+                                            :src="fileCell(tr, header).url" alt="" loading="lazy"
+                                            @error="$set(brokenFiles, fileKey(tr, header), true)">
+                                        <span v-else class="dt-file__badge" :style="{ '--tone': fileCell(tr, header).tone }">
+                                            {{ fileCell(tr, header).ext || 'file' }}
+                                        </span>
+                                    </a>
+                                    <span v-else class="dt-file dt-file--empty">—</span>
                                 </template>
                                 <template v-else-if="header == 'status' && tr[header] && typeof tr[header] === 'object'">
                                     <span class="dt-badge" :class="'dt-badge--' + statusTone(tr[header])">{{ statusTitle(tr[header]) }}</span>
                                 </template>
                                 <template v-else-if="isAmountColumn(header)">
                                     <span class="dt-amount">{{ formatAmount(customField(tr, header)) }}</span>
+                                </template>
+                                <template v-else-if="header == 'path'">
+                                    <span class="dt-path__text" :title="tr[header]">{{ tr[header] }}</span>
                                 </template>
                                 <template v-else>
                                     <template>{{ customField(tr, header) }}</template>
@@ -1891,6 +1891,7 @@ export default {
             ],
             activePrompt: false,
             notFoundFile: "/images/attach.png",
+            brokenFiles: {}, // thumbnails that failed to load fall back to the type badge
         }
     },
     components: {
@@ -1915,6 +1916,31 @@ export default {
         },
     },
     methods: {
+        isFileColumn(header) {
+            return ['photo', 'image', 'thumbnail', 'attach', 'file'].includes(header);
+        },
+        isDateColumn(header) {
+            return /(^|_)(date|at)$|^dob$/.test(String(header));
+        },
+        fileKey(row, header) {
+            return (row.id || '') + ':' + header;
+        },
+        // { url, ext, isImage, tone } for a file/image cell; image columns prefer the stored path
+        fileCell(row, header) {
+            const extOf = value => {
+                const clean = String(value || '').split(/[?#]/)[0];
+                const dot = clean.lastIndexOf('.');
+                return dot > clean.lastIndexOf('/') ? clean.slice(dot + 1).toLowerCase() : '';
+            };
+            const value = row[header];
+            const path = row.path && ['image', 'thumbnail'].includes(header) ? row.path : null;
+            const url = path || value || '';
+            const ext = String(row.type || extOf(url) || '').toLowerCase();
+            const isImage = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp'].includes(ext)
+                || (!ext && ['photo', 'image', 'thumbnail'].includes(header));
+            const tones = { pdf: '220, 53, 69', doc: '43, 87, 154', docx: '43, 87, 154', xls: '33, 115, 70', xlsx: '33, 115, 70', csv: '33, 115, 70' };
+            return { url, ext, isImage, tone: tones[ext] || (isImage ? '115, 103, 240' : '92, 99, 120') };
+        },
         loadErrorImage(event) {
             event.target.src = this.notFoundFile;
         },
@@ -2478,309 +2504,4 @@ th.rotate {
     }
 }
 </style>
-<style lang="scss">
-// ---------------------------------------------------------------- Standard list page
-.dt-list {
-  // Toolbar
-  .dt-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 18px;
-
-    &__title {
-      min-width: 0;
-
-      h3 {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #2c2e45;
-        line-height: 1.4;
-      }
-
-      p {
-        margin-top: 2px;
-        font-size: .82rem;
-        color: #8a8ca5;
-      }
-    }
-
-    &__actions {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-    }
-  }
-
-  .dt-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    height: 38px;
-    padding: 0 14px;
-    font-family: inherit;
-    font-size: .9rem;
-    font-weight: 500;
-    border-radius: 10px;
-    border: 1px solid #e3e5ee;
-    background: #fff;
-    color: #5e6078;
-    cursor: pointer;
-    transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
-
-    .feather-icon {
-      display: flex;
-    }
-
-    &:hover {
-      border-color: rgba(var(--vs-primary), .5);
-      color: rgb(var(--vs-primary));
-    }
-
-    &--icon {
-      width: 38px;
-      padding: 0;
-
-      &.is-active {
-        color: rgb(var(--vs-primary));
-        border-color: rgba(var(--vs-primary), .5);
-        background: rgba(var(--vs-primary), .08);
-      }
-    }
-
-    &--primary {
-      color: #fff;
-      border-color: rgb(var(--vs-primary));
-      background: rgb(var(--vs-primary));
-      box-shadow: 0 6px 14px -6px rgba(var(--vs-primary), .7);
-
-      &:hover {
-        color: #fff;
-        filter: brightness(.95);
-      }
-    }
-  }
-
-  // Table
-  .vs-con-table {
-    background: transparent;
-
-    .vs-con-tbody {
-      background: #fff !important;
-      border: 1px solid #eceef4 !important;
-      border-radius: 12px;
-      overflow: auto;
-    }
-
-    table.vs-table {
-      border-collapse: separate;
-      border-spacing: 0;
-    }
-
-    .vs-table--thead th,
-    thead th {
-      padding: 12px 14px !important;
-      background: #f6f7fb !important;
-      color: #5e6078 !important;
-      font-size: .8rem;
-      font-weight: 600 !important;
-      border: none !important;
-      border-bottom: 1px solid #eceef4 !important;
-      white-space: nowrap;
-
-      .vs-table-text {
-        text-transform: none;
-        font-weight: 600;
-        justify-content: flex-start;
-      }
-    }
-
-    tr td {
-      padding: 12px 14px !important;
-      border: none !important;
-      border-bottom: 1px solid #f1f2f6 !important;
-      color: #3f4157;
-      font-size: .9rem;
-      vertical-align: middle;
-    }
-
-    tbody:last-child tr td {
-      border-bottom: none !important;
-    }
-
-    tr.tr-values {
-      transition: background .15s;
-
-      &:hover {
-        background: #fafbfd !important;
-        transform: none !important;
-      }
-    }
-  }
-
-  // Cells
-  .dt-amount {
-    font-variant-numeric: tabular-nums;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  .dt-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 3px 10px;
-    font-size: .78rem;
-    font-weight: 600;
-    white-space: nowrap;
-    border-radius: 999px;
-
-    &::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: currentColor;
-    }
-
-    &--success { color: #1f9d55; background: rgba(40, 199, 111, .12); }
-    &--warning { color: #d97706; background: rgba(255, 159, 67, .15); }
-    &--danger  { color: #d93b3b; background: rgba(234, 84, 85, .12); }
-    &--neutral { color: #5e6078; background: #f1f2f6; }
-  }
-
-  .dt-actions-cell {
-    width: 1%;
-    white-space: nowrap;
-  }
-
-  .dt-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .dt-action {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    border: none;
-    border-radius: 8px;
-    background: #f4f5f9;
-    color: #6e7091;
-    cursor: pointer;
-    transition: background .15s, color .15s;
-
-    .feather-icon {
-      display: flex;
-    }
-
-    &:hover {
-      color: rgb(var(--vs-primary));
-      background: rgba(var(--vs-primary), .12);
-    }
-
-    &--edit:hover {
-      color: #2f6fed;
-      background: rgba(47, 111, 237, .12);
-    }
-
-    &--delete:hover {
-      color: rgb(var(--vs-danger));
-      background: rgba(var(--vs-danger), .12);
-    }
-  }
-
-  // Alignment: text left, amounts right, actions right
-  .vs-con-table {
-    thead th,
-    .vs-table--thead th {
-      text-align: left !important;
-
-      .vs-table-text {
-        display: flex !important;
-        justify-content: flex-start;
-      }
-
-      &.dt-num,
-      &.dt-actions-head {
-        text-align: right !important;
-
-        .vs-table-text {
-          justify-content: flex-end;
-        }
-      }
-    }
-
-    td.dt-num {
-      text-align: right;
-    }
-
-    .dt-actions-cell .dt-actions {
-      justify-content: flex-end;
-    }
-
-    // Row number column stays narrow
-    thead th:first-child,
-    tr td:first-child {
-      width: 1%;
-      white-space: nowrap;
-      color: #8a8ca5;
-    }
-  }
-
-  // Footer
-  .dt-footer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 18px;
-
-    &__info {
-      font-size: .85rem;
-      color: #8a8ca5;
-    }
-
-    .con-vs-pagination {
-      flex: 0 0 auto;
-      width: auto;
-      margin: 0 0 0 auto;
-    }
-
-    .vs-pagination--nav {
-      justify-content: flex-end;
-    }
-  }
-}
-
-.theme-dark .dt-list {
-  .dt-toolbar__title h3 { color: #fff; }
-  .dt-btn:not(.dt-btn--primary),
-  .dt-action {
-    color: #c2c6dc;
-    border-color: #414561;
-    background: #262c49;
-  }
-  .vs-con-table .vs-con-tbody {
-    background: #262c49 !important;
-    border-color: #414561 !important;
-  }
-  .vs-con-table thead th {
-    background: #10163a !important;
-    color: #c2c6dc !important;
-  }
-  .vs-con-table tr td {
-    color: #c2c6dc;
-    border-color: #414561 !important;
-  }
-}
-</style>
+<!-- List page styles (.dt-list, .dt-toolbar, .dt-btn, .dt-badge, …) are shared app-wide: see "LIST PAGES" in resources/sass/custom.scss -->

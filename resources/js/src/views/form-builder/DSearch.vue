@@ -1,18 +1,20 @@
 <template>
-    <div>
-        <vx-card>
-            <h3 class="pb-4">{{ $t('text_search') }}</h3>
+    <div class="dt-filter-panel d-form" @keydown.enter.prevent="initSearch">
+        <div class="dt-filter-panel__head">
+            <span class="dt-filter-panel__icon"><feather-icon icon="FilterIcon" svgClasses="h-4 w-4" /></span>
+            <h4>{{ $t('text_search') }}</h4>
+        </div>
             <div class="vx-row">
                 <template v-for="(formAttribute, i) in formAttributes">
                     <!-- Form Input Text -->
-                    <div v-if="formAttribute.type == 'text' && formAttribute.required" :class="styleClass" dclass="mt-4">
+                    <div v-if="formAttribute.type == 'text' && formAttribute.required" :class="styleClass" class="d-field" dclass="mt-4">
                         <label>{{ $t(formAttribute.name) }}</label>
                         <vs-input :placeholder="$t(formAttribute.name)" v-model="form.attribute[formAttribute.name]"
                             :name="formAttribute.name" class="mt-2 w-full" />
                     </div>
 
                     <!-- Form Input Number -->
-                    <div v-if="formAttribute.type == 'number' && formAttribute.required" :class="styleClass" dclass="mt-4">
+                    <div v-if="formAttribute.type == 'number' && formAttribute.required" :class="styleClass" class="d-field" dclass="mt-4">
                         <label>{{ $t(formAttribute.name) }}</label>
                         <vs-input type="number" :placeholder="$t(formAttribute.name)"
                             v-model="form.attribute[formAttribute.name]" :name="formAttribute.name"
@@ -20,8 +22,8 @@
                     </div>
 
                     <!-- Form Input Number -->
-                    <div v-if="formAttribute.type == 'hidden' && formAttribute.required" :class="styleClass" dclass="mt-4">
-                        <label>{{ $t(formAttribute.name) }} -- {{data[formAttribute.name]}} - {{form.attribute[formAttribute.name]}}</label>
+                    <div v-if="formAttribute.type == 'hidden' && formAttribute.required" :class="styleClass" class="d-field" dclass="mt-4">
+                        <label>{{ $t(formAttribute.name) }}</label>
                         <vs-input type="number" :placeholder="$t(formAttribute.name)"
                             v-model="form.attribute[formAttribute.name]" 
                             :name="formAttribute.name"
@@ -29,8 +31,8 @@
                     </div>
 
                     <!-- Form Select -->
-                    <div v-if="formAttribute.type == 'select' && formAttribute.required" :class="styleClass" dclass="mt-4">
-                        <label class="mb-2">{{ $t(formAttribute.name) }} <span v-if="formAttribute.required">*</span></label>
+                    <div v-if="formAttribute.type == 'select' && formAttribute.required" :class="styleClass" class="d-field" dclass="mt-4">
+                        <label class="mb-2">{{ $t(formAttribute.name) }}</label>
                         <span v-if="formAttribute.required">
                             <template v-if="formAttribute.hasFilter">
                                 <v-select
@@ -81,7 +83,7 @@
                     </template> -->
 
                     <!-- Form Date -->
-                    <div v-if="formAttribute.type == 'date' && formAttribute.required" :class="styleClass" dclass="mt-4">
+                    <div v-if="formAttribute.type == 'date' && formAttribute.required" :class="styleClass" class="d-field" dclass="mt-4">
                         <label class="mb-2">{{ $t(formAttribute.name) }}</label>
                         <span v-if="formAttribute.required">
                             <flat-pickr v-validate="'required'" :name="formAttribute.name"
@@ -93,10 +95,16 @@
                     </div>
                 </template>
             </div>
-            <span class="pull-right">
-                <vs-button type="filled" @click.prevent="initSearch" class="mt-2 block">{{ $t("btn_search") }}</vs-button>
-            </span>
-        </vx-card>
+            <div class="dt-filter-panel__actions">
+                <button type="button" class="dt-btn" @click="resetSearch">
+                    <feather-icon icon="RotateCcwIcon" svgClasses="h-4 w-4" />
+                    <span>{{ $t('audit_clear') }}</span>
+                </button>
+                <button type="button" class="dt-btn dt-btn--primary" @click.prevent="initSearch">
+                    <feather-icon icon="SearchIcon" svgClasses="h-4 w-4" />
+                    <span>{{ $t("btn_search") }}</span>
+                </button>
+            </div>
     </div>
 </template>
 
@@ -228,6 +236,10 @@ export default {
             })
 
         },
+        resetSearch() {
+            Object.keys(this.form.attribute).forEach(key => this.$set(this.form.attribute, key, null));
+            this.initSearch();
+        },
         initSearch() {
             this._search_fields = [];
             // let _formAttribute = this.form.attribute;
@@ -236,7 +248,6 @@ export default {
                 "formAttribute": this.form.attribute,
                 "dataInfo": this.dataInfo
             };
-            console.log("data Form", _params);
             this.$emit('searchQuery', _params);
 
             // for (let i = 0; i < _formAttribute.length; i++) {

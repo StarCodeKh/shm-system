@@ -141,6 +141,15 @@ export default {
     }
   }
 
+  // Empty: the title stays whole and the hint gives way; chosen: the file name gives way
+  &.has-file &__title {
+    flex-shrink: 1;
+  }
+
+  &.has-file &__hint {
+    flex-shrink: 0;
+  }
+
   &.has-file &__box {
     border-style: solid;
     border-color: var(--input-border, #d8d9e3);
@@ -224,6 +233,7 @@ export default {
   }
 
   &__title {
+    flex-shrink: 0;
     min-width: 0;
     font-size: 14px;
     font-weight: 600;
@@ -236,11 +246,19 @@ export default {
   &__hint {
     display: inline-flex;
     align-items: center;
-    flex-shrink: 0;
+    flex-shrink: 1;
+    min-width: 0;
     gap: 4px;
     font-size: 12px;
     color: #8a8ca5;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    // Plain text hint: block so the ellipsis applies
+    &:not(.is-done) {
+      display: block;
+    }
 
     &.is-done {
       color: rgb(var(--picker-accent));

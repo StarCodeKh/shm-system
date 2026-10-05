@@ -36,6 +36,10 @@ class AuditController extends Controller
             "limit" => config_limit,
             "total" => $this->dbTable::getTotal($filter),
             "data_fields" => $this->dbTable::dataFields(),
+            // Record types for the filter (only on the first page load)
+            "types" => empty($input["search_field"]) && (int) ($filter["page_number"] ?? 1) <= 1
+                ? $this->dbTable::query()->select("auditable_type")->distinct()->orderBy("auditable_type")->pluck("auditable_type")
+                : null,
         );
         return response()->json($data);
     }
