@@ -71,7 +71,6 @@
 import vSelect from 'vue-select'
 import { Validator } from 'vee-validate';
 import axios from "@/axios.js"
-import Datepicker from 'vuejs-datepicker';
 const dict = {
   custom: {
       title: {
@@ -107,7 +106,6 @@ const dict = {
 Validator.localize('en', dict);
 export default {
   components: {
-    Datepicker,
     'v-select': vSelect
   },
   data() {

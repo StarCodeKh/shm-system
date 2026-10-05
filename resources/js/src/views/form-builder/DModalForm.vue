@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { gridColumns } from "@/formGrid.js";
 import SettingBackup from "@/views/pages/settings/SettingBackup.vue"
 import { ref } from 'vue';
 import Vue from "vue";
@@ -85,10 +86,10 @@ export default {
         sizeClass() {
             const fields = (this.formAttributes || []).filter(f => f && f.type !== 'hidden')
             if (fields.some(f => f.type === 'grid' || f.type === 'text_group')) return 'd-modal--xl'
-            const columns = { '1grid': 1, '2grid': 2, '3grid': 3, '4grid': 4 }[this.rowDisplay] || 2
+            const columns = gridColumns(this.rowDisplay)
             const used = Math.min(columns, Math.max(fields.length, 1))
             if (used <= 1 || fields.length <= 3) return 'd-modal--sm'
-            return { 2: 'd-modal--md', 3: 'd-modal--lg', 4: 'd-modal--xl' }[used]
+            return { 2: 'd-modal--md', 3: 'd-modal--lg' }[used]
         },
         // "Create …" for new records, "Edit …" when a record is loaded
         popupTitle() {

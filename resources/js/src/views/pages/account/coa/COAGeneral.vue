@@ -33,7 +33,7 @@
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
         <label for="" class="vs-input--label">ថ្ងៃចំណាយ</label>
-        <datepicker v-validate="'required'" placeholder="ថ្ងៃចំណាយ" name="issue_date" v-model="issue_date"></datepicker>
+        <flat-pickr class="w-full" v-validate="'required'" placeholder="ថ្ងៃចំណាយ" name="issue_date" v-model="issue_date" />
         <span class="text-danger">{{ errors.first('issue_date') }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
@@ -84,11 +84,9 @@
 import vSelect from 'vue-select'
 import { Validator } from 'vee-validate';
 import axios from "@/axios.js"
-import Datepicker from 'vuejs-datepicker';
 
 export default {
   components: {
-    Datepicker,
     'v-select': vSelect
   },
   data() {

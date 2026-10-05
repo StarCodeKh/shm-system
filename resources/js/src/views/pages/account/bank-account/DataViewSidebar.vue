@@ -41,7 +41,7 @@
         <vs-input label="អាស័យដ្ឋាន" v-model="address" class="mt-5 w-full" name="address" />
 
         <br/><label for="" class="vs-input--label">ថ្ងៃដាក់ដំណើរការ</label>
-        <datepicker v-validate="'required'" placeholder="ថ្ងៃដាក់ដំណើរការ" name="issue_date" v-model="issue_date"></datepicker>
+        <flat-pickr class="w-full" v-validate="'required'" placeholder="ថ្ងៃដាក់ដំណើរការ" name="issue_date" v-model="issue_date" />
         <span class="text-danger">{{ errors.first('step-1.issue_date') }}</span>
         
         <vs-input label="សំគាល់" v-model="remark" class="mt-5 w-full" name="remark" />
@@ -59,7 +59,6 @@
 <script>
 import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 import vSelect from 'vue-select'
-import Datepicker from 'vuejs-datepicker';
 import axios from "@/axios.js"
 
 export default {
@@ -261,7 +260,6 @@ export default {
     }
   },
   components: {
-    Datepicker,
     'v-select': vSelect,
     VuePerfectScrollbar,
   }

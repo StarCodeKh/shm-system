@@ -125,7 +125,7 @@
               </vs-td>
             </vs-tr>
           </tbody>
-          <vs-popup class="holamundo"  title="Are you sure?" :active.sync="popupActive">
+          <vs-popup class="holamundo d-modal--sm"  title="Are you sure?" :active.sync="popupActive">
             <p>
               <center>
                 <vs-button @click="deleteData(); popupActive=false" color="primary" type="filled">Yes</vs-button>

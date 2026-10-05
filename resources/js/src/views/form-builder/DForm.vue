@@ -11,7 +11,7 @@
             <d-file-manager ref="refModelFileManager" @clicked="initPassProps"></d-file-manager>
         </template>
 
-        <vs-popup style="z-index: 5200000;" classContent="popup-example" :title="$t(title)"
+        <vs-popup style="z-index: 5200000;" class="d-modal" classContent="popup-example" :title="$t(title)"
             :active.sync="showModalForm">
             <DFormAttribute :data="data" :formAttributes="formAttributeData" :rowDisplay="rowDisplay" :api="newAPi"
                 :dataInfo="dataInfo" :parentDataInfo="parentDataInfo" @clickForm="initTableData" />
@@ -170,7 +170,7 @@
                 </div>
 
                 <!-- Form Textarea -->
-                <div v-if="formAttribute.type == 'textarea'" :class="styleClass" class="d-field" dclass="mt-4">
+                <div v-if="formAttribute.type == 'textarea'" :class="styleClass" class="d-field d-field--textarea" dclass="mt-4">
                     <label class="mb-2">{{ fieldLabel(formAttribute.name) }} <span v-if="formAttribute.required">*</span></label>
                     <span v-if="formAttribute.required">
                         <vs-textarea v-validate="'required'" class="mt-1 w-full"
@@ -360,6 +360,7 @@
 </template>
 
 <script>
+import { gridClass } from "@/formGrid.js";
 import apiConfig from "@/apiConfig.js"
 import axios from "@/axios.js";
 import formAttr from "@/formAttributes.js"
@@ -995,21 +996,7 @@ export default {
     },
     created() {
         // this.form.attribute["budget_template_id"] = 11;
-        if (this.rowDisplay == "1grid") {
-            this.styleClass = "vx-col lg:w-1/1 w-full mt-4";
-        }
-        if (this.rowDisplay == "2grid") {
-            this.styleClass = "vx-col lg:w-1/2 w-full mt-4";
-        }
-        if (this.rowDisplay == "3grid") {
-            this.styleClass = "vx-col lg:w-1/3 w-full mt-4";
-        }
-        if (this.rowDisplay == "4grid") {
-            this.styleClass = "vx-col lg:w-1/4 w-full mt-4";
-        }
-        if (this.rowDisplay == "full-grid") {
-            this.styleClass = "vx-col lg:w-1/1 w-full";
-        }
+        this.styleClass = gridClass(this.rowDisplay);
     },
     watch: {
 
@@ -1019,87 +1006,7 @@ export default {
 <style lang="scss">
 // ---------------------------------------------------------------- Standard form layout
 .d-form {
-  > .vx-row {
-    row-gap: 4px;
-  }
-
-  // Label row: label on the left, optional quick-add on the right, control below
-  .d-field {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    align-content: flex-start;
-
-    > label {
-      flex: 1 1 auto;
-      margin-bottom: 6px !important;
-      font-size: .875rem;
-      font-weight: 600;
-      color: #4b4d68;
-
-      > span {
-        color: rgb(var(--vs-danger));
-        margin-left: 2px;
-      }
-    }
-
-    > *:not(label):not(.d-quick-add) {
-      flex: 1 1 100%;
-      min-width: 0;
-    }
-
-    .vs-input,
-    .v-select,
-    .vs-con-textarea {
-      margin-top: 0 !important;
-    }
-
-    .text-danger {
-      display: block;
-      margin-top: 4px;
-      font-size: .78rem;
-    }
-  }
-
-  .d-quick-add {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 6px;
-    padding: 2px 8px;
-    font-family: inherit;
-    font-size: .75rem;
-    font-weight: 600;
-    color: rgb(var(--vs-primary));
-    border: none;
-    border-radius: 6px;
-    background: rgba(var(--vs-primary), .1);
-    cursor: pointer;
-
-    .feather-icon {
-      display: flex;
-    }
-
-    &:hover {
-      background: rgba(var(--vs-primary), .18);
-    }
-  }
-
-  // Controls share one height and shape
-  .vs-input--input,
-  .vs__dropdown-toggle {
-    min-height: 42px;
-    border-radius: 10px !important;
-  }
-
-  .vs-input--input.normal {
-    padding: 10px 14px !important;
-    font-size: .92rem !important;
-  }
-
-  textarea {
-    min-height: 96px;
-  }
+  // Field rows, quick-add button and control sizes are shared app-wide: see .d-form in resources/sass/custom.scss
 
   // Sticky footer
   &__footer {
@@ -1172,97 +1079,11 @@ export default {
   }
 }
 
-// ---------------------------------------------------------------- Popup frame
-.d-modal.con-vs-popup {
-  .vs-popup--background {
-    background: rgba(17, 20, 45, .45);
-    backdrop-filter: blur(3px);
-  }
-
-  .vs-popup {
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 24px 60px -12px rgba(17, 20, 45, .35);
-  }
-
-  .vs-popup--header {
-    display: flex;
-    align-items: center;
-    padding: 14px 16px 14px 24px;
-    background: #fff;
-    border-bottom: 1px solid #eceef4;
-  }
-
-  .vs-popup--title h3 {
-    padding: 0;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #2c2e45;
-  }
-
-  .vs-popup--close {
-    position: static;
-    width: 34px;
-    height: 34px;
-    margin: 0 0 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    color: #6e7091;
-    border-radius: 8px;
-    background: #f4f5f9;
-    box-shadow: none;
-    transform: none !important;
-
-    &:hover {
-      color: rgb(var(--vs-danger));
-      background: rgba(var(--vs-danger), .1);
-    }
-  }
-
-  .vs-popup--content {
-    flex: 1 1 auto;
-    width: auto !important;
-    max-height: none !important;
-    margin: 0;
-    padding: 16px 24px;
-    overflow-y: auto;
-  }
-
-  // Centered dialog sized by content (see DModalForm sizeClass)
-  .vs-popup {
-    display: flex;
-    flex-direction: column;
-    width: 820px !important;
-    max-width: calc(100vw - 32px);
-    height: auto !important;
-    max-height: calc(100vh - 48px);
-    margin: 0 !important;
-  }
-
-  &.d-modal--sm .vs-popup { width: 560px !important; }
-  &.d-modal--md .vs-popup { width: 820px !important; }
-  &.d-modal--lg .vs-popup { width: 1000px !important; }
-  &.d-modal--xl .vs-popup { width: 1200px !important; }
-
-  // One column inside small dialogs and on phones
-  &.d-modal--sm .d-form .d-field {
-    width: 100% !important;
-  }
-
-  @media (max-width: 640px) {
-    .d-form .d-field {
-      width: 100% !important;
-    }
-  }
-}
+// Popup frame and sizes (.d-modal--sm/md/lg/xl) are shared app-wide: see "POPUPS" in resources/sass/custom.scss
 
 .theme-dark {
   .d-form .d-field > label { color: #c2c6dc; }
   .d-form__footer { background: #262c49; border-color: #414561; }
   .d-form__btn:not(.d-form__btn--primary) { background: #262c49; border-color: #414561; color: #c2c6dc; }
-  .d-modal .vs-popup--header { background: #262c49; border-color: #414561; }
-  .d-modal .vs-popup--title h3 { color: #fff; }
 }
 </style>

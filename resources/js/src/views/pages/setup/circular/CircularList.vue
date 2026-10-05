@@ -101,7 +101,7 @@
               <vs-td class="whitespace-no-wrap">
                 <feather-icon icon="EditIcon" svgClasses="w-5 h-5 hover:text-primary stroke-current" @click.stop="editData(tr)" />
                 <feather-icon icon="TrashIcon" svgClasses="w-5 h-5 hover:text-danger stroke-current" class="ml-2" @click.stop="popupActive=true" />
-                <vs-popup class="holamundo"  title="Are you sure?" :active.sync="popupActive">
+                <vs-popup class="holamundo d-modal--sm"  title="Are you sure?" :active.sync="popupActive">
                     <p>
                       <center>
                         <vs-button @click="deleteData(tr.id); popupActive=false" color="primary" type="filled">Yes</vs-button>

@@ -1,5 +1,5 @@
 <template>
-    <vs-popup style="z-index: 52000;" fullscreen classContent="popup-example" :title="$t('បញ្ជីទិន្នន័យ')"
+    <vs-popup style="z-index: 52000;" class="d-modal d-modal--xl" classContent="popup-example" :title="$t('បញ្ជីទិន្នន័យ')"
         :active.sync="showModalForm">
         <!-- <form-ceiling ref="refOpenPrivatePopupForm" :api="dataAttributes.api" :dataAttributes="dataAttributes"
             :dataInfo="dataInfo"></form-ceiling> -->
@@ -10,6 +10,7 @@
 </template>
 
 <script>
+    import { gridClass } from "@/formGrid.js";
     import axios from "@/axios.js"
     import apiConfig from "@/apiConfig.js"
     // import DForm from '@/views/form-builder/DForm.vue'
@@ -655,21 +656,7 @@
         created() {
             // this.$vs.loading();
             this.getData();
-            if (this.rowDisplay == "1grid") {
-                this.styleClass = "vx-col lg:w-1/1 w-full mt-4";
-            }
-            if (this.rowDisplay == "2grid") {
-                this.styleClass = "vx-col lg:w-1/2 w-full mt-4";
-            }
-            if (this.rowDisplay == "3grid") {
-                this.styleClass = "vx-col lg:w-1/3 w-full mt-4";
-            }
-            if (this.rowDisplay == "4grid") {
-                this.styleClass = "vx-col lg:w-1/4 w-full mt-4";
-            }
-            if (this.rowDisplay == "full-grid") {
-                this.styleClass = "vx-col lg:w-1/1 w-full";
-            }
+            this.styleClass = gridClass(this.rowDisplay);
         },
         computed: {
             isSmallerScreen() {

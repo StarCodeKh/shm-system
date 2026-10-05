@@ -144,7 +144,7 @@
                             
                             <div class="vx-col md:w-1/2 w-full mt-5">
                                 <label for="" class="vs-input--label">ថ្ងៃដាក់សំណើរ</label>
-                                <datepicker v-validate="'required'" placeholder="ថ្ងៃដាក់លិខិត" name="request_date" v-model="request_date"></datepicker>
+                                <flat-pickr class="w-full" v-validate="'required'" placeholder="ថ្ងៃដាក់លិខិត" name="request_date" v-model="request_date" />
                                 <span class="text-danger">{{ errors.first('step-1.request_date') }}</span>
                             </div>
 
@@ -294,7 +294,6 @@ import CreateOfficerPopup from '../../officers/form/CreateOfficerPopup.vue'
 import 'vue-form-wizard/dist/vue-form-wizard.min.css'
 import DataViewSidebar from '@/views/pages/compositions-request/data-list/DataViewSidebar.vue'
 import moduleDataList from "@/store/data-list/moduleDataList.js"
-import Datepicker from 'vuejs-datepicker';
 import VueSimpleSuggest from 'vue-simple-suggest';
 import 'vue-simple-suggest/dist/styles.css'
 import { Validator } from 'vee-validate';
@@ -329,7 +328,6 @@ export default {
         CreateOfficerPopup,
         FormWizard,
         TabContent,
-        Datepicker,
         VueSimpleSuggest,
         'v-select': vSelect
     },

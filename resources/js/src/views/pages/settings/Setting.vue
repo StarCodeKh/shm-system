@@ -243,9 +243,8 @@ export default {
   box-shadow: 0 4px 24px -8px rgba(23, 23, 74, .12);
 }
 
-// Colored icon square; --tile is an "r, g, b" triple
+// Colored icon square; --tile is an "r, g, b" triple inherited from the nav item / section
 .setting-tile {
-  --tile: 99, 102, 241;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -253,8 +252,8 @@ export default {
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  color: rgb(var(--tile));
-  background: rgba(var(--tile), .12);
+  color: rgb(var(--tile, 99, 102, 241));
+  background: rgba(var(--tile, 99, 102, 241), .12);
   transition: transform .2s ease, background .2s ease, color .2s ease;
 
   .feather-icon {
@@ -415,7 +414,7 @@ export default {
   padding: 24px 28px 28px;
   // Soft tint of the active section's color fading into the page background
   background:
-    linear-gradient(180deg, rgba(var(--tile), .07), rgba(var(--tile), 0) 220px),
+    linear-gradient(180deg, rgba(var(--tile), .05), rgba(var(--tile), 0) 180px),
     #f7f8fb;
   transition: background .3s ease;
 
@@ -426,8 +425,8 @@ export default {
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, rgb(var(--tile)), rgba(var(--tile), .35));
+    height: 2px;
+    background: linear-gradient(90deg, rgb(var(--tile)), rgba(var(--tile), 0));
     transition: background .3s ease;
   }
 
@@ -440,12 +439,11 @@ export default {
     border-bottom: 1px solid #e9ebf2;
 
     .setting-tile {
-      width: 46px;
-      height: 46px;
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
-      color: #fff;
-      background: rgb(var(--tile));
-      box-shadow: 0 8px 18px -10px rgba(var(--tile), .9);
+      color: rgb(var(--tile));
+      background: rgba(var(--tile), .12);
     }
 
     h2 {
@@ -509,32 +507,65 @@ export default {
     flex: none;
     border-right: none;
     border-bottom: 1px solid #eef0f5;
+    background: #fff;
+
+    &__header {
+      display: none;
+    }
 
     &__list {
       position: static;
       flex-direction: row;
+      gap: 8px;
       max-height: none;
+      padding: 12px;
       overflow-x: auto;
       overflow-y: hidden;
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
     }
 
     &__item {
       flex: 0 0 auto;
       width: auto;
+      gap: 8px;
+      padding: 5px 14px 5px 5px;
+      border: 1px solid #eceef3;
+      border-radius: 999px;
+      background: #fff;
+      scroll-snap-align: start;
 
       &::before {
-        top: auto;
-        bottom: 0;
-        left: 12px;
-        right: 12px;
-        width: auto;
-        height: 3px;
-        transform: scaleX(0);
+        display: none;
       }
 
-      &.is-active::before {
-        transform: scaleX(1);
+      .setting-tile {
+        width: 30px;
+        height: 30px;
+        border-radius: 999px;
       }
+
+      &:hover {
+        box-shadow: none;
+        border-color: rgba(var(--tile), .35);
+      }
+
+      &.is-active {
+        border-color: rgba(var(--tile), .4);
+        background: rgba(var(--tile), .1);
+
+        .setting-nav__title {
+          color: rgb(var(--tile));
+        }
+      }
+    }
+
+    &__title {
+      font-size: .85rem;
     }
 
     &__desc,
@@ -562,6 +593,10 @@ export default {
   .setting-nav__item.is-active .setting-nav__title { color: #fff; }
   .setting-nav__title { color: #c2c6dc; }
   .setting-nav__item:hover { background: #262c49; }
+  @media (max-width: 900px) {
+    .setting-nav { background: #10163a; }
+    .setting-nav__item { background: #10163a; border-color: #414561; }
+  }
   .setting-content {
     background: linear-gradient(180deg, rgba(var(--tile), .18), rgba(var(--tile), 0) 220px), #1b2142;
   }

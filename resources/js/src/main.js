@@ -44,6 +44,12 @@ import store from './store/store'
 import i18n, { installPhraseTranslation } from './i18n/i18n'
 installPhraseTranslation(Vue)
 
+// Date picker defaults (flatpickr) shared by every date field
+import './plugins/datePicker'
+
+// Textareas grow with their content
+import './plugins/autosize'
+
 // Vuesax Admin Filters
 import './filters/filters'
 

@@ -1,7 +1,7 @@
 <template>
   <div id="invoice-page">
     <!-- Poup Data Table -->
-    <vs-popup fullscreen :title="$t(title)" :active.sync="popupActive">
+    <vs-popup class="d-modal d-modal--xl" :title="$t(title)" :active.sync="popupActive">
       <popup :proPlan="proPlan"></popup>
     </vs-popup><!--###End Poup Data Table-->
 

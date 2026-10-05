@@ -1,6 +1,6 @@
 <template>
     <div class="demo-alignment">
-        <vs-popup classContent="popup-example" :title="title" :active.sync="showModalForm">
+        <vs-popup class="d-modal d-modal--md" classContent="popup-example" :title="title" :active.sync="showModalForm">
             <form name="file">
                 <input type="file" name="file" @change="selectedFile($event)"/>
             </form>

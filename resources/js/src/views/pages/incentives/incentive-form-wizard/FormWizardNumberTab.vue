@@ -42,17 +42,17 @@
                             </div>
                             <div class="vx-col md:w-1/2 w-full mt-5">
                                 <label for="" class="vs-input--label">ថ្ងៃបង្កើតបើកផ្តល់</label>
-                                <datepicker v-validate="'required'" placeholder="ថ្ងៃបង្កើតបើកផ្តល់" name="issue_date" v-model="issue_date"></datepicker>
+                                <flat-pickr class="w-full" v-validate="'required'" placeholder="ថ្ងៃបង្កើតបើកផ្តល់" name="issue_date" v-model="issue_date" />
                                 <span class="text-danger">{{ errors.first('step-1.issue_date') }}</span>
                             </div>
                             <div class="vx-col md:w-1/2 w-full mt-5">
                                 <label for="" class="vs-input--label">បើកពីថ្ងៃ</label>
-                                <datepicker v-validate="'required'" placeholder="បើកពីថ្ងៃ" name="issue_from_date" v-model="issue_from_date"></datepicker>
+                                <flat-pickr class="w-full" v-validate="'required'" placeholder="បើកពីថ្ងៃ" name="issue_from_date" v-model="issue_from_date" />
                                 <span class="text-danger">{{ errors.first('step-1.issue_from_date') }}</span>
                             </div>
                             <div class="vx-col md:w-1/2 w-full mt-5">
                                 <label for="" class="vs-input--label">បើកដល់ថ្ងៃ</label>
-                                <datepicker v-validate="'required'" placeholder="បើកដល់ថ្ងៃ" name="issue_to_date" v-model="issue_to_date"></datepicker>
+                                <flat-pickr class="w-full" v-validate="'required'" placeholder="បើកដល់ថ្ងៃ" name="issue_to_date" v-model="issue_to_date" />
                                 <span class="text-danger">{{ errors.first('step-1.issue_to_date') }}</span>
                             </div>
                             <div class="vx-col md:w-1/2 w-full mt-5">
@@ -260,7 +260,6 @@ import 'vue-form-wizard/dist/vue-form-wizard.min.css'
 import moduleDataList from "@/store/data-list/moduleDataList.js"
 import { Validator } from 'vee-validate';
 import vSelect from 'vue-select'
-import Datepicker from 'vuejs-datepicker';
 import axios from "@/axios.js"
 const dict = {
     custom: {
@@ -319,7 +318,6 @@ export default {
     components: {
         FormWizard,
         TabContent,
-        Datepicker,
         'v-select': vSelect
     },
     data() {
@@ -478,7 +476,7 @@ export default {
                             }
                         }
                         this.$vs.loading();
-                        const formatYmd = date => date.toISOString().slice(0, 10);
+                        const formatYmd = date => (date instanceof Date ? date.toISOString() : String(date)).slice(0, 10);
                         let _issueFromdate = formatYmd(this.issue_from_date);
                         let _issueTodate = formatYmd(this.issue_to_date);
                         axios.get("/api/v1/officer_group_by_entities?entity_id=" + entity_id + '&issue_from_date=' + _issueFromdate + '&issue_to_date=' + _issueTodate + '&allow_cal_tax=' + this.allow_cal_tax)

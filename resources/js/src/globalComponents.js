@@ -13,6 +13,14 @@ Vue.component(VxBreadcrumb.name, VxBreadcrumb)
 Vue.component(FeatherIcon.name, FeatherIcon)
 Vue.component(VxInputGroup.name, VxInputGroup)
 
+// File field (thumbnail + browse), used by every upload in the app
+import DFilePicker from './views/form-builder/DFilePicker.vue'
+Vue.component(DFilePicker.name, DFilePicker)
+
+// Tabbed shell for long forms (sections as tabs with error badges)
+import DFormTabs from './views/form-builder/DFormTabs.vue'
+Vue.component(DFormTabs.name, DFormTabs)
+
 // v-select component
 import vSelect from 'vue-select'
 // Set the components prop default to return our fresh components

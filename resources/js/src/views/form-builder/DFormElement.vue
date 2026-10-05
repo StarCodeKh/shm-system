@@ -2,7 +2,8 @@
     <div>
         <div class="vx-row">
             <!-- {{dataInfo | json}} -->
-            <div :key="i" v-for="(formAttribute, i) in formAttributes" :class="styleClass">
+            <div :key="i" v-for="(formAttribute, i) in formAttributes"
+                :class="[styleClass, { 'd-field--textarea': formAttribute.type == 'textarea' }]">
                 <!-- Form Input Text -->
                 <div v-if="formAttribute.type == 'text'" class="mt-4">
                     <label class="mb-2">{{ $t(formAttribute.name) }}</label>
@@ -254,6 +255,7 @@
 </template>
 
 <script>
+import { gridClass } from "@/formGrid.js";
 import axios from "@/axios.js"
 import DFormInput from '@/views/form-builder/form-control/DFormInput.vue'
 import vSelect from 'vue-select'
@@ -436,21 +438,7 @@ export default {
 
     },
     created() {
-        if (this.rowDisplay == "1grid") {
-            this.styleClass = "vx-col lg:w-1/1 w-full";
-        }
-        if (this.rowDisplay == "2grid") {
-            this.styleClass = "vx-col lg:w-1/2 w-full";
-        }
-        if (this.rowDisplay == "3grid") {
-            this.styleClass = "vx-col lg:w-1/3 w-full";
-        }
-        if (this.rowDisplay == "4grid") {
-            this.styleClass = "vx-col lg:w-1/4 w-full";
-        }
-        if (this.rowDisplay == "full-grid") {
-            this.styleClass = "vx-col lg:w-1/1 w-full";
-        }
+        this.styleClass = gridClass(this.rowDisplay);
     },
     watch: {
 

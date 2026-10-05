@@ -1,6 +1,6 @@
 <template>
     <div>
-        <vs-popup fullscreen classContent="popup-example" title="កំណត់សិទ្ធ" :active.sync="showModalForm">
+        <vs-popup class="d-modal d-modal--xl" classContent="popup-example" title="កំណត់សិទ្ធ" :active.sync="showModalForm">
             <div id="user-edit-tab-info">
                 <!-- Permissions -->
                 <vx-card class="mt-base" no-shadow card-border>

@@ -6,180 +6,112 @@
         <template title="modal" class="modal">
             <d-file-manager ref="refModelFileManager" @clicked="initPassProps"></d-file-manager>
         </template>
-        <div class="vx-col md:w-2/3 w-full mt-5">
-            <div class="container">
-                <div class="header">
-                    <h1><i class="fas fa-credit-card"></i> បង់ប្រាក់</h1>
-                    <p>បំពេញព័ត៌មានខាងក្រោមដើម្បីបង់ប្រាក់</p>
-                </div>
-                
-                <div class="form-container">
-                    <div class="success-message" id="successMessage">
-                        <i class="fas fa-check-circle"></i> ការបង់ប្រាក់ត្រូវបានបង្កើតដោយជោគជ័យ!
+        <div class="vx-col lg:w-2/3 w-full mt-5">
+            <d-form-tabs ref="tabs" v-model="tab" :sections="sections" :errors="errors" icon="CreditCardIcon"
+                :title="$t('payable_form_title')" :subtitle="$t('payable_form_subtitle')">
+                <form id="paymentForm" @submit.prevent="submitForm">
+                    <!-- Member -->
+                    <div class="form-section" data-section="member" v-show="tab === 'member'">
+                        <div class="form-grid">
+                            <div class="form-group half-width">
+                                <label>ស្វែងរកឈ្មោះសមាជិក <span class="required"></span></label>
+                                <v-select label="label" name="officer_id" v-validate="'required'" :options="data"
+                                    v-model="officer_id" @search="onSearchOfficer" @input="onSelectOfficer($event)"
+                                    :filterable="false" :dir="$vs.rtl ? 'rtl' : 'ltr'" />
+                                <span class="text-danger" v-show="errors.has('officer_id')">{{ $t('payable_required_officer') }}</span>
+                            </div>
+                            <div class="form-group">
+                                <label>អត្ថលេខសមាជិក</label>
+                                <input readonly v-model="identity_member_no" type="text" placeholder="អត្ថលេខសមាជិក">
+                            </div>
+                            <div class="form-group">
+                                <label>អង្គភាព</label>
+                                <input readonly v-model="department" type="text" placeholder="អង្គភាព">
+                            </div>
+                            <div class="form-group">
+                                <label>នាយកដ្ឋាន</label>
+                                <input readonly v-model="entity" type="text" placeholder="នាយកដ្ឋាន">
+                            </div>
+                        </div>
                     </div>
-    
-                    <form id="paymentForm">
-                        <!-- Customer Information -->
-                        <div class="section-title">
-                            <i class="fas fa-user"></i>
-                            ព័ត៌មានសមាជិក
-                        </div>
-    
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="required">ស្វែងរកឈ្មោះសមាជិក</label>
-                                <div class="input-icon">
-                                    <i class="fas fa-user"></i>
-                                    <!-- <input type="text" placeholder="ស្វែងរកឈ្មោះសមាជិក" required> -->
-                                    <v-select label="label" :options="data" v-model="officer_id" @search="onSearchOfficer" @input="onSelectOfficer($event)" :filterable="false" :dir="$vs.rtl ? 'rtl' : 'ltr'" />
-                                     <!-- <vs-select v-model="selectedValue" @input="onSelectOfficer($event)" :dir="$vs.rtl ? 'rtl' : 'ltr'" v-validate="'required'" class="mt-1 w-full">
-                                        <vs-select-item :key="index" :value="item.value" :text="item.label" v-for="(item, index) in data" />
-                                    </vs-select> -->
-                                    <!-- <select @change="onChangeElement($event)">                                            
-                                <option value="test">Test</option>
-                                <option value="test2">Test2</option>
-                                </select> -->
-                                </div>
-                            </div>
 
+                    <!-- Payment -->
+                    <div class="form-section" data-section="payment" v-show="tab === 'payment'">
+                        <div class="form-grid">
                             <div class="form-group">
-                                <label class="required">អត្ថលេខសមាជិក</label>
-                                <div class="input-icon">
-                                    <i class="fas fa-user"></i>
-                                    <input readonly v-model="identity_member_no" type="text" placeholder="អត្ថលេខសមាជិក">
-                                </div>
+                                <label>ប្រាក់នៅជំពាក់តាមឆ្នាំ <span class="required"></span></label>
+                                <v-select label="label" name="payable" v-validate="'required'" :options="payables"
+                                    v-model="payable" @input="onSelectPayable($event)" :filterable="false"
+                                    :dir="$vs.rtl ? 'rtl' : 'ltr'" />
+                                <span class="text-danger" v-show="errors.has('payable')">{{ $t('payable_required_year') }}</span>
                             </div>
-
                             <div class="form-group">
-                                <label class="required">អង្គភាព</label>
-                                <div class="input-icon">
-                                    <i class="fas fa-phone"></i>
-                                    <textarea readonly v-model="department" type="text" placeholder="អង្គភាព"/>
-                                </div>
+                                <label>ចំនួនទឹកប្រាក់ (សរុប)</label>
+                                <input type="number" v-model="amount" placeholder="0.00" readonly>
                             </div>
-
                             <div class="form-group">
-                                <label class="required">នាយកដ្ឋាន</label>
-                                <div class="input-icon">
-                                    <i class="fas fa-phone"></i>
-                                    <textarea readonly v-model="entity" type="text" placeholder="នាយកដ្ឋាន"/>
-                                </div>
+                                <label>កាលបរិច្ឆេទបង់ប្រាក់ <span class="required"></span></label>
+                                <flat-pickr v-model="payment_date" name="payment_date" v-validate="'required'" class="w-full" />
+                                <span class="text-danger" v-show="errors.has('payment_date')">{{ $t('payable_required_date') }}</span>
                             </div>
-                        </div>
-    
-                        <!-- Payment Details -->
-                        <div class="section-title">
-                            <i class="fas fa-wallet"></i>
-                            ព័ត៌មានការបង់ប្រាក់
-                        </div>
-    
-                        <div class="vx-row">
-                            <div class="vx-col md:w-1/2 w-full">
-                                <div class="form-group">
-                                    <label class="required">ចំនួនទឹកប្រាក់</label>
-                                    <div class="amount-display">
-                                        <label>សរុប</label>
-                                        <input type="number" v-model="amount" id="amount" placeholder="0.00" required>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="vx-col md:w-1/2 w-full">
-                                <div class="form-group">
-                                    <label class="required">ប្រាក់នៅជំពាក់តាមឆ្នាំ</label>
-                                    <v-select label="label" :options="payables" v-model="payable" @input="onSelectPayable($event)" :filterable="false" :dir="$vs.rtl ? 'rtl' : 'ltr'" />
-                                    <input type="hidden" v-model="payable_id" />
-                                </div>
-                                <div class="form-group">
-                                    <label class="required">កាលបរិច្ឆេទបង់ប្រាក់</label>
-                                    <div class="input-icon">
-                                        <i class="fas fa-calendar"></i>
-                                        <input type="date" v-model="payment_date" required>
-                                    </div>
-                                </div>
-                                <!-- <div class="form-group">
-                                    <label class="required">រូបបីយវត្ថុ</label>
-                                    <v-select label="label" :options="currencies" v-model="currency_id" @input="onSelectCurrency($event)" :filterable="false" :dir="$vs.rtl ? 'rtl' : 'ltr'" />
-                                </div> -->
-                                <div class="form-group">
-                                    <label class="required">វិធីបង់ប្រាក់</label>
-                                    <v-select label="label" :options="paymentMethods" v-model="payment_method_id" :filterable="false" :dir="$vs.rtl ? 'rtl' : 'ltr'" />
-                                </div>
-                                <div class="form-group">
-                                    <label class="required">ស្ថានភាពបង់ប្រាក់</label>
-                                    <v-select label="label" :options="paymentStatus" v-model="status" :filterable="false" :dir="$vs.rtl ? 'rtl' : 'ltr'" />
-                                </div>
-                            </div>
-                        </div>
-    
-                        <!-- <div class="form-group full-width">
-                            <label class="required">វិធីបង់ប្រាក់</label>
-                            <div class="payment-methods">
-                                <div class="payment-option selected" onclick="selectPayment(this)">
-                                    <i class="fas fa-money-bill-wave"></i>
-                                    <span>សាច់ប្រាក់</span>
-                                </div>
-                                <div class="payment-option" onclick="selectPayment(this)">
-                                    <i class="fas fa-mobile-alt"></i>
-                                    <span>ABA</span>
-                                </div>
-                                <div class="payment-option" onclick="selectPayment(this)">
-                                    <i class="fas fa-university"></i>
-                                    <span>ធនាគារ</span>
-                                </div>
-                            </div>
-                        </div> -->
-    
-                        <div class="form-group full-width">
-                            <label>ការកំណត់សម្គាល់</label>
-                            <textarea rows="3" v-model="remark" placeholder="បញ្ចូលការកំណត់សម្គាល់ (បើមាន)"></textarea>
-                        </div>
-
-                        <!-- <div class="form-group full-width">
-                            <label>ឯកសារយោង</label>
-                            <input type="file"/>
-                        </div> -->
-                        <div class="form-group">
-                            <label>ឯកសារភ្ជាប់ <span class="badge">Optional</span></label>
-                            <div class="file-upload-wrapper">
-                                <img v-if="iconThumnail!=null" style="width:100px" class="attach" :src="iconThumnail" />
-                                <vs-input type="hidden" :placeholder="$t('attach')"
-                                    v-model="attach" :value="''"
-                                    class="mt-2 w-full" />
-                                <label for="attach" @click="initOpenFileManager('attach')" class="file-upload-label">
-                                    <i class="fas fa-camera"></i>
-                                    <span>ជ្រើសរើសឯកសារភ្ជាប់</span>
-                                </label>
-                            </div>
-                        </div>
-    
-                        <!-- <div class="form-row">
                             <div class="form-group">
-                                <label>អ្នកទទួលប្រាក់</label>
-                                <input type="text" value="" readonly>
+                                <label>វិធីបង់ប្រាក់ <span class="required"></span></label>
+                                <v-select label="label" name="payment_method_id" v-validate="'required'"
+                                    :options="paymentMethods" v-model="payment_method_id" :filterable="false"
+                                    :dir="$vs.rtl ? 'rtl' : 'ltr'" />
+                                <span class="text-danger" v-show="errors.has('payment_method_id')">{{ $t('payable_required_method') }}</span>
                             </div>
-                        </div> -->
-    
-                        <button type="submit" @click.prevent="submitForm" class="btn-submit">
-                            <i class="fas fa-save"></i> {{$t("btn_process") }}
-                        </button>
-                    </form>
-                </div>
-            </div>
+                            <div class="form-group">
+                                <label>ស្ថានភាពបង់ប្រាក់ <span class="required"></span></label>
+                                <v-select label="label" name="status" v-validate="'required'" :options="paymentStatus"
+                                    v-model="status" :filterable="false" :dir="$vs.rtl ? 'rtl' : 'ltr'" />
+                                <span class="text-danger" v-show="errors.has('status')">{{ $t('payable_required_status') }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Note & attachment -->
+                    <div class="form-section" data-section="extra" v-show="tab === 'extra'">
+                        <div class="form-grid">
+                            <div class="form-group half-width">
+                                <label>ការកំណត់សម្គាល់</label>
+                                <textarea v-model="remark" placeholder="បញ្ចូលការកំណត់សម្គាល់ (បើមាន)"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>ឯកសារភ្ជាប់ <span class="badge">Optional</span></label>
+                                <d-file-picker name="attach" :value="attach || ''"
+                                    @browse="initOpenFileManager('attach')"
+                                    @clear="attach = null; iconThumnail = null" />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <template #actions>
+                    <button type="button" class="d-tabform__btn" @click="resetAll()">
+                        <feather-icon icon="RotateCcwIcon" svgClasses="h-4 w-4" />
+                        <span>{{ $t('form_reset') }}</span>
+                    </button>
+                    <button type="button" class="d-tabform__btn d-tabform__btn--primary" @click="submitForm">
+                        <feather-icon icon="SaveIcon" svgClasses="h-4 w-4" />
+                        <span>{{ $t("btn_process") }}</span>
+                    </button>
+                </template>
+            </d-form-tabs>
         </div>
 
-        <div class="vx-col md:w-1/3 w-full mt-5">
-            <div class="section-title">
-                <i class="fas fa-user"></i>
-                ប្រវត្តិបង់ប្រាក់
+        <div class="vx-col lg:w-1/3 w-full mt-5">
+          <div class="payable-history">
+            <div class="payable-history__head">
+                <span class="payable-history__icon"><feather-icon icon="ClockIcon" svgClasses="h-4 w-4" /></span>
+                <h3>ប្រវត្តិបង់ប្រាក់</h3>
             </div>
 
             <!-- <div id="data-list-list-view" class="data-list-container"> -->
                 <div style="display: none;">{{ paymentHistories | json }}</div>
                 <vs-table multiple v-model="selected" pagination :max-items="itemsPerPage" search :data="paymentHistories">
-                    <template slot="thead" style="background: rgb(96 113 173) !important; color: #ffffff; font-weight: bold;">
-                        <vs-th sort-key="category" style="background: rgb(96 113 173) !important; color: #ffffff; font-weight: bold;">ឆ្នាំ</vs-th>
-                        <vs-th sort-key="popularity" style="background: rgb(96 113 173) !important; color: #ffffff; font-weight: bold;">ចំនួន</vs-th>
+                    <template slot="thead">
+                        <vs-th sort-key="category">ឆ្នាំ</vs-th>
+                        <vs-th sort-key="popularity">ចំនួន</vs-th>
                         <!-- <vs-th style="background: rgb(96 113 173); color: #ffffff; font-weight: bold;">សកម្ម</vs-th> -->
                     </template>
 
@@ -216,8 +148,7 @@
                         </tbody>
                     </template>
                 </vs-table>
-            <!-- </div> -->
-
+          </div>
         </div>
     </div>
 </template>
@@ -232,6 +163,12 @@ import DFileManager from '@/views/form-builder/DFileManager.vue';
 export default {
   data() {
     return {
+        tab: 'member',
+        sections: [
+            { key: 'member', icon: 'UserIcon', title: 'ព័ត៌មានសមាជិក' },
+            { key: 'payment', icon: 'CreditCardIcon', title: 'ព័ត៌មានការបង់ប្រាក់' },
+            { key: 'extra', icon: 'PaperclipIcon', title: 'កំណត់សម្គាល់ និងឯកសារ' },
+        ],
         apiPayable: apiConfig._apiOfficerPayable,
         api: apiConfig._apiOfficerPayableInfo,
         apiOfficerGeneralDataForPayable: apiConfig._apiOfficerGeneralDataForPayable,
@@ -324,25 +261,19 @@ export default {
     },
     getGeneralDataForPayable(_search){
         let _keySearch = {"keyword": _search}
-        this.$validator.validateAll().then(result => {
-            if (result) {
-                return new Promise((resolve, reject) => {
-                    axios.post(this.apiOfficerGeneralDataForPayable, _keySearch)
-                        .then((response) => {
-                            this.data = response.data.officers;
-                            this.paymentMethods = response.data.payment_method_id;
-                            this.currencies = response.data.currency_id;
-                            this.payables = response.data.payables;
-                            this.paymentStatus = response.data.status;
-                            resolve(response.data);   // return data
-                        })
-                        .catch((error) => {
-                            console.error(error);
-                            reject(error);            // return error
-                        });
-                });
-            }
-        });
+        // Lookup only: the payment fields are validated on submit
+        return axios.post(this.apiOfficerGeneralDataForPayable, _keySearch)
+            .then((response) => {
+                this.data = response.data.officers;
+                this.paymentMethods = response.data.payment_method_id;
+                this.currencies = response.data.currency_id;
+                this.payables = response.data.payables;
+                this.paymentStatus = response.data.status;
+                return response.data;
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     },
     addNewData() {
       this.sidebarData = {}
@@ -384,26 +315,22 @@ export default {
     },
     onSelectOfficer(value) {
         this.clearForm();
-        this.paymentHistories = {};
-        // console.log("Selected:", value);
-        this.$validator.validateAll().then(result => {
-            if (result) {
-                return new Promise((resolve, reject) => {
-                    axios.post(this.api, value)
-                        .then((response) => {
-                            if (response.data.success) {
-                                this.entity = response.data.officerDetail.entity.name_kh;
-                                this.department = response.data.officerDetail.department.name_kh;
-                                this.identity_member_no = response.data.officerDetail.identity_member_no;
-                                this.paymentHistories = response.data.paymentHistories;
-                                this.payables = response.data.payables;
-                            }
-                        })
-                    });
-            }else{
-                alert("error!");
-            }
-        });
+        this.paymentHistories = [];
+        // Clearing the payment fields is not a user mistake: drop the errors it would trigger
+        this.$nextTick(() => this.$validator.reset());
+        if (!value) return;
+        axios.post(this.api, value)
+            .then((response) => {
+                if (response.data.success) {
+                    const detail = response.data.officerDetail || {};
+                    this.entity = detail.entity ? detail.entity.name_kh : null;
+                    this.department = detail.department ? detail.department.name_kh : null;
+                    this.identity_member_no = detail.identity_member_no;
+                    this.paymentHistories = response.data.paymentHistories;
+                    this.payables = response.data.payables;
+                }
+            })
+            .catch((error) => console.error(error));
     },
     clearForm(){
         this.identity_member_no = null;
@@ -420,8 +347,15 @@ export default {
         this.remark = null;
     },
     onSelectPayable(obj){
-        this.amount = obj.value;
-        this.payable_id = obj.id;
+        this.amount = obj ? obj.value : null;
+        this.payable_id = obj ? obj.id : null;
+    },
+    resetAll() {
+        this.clearForm();
+        this.officer_id = null;
+        this.paymentHistories = [];
+        this.tab = 'member';
+        this.$nextTick(() => this.$validator.reset());
     },
     submitForm() {
         let _data = [
@@ -447,9 +381,7 @@ export default {
                                     color: 'primary',
                                     position: 'top-right'
                                 })
-                                this.clearForm();
-                                this.officer_id = null;
-                                this.paymentHistories = [];
+                                this.resetAll();
                                 this.$vs.loading.close();
                                 // this.$router.push('/account/expense').catch(() => { })
                             }else{
@@ -477,6 +409,7 @@ export default {
                         })
                     });
             }else{
+                this.$refs.tabs.focusFirstError();
                 this.$vs.notify({
                     title: 'Message',
                     text: 'Error, while trying to do action, please double check criteria form!',
@@ -503,3 +436,67 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.payable-history {
+    border: 1px solid #eceef4;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 4px 24px -10px rgba(23, 23, 74, .12);
+    overflow: hidden;
+
+    &__head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 16px 20px;
+        border-bottom: 1px solid #eef0f4;
+
+        h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2c2e45;
+        }
+    }
+
+    &__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        color: rgb(var(--vs-primary));
+        background: rgba(var(--vs-primary), .12);
+
+        .feather-icon {
+            display: flex;
+        }
+    }
+
+    .vs-con-table {
+        padding: 8px 12px 12px;
+        background: transparent;
+    }
+
+    .vs-table--thead th {
+        font-size: .78rem;
+        font-weight: 700;
+        color: #6b6d7a;
+        background: #f7f8fa;
+    }
+}
+
+.theme-dark .payable-history {
+    background: #262c49;
+    border-color: #414561;
+
+    &__head {
+        border-color: #414561;
+
+        h3 {
+            color: #fff;
+        }
+    }
+}
+</style>

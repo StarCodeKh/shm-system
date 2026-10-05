@@ -3,6 +3,13 @@
     --brand-navy: 31, 32, 103;   // #1F2067 ribbon & lettering
     --brand-gold: 196, 150, 28;  // #C4961C bird
     --brand-green: 47, 164, 73;  // #2FA449 laurels
+
+    // Corner radius shared by every form control (inputs, selects, textareas, date pickers)
+    --input-radius: 10px;
+    --input-height: 42px;
+    --input-border: #d8d9e3;
+    --input-border-hover: #c3c5d4;
+    --field-gap: 20px;
 }
 
 
@@ -132,6 +139,9 @@ textarea {
 /* --- TABLE STRUCTURE --- */
 .flatpickr-input{
     width: auto !important;
+}
+.flatpickr-input.w-full{
+    width: 100% !important;
 }
 .vs-con-table .vs-con-tbody{
     border-radius: 20px;
@@ -1481,4 +1491,817 @@ select:not([multiple]) {
     .vs-select--options {
         animation: none;
     }
+}
+
+
+/* --- DATE PICKER (flatpickr, see resources/js/src/plugins/datePicker.js) --- */
+input.flatpickr-input:not([type="hidden"]) {
+    padding-right: 42px !important;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%235f6170' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4.5' width='18' height='16.5' rx='3'/%3E%3Cpath d='M16 2.5v4M8 2.5v4M3 10h18'/%3E%3Cpath d='M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 18px 18px;
+}
+input.flatpickr-input.active {
+    border-color: rgb(var(--vs-primary)) !important;
+    box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
+}
+
+.flatpickr-calendar.shm-datepicker {
+    width: 340px !important;
+    max-width: calc(100vw - 32px);
+    padding: 0;
+    font-family: inherit;
+    background: #fff;
+    border: 1px solid #e6e8ee;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 44px -14px rgba(23, 23, 74, .28), 0 4px 12px -4px rgba(23, 23, 74, .08) !important;
+    overflow: hidden;
+
+    &.open {
+        animation: shmDatepickerIn .16s ease-out;
+    }
+
+    // Header: month + year with square nav buttons
+    .flatpickr-months {
+        position: relative;
+        height: auto !important;
+        padding: 16px 16px 6px !important;
+        align-items: center;
+    }
+    .flatpickr-month {
+        height: 42px !important;
+        color: #1f2030;
+        fill: #1f2030;
+    }
+    .flatpickr-prev-month,
+    .flatpickr-next-month {
+        position: absolute;
+        top: 16px !important;
+        width: 42px;
+        height: 42px;
+        padding: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: #f3f4f1;
+        transition: background-color .15s ease;
+
+        svg {
+            width: 12px;
+            height: 12px;
+            fill: #3a3b45 !important;
+        }
+        &:hover {
+            background: rgba(var(--vs-primary), .12);
+            svg { fill: rgb(var(--vs-primary)) !important; }
+        }
+        &.flatpickr-disabled {
+            display: flex;
+            opacity: .35;
+            pointer-events: none;
+        }
+    }
+    .flatpickr-prev-month { left: 16px !important; }
+    .flatpickr-next-month { right: 16px !important; }
+
+    .flatpickr-current-month {
+        top: 0;
+        bottom: auto;
+        left: 15%;
+        width: 70%;
+        height: 42px;
+        padding: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        font-size: 17px;
+
+        span.cur-month {
+            margin: 0;
+            font-weight: 700;
+            color: #1f2030;
+            &:hover { background: transparent; }
+        }
+        .numInputWrapper {
+            width: 6ch !important;
+            border-radius: 6px;
+            &:hover { background: rgba(var(--vs-primary), .08); }
+        }
+        input.cur-year {
+            padding: 0 0 0 2px;
+            font-size: 17px;
+            font-weight: 700 !important;
+            color: #1f2030;
+            border: 0;
+            box-shadow: none;
+            background: transparent;
+        }
+    }
+
+    // Day grid
+    .flatpickr-innerContainer {
+        padding: 6px 14px 12px !important;
+    }
+    .flatpickr-rContainer,
+    .flatpickr-days,
+    .dayContainer {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+    }
+    .flatpickr-weekdays {
+        height: 38px;
+    }
+    span.flatpickr-weekday {
+        font-size: 13px;
+        font-weight: 600;
+        color: #6b6d7a;
+    }
+    .dayContainer {
+        row-gap: 4px;
+    }
+    .flatpickr-day {
+        flex-basis: 14.2857%;
+        max-width: none;
+        height: 40px;
+        line-height: 40px;
+        margin: 0;
+        border: 0;
+        border-radius: 10px;
+        font-size: 14.5px;
+        color: #2c2e45;
+        transition: background-color .12s ease, color .12s ease;
+
+        &:hover,
+        &:focus {
+            background: rgba(var(--vs-primary), .1);
+            border: 0;
+        }
+        &.prevMonthDay,
+        &.nextMonthDay {
+            color: #b0b2bd;
+        }
+        &.today:not(.selected):not(.startRange):not(.endRange) {
+            color: rgb(var(--vs-primary));
+            font-weight: 700;
+            box-shadow: inset 0 0 0 1.5px rgba(var(--vs-primary), .45);
+        }
+        &.inRange {
+            background: rgba(var(--vs-primary), .12);
+            border-radius: 0;
+            box-shadow: none;
+        }
+        &.selected,
+        &.startRange,
+        &.endRange,
+        &.selected:hover,
+        &.startRange:hover,
+        &.endRange:hover,
+        &.selected:focus,
+        &.startRange:focus,
+        &.endRange:focus,
+        &.selected.prevMonthDay,
+        &.selected.nextMonthDay {
+            background: rgb(var(--vs-primary)) !important;
+            border-color: rgb(var(--vs-primary)) !important;
+            color: #fff;
+            font-weight: 700;
+            box-shadow: 0 6px 14px -6px rgba(var(--vs-primary), .75);
+        }
+        &.startRange.endRange { border-radius: 10px; }
+        &.startRange:not(.endRange) { border-radius: 10px 0 0 10px; }
+        &.endRange:not(.startRange) { border-radius: 0 10px 10px 0; }
+        &.flatpickr-disabled,
+        &.flatpickr-disabled:hover {
+            color: #d3d5dc;
+            background: transparent;
+        }
+    }
+
+    // Footer: Today / Clear
+    .shm-datepicker-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        background: #f7f8f6;
+        border-top: 1px solid #ebedf0;
+    }
+    .shm-datepicker-today,
+    .shm-datepicker-clear {
+        padding: 8px 16px;
+        font-family: inherit;
+        font-size: 14px;
+        line-height: 1.4;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all .15s ease;
+    }
+    .shm-datepicker-today {
+        color: #4b4d5c;
+        background: #fff;
+        border: 1px solid #e3e5ea;
+        &:hover {
+            color: rgb(var(--vs-primary));
+            border-color: rgba(var(--vs-primary), .5);
+            background: rgba(var(--vs-primary), .06);
+        }
+    }
+    .shm-datepicker-clear {
+        color: #c0392b;
+        font-weight: 600;
+        background: transparent;
+        border: 0;
+        &:hover { background: rgba(234, 84, 85, .1); }
+    }
+}
+
+@keyframes shmDatepickerIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.theme-dark .flatpickr-calendar.shm-datepicker {
+    background: #262c49;
+    border-color: #414561;
+
+    .flatpickr-month,
+    .flatpickr-current-month span.cur-month,
+    .flatpickr-current-month input.cur-year { color: #fff; fill: #fff; }
+    .flatpickr-prev-month,
+    .flatpickr-next-month {
+        background: #10163a;
+        svg { fill: #c2c6dc !important; }
+    }
+    span.flatpickr-weekday { color: #b8bcd4; }
+    .flatpickr-day { color: #c2c6dc; }
+    .flatpickr-day.prevMonthDay,
+    .flatpickr-day.nextMonthDay { color: #6e7393; opacity: 1; }
+    .flatpickr-day.selected,
+    .flatpickr-day.startRange,
+    .flatpickr-day.endRange { color: #fff; }
+    .shm-datepicker-footer {
+        background: #1e2442;
+        border-top-color: #414561;
+    }
+    .shm-datepicker-today {
+        color: #c2c6dc;
+        background: #10163a;
+        border-color: #414561;
+    }
+}
+
+
+/* --- TEXTAREA: same look and height as the other inputs --- */
+textarea,
+textarea.vs-textarea {
+    display: block;
+    width: 100%;
+    height: var(--input-height);
+    min-height: var(--input-height);
+    padding: 10px 14px;
+    font-size: 14px;
+    line-height: 20px;
+    font-family: inherit;
+    color: #2c2e45;
+    background: #fff;
+    border: 1px solid var(--input-border);
+    border-radius: var(--input-radius);
+    resize: vertical;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+textarea[rows] {
+    height: auto;
+}
+textarea:hover,
+textarea.vs-textarea:hover {
+    border-color: #c3c5d4;
+}
+textarea:focus,
+textarea.vs-textarea:focus {
+    outline: none;
+    background: #fff;
+    border-color: rgb(var(--vs-primary));
+    box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
+    resize: vertical !important;
+}
+textarea[readonly] {
+    background: #f7f8fa;
+}
+.vs-con-textarea,
+.vs-con-textarea.focusx {
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+
+/* --- FORM CONTROL RADIUS: one value for all fields, set by --input-radius in :root --- */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="number"],
+input[type="password"],
+input[type="search"],
+input[type="url"],
+input.flatpickr-input,
+select,
+textarea,
+.vs__dropdown-toggle,
+.vs-input--input,
+.vs-inputx,
+.vs-select--input,
+.vs-textarea,
+.vs-con-textarea {
+    border-radius: var(--input-radius) !important;
+}
+
+
+/* --- FORM LAYOUT: textarea fields sit last in a form, in the same column grid as other fields --- */
+.vx-row > .d-field--textarea {
+    order: 1;
+}
+
+/* --- FORM CONTROLS: one height, border and background for every field (tokens in :root) --- */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="number"],
+input[type="password"],
+input[type="search"],
+input[type="url"],
+input.flatpickr-input,
+input.vs-input--input,
+select {
+    min-height: var(--input-height);
+    padding: 10px 14px;
+    font-size: 14px;
+    line-height: 20px;
+    font-family: inherit;
+    color: #2c2e45;
+    background-color: #fff;
+    border: 1px solid var(--input-border);
+    box-shadow: none;
+}
+input.vs-input--input.normal {
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+}
+input[type="text"]:hover,
+input[type="email"]:hover,
+input[type="tel"]:hover,
+input[type="number"]:hover,
+input[type="password"]:hover,
+input.vs-input--input:hover,
+select:hover {
+    border-color: var(--input-border-hover) !important;
+}
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+input[type="url"]:focus,
+input.vs-input--input:focus,
+select:focus {
+    outline: none;
+    background-color: #fff;
+    border-color: rgb(var(--vs-primary)) !important;
+    box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
+}
+input[readonly]:not(.flatpickr-input),
+input:disabled,
+select:disabled {
+    background-color: #f7f8fa;
+}
+.vs__dropdown-toggle {
+    min-height: var(--input-height);
+    padding: 4px 10px;
+    background: #fff;
+    border: 1px solid var(--input-border);
+}
+
+/* --- FORM FIELDS (.d-form / .d-field): label row with an optional "+ Add" button, control below --- */
+.d-form {
+    // One gap between every row of fields (column classes carry mt-4; the grid owns spacing here)
+    .vx-row {
+        row-gap: var(--field-gap);
+    }
+    .vx-row > .d-field {
+        margin-top: 0 !important;
+    }
+
+    .d-field {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        align-content: flex-start;
+
+        > label {
+            flex: 1 1 auto;
+            margin-bottom: 6px !important;
+            font-size: .875rem;
+            font-weight: 600;
+            color: #4b4d68;
+
+            > span {
+                color: rgb(var(--vs-danger));
+                margin-left: 2px;
+            }
+        }
+
+        > *:not(label):not(.d-quick-add) {
+            flex: 1 1 100%;
+            min-width: 0;
+        }
+
+        .vs-input,
+        .v-select,
+        .vs-con-textarea,
+        .flatpickr-input,
+        .d-file-picker {
+            margin-top: 0 !important;
+        }
+
+        .text-danger {
+            display: block;
+            margin-top: 4px;
+            font-size: .78rem;
+        }
+    }
+
+    .d-quick-add {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 6px;
+        padding: 2px 8px;
+        font-family: inherit;
+        font-size: .75rem;
+        font-weight: 600;
+        color: rgb(var(--vs-primary));
+        border: none;
+        border-radius: 6px;
+        background: rgba(var(--vs-primary), .1);
+        cursor: pointer;
+        transition: background-color .15s ease;
+
+        .feather-icon {
+            display: flex;
+        }
+
+        &:hover {
+            background: rgba(var(--vs-primary), .18);
+        }
+    }
+}
+
+.theme-dark .d-form .d-field > label {
+    color: #c2c6dc;
+}
+
+
+/* --- NATIVE FILE INPUTS: same dashed row as <d-file-picker> --- */
+input[type="file"] {
+    width: 100%;
+    height: var(--input-height);
+    padding: 5px 6px;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 30px;
+    color: #8a8ca5;
+    background: #fff;
+    border: 1px dashed #c9ccd6;
+    border-radius: var(--input-radius);
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease;
+
+    &::file-selector-button {
+        height: 30px;
+        margin-right: 12px;
+        padding: 0 12px;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        color: rgb(var(--vs-primary));
+        background: rgba(var(--vs-primary), .1);
+        border: 0;
+        border-radius: 7px;
+        cursor: pointer;
+        transition: background .2s ease;
+    }
+
+    &:hover {
+        border-color: rgb(var(--vs-primary));
+        background: rgba(var(--vs-primary), .03);
+
+        &::file-selector-button {
+            background: rgba(var(--vs-primary), .18);
+        }
+    }
+
+    &:focus-visible {
+        outline: none;
+        border-color: rgb(var(--vs-primary));
+        box-shadow: 0 0 0 3px rgba(var(--vs-primary), .2);
+    }
+}
+.theme-dark input[type="file"] {
+    background: #10163a;
+    border-color: #414561;
+}
+
+
+/* --- POPUPS: every <vs-popup> is a centered card; width via .d-modal--sm / md (default) / lg / xl --- */
+:root {
+    --popup-sm: 560px;
+    --popup-md: 820px;
+    --popup-lg: 1000px;
+    --popup-xl: 1200px;
+}
+
+.con-vs-popup {
+    .vs-popup--background {
+        background: rgba(17, 20, 45, .45);
+        backdrop-filter: blur(3px);
+    }
+
+    .vs-popup {
+        display: flex;
+        flex-direction: column;
+        width: var(--popup-md) !important;
+        max-width: calc(100vw - 32px);
+        height: auto !important;
+        max-height: calc(100vh - 48px);
+        margin: 0 !important;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 24px 60px -12px rgba(17, 20, 45, .35);
+    }
+
+    &.d-modal--sm .vs-popup { width: var(--popup-sm) !important; }
+    &.d-modal--md .vs-popup { width: var(--popup-md) !important; }
+    &.d-modal--lg .vs-popup { width: var(--popup-lg) !important; }
+    &.d-modal--xl .vs-popup { width: var(--popup-xl) !important; }
+
+    .vs-popup--header {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        padding: 14px 16px 14px 24px;
+        background: #fff;
+        border-bottom: 1px solid #eceef4;
+    }
+
+    .vs-popup--title h3 {
+        padding: 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #2c2e45;
+    }
+
+    .vs-popup--close {
+        position: static;
+        flex-shrink: 0;
+        width: 34px;
+        height: 34px;
+        margin: 0 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        color: #6e7091;
+        border-radius: 8px;
+        background: #f4f5f9;
+        box-shadow: none !important;
+        transform: none !important;
+
+        &:hover {
+            color: rgb(var(--vs-danger));
+            background: rgba(var(--vs-danger), .1);
+        }
+    }
+
+    .vs-popup--content {
+        flex: 1 1 auto;
+        width: auto !important;
+        max-height: none !important;
+        margin: 0;
+        padding: 16px 24px;
+        overflow-y: auto;
+    }
+
+    // One column inside small dialogs and on phones
+    &.d-modal--sm .d-form .d-field {
+        width: 100% !important;
+    }
+
+    @media (max-width: 640px) {
+        .d-form .d-field {
+            width: 100% !important;
+        }
+    }
+}
+
+.theme-dark .con-vs-popup {
+    .vs-popup--header {
+        background: #262c49;
+        border-color: #414561;
+    }
+
+    .vs-popup--title h3 {
+        color: #fff;
+    }
+
+    .vs-popup--close {
+        color: #c2c6dc;
+        background: #10163a;
+    }
+}
+
+
+/* --- FORM CONTROLS: lock the border so no older rule (Vuesax, Officer form) makes one field look heavier --- */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="number"],
+input[type="password"],
+input[type="search"],
+input[type="url"],
+input.flatpickr-input,
+input.vs-input--input,
+select,
+textarea,
+textarea.vs-textarea,
+.vs__dropdown-toggle {
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-color: var(--input-border) !important;
+    box-shadow: none;
+    background-color: #fff;
+}
+input.vs-input--input:hover,
+input[type="text"]:hover,
+input[type="number"]:hover,
+input[type="password"]:hover,
+input.flatpickr-input:hover,
+select:hover,
+textarea:hover,
+.vs__dropdown-toggle:hover {
+    border-color: var(--input-border-hover) !important;
+}
+input.vs-input--input:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus,
+input.flatpickr-input.active,
+select:focus,
+textarea:focus,
+.vs__dropdown-toggle:focus-within,
+.vs--open .vs__dropdown-toggle {
+    border-color: rgb(var(--vs-primary)) !important;
+    box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
+}
+// Field-level errors (vee-validate adds .vs-input-danger / aria-invalid)
+.vs-input-danger input.vs-input--input,
+input[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+    border-color: rgb(var(--vs-danger)) !important;
+}
+input[readonly]:not(.flatpickr-input),
+input:disabled,
+textarea[readonly],
+textarea:disabled {
+    background-color: #f7f8fa;
+}
+
+/* Same spacing under every field: Vuesax wrappers carry their own bottom margin */
+.d-field .vs-con-textarea,
+.d-field .vs-con-input-label,
+.d-field .vs-component.vs-con-input-label {
+    margin-bottom: 0 !important;
+}
+.d-field > span:empty {
+    display: none;
+}
+
+.theme-dark {
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="password"],
+    input[type="search"],
+    input.flatpickr-input,
+    input.vs-input--input,
+    select,
+    textarea,
+    .vs__dropdown-toggle {
+        color: #c2c6dc;
+        background-color: #10163a;
+        border-color: #414561 !important;
+    }
+}
+
+
+/* --- TEXTAREA AUTO-GROW: starts at input height, grows with its text (JS fallback in plugins/autosize.js) --- */
+textarea:not([rows]),
+textarea.vs-textarea:not([rows]) {
+    field-sizing: content;
+    height: auto;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+
+/* --- CONTROL HEIGHT: every single-line control is exactly --input-height (42px) --- */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="number"],
+input[type="password"],
+input[type="url"],
+input.flatpickr-input,
+input.vs-input--input,
+input.vs-select--input,
+select {
+    box-sizing: border-box;
+    height: var(--input-height) !important;
+    min-height: var(--input-height);
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    line-height: 20px;
+}
+// Vuesax size variants follow the standard too
+input.vs-input--input.small,
+input.vs-input--input.large {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    font-size: 14px !important;
+}
+
+// vue-select: the toggle is the box; its inner search <input type="search"> must not get input styles
+.v-select .vs__dropdown-toggle {
+    box-sizing: border-box;
+    height: var(--input-height);
+    min-height: var(--input-height);
+    padding: 0 8px 0 10px !important;
+    align-items: center;
+}
+.v-select.vs--multiple .vs__dropdown-toggle {
+    height: auto;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+}
+.v-select .vs__selected-options {
+    align-items: center;
+    min-width: 0;
+    padding: 0;
+}
+.v-select.vs--single .vs__selected-options {
+    flex-wrap: nowrap;
+}
+.v-select.vs--single .vs__selected {
+    margin: 0;
+    padding: 0 4px;
+    line-height: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.v-select.vs--single.vs--open .vs__selected,
+.v-select.vs--single.vs--loading .vs__selected {
+    position: absolute;
+    opacity: .5;
+}
+[dir] .v-select input.vs__search,
+.v-select input.vs__search,
+.v-select input.vs__search:focus,
+.v-select input.vs__search:hover {
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 4px !important;
+    line-height: 20px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+.v-select .vs__actions {
+    padding: 0 0 0 6px;
+}
+
+// Vuesax <vs-select>
+.con-select .vs-select--input {
+    padding-left: 14px !important;
 }

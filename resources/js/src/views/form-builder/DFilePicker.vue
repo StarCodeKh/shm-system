@@ -1,49 +1,36 @@
 <template>
-  <div class="d-file-picker" :class="{ 'has-file': !!value, 'is-image': isImage && !imageFailed }">
+  <div class="d-file-picker" :class="{ 'has-file': !!value }">
+    <div class="d-file-picker__box" role="button" tabindex="0" :title="value ? $t('upload_change') : $t('upload_choose')"
+      @click="$emit('browse')" @keydown.enter.prevent="$emit('browse')" @keydown.space.prevent="$emit('browse')">
 
-    <!-- Empty: dashed drop-style button -->
-    <button v-if="!value" type="button" class="d-file-picker__empty" @click="$emit('browse')">
-      <span class="d-file-picker__icon">
-        <feather-icon icon="UploadIcon" svgClasses="h-5 w-5" />
-      </span>
-      <span class="d-file-picker__text">
-        <span class="d-file-picker__title">{{ $t('upload_choose') }}</span>
-        <span class="d-file-picker__hint">{{ hintText }}</span>
-      </span>
-      <span class="d-file-picker__browse">{{ $t('upload_browse') }}</span>
-    </button>
-
-    <!-- Chosen: preview + actions -->
-    <div v-else class="d-file-picker__chosen">
-      <button type="button" class="d-file-picker__preview" :title="$t('upload_view')" @click="$emit('view', value)">
-        <img v-if="isImage && !imageFailed" :src="value" alt="" @error="imageFailed = true">
-        <span v-else class="d-file-picker__type" :style="{ '--type': typeInfo.color }">
-          <feather-icon :icon="typeInfo.icon" svgClasses="h-5 w-5" />
+      <!-- Thumbnail: image preview, file-type badge, or upload icon when empty -->
+      <span class="d-file-picker__thumb" :class="{ 'is-preview': !!value }" :title="value ? $t('upload_view') : null"
+        @click="onThumb">
+        <img v-if="value && isImage && !imageFailed" :src="value" alt="" @error="imageFailed = true">
+        <span v-else-if="value" class="d-file-picker__type" :style="{ '--type': typeInfo.color }">
+          <feather-icon :icon="typeInfo.icon" svgClasses="h-3 w-3" />
           <small>{{ extension || 'FILE' }}</small>
         </span>
-        <span class="d-file-picker__zoom">
+        <feather-icon v-else icon="UploadIcon" svgClasses="h-4 w-4" />
+        <span v-if="value" class="d-file-picker__zoom">
           <feather-icon icon="EyeIcon" svgClasses="h-4 w-4" />
         </span>
-      </button>
+      </span>
 
-      <div class="d-file-picker__info">
-        <span class="d-file-picker__name" :title="fileName">{{ fileName }}</span>
-        <span class="d-file-picker__meta">
+      <span class="d-file-picker__text">
+        <span class="d-file-picker__title" :title="value ? fileName : null">{{ value ? fileName : $t('upload_choose') }}</span>
+        <span v-if="value" class="d-file-picker__hint is-done">
           <feather-icon icon="CheckCircleIcon" svgClasses="h-3 w-3" />
           {{ $t('upload_selected') }}
         </span>
-      </div>
+        <span v-else class="d-file-picker__hint">{{ hintText }}</span>
+      </span>
 
-      <div class="d-file-picker__actions">
-        <button type="button" class="d-file-picker__btn" :title="$t('upload_change')" @click="$emit('browse')">
-          <feather-icon icon="RefreshCwIcon" svgClasses="h-4 w-4" />
-          <span>{{ $t('upload_change') }}</span>
-        </button>
-        <button type="button" class="d-file-picker__btn d-file-picker__btn--danger" :title="$t('upload_remove')"
-          @click="$emit('clear')">
-          <feather-icon icon="Trash2Icon" svgClasses="h-4 w-4" />
-        </button>
-      </div>
+      <span class="d-file-picker__browse">{{ value ? $t('upload_change') : $t('upload_browse') }}</span>
+      <button v-if="value" type="button" class="d-file-picker__remove" :title="$t('upload_remove')"
+        @click.stop="$emit('clear')">
+        <feather-icon icon="XIcon" svgClasses="h-4 w-4" />
+      </button>
     </div>
   </div>
 </template>
@@ -98,6 +85,15 @@ export default {
       this.imageFailed = false
     },
   },
+  methods: {
+    // Clicking the thumbnail of a chosen file previews it instead of re-opening the picker
+    onThumb(event) {
+      if (!this.value) return
+      event.stopPropagation()
+      if (this.$listeners.view) this.$emit('view', this.value)
+      else window.open(this.value, '_blank', 'noopener')
+    },
+  },
 }
 </script>
 
@@ -106,49 +102,25 @@ export default {
   --picker-accent: var(--vs-primary);
   width: 100%;
 
-  // ---------------------------------------------------------------- Empty state
-  &__empty {
-    position: relative;
+  &__box {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 10px;
     width: 100%;
-    min-height: 64px;
-    padding: 12px 18px 12px 14px;
-    font-family: inherit;
+    height: var(--input-height, 42px);
+    padding: 0 6px 0 6px;
     text-align: left;
-    border: 1.5px dashed rgba(var(--brand-gold, 180, 140, 60), .75);
-    border-radius: 14px;
+    border: 1px dashed #c9ccd6;
+    border-radius: var(--input-radius, 10px);
     background: #fff;
     cursor: pointer;
-    overflow: hidden;
-    transition: border-color .2s ease, background .2s ease, box-shadow .2s ease, transform .2s ease;
-
-    // Soft sweep on hover
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: -40%;
-      width: 35%;
-      background: linear-gradient(100deg, transparent, rgba(var(--picker-accent), .08), transparent);
-      transform: skewX(-20deg);
-      opacity: 0;
-      pointer-events: none;
-    }
+    transition: border-color .2s ease, background .2s ease, box-shadow .2s ease;
 
     &:hover {
       border-color: rgb(var(--picker-accent));
       background: rgba(var(--picker-accent), .03);
-      box-shadow: 0 8px 20px -14px rgba(var(--picker-accent), .9);
-      transform: translateY(-1px);
 
-      &::after {
-        animation: d-file-picker-shine .8s ease forwards;
-      }
-
-      .d-file-picker__icon {
+      .d-file-picker__thumb:not(.is-preview) {
         color: #fff;
         background: rgb(var(--picker-accent));
 
@@ -162,10 +134,6 @@ export default {
       }
     }
 
-    &:active {
-      transform: translateY(0) scale(.995);
-    }
-
     &:focus-visible {
       outline: none;
       border-color: rgb(var(--picker-accent));
@@ -173,91 +141,40 @@ export default {
     }
   }
 
-  &__icon {
+  &.has-file &__box {
+    border-style: solid;
+    border-color: var(--input-border, #d8d9e3);
+  }
+
+  // ---------------------------------------------------------------- Thumbnail
+  &__thumb {
+    position: relative;
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    color: #4b4d63;
-    background: #f3f5f2;
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    color: #5f6170;
+    background: #f3f4f6;
+    overflow: hidden;
     transition: background .2s ease, color .2s ease;
 
     .feather-icon {
       display: flex;
     }
-  }
-
-  &__text {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 2px 10px;
-    flex: 1;
-    min-width: 0;
-  }
-
-  &__title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #2c2e45;
-  }
-
-  &__hint {
-    font-size: .8rem;
-    color: #8a8ca5;
-  }
-
-  &__browse {
-    flex-shrink: 0;
-    padding: 6px 12px;
-    font-size: .95rem;
-    font-weight: 600;
-    color: rgb(var(--picker-accent));
-    border-radius: 8px;
-    transition: background .2s ease;
-  }
-
-  // ---------------------------------------------------------------- Chosen state
-  &__chosen {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 10px 12px 10px 10px;
-    border: 1px solid #e6e8f0;
-    border-radius: 14px;
-    background: #fff;
-    box-shadow: 0 2px 10px -6px rgba(23, 23, 74, .15);
-    animation: d-file-picker-in .35s cubic-bezier(.22, 1, .36, 1);
-  }
-
-  &__preview {
-    position: relative;
-    flex-shrink: 0;
-    width: 64px;
-    height: 64px;
-    padding: 0;
-    border: 1px solid #eceef4;
-    border-radius: 10px;
-    background: #f7f8fb;
-    overflow: hidden;
-    cursor: zoom-in;
 
     img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
-      transition: transform .3s ease;
+      object-fit: cover;
     }
 
-    &:hover {
-      img {
-        transform: scale(1.08);
-      }
+    &.is-preview {
+      cursor: zoom-in;
 
-      .d-file-picker__zoom {
+      &:hover .d-file-picker__zoom {
         opacity: 1;
       }
     }
@@ -281,30 +198,34 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
     width: 100%;
     height: 100%;
     color: rgb(var(--type));
     background: rgba(var(--type), .1);
 
     small {
-      font-size: .65rem;
+      font-size: .5rem;
       font-weight: 700;
-      letter-spacing: .04em;
+      line-height: 1.1;
+      letter-spacing: .03em;
       text-transform: uppercase;
     }
   }
 
-  &__info {
+  // ---------------------------------------------------------------- Text
+  &__text {
     display: flex;
-    flex-direction: column;
+    align-items: baseline;
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow: hidden;
     flex: 1;
     min-width: 0;
-    line-height: 1.4;
   }
 
-  &__name {
-    font-size: .9rem;
+  &__title {
+    min-width: 0;
+    font-size: 14px;
     font-weight: 600;
     color: #2c2e45;
     white-space: nowrap;
@@ -312,85 +233,59 @@ export default {
     text-overflow: ellipsis;
   }
 
-  &__meta {
+  &__hint {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    font-size: .78rem;
-    color: rgb(var(--picker-accent));
-  }
-
-  &__actions {
-    display: flex;
-    gap: 6px;
     flex-shrink: 0;
+    gap: 4px;
+    font-size: 12px;
+    color: #8a8ca5;
+    white-space: nowrap;
+
+    &.is-done {
+      color: rgb(var(--picker-accent));
+    }
+
+    .feather-icon {
+      display: flex;
+    }
   }
 
-  &__btn {
+  // ---------------------------------------------------------------- Actions
+  &__browse {
+    flex-shrink: 0;
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgb(var(--picker-accent));
+    border-radius: 7px;
+    transition: background .2s ease;
+  }
+
+  &__remove {
+    flex-shrink: 0;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    height: 34px;
-    padding: 0 12px;
-    font-family: inherit;
-    font-size: .85rem;
-    font-weight: 500;
-    color: #4b4d63;
-    border: 1px solid #e3e5ee;
-    border-radius: 9px;
-    background: #fff;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    color: #8a8ca5;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
     cursor: pointer;
-    transition: color .2s ease, border-color .2s ease, background .2s ease;
+    transition: color .2s ease, background .2s ease;
 
     .feather-icon {
       display: flex;
     }
 
     &:hover {
-      color: rgb(var(--picker-accent));
-      border-color: rgba(var(--picker-accent), .5);
-      background: rgba(var(--picker-accent), .05);
-
-      .feather-icon svg {
-        animation: d-file-picker-spin .5s ease;
-      }
-    }
-
-    &--danger {
-      padding: 0 9px;
-
-      &:hover {
-        color: #dc3545;
-        border-color: rgba(220, 53, 69, .4);
-        background: rgba(220, 53, 69, .06);
-
-        .feather-icon svg {
-          animation: d-file-picker-shake .4s ease;
-        }
-      }
+      color: #dc3545;
+      background: rgba(220, 53, 69, .08);
     }
   }
-
-  @media (max-width: 480px) {
-    &__btn span {
-      display: none;
-    }
-
-    &__btn {
-      padding: 0 9px;
-    }
-  }
-}
-
-@keyframes d-file-picker-in {
-  from { opacity: 0; transform: translateY(6px) scale(.98); }
-  to { opacity: 1; transform: none; }
-}
-
-@keyframes d-file-picker-shine {
-  0% { left: -40%; opacity: 0; }
-  20% { opacity: 1; }
-  100% { left: 120%; opacity: 0; }
 }
 
 @keyframes d-file-picker-bounce {
@@ -399,46 +294,26 @@ export default {
   70% { transform: translateY(1px); }
 }
 
-@keyframes d-file-picker-spin {
-  from { transform: rotate(0); }
-  to { transform: rotate(180deg); }
-}
-
-@keyframes d-file-picker-shake {
-  0%, 100% { transform: rotate(0); }
-  25% { transform: rotate(-12deg); }
-  75% { transform: rotate(12deg); }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .d-file-picker *,
-  .d-file-picker *::after {
+  .d-file-picker * {
     animation: none !important;
     transition: none !important;
   }
 }
 
 .theme-dark .d-file-picker {
-  &__empty,
-  &__chosen,
-  &__btn {
+  &__box {
     background: #10163a;
     border-color: #414561;
   }
 
-  &__title,
-  &__name {
+  &__title {
     color: #fff;
   }
 
-  &__icon,
-  &__preview {
-    background: #262c49;
-  }
-
-  &__icon,
-  &__btn {
+  &__thumb {
     color: #c2c6dc;
+    background: #262c49;
   }
 }
 </style>

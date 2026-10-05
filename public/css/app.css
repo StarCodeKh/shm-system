@@ -4051,6 +4051,11 @@ input.vs-inputx.vs-input--input.small.hasValue {
   --brand-navy: 31, 32, 103;
   --brand-gold: 196, 150, 28;
   --brand-green: 47, 164, 73;
+  --input-radius: 10px;
+  --input-height: 42px;
+  --input-border: #d8d9e3;
+  --input-border-hover: #c3c5d4;
+  --field-gap: 20px;
 }
 
 .vs-navbar.vx-navbar.navbar-custom {
@@ -4203,6 +4208,10 @@ textarea {
 
 .flatpickr-input {
   width: auto !important;
+}
+
+.flatpickr-input.w-full {
+  width: 100% !important;
 }
 
 [dir] .vs-con-table .vs-con-tbody {
@@ -6058,6 +6067,1069 @@ select:not([multiple]) {
   [dir=rtl] .vs__dropdown-menu, [dir=rtl] .vs-select--options {
     animation: none;
   }
+}
+
+/* --- DATE PICKER (flatpickr, see resources/js/src/plugins/datePicker.js) --- */
+
+[dir] input.flatpickr-input:not([type=hidden]) {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%235f6170' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4.5' width='18' height='16.5' rx='3'/%3E%3Cpath d='M16 2.5v4M8 2.5v4M3 10h18'/%3E%3Cpath d='M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 18px 18px;
+}
+
+[dir=ltr] input.flatpickr-input:not([type=hidden]) {
+  padding-right: 42px !important;
+  background-position: right 14px center;
+}
+
+[dir=rtl] input.flatpickr-input:not([type=hidden]) {
+  padding-left: 42px !important;
+  background-position: left 14px center;
+}
+
+[dir] input.flatpickr-input.active {
+  border-color: rgb(var(--vs-primary)) !important;
+  box-shadow: 0 0 0 3px rgba(var(--vs-primary), 0.15);
+}
+
+.flatpickr-calendar.shm-datepicker {
+  width: 340px !important;
+  max-width: calc(100vw - 32px);
+  font-family: inherit;
+  overflow: hidden;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker {
+  padding: 0;
+  background: #fff;
+  border: 1px solid #e6e8ee;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 44px -14px rgba(23, 23, 74, 0.28), 0 4px 12px -4px rgba(23, 23, 74, 0.08) !important;
+}
+
+[dir=ltr] .flatpickr-calendar.shm-datepicker.open {
+  animation: shmDatepickerIn 0.16s ease-out;
+}
+
+[dir=rtl] .flatpickr-calendar.shm-datepicker.open {
+  animation: shmDatepickerIn 0.16s ease-out;
+}
+
+.flatpickr-calendar.shm-datepicker .flatpickr-months {
+  position: relative;
+  height: auto !important;
+  align-items: center;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .flatpickr-months {
+  padding: 16px 16px 6px !important;
+}
+
+.flatpickr-calendar.shm-datepicker .flatpickr-month {
+  height: 42px !important;
+  color: #1f2030;
+  fill: #1f2030;
+}
+
+.flatpickr-calendar.shm-datepicker .flatpickr-prev-month,
+.flatpickr-calendar.shm-datepicker .flatpickr-next-month {
+  position: absolute;
+  top: 16px !important;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .flatpickr-prev-month, [dir] .flatpickr-calendar.shm-datepicker .flatpickr-next-month {
+  padding: 0 !important;
+  border-radius: 10px;
+  background: #f3f4f1;
+}
+
+.flatpickr-calendar.shm-datepicker .flatpickr-prev-month svg,
+.flatpickr-calendar.shm-datepicker .flatpickr-next-month svg {
+  width: 12px;
+  height: 12px;
+  fill: #3a3b45 !important;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .flatpickr-prev-month:hover, [dir] .flatpickr-calendar.shm-datepicker .flatpickr-next-month:hover {
+  background: rgba(var(--vs-primary), 0.12);
+}
+
+.flatpickr-calendar.shm-datepicker .flatpickr-prev-month:hover svg,
+.flatpickr-calendar.shm-datepicker .flatpickr-next-month:hover svg {
+  fill: rgb(var(--vs-primary)) !important;
+}
+
+.flatpickr-calendar.shm-datepicker .flatpickr-prev-month.flatpickr-disabled,
+.flatpickr-calendar.shm-datepicker .flatpickr-next-month.flatpickr-disabled {
+  display: flex;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+[dir=ltr] .flatpickr-calendar.shm-datepicker .flatpickr-prev-month {
+  left: 16px !important;
+}
+
+[dir=rtl] .flatpickr-calendar.shm-datepicker .flatpickr-prev-month {
+  right: 16px !important;
+}
+
+[dir=ltr] .flatpickr-calendar.shm-datepicker .flatpickr-next-month {
+  right: 16px !important;
+}
+
+[dir=rtl] .flatpickr-calendar.shm-datepicker .flatpickr-next-month {
+  left: 16px !important;
+}
+
+.flatpickr-calendar.shm-datepicker .flatpickr-current-month {
+  top: 0;
+  bottom: auto;
+  width: 70%;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 17px;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .flatpickr-current-month {
+  padding: 0 !important;
+}
+
+[dir=ltr] .flatpickr-calendar.shm-datepicker .flatpickr-current-month {
+  left: 15%;
+}
+
+[dir=rtl] .flatpickr-calendar.shm-datepicker .flatpickr-current-month {
+  right: 15%;
+}
+
+.flatpickr-calendar.shm-datepicker .flatpickr-current-month span.cur-month {
+  font-weight: 700;
+  color: #1f2030;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .flatpickr-current-month span.cur-month {
+  margin: 0;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .flatpickr-current-month span.cur-month:hover {
+  background: transparent;
+}
+
+.flatpickr-calendar.shm-datepicker .flatpickr-current-month .numInputWrapper {
+  width: 6ch !important;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .flatpickr-current-month .numInputWrapper {
+  border-radius: 6px;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .flatpickr-current-month .numInputWrapper:hover {
+  background: rgba(var(--vs-primary), 0.08);
+}
+
+.flatpickr-calendar.shm-datepicker .flatpickr-current-month input.cur-year {
+  font-size: 17px;
+  font-weight: 700 !important;
+  color: #1f2030;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .flatpickr-current-month input.cur-year {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+[dir=ltr] .flatpickr-calendar.shm-datepicker .flatpickr-current-month input.cur-year {
+  padding: 0 0 0 2px;
+}
+
+[dir=rtl] .flatpickr-calendar.shm-datepicker .flatpickr-current-month input.cur-year {
+  padding: 0 2px 0 0;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .flatpickr-innerContainer {
+  padding: 6px 14px 12px !important;
+}
+
+.flatpickr-calendar.shm-datepicker .flatpickr-rContainer,
+.flatpickr-calendar.shm-datepicker .flatpickr-days,
+.flatpickr-calendar.shm-datepicker .dayContainer {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+}
+
+.flatpickr-calendar.shm-datepicker .flatpickr-weekdays {
+  height: 38px;
+}
+
+.flatpickr-calendar.shm-datepicker span.flatpickr-weekday {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b6d7a;
+}
+
+.flatpickr-calendar.shm-datepicker .dayContainer {
+  row-gap: 4px;
+}
+
+.flatpickr-calendar.shm-datepicker .flatpickr-day {
+  flex-basis: 14.2857%;
+  max-width: none;
+  height: 40px;
+  line-height: 40px;
+  font-size: 14.5px;
+  color: #2c2e45;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .flatpickr-day {
+  margin: 0;
+  border: 0;
+  border-radius: 10px;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .flatpickr-day:hover, [dir] .flatpickr-calendar.shm-datepicker .flatpickr-day:focus {
+  background: rgba(var(--vs-primary), 0.1);
+  border: 0;
+}
+
+.flatpickr-calendar.shm-datepicker .flatpickr-day.prevMonthDay,
+.flatpickr-calendar.shm-datepicker .flatpickr-day.nextMonthDay {
+  color: #b0b2bd;
+}
+
+.flatpickr-calendar.shm-datepicker .flatpickr-day.today:not(.selected):not(.startRange):not(.endRange) {
+  color: rgb(var(--vs-primary));
+  font-weight: 700;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .flatpickr-day.today:not(.selected):not(.startRange):not(.endRange) {
+  box-shadow: inset 0 0 0 1.5px rgba(var(--vs-primary), 0.45);
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .flatpickr-day.inRange {
+  background: rgba(var(--vs-primary), 0.12);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.flatpickr-calendar.shm-datepicker .flatpickr-day.selected,
+.flatpickr-calendar.shm-datepicker .flatpickr-day.startRange,
+.flatpickr-calendar.shm-datepicker .flatpickr-day.endRange,
+.flatpickr-calendar.shm-datepicker .flatpickr-day.selected:hover,
+.flatpickr-calendar.shm-datepicker .flatpickr-day.startRange:hover,
+.flatpickr-calendar.shm-datepicker .flatpickr-day.endRange:hover,
+.flatpickr-calendar.shm-datepicker .flatpickr-day.selected:focus,
+.flatpickr-calendar.shm-datepicker .flatpickr-day.startRange:focus,
+.flatpickr-calendar.shm-datepicker .flatpickr-day.endRange:focus,
+.flatpickr-calendar.shm-datepicker .flatpickr-day.selected.prevMonthDay,
+.flatpickr-calendar.shm-datepicker .flatpickr-day.selected.nextMonthDay {
+  color: #fff;
+  font-weight: 700;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .flatpickr-day.selected, [dir] .flatpickr-calendar.shm-datepicker .flatpickr-day.startRange, [dir] .flatpickr-calendar.shm-datepicker .flatpickr-day.endRange, [dir] .flatpickr-calendar.shm-datepicker .flatpickr-day.selected:hover, [dir] .flatpickr-calendar.shm-datepicker .flatpickr-day.startRange:hover, [dir] .flatpickr-calendar.shm-datepicker .flatpickr-day.endRange:hover, [dir] .flatpickr-calendar.shm-datepicker .flatpickr-day.selected:focus, [dir] .flatpickr-calendar.shm-datepicker .flatpickr-day.startRange:focus, [dir] .flatpickr-calendar.shm-datepicker .flatpickr-day.endRange:focus, [dir] .flatpickr-calendar.shm-datepicker .flatpickr-day.selected.prevMonthDay, [dir] .flatpickr-calendar.shm-datepicker .flatpickr-day.selected.nextMonthDay {
+  background: rgb(var(--vs-primary)) !important;
+  border-color: rgb(var(--vs-primary)) !important;
+  box-shadow: 0 6px 14px -6px rgba(var(--vs-primary), 0.75);
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .flatpickr-day.startRange.endRange {
+  border-radius: 10px;
+}
+
+[dir=ltr] .flatpickr-calendar.shm-datepicker .flatpickr-day.startRange:not(.endRange) {
+  border-radius: 10px 0 0 10px;
+}
+
+[dir=rtl] .flatpickr-calendar.shm-datepicker .flatpickr-day.startRange:not(.endRange) {
+  border-radius: 0 10px 10px 0;
+}
+
+[dir=ltr] .flatpickr-calendar.shm-datepicker .flatpickr-day.endRange:not(.startRange) {
+  border-radius: 0 10px 10px 0;
+}
+
+[dir=rtl] .flatpickr-calendar.shm-datepicker .flatpickr-day.endRange:not(.startRange) {
+  border-radius: 10px 0 0 10px;
+}
+
+.flatpickr-calendar.shm-datepicker .flatpickr-day.flatpickr-disabled,
+.flatpickr-calendar.shm-datepicker .flatpickr-day.flatpickr-disabled:hover {
+  color: #d3d5dc;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .flatpickr-day.flatpickr-disabled, [dir] .flatpickr-calendar.shm-datepicker .flatpickr-day.flatpickr-disabled:hover {
+  background: transparent;
+}
+
+.flatpickr-calendar.shm-datepicker .shm-datepicker-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .shm-datepicker-footer {
+  padding: 12px 16px;
+  background: #f7f8f6;
+  border-top: 1px solid #ebedf0;
+}
+
+.flatpickr-calendar.shm-datepicker .shm-datepicker-today,
+.flatpickr-calendar.shm-datepicker .shm-datepicker-clear {
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+  transition: all 0.15s ease;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .shm-datepicker-today, [dir] .flatpickr-calendar.shm-datepicker .shm-datepicker-clear {
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.flatpickr-calendar.shm-datepicker .shm-datepicker-today {
+  color: #4b4d5c;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .shm-datepicker-today {
+  background: #fff;
+  border: 1px solid #e3e5ea;
+}
+
+.flatpickr-calendar.shm-datepicker .shm-datepicker-today:hover {
+  color: rgb(var(--vs-primary));
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .shm-datepicker-today:hover {
+  border-color: rgba(var(--vs-primary), 0.5);
+  background: rgba(var(--vs-primary), 0.06);
+}
+
+.flatpickr-calendar.shm-datepicker .shm-datepicker-clear {
+  color: #c0392b;
+  font-weight: 600;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .shm-datepicker-clear {
+  background: transparent;
+  border: 0;
+}
+
+[dir] .flatpickr-calendar.shm-datepicker .shm-datepicker-clear:hover {
+  background: rgba(234, 84, 85, 0.1);
+}
+
+@keyframes shmDatepickerIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+[dir] .theme-dark .flatpickr-calendar.shm-datepicker {
+  background: #262c49;
+  border-color: #414561;
+}
+
+.theme-dark .flatpickr-calendar.shm-datepicker .flatpickr-month,
+.theme-dark .flatpickr-calendar.shm-datepicker .flatpickr-current-month span.cur-month,
+.theme-dark .flatpickr-calendar.shm-datepicker .flatpickr-current-month input.cur-year {
+  color: #fff;
+  fill: #fff;
+}
+
+[dir] .theme-dark .flatpickr-calendar.shm-datepicker .flatpickr-prev-month, [dir] .theme-dark .flatpickr-calendar.shm-datepicker .flatpickr-next-month {
+  background: #10163a;
+}
+
+.theme-dark .flatpickr-calendar.shm-datepicker .flatpickr-prev-month svg,
+.theme-dark .flatpickr-calendar.shm-datepicker .flatpickr-next-month svg {
+  fill: #c2c6dc !important;
+}
+
+.theme-dark .flatpickr-calendar.shm-datepicker span.flatpickr-weekday {
+  color: #b8bcd4;
+}
+
+.theme-dark .flatpickr-calendar.shm-datepicker .flatpickr-day {
+  color: #c2c6dc;
+}
+
+.theme-dark .flatpickr-calendar.shm-datepicker .flatpickr-day.prevMonthDay,
+.theme-dark .flatpickr-calendar.shm-datepicker .flatpickr-day.nextMonthDay {
+  color: #6e7393;
+  opacity: 1;
+}
+
+.theme-dark .flatpickr-calendar.shm-datepicker .flatpickr-day.selected,
+.theme-dark .flatpickr-calendar.shm-datepicker .flatpickr-day.startRange,
+.theme-dark .flatpickr-calendar.shm-datepicker .flatpickr-day.endRange {
+  color: #fff;
+}
+
+[dir] .theme-dark .flatpickr-calendar.shm-datepicker .shm-datepicker-footer {
+  background: #1e2442;
+  border-top-color: #414561;
+}
+
+.theme-dark .flatpickr-calendar.shm-datepicker .shm-datepicker-today {
+  color: #c2c6dc;
+}
+
+[dir] .theme-dark .flatpickr-calendar.shm-datepicker .shm-datepicker-today {
+  background: #10163a;
+  border-color: #414561;
+}
+
+/* --- TEXTAREA: same look and height as the other inputs --- */
+
+textarea,
+textarea.vs-textarea {
+  display: block;
+  width: 100%;
+  height: var(--input-height);
+  min-height: var(--input-height);
+  font-size: 14px;
+  line-height: 20px;
+  font-family: inherit;
+  color: #2c2e45;
+  resize: vertical;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+[dir] textarea, [dir] textarea.vs-textarea {
+  padding: 10px 14px;
+  background: #fff;
+  border: 1px solid var(--input-border);
+  border-radius: var(--input-radius);
+}
+
+textarea[rows] {
+  height: auto;
+}
+
+[dir] textarea:hover, [dir] textarea.vs-textarea:hover {
+  border-color: #c3c5d4;
+}
+
+textarea:focus,
+textarea.vs-textarea:focus {
+  outline: none;
+  resize: vertical !important;
+}
+
+[dir] textarea:focus, [dir] textarea.vs-textarea:focus {
+  background: #fff;
+  border-color: rgb(var(--vs-primary));
+  box-shadow: 0 0 0 3px rgba(var(--vs-primary), 0.15);
+}
+
+[dir] textarea[readonly] {
+  background: #f7f8fa;
+}
+
+[dir] .vs-con-textarea, [dir] .vs-con-textarea.focusx {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* --- FORM CONTROL RADIUS: one value for all fields, set by --input-radius in :root --- */
+
+[dir] input[type=text], [dir] input[type=email], [dir] input[type=tel], [dir] input[type=date], [dir] input[type=number], [dir] input[type=password], [dir] input[type=search], [dir] input[type=url], [dir] input.flatpickr-input, [dir] select, [dir] textarea, [dir] .vs__dropdown-toggle, [dir] .vs-input--input, [dir] .vs-inputx, [dir] .vs-select--input, [dir] .vs-textarea, [dir] .vs-con-textarea {
+  border-radius: var(--input-radius) !important;
+}
+
+/* --- FORM LAYOUT: textarea fields sit last in a form, in the same column grid as other fields --- */
+
+.vx-row > .d-field--textarea {
+  order: 1;
+}
+
+/* --- FORM CONTROLS: one height, border and background for every field (tokens in :root) --- */
+
+input[type=text],
+input[type=email],
+input[type=tel],
+input[type=date],
+input[type=number],
+input[type=password],
+input[type=search],
+input[type=url],
+input.flatpickr-input,
+input.vs-input--input,
+select {
+  min-height: var(--input-height);
+  font-size: 14px;
+  line-height: 20px;
+  font-family: inherit;
+  color: #2c2e45;
+}
+
+[dir] input[type=text], [dir] input[type=email], [dir] input[type=tel], [dir] input[type=date], [dir] input[type=number], [dir] input[type=password], [dir] input[type=search], [dir] input[type=url], [dir] input.flatpickr-input, [dir] input.vs-input--input, [dir] select {
+  padding: 10px 14px;
+  background-color: #fff;
+  border: 1px solid var(--input-border);
+  box-shadow: none;
+}
+
+input.vs-input--input.normal {
+  font-size: 14px !important;
+}
+
+[dir] input.vs-input--input.normal {
+  padding: 10px 14px !important;
+}
+
+[dir] input[type=text]:hover, [dir] input[type=email]:hover, [dir] input[type=tel]:hover, [dir] input[type=number]:hover, [dir] input[type=password]:hover, [dir] input.vs-input--input:hover, [dir] select:hover {
+  border-color: var(--input-border-hover) !important;
+}
+
+input[type=text]:focus,
+input[type=email]:focus,
+input[type=tel]:focus,
+input[type=date]:focus,
+input[type=number]:focus,
+input[type=password]:focus,
+input[type=search]:focus,
+input[type=url]:focus,
+input.vs-input--input:focus,
+select:focus {
+  outline: none;
+}
+
+[dir] input[type=text]:focus, [dir] input[type=email]:focus, [dir] input[type=tel]:focus, [dir] input[type=date]:focus, [dir] input[type=number]:focus, [dir] input[type=password]:focus, [dir] input[type=search]:focus, [dir] input[type=url]:focus, [dir] input.vs-input--input:focus, [dir] select:focus {
+  background-color: #fff;
+  border-color: rgb(var(--vs-primary)) !important;
+  box-shadow: 0 0 0 3px rgba(var(--vs-primary), 0.15);
+}
+
+[dir] input[readonly]:not(.flatpickr-input), [dir] input:disabled, [dir] select:disabled {
+  background-color: #f7f8fa;
+}
+
+.vs__dropdown-toggle {
+  min-height: var(--input-height);
+}
+
+[dir] .vs__dropdown-toggle {
+  padding: 4px 10px;
+  background: #fff;
+  border: 1px solid var(--input-border);
+}
+
+/* --- FORM FIELDS (.d-form / .d-field): label row with an optional "+ Add" button, control below --- */
+
+.d-form .vx-row {
+  row-gap: var(--field-gap);
+}
+
+[dir] .d-form .vx-row > .d-field {
+  margin-top: 0 !important;
+}
+
+.d-form .d-field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: flex-start;
+}
+
+.d-form .d-field > label {
+  flex: 1 1 auto;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4b4d68;
+}
+
+[dir] .d-form .d-field > label {
+  margin-bottom: 6px !important;
+}
+
+.d-form .d-field > label > span {
+  color: rgb(var(--vs-danger));
+}
+
+[dir=ltr] .d-form .d-field > label > span {
+  margin-left: 2px;
+}
+
+[dir=rtl] .d-form .d-field > label > span {
+  margin-right: 2px;
+}
+
+.d-form .d-field > *:not(label):not(.d-quick-add) {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+[dir] .d-form .d-field .vs-input, [dir] .d-form .d-field .v-select, [dir] .d-form .d-field .vs-con-textarea, [dir] .d-form .d-field .flatpickr-input, [dir] .d-form .d-field .d-file-picker {
+  margin-top: 0 !important;
+}
+
+.d-form .d-field .text-danger {
+  display: block;
+  font-size: 0.78rem;
+}
+
+[dir] .d-form .d-field .text-danger {
+  margin-top: 4px;
+}
+
+.d-form .d-quick-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgb(var(--vs-primary));
+  transition: background-color 0.15s ease;
+}
+
+[dir] .d-form .d-quick-add {
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(var(--vs-primary), 0.1);
+  cursor: pointer;
+}
+
+.d-form .d-quick-add .feather-icon {
+  display: flex;
+}
+
+[dir] .d-form .d-quick-add:hover {
+  background: rgba(var(--vs-primary), 0.18);
+}
+
+.theme-dark .d-form .d-field > label {
+  color: #c2c6dc;
+}
+
+/* --- NATIVE FILE INPUTS: same dashed row as <d-file-picker> --- */
+
+input[type=file] {
+  width: 100%;
+  height: var(--input-height);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 30px;
+  color: #8a8ca5;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+[dir] input[type=file] {
+  padding: 5px 6px;
+  background: #fff;
+  border: 1px dashed #c9ccd6;
+  border-radius: var(--input-radius);
+  cursor: pointer;
+}
+
+input[type=file]::file-selector-button {
+  height: 30px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgb(var(--vs-primary));
+  transition: background 0.2s ease;
+}
+
+[dir] input[type=file]::file-selector-button {
+  padding: 0 12px;
+  background: rgba(var(--vs-primary), 0.1);
+  border: 0;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+[dir=ltr] input[type=file]::file-selector-button {
+  margin-right: 12px;
+}
+
+[dir=rtl] input[type=file]::file-selector-button {
+  margin-left: 12px;
+}
+
+[dir] input[type=file]:hover {
+  border-color: rgb(var(--vs-primary));
+  background: rgba(var(--vs-primary), 0.03);
+}
+
+[dir] input[type=file]:hover::file-selector-button {
+  background: rgba(var(--vs-primary), 0.18);
+}
+
+input[type=file]:focus-visible {
+  outline: none;
+}
+
+[dir] input[type=file]:focus-visible {
+  border-color: rgb(var(--vs-primary));
+  box-shadow: 0 0 0 3px rgba(var(--vs-primary), 0.2);
+}
+
+[dir] .theme-dark input[type=file] {
+  background: #10163a;
+  border-color: #414561;
+}
+
+/* --- POPUPS: every <vs-popup> is a centered card; width via .d-modal--sm / md (default) / lg / xl --- */
+
+:root {
+  --popup-sm: 560px;
+  --popup-md: 820px;
+  --popup-lg: 1000px;
+  --popup-xl: 1200px;
+}
+
+.con-vs-popup .vs-popup--background {
+  backdrop-filter: blur(3px);
+}
+
+[dir] .con-vs-popup .vs-popup--background {
+  background: rgba(17, 20, 45, 0.45);
+}
+
+.con-vs-popup .vs-popup {
+  display: flex;
+  flex-direction: column;
+  width: var(--popup-md) !important;
+  max-width: calc(100vw - 32px);
+  height: auto !important;
+  max-height: calc(100vh - 48px);
+  overflow: hidden;
+}
+
+[dir] .con-vs-popup .vs-popup {
+  margin: 0 !important;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px -12px rgba(17, 20, 45, 0.35);
+}
+
+.con-vs-popup.d-modal--sm .vs-popup {
+  width: var(--popup-sm) !important;
+}
+
+.con-vs-popup.d-modal--md .vs-popup {
+  width: var(--popup-md) !important;
+}
+
+.con-vs-popup.d-modal--lg .vs-popup {
+  width: var(--popup-lg) !important;
+}
+
+.con-vs-popup.d-modal--xl .vs-popup {
+  width: var(--popup-xl) !important;
+}
+
+.con-vs-popup .vs-popup--header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+[dir] .con-vs-popup .vs-popup--header {
+  background: #fff;
+  border-bottom: 1px solid #eceef4;
+}
+
+[dir=ltr] .con-vs-popup .vs-popup--header {
+  padding: 14px 16px 14px 24px;
+}
+
+[dir=rtl] .con-vs-popup .vs-popup--header {
+  padding: 14px 24px 14px 16px;
+}
+
+.con-vs-popup .vs-popup--title h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2c2e45;
+}
+
+[dir] .con-vs-popup .vs-popup--title h3 {
+  padding: 0;
+}
+
+.con-vs-popup .vs-popup--close {
+  position: static;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: #6e7091;
+}
+
+[dir] .con-vs-popup .vs-popup--close {
+  border-radius: 8px;
+  background: #f4f5f9;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+[dir=ltr] .con-vs-popup .vs-popup--close {
+  margin: 0 0 0 auto;
+}
+
+[dir=rtl] .con-vs-popup .vs-popup--close {
+  margin: 0 auto 0 0;
+}
+
+.con-vs-popup .vs-popup--close:hover {
+  color: rgb(var(--vs-danger));
+}
+
+[dir] .con-vs-popup .vs-popup--close:hover {
+  background: rgba(var(--vs-danger), 0.1);
+}
+
+.con-vs-popup .vs-popup--content {
+  flex: 1 1 auto;
+  width: auto !important;
+  max-height: none !important;
+  overflow-y: auto;
+}
+
+[dir] .con-vs-popup .vs-popup--content {
+  margin: 0;
+  padding: 16px 24px;
+}
+
+.con-vs-popup.d-modal--sm .d-form .d-field {
+  width: 100% !important;
+}
+
+@media (max-width: 640px) {
+  .con-vs-popup .d-form .d-field {
+    width: 100% !important;
+  }
+}
+
+[dir] .theme-dark .con-vs-popup .vs-popup--header {
+  background: #262c49;
+  border-color: #414561;
+}
+
+.theme-dark .con-vs-popup .vs-popup--title h3 {
+  color: #fff;
+}
+
+.theme-dark .con-vs-popup .vs-popup--close {
+  color: #c2c6dc;
+}
+
+[dir] .theme-dark .con-vs-popup .vs-popup--close {
+  background: #10163a;
+}
+
+/* --- FORM CONTROLS: lock the border so no older rule (Vuesax, Officer form) makes one field look heavier --- */
+
+[dir] input[type=text], [dir] input[type=email], [dir] input[type=tel], [dir] input[type=date], [dir] input[type=number], [dir] input[type=password], [dir] input[type=search], [dir] input[type=url], [dir] input.flatpickr-input, [dir] input.vs-input--input, [dir] select, [dir] textarea, [dir] textarea.vs-textarea, [dir] .vs__dropdown-toggle {
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: var(--input-border) !important;
+  box-shadow: none;
+  background-color: #fff;
+}
+
+[dir] input.vs-input--input:hover, [dir] input[type=text]:hover, [dir] input[type=number]:hover, [dir] input[type=password]:hover, [dir] input.flatpickr-input:hover, [dir] select:hover, [dir] textarea:hover, [dir] .vs__dropdown-toggle:hover {
+  border-color: var(--input-border-hover) !important;
+}
+
+[dir] input.vs-input--input:focus, [dir] input[type=text]:focus, [dir] input[type=number]:focus, [dir] input[type=password]:focus, [dir] input.flatpickr-input.active, [dir] select:focus, [dir] textarea:focus, [dir] .vs__dropdown-toggle:focus-within, [dir] .vs--open .vs__dropdown-toggle {
+  border-color: rgb(var(--vs-primary)) !important;
+  box-shadow: 0 0 0 3px rgba(var(--vs-primary), 0.15);
+}
+
+[dir] .vs-input-danger input.vs-input--input, [dir] input[aria-invalid=true], [dir] textarea[aria-invalid=true] {
+  border-color: rgb(var(--vs-danger)) !important;
+}
+
+[dir] input[readonly]:not(.flatpickr-input), [dir] input:disabled, [dir] textarea[readonly], [dir] textarea:disabled {
+  background-color: #f7f8fa;
+}
+
+/* Same spacing under every field: Vuesax wrappers carry their own bottom margin */
+
+[dir] .d-field .vs-con-textarea, [dir] .d-field .vs-con-input-label, [dir] .d-field .vs-component.vs-con-input-label {
+  margin-bottom: 0 !important;
+}
+
+.d-field > span:empty {
+  display: none;
+}
+
+.theme-dark input[type=text],
+.theme-dark input[type=email],
+.theme-dark input[type=tel],
+.theme-dark input[type=number],
+.theme-dark input[type=password],
+.theme-dark input[type=search],
+.theme-dark input.flatpickr-input,
+.theme-dark input.vs-input--input,
+.theme-dark select,
+.theme-dark textarea,
+.theme-dark .vs__dropdown-toggle {
+  color: #c2c6dc;
+}
+
+[dir] .theme-dark input[type=text], [dir] .theme-dark input[type=email], [dir] .theme-dark input[type=tel], [dir] .theme-dark input[type=number], [dir] .theme-dark input[type=password], [dir] .theme-dark input[type=search], [dir] .theme-dark input.flatpickr-input, [dir] .theme-dark input.vs-input--input, [dir] .theme-dark select, [dir] .theme-dark textarea, [dir] .theme-dark .vs__dropdown-toggle {
+  background-color: #10163a;
+  border-color: #414561 !important;
+}
+
+/* --- TEXTAREA AUTO-GROW: starts at input height, grows with its text (JS fallback in plugins/autosize.js) --- */
+
+textarea:not([rows]),
+textarea.vs-textarea:not([rows]) {
+  field-sizing: content;
+  height: auto;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+/* --- CONTROL HEIGHT: every single-line control is exactly --input-height (42px) --- */
+
+input[type=text],
+input[type=email],
+input[type=tel],
+input[type=date],
+input[type=number],
+input[type=password],
+input[type=url],
+input.flatpickr-input,
+input.vs-input--input,
+input.vs-select--input,
+select {
+  box-sizing: border-box;
+  height: var(--input-height) !important;
+  min-height: var(--input-height);
+  line-height: 20px;
+}
+
+[dir] input[type=text], [dir] input[type=email], [dir] input[type=tel], [dir] input[type=date], [dir] input[type=number], [dir] input[type=password], [dir] input[type=url], [dir] input.flatpickr-input, [dir] input.vs-input--input, [dir] input.vs-select--input, [dir] select {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+input.vs-input--input.small,
+input.vs-input--input.large {
+  font-size: 14px !important;
+}
+
+[dir] input.vs-input--input.small, [dir] input.vs-input--input.large {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.v-select .vs__dropdown-toggle {
+  box-sizing: border-box;
+  height: var(--input-height);
+  min-height: var(--input-height);
+  align-items: center;
+}
+
+[dir=ltr] .v-select .vs__dropdown-toggle {
+  padding: 0 8px 0 10px !important;
+}
+
+[dir=rtl] .v-select .vs__dropdown-toggle {
+  padding: 0 10px 0 8px !important;
+}
+
+.v-select.vs--multiple .vs__dropdown-toggle {
+  height: auto;
+}
+
+[dir] .v-select.vs--multiple .vs__dropdown-toggle {
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
+
+.v-select .vs__selected-options {
+  align-items: center;
+  min-width: 0;
+}
+
+[dir] .v-select .vs__selected-options {
+  padding: 0;
+}
+
+.v-select.vs--single .vs__selected-options {
+  flex-wrap: nowrap;
+}
+
+.v-select.vs--single .vs__selected {
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+[dir] .v-select.vs--single .vs__selected {
+  margin: 0;
+  padding: 0 4px;
+}
+
+.v-select.vs--single.vs--open .vs__selected,
+.v-select.vs--single.vs--loading .vs__selected {
+  position: absolute;
+  opacity: 0.5;
+}
+
+[dir] .v-select input.vs__search,
+.v-select input.vs__search,
+.v-select input.vs__search:focus,
+.v-select input.vs__search:hover {
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 4px !important;
+  line-height: 20px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+[dir=ltr] .v-select .vs__actions {
+  padding: 0 0 0 6px;
+}
+
+[dir=rtl] .v-select .vs__actions {
+  padding: 0 6px 0 0;
+}
+
+[dir=ltr] .con-select .vs-select--input {
+  padding-left: 14px !important;
+}
+
+[dir=rtl] .con-select .vs-select--input {
+  padding-right: 14px !important;
 }
 
 [dir] .con-vs-alert {

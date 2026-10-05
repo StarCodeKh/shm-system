@@ -1,5 +1,5 @@
 <template>
-    <vs-popup fullscreen classContent="popup-example" title="បញ្ជីគ្រោងថវិកាចំណាយ" :active.sync="showModalForm">
+    <vs-popup class="d-modal d-modal--xl" classContent="popup-example" title="បញ្ជីគ្រោងថវិកាចំណាយ" :active.sync="showModalForm">
         <!-- <vx-card title="ទិន្នន័យការងារលម្អិត" class="mb-base">
             <vs-divider />
             <div class="vx-row">
@@ -100,6 +100,7 @@
 </template>
 
 <script>
+    import { gridClass } from "@/formGrid.js";
     import axios from "@/axios.js"
     import apiConfig from "@/apiConfig.js"
     import DForm from '@/views/form-builder/DForm.vue'
@@ -442,21 +443,7 @@
         created() {
             // this.$vs.loading();
             // this.getData();
-            if (this.rowDisplay == "1grid") {
-                this.styleClass = "vx-col lg:w-1/1 w-full mt-4";
-            }
-            if (this.rowDisplay == "2grid") {
-                this.styleClass = "vx-col lg:w-1/2 w-full mt-4";
-            }
-            if (this.rowDisplay == "3grid") {
-                this.styleClass = "vx-col lg:w-1/3 w-full mt-4";
-            }
-            if (this.rowDisplay == "4grid") {
-                this.styleClass = "vx-col lg:w-1/4 w-full mt-4";
-            }
-            if (this.rowDisplay == "full-grid") {
-                this.styleClass = "vx-col lg:w-1/1 w-full";
-            }
+            this.styleClass = gridClass(this.rowDisplay);
         },
         computed: {
             isSmallerScreen() {

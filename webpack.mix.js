@@ -57,9 +57,11 @@ mix.js('resources/js/app.js', 'public/js')
     .copyDirectory('resources/assets/images', 'public/images'); // Copy all images from resources to public folder
 
 
+// Cache-busting ?id= hashes on every build (the Blade layout loads assets via mix())
+mix.version();
+
 // Change below options according to your requirement
 if (mix.inProduction()) {
-    mix.version();
     mix.webpackConfig({
         output: {
             publicPath: '/demo/vuexy-vuejs-laravel-admin-template/demo-1/',

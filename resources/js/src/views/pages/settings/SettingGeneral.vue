@@ -1,5 +1,5 @@
 <template>
-  <vx-card no-shadow>
+  <vx-card no-shadow class="d-form">
 
     <!-- Img Row -->
     <!-- <div class="flex flex-wrap items-center mb-base">
@@ -21,7 +21,7 @@
     <div class="vx-row">
       <template v-for="(formAttribute, i) in formAttributes">
           <!-- Form Input Text -->
-          <div v-if="formAttribute.type == 'text'" :class="styleClass" dclass="mt-4">
+          <div v-if="formAttribute.type == 'text'" :class="styleClass" class="d-field" dclass="mt-4">
               <label class="mb-2">{{ $t(formAttribute.name) }}</label>
               <span v-if="formAttribute.required">
                   <vs-input v-validate="'required'" v-model="form.attribute[formAttribute.name]"
@@ -43,7 +43,7 @@
           <!-- </div> -->
 
           <!-- Form Input Text -->
-          <div v-if="formAttribute.type == 'password'" :class="styleClass" dclass="mt-4">
+          <div v-if="formAttribute.type == 'password'" :class="styleClass" class="d-field" dclass="mt-4">
               <label class="mb-2">{{ $t(formAttribute.name) }}</label>
               <span v-if="formAttribute.required">
                   <vs-input type="password" v-validate="'required'"
@@ -58,7 +58,7 @@
           </div>
 
           <!-- Form Input Number -->
-          <div v-if="formAttribute.type == 'number'" :class="styleClass" dclass="mt-4">
+          <div v-if="formAttribute.type == 'number'" :class="styleClass" class="d-field" dclass="mt-4">
               <label class="mb-2">{{ $t(formAttribute.name) }}</label>
               <span v-if="formAttribute.required">
                   <vs-input type="number" v-validate="'required'" :name="formAttribute.name"
@@ -73,14 +73,14 @@
                   class="mt-1 w-full" />
           </div>
 
-          <div v-if="formAttribute.type == 'select'" :class="styleClass" dclass="mt-4">
+          <div v-if="formAttribute.type == 'select'" :class="styleClass" class="d-field" dclass="mt-4">
               <label class="mb-2">{{ $t(formAttribute.name) }} <span
                       v-if="formAttribute.required">*</span></label>
               <button v-if="formAttribute.name != 'year' && formAttribute.name != 'gender'" type="button"
+                  class="d-quick-add" :title="$t('form_quick_add', { field: $t(formAttribute.name) })"
                   @click.stop="initNewForm(formAttribute.name)">
-                  <feather-icon v-if="formAttribute.name != 'year' && formAttribute.name != 'gender'"
-                      type="button" @click.stop="initNewForm(formAttribute.name)" icon="PlusIcon"
-                      svgClasses="h-4 w-4" />
+                  <feather-icon icon="PlusIcon" svgClasses="h-3 w-3" />
+                  <span>{{ $t('form_add') }}</span>
               </button>
               <span v-if="formAttribute.required">
                   <template v-if="formAttribute.hasFilter">
@@ -125,7 +125,7 @@
               </span>
           </div>
 
-          <div v-if="formAttribute.type == 'select_autocomplete'" :class="styleClass" dclass="mt-4">
+          <div v-if="formAttribute.type == 'select_autocomplete'" :class="styleClass" class="d-field" dclass="mt-4">
               <label class="mb-2">{{ $t(formAttribute.name) }} - {{ form.attribute[formAttribute.name] }}</label>
               <span v-if="formAttribute.required">
                   <vs-select :name="formAttribute.name" @change="onChangeElement($event, formAttribute.name)"
@@ -155,7 +155,7 @@
           </div>
 
           <!-- Form Check Box -->
-          <div v-if="formAttribute.type == 'checkbox'" :class="styleClass" dclass="mt-4">
+          <div v-if="formAttribute.type == 'checkbox'" :class="styleClass" class="d-field" dclass="mt-4">
               <label class="mb-2">{{ $t(formAttribute.name) }}</label>
               <span v-if="formAttribute.required">
                   <vs-checkbox v-model="form.attribute[formAttribute.name]">
@@ -172,7 +172,7 @@
           </div>
 
           <!-- Form Textarea -->
-          <div v-if="formAttribute.type == 'textarea'" :class="styleClass" dclass="mt-4">
+          <div v-if="formAttribute.type == 'textarea'" :class="styleClass" class="d-field d-field--textarea" dclass="mt-4">
               <label class="mb-2">{{ $t(formAttribute.name) }}</label>
               <span v-if="formAttribute.required">
                   <vs-textarea v-validate="'required'" class="mt-1 w-full"
@@ -187,7 +187,7 @@
           </div>
 
           <!-- Form Date -->
-          <div v-if="formAttribute.type == 'date'" :class="styleClass" dclass="mt-4">
+          <div v-if="formAttribute.type == 'date'" :class="styleClass" class="d-field" dclass="mt-4">
               <label class="mb-2">{{ $t(formAttribute.name) }}</label>
               <span v-if="formAttribute.required">
                   <flat-pickr v-validate="'required'" :name="formAttribute.name"
@@ -328,7 +328,7 @@
 
           <!-- Form Grid -->
           <!-- Form Input Text -->
-          <div v-if="formAttribute.type == 'file'" :class="styleClass" dclass="mt-4">
+          <div v-if="formAttribute.type == 'file'" :class="styleClass" class="d-field" dclass="mt-4">
               <label class="mb-2">{{ $t(formAttribute.name) }}</label>
               <d-file-picker class="mt-1" :name="formAttribute.name" :value="form.attribute[formAttribute.name]"
                   @browse="initOpenFileManager(formAttribute.name)"
@@ -365,6 +365,7 @@
 </template>
 
 <script>
+import { gridClass } from "@/formGrid.js";
 import axios from "@/axios.js"
 import vSelect from 'vue-select';
 import flatPickr from 'vue-flatpickr-component';
@@ -761,20 +762,22 @@ export default {
           } else {
             this.data = this.data;
           }
+          const saved = this.data.data || {};
           this.formAttributes.forEach(_formAttribute => {
+            const name = _formAttribute["name"];
+            let value = saved[name];
             if (_formAttribute["type"] == "select") {
-              this.form.attribute[_formAttribute["name"]] = (this.data.data[_formAttribute["name"]]);
-            } else if (_formAttribute["type"] == "hidden") {
-              this.form.attribute[_formAttribute["name"]] = (this.data.data[_formAttribute["name"]]);
+              // The API stores the option value (e.g. 1); v-select needs the matching {label, value} option
+              const options = this.data[name] || [];
+              value = options.find(option => option && String(option.value) === String(value)) || value;
             } else if (_formAttribute["type"] == "file") {
-              this.form.attribute[_formAttribute["name"]] = (this.data.data[_formAttribute["name"]]);
-              this.iconThumnail = (this.data.data[_formAttribute["name"]]);
-            }else {
-              this.form.attribute[_formAttribute["name"]] = (this.data.data[_formAttribute["name"]]);
+              this.iconThumnail = value;
             }
-            this.$validator.validateAll().then(result => {
-            })
+            // $set: keys must be reactive so v-model and vee-validate see the loaded values
+            this.$set(this.form.attribute, name, value);
           });
+          // Loaded values are valid until edited; drop errors from the empty initial state
+          this.$nextTick(() => this.$validator.reset());
 
           this.$vs.loading.close();
         }).catch((error) => {
@@ -973,21 +976,7 @@ this.$vs.notify({
     }
   },
   created() {
-    if (this.rowDisplay == "1grid") {
-      this.styleClass = "vx-col lg:w-1/1 w-full mt-4";
-    }
-    if (this.rowDisplay == "2grid") {
-      this.styleClass = "vx-col lg:w-1/2 w-full mt-4";
-    }
-    if (this.rowDisplay == "3grid") {
-      this.styleClass = "vx-col lg:w-1/3 w-full mt-4";
-    }
-    if (this.rowDisplay == "4grid") {
-      this.styleClass = "vx-col lg:w-1/4 w-full mt-4";
-    }
-    if (this.rowDisplay == "full-grid") {
-      this.styleClass = "vx-col lg:w-1/1 w-full";
-    }
+    this.styleClass = gridClass(this.rowDisplay);
     this.$vs.loading();
     this.getData();
   },

@@ -153,7 +153,7 @@
                 </div>
 
                 <!-- Form Textarea -->
-                <div v-if="formAttribute.type == 'textarea'" :class="styleClass" dclass="mt-4">
+                <div v-if="formAttribute.type == 'textarea'" :class="styleClass" class="d-field--textarea" dclass="mt-4">
                     <label class="mb-2">{{ $t(formAttribute.name) }}</label>
                     <span v-if="formAttribute.required">
                         <vs-textarea v-validate="'required'" class="mt-1 w-full"
@@ -317,6 +317,7 @@
 </template>
 
 <script>
+import { gridClass } from "@/formGrid.js";
 import axios from "@/axios.js";
 import DFormInput from '@/views/form-builder/form-control/DFormInput.vue';
 import vSelect from 'vue-select';
@@ -596,21 +597,7 @@ export default {
 
     },
     created() {
-        if (this.rowDisplay == "1grid") {
-            this.styleClass = "vx-col lg:w-1/1 w-full mt-4";
-        }
-        if (this.rowDisplay == "2grid") {
-            this.styleClass = "vx-col lg:w-1/2 w-full mt-4";
-        }
-        if (this.rowDisplay == "3grid") {
-            this.styleClass = "vx-col lg:w-1/3 w-full mt-4";
-        }
-        if (this.rowDisplay == "4grid") {
-            this.styleClass = "vx-col lg:w-1/4 w-full mt-4";
-        }
-        if (this.rowDisplay == "full-grid") {
-            this.styleClass = "vx-col lg:w-1/1 w-full";
-        }
+        this.styleClass = gridClass(this.rowDisplay);
     },
     watch: {
 

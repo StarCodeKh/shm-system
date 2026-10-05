@@ -1,43 +1,24 @@
 <template>
-    <div class="form-container">
-        <div class="form-header">
-            <div class="form-title">
-                <i class="fas fa-user-plus"></i>
-                <span>បង្កើតសមាជិកថ្មី</span>
-            </div>
-            <!-- <button class="close-btn" onclick="closeForm()">
-                <i class="fas fa-times"></i>
-            </button> -->
-        </div>
+    <div class="officer-form">
         <template title="modal" class="modal">
             <d-file-manager ref="refModelFileManager" @clicked="initPassProps"></d-file-manager>
         </template>
-        <div class="form-body">
-            <form id="memberForm">
+        <d-form-tabs ref="tabs" v-model="tab" :sections="sections" :errors="errors" icon="UserPlusIcon"
+            :title="$t('officer_form_title')" :subtitle="$t('officer_form_subtitle')">
+            <form id="memberForm" class="officer-form__form" @submit.prevent="submitForm">
                 <!-- Personal Information Section -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fas fa-user"></i>
-                        ព័ត៌មានផ្ទាល់ខ្លួន
-                    </div>
+                <div class="form-section" data-section="personal" v-show="tab === 'personal'">
                     <div class="form-grid">
 
                         <div class="form-group">
                             <label>រូបថត <span class="badge">Optional</span></label>
-                            <div class="file-upload-wrapper">
-                                <img v-if="iconThumnail!=null" style="width:100px" class="photo" :src="iconThumnail" />
-                                <vs-input type="hidden" :placeholder="$t('photo')"
-                                    v-model="officer.photo" :value="''"
-                                    class="mt-2 w-full" />
-                                <label for="photo" @click="initOpenFileManager('photo')" class="file-upload-label">
-                                    <i class="fas fa-camera"></i>
-                                    <span>ជ្រើសរើសរូបថត</span>
-                                </label>
-                            </div>
+                            <d-file-picker name="photo" :value="officer.photo || ''"
+                                @browse="initOpenFileManager('photo')"
+                                @clear="officer.photo = null; iconThumnail = null" />
                         </div>
 
                         <div class="form-group">
-                            <label>{{ $t('first_name') }} <span class="required">*</span></label>
+                            <label>{{ $t('first_name') }} <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-user"></i>
                                 <!-- <input type="text" ​name="first_name" :placeholder="$t('first_name')" v-model="officer.first_name" v-validate="'required'"> -->
@@ -49,7 +30,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>{{ $t('last_name') }} <span class="required">*</span></label>
+                            <label>{{ $t('last_name') }} <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-user"></i>
                                 <!-- <input type="text" :placeholder="$t('last_name')" v-model="officer.last_name" required> -->
@@ -61,7 +42,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>{{ $t('latin') }} <span class="required">*</span></label>
+                            <label>{{ $t('latin') }} <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-user"></i>
                                 <!-- <input type="text" :placeholder="$t('latin')" v-model="officer.latin" required> -->
@@ -73,7 +54,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>{{ $t('gender') }} <span class="required">*</span></label>
+                            <label>{{ $t('gender') }} <span class="required"></span></label>
                             <v-select
                                     v-validate="'required'" v-model="officer.gender"
                                     name="gender" :options="genders"
@@ -89,7 +70,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>ថ្ងៃខែឆ្នាំកំណើត <span class="required">*</span></label>
+                            <label>ថ្ងៃខែឆ្នាំកំណើត <span class="required"></span></label>
                             <!-- <input type="date" v-model="officer.dob" required> -->
                              <flat-pickr v-validate="'required'" name="dob"
                                 v-model="officer.dob" class="mt-1 w-full" />
@@ -162,15 +143,11 @@
                 </div>
 
                 <!-- Contact Information Section -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fas fa-address-book"></i>
-                        ទីកន្លែងបំពេញការងារ និងតួនាទី
-                    </div>
+                <div class="form-section" data-section="work" v-show="tab === 'work'">
                     <div class="form-grid">
 
                         <div class="form-group">
-                            <label>អង្គភាព<span class="required">*</span></label>
+                            <label>អង្គភាព<span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-envelope"></i>
                                 <v-select
@@ -186,7 +163,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>នាយកដ្ឋាន  <span class="required">*</span></label>
+                            <label>នាយកដ្ឋាន  <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-phone"></i>
                                 <v-select
@@ -231,14 +208,10 @@
 
 
                 <!-- Contact Information Section -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fas fa-address-book"></i>
-                        ព័ត៌មានទំនាក់ទំនង
-                    </div>
+                <div class="form-section" data-section="contact" v-show="tab === 'contact'">
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>លេខទូរស័ព្ទ <span class="required">*</span></label>
+                            <label>លេខទូរស័ព្ទ <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-phone"></i>
                                 <vs-input v-validate="'required'" v-model="officer.telephone_1" :placeholder="$t('telephone_1')" :name="'telephone_1'" class="mt-1 w-full" />
@@ -294,11 +267,7 @@
                 </div>
 
                 <!-- Emergency Contact Section -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fas fa-exclamation-circle"></i>
-                        ទំនាក់ទំនងបន្ទាន់
-                    </div>
+                <div class="form-section" data-section="emergency" v-show="tab === 'emergency'">
                     <div class="form-grid">
                         <div class="form-group">
                             <label>ឈ្មោះអ្នកទំនាក់ទំនងបន្ទាន់</label>
@@ -322,11 +291,7 @@
                 </div>
 
                 <!-- Additional Information -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fas fa-info-circle"></i>
-                        ព័ត៌មានបន្ថែម
-                    </div>
+                <div class="form-section" data-section="additional" v-show="tab === 'additional'">
                     <div class="form-grid">
                         <div class="form-group full-width">
                             <label>ចំណុចពិសេស ឬ ការកត់សម្គាល់</label>
@@ -337,23 +302,19 @@
                         <!-- <div class="form-group full-width">
                             <div class="checkbox-group">
                                 <input type="checkbox" id="agree" required>
-                                <label for="agree">ខ្ញុំយល់ព្រមនឹងលក្ខខណ្ឌ និង គោលការណ៍ឯកជនភាព <span class="required">*</span></label>
+                                <label for="agree">ខ្ញុំយល់ព្រមនឹងលក្ខខណ្ឌ និង គោលការណ៍ឯកជនភាព <span class="required"></span></label>
                             </div>
                         </div> -->
                     </div>
                 </div>
 
                 <!-- Status Section -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="fas fa-exclamation-circle"></i>
-                        ស្ថានភាព
-                    </div>
+                <div class="form-section" data-section="status" v-show="tab === 'status'">
                     
                     
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>ថ្ងៃខែចុះឈ្មោះ <span class="required">*</span></label>
+                            <label>ថ្ងៃខែចុះឈ្មោះ <span class="required"></span></label>
                             <!-- <input type="date" v-model="officer.dob" required> -->
                                 <flat-pickr v-validate="'required'" name="register_date"
                                 v-model="officer.register_date" class="mt-1 w-full" />
@@ -362,7 +323,7 @@
                             }}</span>
                         </div>
                         <div class="form-group">
-                            <label>តើសមាជិកមានប័ណ្ណបសស? <span class="required">*</span></label>
+                            <label>តើសមាជិកមានប័ណ្ណបសស? <span class="required"></span></label>
                             <v-select
                                     v-validate="'required'" v-model="officer.is_nssf_member"
                                     name="is_nssf_member" :options="nssfs"
@@ -373,7 +334,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>ស្ថានភាព <span class="required">*</span></label>
+                            <label>ស្ថានភាព <span class="required"></span></label>
                             <v-select
                                     v-validate="'required'" v-model="officer.status"
                                     name="status" :options="statuses"
@@ -386,18 +347,18 @@
                     </div>
                 </div>
 
-                <!-- Form Actions -->
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
-                        <i class="fas fa-undo"></i>
-                        លុបចោល
-                    </button>
-                    <button type="submit" @click.prevent="submitForm" class="btn btn-primary btn-submit">
-                        <i class="fas fa-save"></i> {{$t("btn_process") }}
-                    </button>
-                </div>
             </form>
-        </div>
+            <template #actions>
+                <button type="button" class="d-tabform__btn" @click="clearForm()">
+                    <feather-icon icon="RotateCcwIcon" svgClasses="h-4 w-4" />
+                    <span>{{ $t('form_reset') }}</span>
+                </button>
+                <button type="button" class="d-tabform__btn d-tabform__btn--primary" @click="submitForm">
+                    <feather-icon icon="SaveIcon" svgClasses="h-4 w-4" />
+                    <span>{{ $t("btn_process") }}</span>
+                </button>
+            </template>
+        </d-form-tabs>
     </div>
 </template>
 <script>
@@ -420,6 +381,15 @@ export default {
   },
   data() {
     return {
+      tab: 'personal',
+      sections: [
+        { key: 'personal', icon: 'UserIcon', title: 'ព័ត៌មានផ្ទាល់ខ្លួន' },
+        { key: 'work', icon: 'BriefcaseIcon', title: 'ទីកន្លែងបំពេញការងារ និងតួនាទី' },
+        { key: 'contact', icon: 'PhoneIcon', title: 'ព័ត៌មានទំនាក់ទំនង' },
+        { key: 'emergency', icon: 'AlertCircleIcon', title: 'ទំនាក់ទំនងបន្ទាន់' },
+        { key: 'additional', icon: 'InfoIcon', title: 'ព័ត៌មានបន្ថែម' },
+        { key: 'status', icon: 'CheckCircleIcon', title: 'ស្ថានភាព' },
+      ],
       api: apiConfig._apiOfficer,
       apiEntityByDept: apiConfig._apiEntityByDept,
       selected: [],
@@ -796,6 +766,7 @@ export default {
                         })
                     });
             }else{
+                this.$refs.tabs.focusFirstError();
                 this.$vs.notify({
                     title: 'ការជូនដំណឹង',
                     text: 'ព័ត៌មានពុំទាន់គ្រប់ជ្រុងជ្រោយ',
