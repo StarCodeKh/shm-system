@@ -1,1320 +1,615 @@
 <template>
-    <div class="main-dashboard">
-        <div class="switch-currency-block">
-            <CurrencyDropDown
-            :value="cardCurrency.currency"
-            @change="cardCurrency.currency = $event" class="ml-2"/>
-
-            <flat-pickr
-                v-model="dateRange"
-                :config="config"
-                class="vs-input ml-2 date-rang-width"
-                placeholder="Select Date Range"/>
+    <div class="dashboard">
+        <!-- Toolbar -->
+        <div class="dashboard-toolbar">
+            <div class="mr-4 mb-3">
+                <h3 class="mb-1">ផ្ទាំងគ្រប់គ្រង</h3>
+                <p class="text-grey">
+                    ទិន្នន័យពី {{ formatDate(range.start) }} ដល់ {{ formatDate(range.end) }}
+                    <span v-if="updatedAt"> · ធ្វើបច្ចុប្បន្នភាព {{ updatedAt }}</span>
+                </p>
+            </div>
+            <div class="flex flex-wrap items-center mb-3">
+                <flat-pickr
+                    v-model="dateRange"
+                    :config="dateConfig"
+                    class="vs-input dashboard-date mr-3 mb-2"
+                    placeholder="ជ្រើសរើសកាលបរិច្ឆេទ" />
+                <div class="currency-switch mr-3 mb-2">
+                    <button v-for="c in ['KHR', 'USD']" :key="c" :class="{ active: currency === c }" @click="currency = c">
+                        {{ c === 'KHR' ? '៛ រៀល' : '$ ដុល្លារ' }}
+                    </button>
+                </div>
+                <vx-tooltip text="ផ្ទុកឡើងវិញ" position="top">
+                    <div class="toolbar-btn mb-2" :class="{ spinning: loading }" @click="load">
+                        <feather-icon icon="RefreshCwIcon" svgClasses="h-5 w-5" />
+                    </div>
+                </vx-tooltip>
+            </div>
         </div>
-        
+
+        <!-- Error -->
+        <vx-card v-if="error" class="text-center py-8 mb-base">
+            <feather-icon icon="AlertTriangleIcon" svgClasses="h-10 w-10 text-danger" />
+            <p class="mt-3 mb-4">មិនអាចទាញយកទិន្នន័យបានទេ។</p>
+            <vs-button type="border" @click="load">ព្យាយាមម្តងទៀត</vs-button>
+        </vx-card>
+
+        <!-- KPI cards -->
         <div class="vx-row">
-            <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4 mb-base">
-                <!-- <div class="line-area-chart">
-                    <h3>ការប្រៀបធៀបចំនួនមន្ត្រី</h3>
-                    <vue-apex-charts ref="apexChart" type="line" height=200 width='100%' :options="chartOptionOfficers" :series="serieOfficers" />
-                </div> -->
-                <OfficerStatistic :data="data"></OfficerStatistic>
-                <!-- <statistics-card-line
-                  icon="UsersIcon"
-                  :statistic=" totalMembers + ' នាក់'"
-                  statisticTitle="ចំនួនសមាជិកសរុប"
-                  :chartData="totalOfficerLatest5YearsSeries.series"
-                  :showCurrency="false"
-                  type='area' /> -->
+            <div v-for="card in kpiCards" :key="card.key" class="vx-col w-full sm:w-1/2 xl:w-1/4 mb-base">
+                <div class="kpi-card" :class="{ skeleton: !summary }">
+                    <template v-if="summary">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="kpi-card__label">{{ card.label }}</p>
+                                <h2 class="kpi-card__value">{{ card.value }}</h2>
+                                <p class="kpi-card__sub">{{ card.sub }}</p>
+                            </div>
+                            <div class="kpi-card__icon" :style="{ backgroundColor: card.color + '1f', color: card.color }">
+                                <feather-icon :icon="card.icon" svgClasses="h-6 w-6" />
+                            </div>
+                        </div>
+                        <vue-apex-charts type="area" height="70" :options="sparkOptions(card.color)" :series="[{ name: card.label, data: card.trend }]" />
+                    </template>
+                </div>
             </div>
-
-            <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4 mb-base">
-                <statistics-card-line
-                    icon="DollarSignIcon"
-                    :currency="cardCurrency.currency"
-                    @currency-change="cardCurrency.currency = $event"
-                    :showCurrency="false"
-                    :statistic="cardCurrency.currency === 'KHR'
-                        ? totalIncomeKHR
-                        : totalIncomeUSD"
-                    :statisticTitle="cardCurrency.currency === 'KHR'
-                        ? 'ចំណូលសរុប (គិតជារៀល)'
-                        : 'ចំណូលសរុប (គិតជាដុល្លារ)'"
-                    :chartData="revenueGenerated.series"
-                    color="success"
-                    type="area"
-                />
-            </div>
-
-            <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4 mb-base">
-                <statistics-card-line
-                    icon="DollarSignIcon"
-                    :currency="cardCurrency.currency"
-                    @currency-change="cardCurrency.currency = $event"
-                    :showCurrency="false"
-                    :statistic="cardCurrency.currency === 'KHR'
-                        ? totalExpenseKHR
-                        : totalExpenseUSD"
-                    :statisticTitle="cardCurrency.currency === 'KHR'
-                        ? 'ចំណាយសរុប (គិតជារៀល)'
-                        : 'ចំណាយសរុប (គិតជាដុល្លារ)'"
-                    :chartData="quarterlySales.series"
-                    color="danger"
-                    type="area"
-                />
-            </div>
-
-            <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4 mb-base">
-                <statistics-card-line
-                    icon="DollarSignIcon"
-                    :currency="cardCurrency.currency"
-                    @currency-change="cardCurrency.currency = $event"
-                    :showCurrency="false"
-                    :statistic="cardCurrency.currency === 'KHR'
-                        ? totalRemainingBalanceKHR
-                        : totalRemainingBalanceUSD"
-                    :statisticTitle="cardCurrency.currency === 'KHR'
-                        ? 'សន្និធិសាច់ប្រាក់សរុប (គិតជារៀល)'
-                        : 'សន្និធិសាច់ប្រាក់សរុប (គិតជាដុល្លារ)'"
-                    :chartData="ordersRecevied.series"
-                    color="warning"
-                    type="area"
-                />
-            </div>
-
         </div>
 
-         <div class="vx-row">
-            
-            <!-- ប្រៀបធៀបចំណូល/ចំណាយ -->
-            <div class="vx-col w-full md:w-2/3 mb-base">
-                <vx-card title="ប្រៀបធៀបចំណូល/ចំណាយ">
-                    <template slot="actions">
-                         <QuarterDropDown
-                            v-model="quarterFilter"
-                            @change="onQuarterChange"
-                            class="ml-2 quarter-block"
-                        />
-                    </template>
-                    <div slot="no-body" class="p-6 pb-0">
-                        <div class="flex">
-                        <!-- Income -->
-                        <div class="mr-6">
-                            <p class="mb-1 font-semibold">
-                                {{ cardCurrency.currency === 'KHR' ? 'ចំណូល' : 'Income' }}
-                            </p>
-
-                            <p class="text-3xl text-success">
-                                <sup class="text-base mr-1">
-                                 {{ cardCurrency.currency === 'KHR' ? '៛' : '$' }}
-                                </sup>
-                                {{ cardCurrency.currency === 'KHR'
-                                    ? quarterly_total_income_khr
-                                    : quarterly_total_income_usd
-                                }}
-                            </p>
-                         </div>
-
-                        <!-- Expense -->
-                        <div>
-                        <p class="mb-1 font-semibold">
-                            {{ cardCurrency.currency === 'KHR' ? 'ចំណាយ' : 'Expense' }}
-                        </p>
-
-                        <p class="text-3xl">
-                            <sup class="text-base mr-1">
-                            {{ cardCurrency.currency === 'KHR' ? '៛' : '$' }}
-                            </sup>
-                            {{ cardCurrency.currency === 'KHR'
-                                ? quarterly_total_expense_khr
-                                : quarterly_total_expense_usd
-                            }}
-                        </p>
+        <!-- Monthly income vs expense + payment progress -->
+        <div class="vx-row">
+            <div class="vx-col w-full lg:w-2/3 mb-base">
+                <vx-card title="ចំណូល និង ចំណាយប្រចាំខែ" class="h-full">
+                    <div v-if="summary">
+                        <vue-apex-charts type="bar" height="300" :options="monthlyOptions" :series="monthlySeries" />
+                        <div class="quarter-strip">
+                            <div v-for="q in quarters" :key="q.label" class="quarter-strip__item">
+                                <span class="quarter-strip__label">{{ q.label }}</span>
+                                <span class="text-success">+{{ money(q.income) }}</span>
+                                <span class="text-danger">−{{ money(q.expense) }}</span>
+                            </div>
                         </div>
                     </div>
-                        <IncomeExpenseChart :data="data"></IncomeExpenseChart>
-                    </div>
+                    <div v-else class="skeleton-block" style="height: 360px"></div>
                 </vx-card>
             </div>
 
-            <!-- %នៃការបង់ប្រាក់សមាជិក -->
-            <div class="vx-col w-full md:w-1/3 mb-base">
-                <vx-card title="%នៃការបង់ប្រាក់សមាជិក">
-                    <template slot="actions">
-                        <feather-icon icon="HelpCircleIcon" svgClasses="w-6 h-6 text-grey"></feather-icon>
+            <div class="vx-col w-full lg:w-1/3 mb-base">
+                <vx-card title="ការបង់ប្រាក់សមាជិក" class="h-full">
+                    <template v-if="summary">
+                        <vue-apex-charts type="radialBar" height="240" :options="paymentOptions" :series="[payment.percent]" />
+                        <div class="flex text-center payment-split">
+                            <div class="w-1/2">
+                                <p class="text-grey">បានបង់រួច</p>
+                                <h3 class="text-success">{{ number(payment.paid) }}</h3>
+                            </div>
+                            <div class="w-1/2">
+                                <p class="text-grey">មិនទាន់បង់</p>
+                                <h3 class="text-danger">{{ number(payment.unpaid) }}</h3>
+                            </div>
+                        </div>
+                        <p v-if="payment.unpaidAmount" class="text-center text-grey mt-3">
+                            ប្រាក់មិនទាន់បង់: <b class="text-danger">{{ money(payment.unpaidAmount) }}</b>
+                        </p>
                     </template>
-
-                    <!-- CHART -->
-                    <template slot="no-body">
-                        <div class="mt-10">
-                            <vue-apex-charts type=radialBar height=240 :options="analyticsData.goalOverviewRadialBar.chartOptions" 
-                            :series="officerPaymentHistory.percent_paid" />
-                        </div>
-                    </template>
-
-                    <!-- DATA -->
-                    <div class="flex justify-between text-center mt-6" slot="no-body-bottom">
-                        <div class="w-1/2 border border-solid d-theme-border-grey-light border-r-0 border-b-0 border-l-0">
-                            <p class="mt-4">បានបង់រួច</p>
-                            <p class="mb-4 text-3xl font-semibold">{{officerPaymentHistory.paid}}</p>
-                        </div>
-                        <div class="w-1/2 border border-solid d-theme-border-grey-light border-r-0 border-b-0">
-                            <p class="mt-4">ពុំទាន់បង់</p>
-                            <p class="mb-4 text-3xl font-semibold">{{officerPaymentHistory.unpaid}}</p>
-                        </div>
-                    </div>
+                    <div v-else class="skeleton-block" style="height: 330px"></div>
                 </vx-card>
             </div>
-
         </div>
-        
+
+        <!-- Members -->
         <div class="vx-row">
-            <!-- ស្ថានភាពសមាជិក -->
             <div class="vx-col w-full lg:w-1/2 mb-base">
-                <OfficerStatusChart :data="data"></OfficerStatusChart>
-            </div>
-
-            <!-- មុខសញ្ញានៃប្រាក់ឧបត្ថម្ភ -->
-             <div class="vx-col w-full md:w-1/2 mb-base">
-                <vx-card title="មុខសញ្ញានៃប្រាក់ឧបត្ថម្ភ">
-                    <!-- SLOT = ACTIONS -->
-                    <!-- <template slot="actions">
-                        <CurrencyDropDown
-                            :value="cardCurrency.currency"
-                            @change="cardCurrency.currency = $event"
-                        />
-                    </template> -->
-
-                    <div slot="no-body">
-                        <!-- CHART -->
-                        <vue-apex-charts type=pie height=345 class="mt-10 mb-10" :options="IncentivePie.chartOptions" :series="cardCurrency.currency === 'KHR'
-                        ? officerIncentive.series_khr
-                        : officerIncentive.series_usd" />
-
-                        <!-- CHART DATA -->
-                        <ul class="mb-1">
-                            <li v-for="incentive in officerIncentive.totalIncentive" :key="incentive.payment_type_name" class="flex justify-between py-3 px-6 border d-theme-border-grey-light border-solid border-r-0 border-l-0 border-b-0">
-                                <span class="flex items-center">
-                                    <span class="inline-block h-3 w-3 rounded-full mr-2" :class="`bg-primary`"></span>
-                                    <span class="font-semibold">{{ incentive.payment_type_name }}</span>
-                                </span>
-                                <span>
-                                    {{ cardCurrency.currency === 'KHR'
-                                        ? `៛ ${incentive.total_amount_khr_kh}`
-                                        : `$ ${incentive.total_amount_usd}`
-                                    }}
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-
-                </vx-card>
-            </div>
-        </div>
-
-        <!-- ចំណូលតាមស្ថាប័ន -->
-        <div class="vx-row">
-            <div class="vx-col md:w-1/1 w-full mb-base">
-                <vx-card title="ចំណូលតាមស្ថាប័ន" code-toggler>
-                    <!-- <vue-apex-charts type="bar" height="350" :options="apexChatData.barChart.chartOptions" :series="apexChatData.barChart.series"></vue-apex-charts>
-                    <template slot="codeContainer">
-                        {{ apexChatData.barChartCode }}
-                    </template> -->
-                    <EntityIncomeChart :data="data"></EntityIncomeChart>
-                </vx-card>
-            </div>
-            <div class="vx-col md:w-1/1 w-full">
-                <!-- Monthly Income -->
-                 <MonthlyIncomeChart :data="data"></MonthlyIncomeChart>
-                <!-- <vx-card title="ចំណូលប្រចាំខែ" class="mb-base">
-                    <template slot="actions">
-                        <feather-icon icon="SettingsIcon" svgClasses="w-6 h-6 text-grey"></feather-icon>
+                <vx-card title="ស្ថានភាពសមាជិក" class="h-full">
+                    <template v-if="summary">
+                        <vue-apex-charts type="donut" height="300" :options="memberStatusOptions" :series="memberStatus.map(s => s.value)" />
                     </template>
-                    <div slot="no-body" class="p-6 pb-0">
-                        <vue-apex-charts type=line height=266 :options="analyticsData.salesLine.chartOptions" :series="salesLine.series" />
-                    </div>
-                </vx-card> -->
+                    <div v-else class="skeleton-block" style="height: 300px"></div>
+                </vx-card>
+            </div>
+            <div class="vx-col w-full lg:w-1/2 mb-base">
+                <vx-card title="សមាជិកថ្មីតាមឆ្នាំ" class="h-full">
+                    <vue-apex-charts v-if="summary" type="bar" height="300" :options="growthOptions" :series="[{ name: 'សមាជិកថ្មី', data: summary.officerStatisticSeries || [] }]" />
+                    <div v-else class="skeleton-block" style="height: 300px"></div>
+                </vx-card>
             </div>
         </div>
 
+        <!-- Incentives + income by entity -->
+        <div class="vx-row">
+            <div class="vx-col w-full lg:w-1/3 mb-base">
+                <vx-card title="ប្រាក់ឧបត្ថម្ភតាមប្រភេទ" class="h-full">
+                    <template v-if="summary">
+                        <template v-if="incentives.length">
+                            <vue-apex-charts type="donut" height="240" :options="incentiveOptions" :series="incentives.map(i => i.amount)" />
+                            <ul class="legend-list">
+                                <li v-for="(item, i) in incentives" :key="item.name">
+                                    <span class="flex items-center">
+                                        <span class="legend-dot" :style="{ backgroundColor: palette[i % palette.length] }"></span>
+                                        {{ item.name }}
+                                    </span>
+                                    <b>{{ money(item.amount) }}</b>
+                                </li>
+                            </ul>
+                        </template>
+                        <div v-else class="empty-state">
+                            <feather-icon icon="GiftIcon" svgClasses="h-8 w-8" />
+                            <p>មិនមានប្រាក់ឧបត្ថម្ភក្នុងរយៈពេលនេះ</p>
+                        </div>
+                    </template>
+                    <div v-else class="skeleton-block" style="height: 300px"></div>
+                </vx-card>
+            </div>
+            <div class="vx-col w-full lg:w-2/3 mb-base">
+                <vx-card title="ចំណូលតាមស្ថាប័ន (៛)" class="h-full">
+                    <template v-if="summary">
+                        <vue-apex-charts v-if="entityIncome.length" type="bar" :height="Math.max(220, entityIncome.length * 42)" :options="entityOptions" :series="[{ name: 'ចំណូល', data: entityIncome.map(e => e.amount) }]" />
+                        <div v-else class="empty-state">
+                            <feather-icon icon="BarChart2Icon" svgClasses="h-8 w-8" />
+                            <p>មិនមានទិន្នន័យចំណូល</p>
+                        </div>
+                    </template>
+                    <div v-else class="skeleton-block" style="height: 300px"></div>
+                </vx-card>
+            </div>
+        </div>
     </div>
 </template>
 
-
-
-
 <script>
-import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-import VueApexCharts from 'vue-apexcharts'
-import StatisticsCardLine from '@/components/statistics-cards/StatisticsCardLine.vue'
-import analyticsData from './components/ui-elements/card/analyticsData.js'
-import apexChatData from './components/charts-and-maps/charts/apex-charts/apexChartData.js'
-import ChangeTimeDurationDropdown from '@/components/ChangeTimeDurationDropdown.vue'
-import IncomeSector from '@/views/components/charts-and-maps/charts/IncomeSector.vue'
-import ExpenseSector from '@/views/components/charts-and-maps/charts/ExpenseSector.vue'
-import IncomeQuarter from '@/views/components/charts-and-maps/charts/IncomeQuarter.vue'
-import OutcomeQuarter from '@/views/components/charts-and-maps/charts/OutcomeQuarter.vue'
-import TopEntity from '@/views/components/charts-and-maps/charts/TopEntity.vue'
-import SummaryQuarter from '@/views/components/charts-and-maps/charts/SummaryQuarter.vue'
-import StatisticPercentage from '@/views/components/charts-and-maps/charts/StatisticPercentage.vue'
-import SummaryData from '@/views/components/charts-and-maps/charts/SummaryData.vue'
-import TotalIncomeOutcomeQuarter from '@/views/components/charts-and-maps/charts/TotalIncomeOutcomeQuarter.vue'
-import IncentiveTaxMonthly from '@/views/components/charts-and-maps/charts/IncentiveTaxMonthly.vue'
-import TopRankIncomeEntity from '@/views/components/charts-and-maps/charts/TopRankIncomeEntity.vue'
-import TopRankExpenseEntity from '@/views/components/charts-and-maps/charts/TopRankExpenseEntity.vue'
-
-import OfficerStatistic from './_OfficerStatistic.vue'
-import OfficerStatusChart from './_OfficerStatusChart.vue'
-import EntityIncomeChart from './_EntityIncomeChart.vue'
-import MonthlyIncomeChart from './_MonthlyIncomeChart.vue'
-import IncomeExpenseChart from './_IncomeExpenseChart.vue'
-
-import EchartsBarChart from './EchartsBarChart.vue'
-import EchartsLineChart from './EchartsLineChart.vue'
-import EchartsPieChart from './EchartsPieChart.vue'
-import EchartsPolarChart from './EchartsPolarChart.vue'
-import EchartsScatterChart from './EchartsScatterChart.vue'
-import EchartsRadarChart from './EchartsRadarChart.vue'
-import CurrencyDropDown from "../layouts/components/navbar/components/CurrencyDropDown.vue"
-import QuarterDropDown from "../layouts/components/navbar/components/QuarterDropDown.vue"
-import flatPickr from 'vue-flatpickr-component'
-import 'flatpickr/dist/flatpickr.css'
-import vSelect from 'vue-select'
-
-import router from '@/router'
+import VueApexCharts from "vue-apexcharts"
+import flatPickr from "vue-flatpickr-component"
+import "flatpickr/dist/flatpickr.css"
 import axios from "@/axios.js"
-export default{
+import router from "@/router"
+
+const KH_MONTHS = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"]
+const PALETTE = ["#7367F0", "#28C76F", "#FF9F43", "#EA5455", "#00CFE8", "#F35588", "#4A5F9D"]
+const toNumber = (value) => Number(String(value || 0).replace(/,/g, "")) || 0
+
+export default {
+    components: { VueApexCharts, flatPickr },
     data() {
-        const now = new Date();
-        const year = new Date().getFullYear();
-        const start = `${year}-01-01`;
-        const end   = `${year}-12-31`;
+        const year = new Date().getFullYear()
         return {
-            chartOptionOfficers: {
-                chart: {
-                    toolbar: { show: false },
-                    height: 200,
-                    type: 'line',
-                    stacked: false
-                },
-                legend: {
-                    show: false,
-                },
-                dataLabels: {
-                    enabled: true
-                },
-                stroke: {
-                    width: [1, 1, 4]
-                },
-                title: {
-                    text: '',
-                    align: 'left',
-                    offsetX: 110
-                },
-                colors: ['#7961F9', '#FF9F43', '#EA5455'],
-                markers: {
-                    size: 0,
-                    hover: {
-                        size: 5
-                    }
-                },
-                xaxis: {
-                    labels: {
-                        style: {
-                            cssClass: 'text-black fill-current',
-                        }
-                    },
-                    axisTicks: {
-                        show: true,
-                    },
-                    categories: ['2024', '2025', '2026'],
-                    axisBorder: {
-                        show: true,
-                    },
-                },
-                yaxis: {
-                    show: false,
-                },
-                tooltip: {
-                    x: { show: false }
-                },
-                legend: {
-                    horizontalAlign: 'left',
-                    offsetX: 40
-                },
-                grid: {
-                    show: false,
-                    padding: {
-                        left: 0,
-                        right: 0
-                    },
-                    // row: {
-                    //     colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                    //     opacity: 0.5
-                    // },
-                },
-            },
-            serieOfficers: [
-                {
-                    name: 'ចំនួន',
-                    type: 'column',
-                    data: [340, 342, 353]
-                }
-            ],
-
-            dateRange: [start, end],
-            config: {
-                mode: 'range',
-                dateFormat: 'Y-m-d',
-                allowInput: true,
-                altInput: false
-            },
-            startDate:`${year}-01-01`,
-            endDate:`${year}-12-31`,
-            cardCurrency: {
-                income: 'KHR',
-                expense: 'KHR',
-                balance: 'KHR',
-                incentive: 'KHR',
-                quarter: 'KHR',
-                currency:'KHR'
-            },
-            quarterFilter: {
-                year: now.getFullYear(),
-                quarter: `Q${Math.floor(now.getMonth() / 3) + 1}`
-            },
-            data: null,
-            totalMembers:0,
-            totalMales:0,
-            totalFemales:0,
-            totalExpenseKHR:0,
-            totalExpenseUSD:0,
-            totalIncomeKHR:0,
-            totalIncomeUSD:0,
-            totalRemainingBalanceKHR:0,
-            totalRemainingBalanceUSD:0,
-            quarterly_total_income_khr:0,
-            quarterly_total_income_usd:0,
-            quarterly_total_expense_khr:0,
-            quarterly_total_expense_usd:0,
-            officerPaymentHistory:{},
-            officerIncentive:{},
-            IncentivePie:{},
-            
-            totalMemberLatest5Years:{},
-            subscribersGained: {},
-            revenueGenerated: {},
-            quarterlySales: {},
-            ordersRecevied: {},
-            
-            totalOfficerLatest5YearsSeries:{},
-            officers: [],
-            years: [],
-            revenueComparisonLine: {
-                analyticsData: {
-                thisMonth: 86589,
-                lastMonth: 73683
-                },
-                series: [{
-                        name: "ចំណូល",
-                        data: [45000, 47000, 44800, 47500, 45500, 48000, 46500, 48600, 45000, 47000, 44800, 47500]
-                    },
-                    {
-                        name: "ចំណាយ",
-                        data: [46000, 48000, 45500, 46600, 44500, 46500, 45000, 47000, 45000, 47000, 44800, 47500]
-                    }
-                ],
-            },
-            goalOverview: {},
-
-            browserStatistics: [],
-            clientRetentionBar: {},
-
-            salesLine: {
-                series: [{
-                    name: "Sales",
-                    data: [140, 180, 150, 205, 160, 295, 125, 255, 205, 305, 240, 295]
-                }],
-            },
-            funding: {},
-
-            apexChatData: apexChatData,
-
-            sessionsData: {},
-            chatLog: [],
-            chatMsgInput: '',
-            customersData: {},
-            productsOrder: {},
-            analyticsData: analyticsData,
-            settings: { // perfectscrollbar settings
-                maxScrollbarLength: 60,
-                wheelSpeed: .60,
-            },
-            totalData: 100000,
-            // serieOfficers: [
-                // {
-                //     name: 'Number of Officer',
-                //     type: 'column',
-                //     data: [340, 342, 353]
-                // }
-            // ],
-            series: [{
-                name: [''],
-                data: [0, 0, 0, 0]
-            }],
-            incomeCompareSeries: [
-                {
-                    name: ['This year'],
-                    data: [0, 0, 0, 0]
-                },
-                // {
-                //     name: ['Last Year'],
-                //     data: [0, 0, 0, 0]
-                // }
-            ],
-            expenseCompareSeries: [
-                {
-                    name: ['This year'],
-                    data: [0, 0, 0, 0]
-                },
-                // {
-                //     name: ['Last Year'],
-                //     data: [0, 0, 0, 0]
-                // }
-            ],
-            remainCompareSeries: [
-                {
-                    name: ['This year'],
-                    data: [0, 0, 0, 0]
-                },
-                // {
-                //     name: ['Last Year'],
-                //     data: [0, 0, 0, 0]
-                // }
-            ],
-            // chartOptionOfficers: {},
-            chartOptionIncomes: {
-                chart: {
-                    toolbar: { show: false },
-                    dropShadow: {
-                        enabled: true,
-                        top: 5,
-                        left: 0,
-                        blur: 4,
-                        opacity: 0.10,
-                    },
-                },
-                stroke: {
-                    curve: 'smooth',
-                    dashArray: [0, 8],
-                    width: [4, 2],
-                },
-                grid: {
-                    borderColor: '#e7e7e7',
-                },
-                legend: {
-                    show: false,
-                },
-                colors: ['#28C76F', '#999999'],
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shade: 'dark',
-                        inverseColors: false,
-                        // gradientToColors: ['#7367F0', '#b8c2cc'],
-                        shadeIntensity: 1,
-                        type: 'horizontal',
-                        opacityFrom: 0.7,
-                        opacityTo: 0.45,
-                        // stops: [0, 100, 100, 100]
-                    },
-                },
-                markers: {
-                    size: 0,
-                    hover: {
-                        size: 5
-                    }
-                },
-                xaxis: {
-                    labels: {
-                        style: {
-                            cssClass: 'text-grey fill-current',
-                        }
-                    },
-                    axisTicks: {
-                        show: false,
-                    },
-                    categories: ['Q1', 'Q2', 'Q3', 'Q4'],
-                    axisBorder: {
-                        show: false,
-                    },
-                },
-                yaxis: {
-                    show: false,
-                },
-                tooltip: {
-                    x: { show: false }
-                }
-            },
-            chartOptionExpenses: {
-                chart: {
-                    toolbar: { show: false },
-                    dropShadow: {
-                        enabled: true,
-                        top: 5,
-                        left: 0,
-                        blur: 4,
-                        opacity: 0.10,
-                    },
-                },
-                stroke: {
-                    curve: 'smooth',
-                    dashArray: [0, 8],
-                    width: [4, 2],
-                },
-                grid: {
-                    borderColor: '#e7e7e7',
-                },
-                legend: {
-                    show: false,
-                },
-                colors: ['#EA5455', '#999999'],
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shade: 'dark',
-                        inverseColors: false,
-                        // gradientToColors: ['#7367F0', '#b8c2cc'],
-                        shadeIntensity: 1,
-                        type: 'horizontal',
-                        opacityFrom: 0.7,
-                        opacityTo: 0.45,
-                        // stops: [0, 100, 100, 100]
-                    },
-                },
-                markers: {
-                    size: 0,
-                    hover: {
-                        size: 5
-                    }
-                },
-                xaxis: {
-                    labels: {
-                        style: {
-                            cssClass: 'text-grey fill-current',
-                        }
-                    },
-                    axisTicks: {
-                        show: false,
-                    },
-                    categories: ['Q1', 'Q2', 'Q3', 'Q4'],
-                    axisBorder: {
-                        show: false,
-                    },
-                },
-                yaxis: {
-                    show: false,
-                },
-                tooltip: {
-                    x: { show: false }
-                }
-            },
-            __chartOptionExpenses: {
-                yaxis: {
-                    show: false,
-                },
-                chart: {
-                    height: 350,
-                    type: 'line',
-                    zoom: {
-                        enabled: true
-                    },
-                    dropShadow: {
-                        enabled: false,
-                        top: 5,
-                        left: 0,
-                        blur: 4,
-                        opacity: 0.10,
-                    },
-                    toolbar: {
-                        show: false,
-                    },
-                    sparkline: {
-                        enabled: false
-                    }
-                },
-                dataLabels: {
-                enabled: false
-                },
-                stroke: {
-                    width: 3,
-                    curve: 'smooth'
-                },
-                title: {
-                text: '',
-                align: 'left'
-                },
-                colors: ['#EA5455'],
-                grid: {
-                    show: false,
-                    padding: {
-                        left: 0,
-                        right: 0
-                    },
-                    // row: {
-                    //     colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                    //     opacity: 0.5
-                    // },
-                },
-                xaxis: {
-                    categories: ['Q1', 'Q2', 'Q3', 'Q4'],
-                },
-                markers: {
-                    size: 0,
-                    hover: {
-                        size: 5
-                    }
-                },
-                tooltip: {
-                    x: { show: false },
-                    y: { show: false }
-                },
-            },
-            __chartOptionRemains: {
-                yaxis: {
-                    show: false,
-                },
-                chart: {
-                    height: 350,
-                    type: 'line',
-                    zoom: {
-                        enabled: true
-                    },
-                    dropShadow: {
-                        enabled: false,
-                        top: 5,
-                        left: 0,
-                        blur: 4,
-                        opacity: 0.10,
-                    },
-                    toolbar: {
-                        show: false,
-                    },
-                    sparkline: {
-                        enabled: false
-                    }
-                },
-                dataLabels: {
-                enabled: false
-                },
-                stroke: {
-                    width: 3,
-                    curve: 'smooth'
-                },
-                title: {
-                text: '',
-                align: 'left'
-                },
-                colors: ['#FF9F43'],
-                grid: {
-                    show: false,
-                    padding: {
-                        left: 0,
-                        right: 0
-                    },
-                    // row: {
-                    //     colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                    //     opacity: 0.5
-                    // },
-                },
-                xaxis: {
-                    categories: ['Q1', 'Q2', 'Q3', 'Q4'],
-                },
-                markers: {
-                    size: 0,
-                    hover: {
-                        size: 5
-                    }
-                },
-                tooltip: {
-                    x: { show: false },
-                    y: { show: false }
-                },
-            },
-            chartOptionRemains: {
-                chart: {
-                    toolbar: { show: false },
-                    dropShadow: {
-                        enabled: true,
-                        top: 5,
-                        left: 0,
-                        blur: 4,
-                        opacity: 0.10,
-                    },
-                },
-                stroke: {
-                    curve: 'smooth',
-                    dashArray: [0, 8],
-                    width: [4, 2],
-                },
-                grid: {
-                    borderColor: '#e7e7e7',
-                },
-                legend: {
-                    show: false,
-                },
-                colors: ['#FF9F43', '#999999'],
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shade: 'dark',
-                        inverseColors: false,
-                        // gradientToColors: ['#7367F0', '#b8c2cc'],
-                        shadeIntensity: 1,
-                        type: 'horizontal',
-                        opacityFrom: 0.7,
-                        opacityTo: 0.45,
-                        // stops: [0, 100, 100, 100]
-                    },
-                },
-                markers: {
-                    size: 0,
-                    hover: {
-                        size: 5
-                    }
-                },
-                xaxis: {
-                    labels: {
-                        style: {
-                            cssClass: 'text-grey fill-current',
-                        }
-                    },
-                    axisTicks: {
-                        show: false,
-                    },
-                    categories: ['Q1', 'Q2', 'Q3', 'Q4'],
-                    axisBorder: {
-                        show: false,
-                    },
-                },
-                yaxis: {
-                    show: false,
-                },
-                tooltip: {
-                    x: { show: false }
-                }
-            },
-            summaryInfo: {
-                totalIncentive: ''
-            },
-
-            // Income Outcome Quarter
-            serieInOutQuarters: [
-                {
-                    name: "ចំណូល",
-                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                },
-                {
-                    name: "ចំណាយ",
-                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                }
-            ],
-            summaryInOutQuarter: {},
-            // #End 
-            issueDateOfficer: '',
-            issueDateIncome: '',
-            issueDateOutcome: '',
-            issueDateRemain: '',
-            filterOption: 'This Year',
-            currentYear: new Date().getFullYear()
+            summary: null,
+            loading: false,
+            error: false,
+            updatedAt: "",
+            currency: "KHR",
+            dateRange: [`${year}-01-01`, `${year}-12-31`],
+            dateConfig: { mode: "range", dateFormat: "Y-m-d", allowInput: true },
+            palette: PALETTE,
         }
     },
-    components: {
-        VueApexCharts,
-        apexchart: VueApexCharts,
-        StatisticsCardLine,
-        VuePerfectScrollbar,
-        ChangeTimeDurationDropdown,
-        IncomeSector,
-        ExpenseSector,
-        OutcomeQuarter,
-        IncomeQuarter,
-        TopEntity,
-        SummaryQuarter,
-        StatisticPercentage,
-        SummaryData,
-        TotalIncomeOutcomeQuarter,
-        IncentiveTaxMonthly,
-        TopRankIncomeEntity,
-        TopRankExpenseEntity,
-        StatisticsCardLine,
-        CurrencyDropDown,
-        QuarterDropDown,
-        EchartsBarChart,
-        EchartsLineChart,
-        EchartsPieChart,
-        EchartsPolarChart,
-        EchartsScatterChart,
-        EchartsRadarChart,
-        OfficerStatusChart,
-        EntityIncomeChart,
-        MonthlyIncomeChart,
-        IncomeExpenseChart,
-        OfficerStatistic,
-        vSelect,
-        flatPickr
-    },  
-    watch:{
-        dateRange(val) {
-            if (!val) return
-
-            let start = ''
-            let end = ''
-
-            if (Array.isArray(val)) {
-                ;[start, end] = val
-            } else {
-                ;[start, end] = val.split(' to ')
+    computed: {
+        range() {
+            const value = Array.isArray(this.dateRange) ? this.dateRange : String(this.dateRange || "").split(" to ")
+            // While picking, flatpickr reports only the start date; wait for the end date.
+            return { start: value[0], end: value[1] || null }
+        },
+        isKhr() {
+            return this.currency === "KHR"
+        },
+        trend() {
+            const t = (this.summary && this.summary.monthlyTrend) || { months: [], income_khr: [], income_usd: [], expense_khr: [], expense_usd: [] }
+            const income = this.isKhr ? t.income_khr : t.income_usd
+            const expense = this.isKhr ? t.expense_khr : t.expense_usd
+            let running = 0
+            const balance = income.map((value, i) => (running += value - expense[i]))
+            return { months: t.months, income, expense, balance }
+        },
+        kpiCards() {
+            const s = this.summary
+            if (!s) return [1, 2, 3, 4].map(key => ({ key }))
+            const pick = (obj, khr, usd) => toNumber(this.isKhr ? obj[khr] : obj[usd])
+            const members = s.totalMember || {}
+            return [
+                {
+                    key: "members", label: "សមាជិកសរុប", icon: "UsersIcon", color: "#7367F0",
+                    value: this.number(members.totalMembers),
+                    sub: `ប្រុស ${this.number(members.totalMales)} · ស្រី ${this.number(members.totalFemales)}`,
+                    trend: s.officerStatisticSeries || [],
+                },
+                {
+                    key: "income", label: "ចំណូលសរុប", icon: "TrendingUpIcon", color: "#28C76F",
+                    value: this.money(pick(s.totalIncome, "total_in_khr", "total_in_usd")),
+                    sub: "ចំណូល + ការបង់ប្រាក់សមាជិក", trend: this.trend.income,
+                },
+                {
+                    key: "expense", label: "ចំណាយសរុប", icon: "TrendingDownIcon", color: "#EA5455",
+                    value: this.money(pick(s.totalExpense, "total_in_khr", "total_in_usd")),
+                    sub: "ចំណាយ + ប្រាក់ឧបត្ថម្ភ", trend: this.trend.expense,
+                },
+                {
+                    key: "balance", label: "សន្និធិសាច់ប្រាក់", icon: "DollarSignIcon", color: "#FF9F43",
+                    value: this.money(pick(s.totalRemainingBalance, "remaining_balance_khr", "remaining_balance_usd")),
+                    sub: "ចំណូល − ចំណាយ", trend: this.trend.balance,
+                },
+            ]
+        },
+        monthLabels() {
+            const multiYear = new Set(this.trend.months.map(m => m.slice(0, 4))).size > 1
+            return this.trend.months.map(m => KH_MONTHS[Number(m.slice(5, 7)) - 1] + (multiYear ? ` ${m.slice(2, 4)}` : ""))
+        },
+        monthlySeries() {
+            return [
+                { name: "ចំណូល", data: this.trend.income },
+                { name: "ចំណាយ", data: this.trend.expense },
+            ]
+        },
+        monthlyOptions() {
+            return {
+                chart: { toolbar: { show: false }, fontFamily: "inherit" },
+                colors: ["#28C76F", "#EA5455"],
+                plotOptions: { bar: { columnWidth: "45%", borderRadius: 4 } },
+                dataLabels: { enabled: false },
+                legend: { position: "top", horizontalAlign: "right" },
+                grid: { borderColor: "#eef0f4", strokeDashArray: 4 },
+                xaxis: { categories: this.monthLabels, axisBorder: { show: false }, axisTicks: { show: false } },
+                yaxis: { labels: { formatter: this.compact } },
+                tooltip: { y: { formatter: this.money } },
             }
-
-            if (!start || !end) return
-
-            this.getDashboardSummary(
-                this.quarterFilter.year,
-                this.quarterFilter.quarter,
-                start,
-                end
-            );
-        }
-    },
-    mounted() {
-        if(!localStorage.getItem("accessToken")){
-            router.push(router.currentRoute.query.to || '/pages/login')
-        }
-        // this.$refs.chatLogPS.$el.scrollTop = this.$refs.chatLog.scrollHeight;
-        this.wasSidebarOpen = this.$store.state.reduceButton
-        this.$store.commit('TOGGLE_REDUCE_BUTTON', true)
-    },
-    beforeDestroy() {
-        if (!this.wasSidebarOpen) this.$store.commit('TOGGLE_REDUCE_BUTTON', false)
-    },
-    methods: {
-        onQuarterChange(val) {
-            const quarterNumber = this.quarterFilter.quarter
-                ? Number(this.quarterFilter.quarter.slice(1))
-                : null;
-            this.getDashboardSummary(this.quarterFilter.year,quarterNumber,this.startDate,this.endDate);
         },
-        getSummary(option){
-            // this.resetForm();
-            //this.$vs.loading();
-            return new Promise((resolve, reject) => {
-                axios.get("api/v1/report/summary?filter=" + option)
-                    .then((response) => {
-                    let _data = response["data"]["data"];
-                    this.summaryInfo = response["data"]["data"];
-                    this.issueDateOfficer = 'គិតត្រឹមថ្ងៃទី ' + _data.currentDate + ' ខែ ' + _data.currentMonth + ' ឆ្នាំ ' + _data.currentYear;
-                    this.incomeCompareSeries = [
-                        {
-                            name: ['This year'],
-                            data: response["data"]["data"]["quaterThisYearIncome"]
-                        },
-                        {
-                            name: ['Last Year'],
-                            data: response["data"]["data"]["quaterLastYearIncome"]
-                        }
-                    ]
-
-                    this.expenseCompareSeries = [
-                        {
-                            name: ['This year'],
-                            data: response["data"]["data"]["quaterThisYearExpense"]
-                        },
-                        {
-                            name: ['Last Year'],
-                            data: response["data"]["data"]["quaterLastYearExpense"]
-                        }
-                    ]
-                    this.remainCompareSeries = [
-                        {
-                            name: ['This year'],
-                            data: response["data"]["data"]["remainAmountThisYear"]
-                        },
-                        {
-                            name: ['Last Year'],
-                            data: response["data"]["data"]["remainAmountLastYear"]
-                        }
-                    ]
-                    
-                    // Officer Records All Years
-                    for(let j = 0; j < response["data"]["data"]["officerByYears"].length; j++){
-                        const _num_officer = response["data"]["data"]["officerByYears"][j]["number_officer"];
-                        const _year = response["data"]["data"]["officerByYears"][j]["year"];
-                        this.officers.push(_num_officer);
-                        this.years.push(_year);
-                    }
-                    this.serieOfficers = [
-                        {
-                            name: 'Number of Officer',
-                            type: 'column',
-                            data: this.officers
-                        }
-                    ]
-
-                    this.chartOptionOfficers = {
-                        chart: {
-                            toolbar: { show: false },
-                            height: 200,
-                            type: 'line',
-                            stacked: false
-                        },
-                        legend: {
-                            show: false,
-                        },
-                        dataLabels: {
-                            enabled: true
-                        },
-                        stroke: {
-                            width: [1, 1, 4]
-                        },
-                        title: {
-                            text: '',
-                            align: 'left',
-                            offsetX: 110
-                        },
-                        xaxis: {
-                            categories: this.years,
-                        },
-                        yaxis: {
-                            show: false,
-                        },
-                        tooltip: {
-                            x: { show: false }
-                        },
-                        legend: {
-                            horizontalAlign: 'left',
-                            offsetX: 40
-                        }
-                    };
-
-                    this.$vs.loading.close();
-                    
-                }).catch((error) => { 
-                    reject(error) 
-                })
+        quarters() {
+            const result = []
+            this.trend.months.forEach((month, i) => {
+                const label = `Q${Math.ceil(Number(month.slice(5, 7)) / 3)} ${month.slice(0, 4)}`
+                let q = result.find(r => r.label === label)
+                if (!q) result.push((q = { label, income: 0, expense: 0 }))
+                q.income += this.trend.income[i]
+                q.expense += this.trend.expense[i]
             })
-            
+            return result
         },
-
-        getIncomeOutcomeByQuarter(year){
-          return new Promise((resolve, reject) => {
-              axios.get("/api/v1/report/income_outcome_by_quarter?year=" + year)
-                  .then((response) => {
-                  this.summaryInOutQuarter = response["data"]["data"]
-                  let dataIncome = response["data"]["data"]["dataIncome"]
-                  let dataOutcome = response["data"]["data"]["dataOutcome"]
-                  this.serieInOutQuarters = [
-                    {
-                        name: "ចំណូល",
-                        data: dataIncome
+        payment() {
+            const p = (this.summary && this.summary.officerPaymentInfo) || {}
+            return {
+                percent: toNumber(p.percent_paid),
+                paid: toNumber(p.officers_paid),
+                unpaid: toNumber(p.officers_unpaid),
+                unpaidAmount: toNumber(this.isKhr ? p.total_unpaid_khr : p.total_unpaid_usd),
+            }
+        },
+        paymentOptions() {
+            return {
+                chart: { fontFamily: "inherit", sparkline: { enabled: true } },
+                colors: ["#28C76F"],
+                plotOptions: {
+                    radialBar: {
+                        hollow: { size: "68%" },
+                        track: { background: "#eef0f4" },
+                        dataLabels: {
+                            name: { show: true, offsetY: 22, color: "#8a90a0", fontSize: "13px" },
+                            value: { offsetY: -12, fontSize: "34px", fontWeight: 600, formatter: v => `${v}%` },
+                        },
                     },
-                    {
-                        name: "ចំណាយ",
-                        data: dataOutcome
-                    }
-                  ]
-              }).catch((error) => { reject(error) })
-          })
+                },
+                fill: { type: "gradient", gradient: { shade: "light", type: "horizontal", gradientToColors: ["#7367F0"], stops: [0, 100] } },
+                stroke: { lineCap: "round" },
+                labels: ["បានបង់"],
+            }
         },
-
-
-        getDashboardSummary(year, quarter,startDate, endDate) {
-        //this.$vs.loading();
-        axios.post("/api/v1/mobile/dashboard-summary", {
-                year: year,
-                quarter: quarter !== undefined && quarter !== null ? quarter : null,
-                start_date: startDate,
-                end_date: endDate
-            }).then((response) => {
-
-                if (response.data.errorCode === "000") {
-
-                    const members = response.data.data.totalMember;
-                    const officersSeries = {
-                        series: [{
-                            name: ['Yearly'],
-                            // data: [
-                            //     response.data.data.totalMemberLatest5Years[0]?.["total_officers"] ?? 0,
-                            //     response.data.data.totalMemberLatest5Years[1]?.["total_officers"] ?? 0,
-                            //     response.data.data.totalMemberLatest5Years[2]?.["total_officers"] ?? 0,
-                            //     response.data.data.totalMemberLatest5Years[3]?.["total_officers"] ?? 0,
-                            //     response.data.data.totalMemberLatest5Years[4]?.["total_officers"] ?? 0,
-                            // ]
-                            data: [
-                                response.data.data.totalMemberLatest5Years && response.data.data.totalMemberLatest5Years[0]
-                                    ? response.data.data.totalMemberLatest5Years[0]["total_officers"]
-                                    : 0,
-                                response.data.data.totalMemberLatest5Years && response.data.data.totalMemberLatest5Years[1]
-                                    ? response.data.data.totalMemberLatest5Years[1]["total_officers"]
-                                    : 0,
-                                response.data.data.totalMemberLatest5Years && response.data.data.totalMemberLatest5Years[2]
-                                    ? response.data.data.totalMemberLatest5Years[2]["total_officers"]
-                                    : 0,
-                                response.data.data.totalMemberLatest5Years && response.data.data.totalMemberLatest5Years[3]
-                                    ? response.data.data.totalMemberLatest5Years[3]["total_officers"]
-                                    : 0,
-                                response.data.data.totalMemberLatest5Years && response.data.data.totalMemberLatest5Years[4]
-                                    ? response.data.data.totalMemberLatest5Years[4]["total_officers"]
-                                    : 0
-                            ]
-                        }]
-                    };
-                    this.totalOfficerLatest5YearsSeries = officersSeries;
-
-                    const expenses= response.data.data.totalExpense;
-                    const incomes = response.data.data.totalIncome;
-                    const remains = response.data.data.totalRemainingBalance;
-                    
-                    this.data = response.data.data;
-                    this.totalMembers = members.totalMembers;
-                    this.totalMales = members.totalMales;
-                    this.totalFemales = members.totalFemales;
-
-                    this.totalExpenseKHR = expenses.total_in_khr_kh;
-                    this.totalExpenseUSD = expenses.total_in_usd;
-
-                    this.totalIncomeKHR = incomes.total_in_khr_kh;
-                    this.totalIncomeUSD = incomes.total_in_usd;
-
-                    this.totalRemainingBalanceKHR = remains.remaining_balance_khr_kh;
-                    this.totalRemainingBalanceUSD = remains.remaining_balance_usd;
-
-            
-                    var summary = response.data.data.quarterlySummary || [];
-                    this.quarterly_total_income_khr =
-                    summary[0] && summary[0]["total_income_khr_kh"] != null
-                        ? summary[0]["total_income_khr_kh"]
-                        : 0;
-
-                    this.quarterly_total_income_usd =
-                    summary[0] && summary[0]["total_income_usd"] != null
-                        ? summary[0]["total_income_usd"]
-                        : 0;
-
-                    this.quarterly_total_expense_khr =
-                    summary[0] && summary[0]["total_expense_khr_kh"] != null
-                        ? summary[0]["total_expense_khr_kh"]
-                        : 0;
-
-                    this.quarterly_total_expense_usd =
-                    summary[0] && summary[0]["total_expense_usd"] != null
-                        ? summary[0]["total_expense_usd"]
-                        : 0;
-
-
-                    const paymentHistory = {
-                        paid:response.data.data.officerPaymentInfo.officers_paid,
-                        unpaid:response.data.data.officerPaymentInfo.officers_unpaid,
-                        percent_paid:[response.data.data.officerPaymentInfo.percent_paid],
-                    } 
-                    this.officerPaymentHistory = paymentHistory;
-
-
-                    // Incentive. ======================================
-                    const incentives = response.data.data.totalIncentive;
-                    const series_khr = incentives.map(i => {
-                        return Number((i.total_amount_khr || '0').toString().replace(/,/g, ''));
-                    });
-                    const series_usd = incentives.map(i => {
-                        return Number((i.total_amount_usd || '0').toString().replace(/,/g, ''));
-                    });
-                    const IncentiveGraphInfo = {
-                        totalIncentive : incentives,
-                        series_khr: series_khr,
-                        series_usd: series_usd
-                    };
-                    this.officerIncentive = IncentiveGraphInfo;
-
-                     this.IncentivePie=  {
-                        chartOptions: {
-                            labels: IncentiveGraphInfo.totalIncentive.map(i => i.payment_type_name),
-                            dataLabels: {
-                                enabled: false
-                            },
-                            legend: { show: false },
-                            chart: {
-                                type: 'pie',
-                                offsetY: 0,
-                                dropShadow: {
-                                    enabled: false,
-                                    blur: 5,
-                                    left: 1,
-                                    top: 1,
-                                    opacity: 0.2
-                                },
-                                toolbar: {
-                                    show: false
-                                }
-                            },
-                            stroke: {
-                                width: 5
-                            },
-                            colors: ['#7961F9', '#FF9F43', '#EA5455'],
-                            fill: {
-                                type: 'gradient',
-                                gradient: {
-                                    gradientToColors: ['#9c8cfc', '#FFC085', '#f29292']
-                                }
-                            }
-                        }
-                    };
-
-                } else {
-                    console.error("API Error:", response.data.errorMessage);
-                }
-
-                })
-                .catch((error) => {
-                console.error("Request Error:", error);
-            });
+        memberStatus() {
+            const m = (this.summary && this.summary.totalMember) || {}
+            return [
+                { label: "សកម្ម", value: toNumber(m.activeMembers) },
+                { label: "អសកម្ម", value: toNumber(m.inactiveMembers) },
+                { label: "ចូលនិវត្តន៍", value: toNumber(m.retiredMembers) },
+                { label: "ទទួលមរណភាព", value: toNumber(m.deadMembers) },
+            ]
         },
-
-        
-        onSelectFilter(val, label){
-            this.serieOfficers = [];
-            this.officers = [];
-            this.filterOption = label;
-            this.currentYear = val;
-            this.getSummary(val);
-            this.getIncomeOutcomeByQuarter(val);
-            // this.$emit('send', 'bye');
-            // this.$emit('clicked-show-detail', product);
+        memberStatusOptions() {
+            return {
+                chart: { fontFamily: "inherit" },
+                labels: this.memberStatus.map(s => s.label),
+                colors: ["#28C76F", "#FF9F43", "#00CFE8", "#82868B"],
+                legend: { position: "bottom" },
+                dataLabels: { enabled: false },
+                stroke: { width: 2 },
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            size: "70%",
+                            labels: { show: true, total: { show: true, label: "សរុប", formatter: () => this.number(this.memberStatus.reduce((a, s) => a + s.value, 0)) } },
+                        },
+                    },
+                },
+                tooltip: { y: { formatter: v => `${this.number(v)} នាក់` } },
+            }
         },
-        resetForm(){
-            this.incomeCompareSeries = [];
-            this.expenseCompareSeries = [];
-            this.remainCompareSeries = [];
-            this.serieOfficers = [];
-        }
+        growthOptions() {
+            return {
+                chart: { toolbar: { show: false }, fontFamily: "inherit" },
+                colors: ["#7367F0"],
+                plotOptions: { bar: { columnWidth: "45%", borderRadius: 4, dataLabels: { position: "top" } } },
+                dataLabels: { enabled: true, offsetY: -20, style: { colors: ["#6e7485"], fontWeight: 500 } },
+                grid: { borderColor: "#eef0f4", strokeDashArray: 4 },
+                xaxis: { categories: (this.summary && this.summary.officerStatisticYears) || [], axisBorder: { show: false }, axisTicks: { show: false } },
+                yaxis: { show: false },
+                tooltip: { y: { formatter: v => `${this.number(v)} នាក់` } },
+            }
+        },
+        incentives() {
+            const list = (this.summary && this.summary.totalIncentive) || []
+            return list
+                .map(i => ({ name: i.payment_type_name, amount: toNumber(this.isKhr ? i.total_amount_khr : i.total_amount_usd) }))
+                .filter(i => i.amount > 0)
+        },
+        incentiveOptions() {
+            return {
+                chart: { fontFamily: "inherit" },
+                labels: this.incentives.map(i => i.name),
+                colors: PALETTE,
+                legend: { show: false },
+                dataLabels: { enabled: false },
+                plotOptions: { pie: { donut: { size: "65%" } } },
+                tooltip: { y: { formatter: this.money } },
+            }
+        },
+        entityIncome() {
+            const data = (this.summary && this.summary.incomeByDepartments) || {}
+            const names = data.departments || []
+            return (data.incomes || [])
+                .map((amount, i) => ({ name: names[i] || "-", amount: toNumber(amount) }))
+                .sort((a, b) => b.amount - a.amount)
+                .slice(0, 10)
+        },
+        entityOptions() {
+            return {
+                chart: { toolbar: { show: false }, fontFamily: "inherit" },
+                colors: ["#4A5F9D"],
+                plotOptions: { bar: { horizontal: true, barHeight: "55%", borderRadius: 4 } },
+                dataLabels: { enabled: true, formatter: this.compact, style: { fontWeight: 500 } },
+                grid: { borderColor: "#eef0f4", strokeDashArray: 4 },
+                xaxis: { categories: this.entityIncome.map(e => e.name), labels: { formatter: this.compact } },
+                // The API reports income by entity in riel only.
+                tooltip: { y: { formatter: v => `៛ ${Math.round(toNumber(v)).toLocaleString("en-US")}` } },
+            }
+        },
+    },
+    watch: {
+        range(value, old) {
+            if (value.start && value.end && (value.start !== old.start || value.end !== old.end)) this.load()
+        },
     },
     created() {
-        //this.getSummary(this.currentYear);
-        //this.getIncomeOutcomeByQuarter(this.currentYear)
-        this.$vs.loading();
-        setTimeout(() => {
-            this.$vs.loading.close()
-        }, 10000);
-        const quarterNumber = this.quarterFilter.quarter
-            ? Number(this.quarterFilter.quarter.slice(1))
-            : null;
-        this.getDashboardSummary(this.quarterFilter.year,quarterNumber, this.startDate,this.endDate);
-
-      // Subscribers gained - Statistics
-    //   this.$http.get("/api/card/card-statistics/subscribers")
-    //     .then((response) => { this.subscribersGained = response.data })
-    //     .catch((error) => { console.log(error) })
-
-      // Revenue Generated
-      this.$http.get("/api/card/card-statistics/revenue")
-        .then((response) => { this.revenueGenerated = response.data })
-        .catch((error) => { console.log(error) })
-
-      // Sales
-      this.$http.get("/api/card/card-statistics/sales")
-        .then((response) => { this.quarterlySales = response.data })
-        .catch((error) => { console.log(error) })
-
-      // Orders - Statistics
-      this.$http.get("/api/card/card-statistics/orders")
-        .then((response) => { this.ordersRecevied = response.data })
-        .catch((error) => { console.log(error) })
-
-      // Revenue Comparison
-    //   this.$http.get("/api/card/card-analytics/revenue-comparison")
-    //     .then((response) => { this.revenueComparisonLine = response.data })
-    //     .catch((error) => { console.log(error) })
-
-    // Sales line
-    //   this.$http.get("/api/card/card-analytics/sales/line")
-    //     .then((response) => { this.salesLine = response.data })
-    //     .catch((error) => { console.log(error) })
-
-    // Products Order
-    this.$http.get("/api/card/card-analytics/products-orders")
-    .then((response) => { this.productsOrder = response.data })
-    .catch((error) => { console.log(error) })
-
-      // Goal Overview
-    //   this.$http.get("/api/card/card-analytics/goal-overview")
-    //     .then((response) => { this.goalOverview = response.data })
-    //     .catch((error) => { console.log(error) })
-
-      // Browser Analytics
-    //   this.$http.get("/api/card/card-analytics/browser-analytics")
-    //     .then((response) => { this.browserStatistics = response.data })
-    //     .catch((error) => { console.log(error) })
-
-      // Client Retention
-    //   this.$http.get("/api/card/card-analytics/client-retention")
-    //     .then((response) => { this.clientRetentionBar = response.data })
-    //     .catch((error) => { console.log(error) })
-
-      // Sessions By Device
-    //   this.$http.get("/api/card/card-analytics/session-by-device")
-    //     .then((response) => { this.sessionsData = response.data })
-    //     .catch((error) => { console.log(error) })
-
-      // Chat Log
-    //   this.$http.get("/api/chat/demo-1/log")
-    //     .then((response) => { this.chatLog = response.data })
-    //     .catch((error) => { console.log(error) })
-
-    //   Customers
-      this.$http.get("/api/card/card-analytics/customers")
-        .then((response) => { this.customersData = response.data })
-        .catch((error) => { console.log(error) })
-    
+        if (!localStorage.getItem("accessToken")) {
+            router.push(router.currentRoute.query.to || "/pages/login")
+            return
+        }
+        this.load()
     },
-    
+    mounted() {
+        this.wasSidebarOpen = this.$store.state.reduceButton
+        this.$store.commit("TOGGLE_REDUCE_BUTTON", true)
+    },
+    beforeDestroy() {
+        if (!this.wasSidebarOpen) this.$store.commit("TOGGLE_REDUCE_BUTTON", false)
+    },
+    methods: {
+        async load() {
+            this.loading = true
+            this.error = false
+            try {
+                const end = new Date(this.range.end)
+                const response = await axios.post("/api/v1/mobile/dashboard-summary", {
+                    year: end.getFullYear(),
+                    quarter: Math.floor(end.getMonth() / 3) + 1,
+                    start_date: this.range.start,
+                    end_date: this.range.end,
+                })
+                if (response.data.errorCode !== "000") throw new Error(response.data.errorMessage)
+                this.summary = response.data.data
+                this.updatedAt = new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+            } catch (e) {
+                this.error = true
+            }
+            this.loading = false
+        },
+        number(value) {
+            return toNumber(value).toLocaleString("en-US")
+        },
+        money(value) {
+            const amount = toNumber(value)
+            return this.isKhr
+                ? `៛ ${Math.round(amount).toLocaleString("en-US")}`
+                : `$ ${amount.toLocaleString("en-US", { maximumFractionDigits: 2 })}`
+        },
+        compact(value) {
+            const amount = toNumber(value)
+            const units = [[1e9, "B"], [1e6, "M"], [1e3, "K"]]
+            const unit = units.find(([size]) => Math.abs(amount) >= size)
+            return unit ? `${+(amount / unit[0]).toFixed(1)}${unit[1]}` : `${Math.round(amount)}`
+        },
+        formatDate(value) {
+            if (!value) return "-"
+            const [y, m, d] = value.split("-")
+            return `${d}/${m}/${y}`
+        },
+        sparkOptions(color) {
+            return {
+                chart: { sparkline: { enabled: true }, fontFamily: "inherit" },
+                colors: [color],
+                stroke: { curve: "smooth", width: 2.5 },
+                fill: { type: "gradient", gradient: { opacityFrom: 0.45, opacityTo: 0.05 } },
+                tooltip: { enabled: false },
+            }
+        },
+    },
 }
 </script>
 
-<style lang="scss">
-    .main-dashboard{
-        font-family: var(--font-base);
-        font-size: 13px;
-    }
-    h4{
-        font-size: 16px;
-    }
-    .chat-card-log {
-        height: 400px;
+<style lang="scss" scoped>
+.dashboard-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
 
-        .chat-sent-msg {
-            background-color: #f2f4f7 !important;
+.dashboard-date {
+    min-width: 230px;
+}
+
+.currency-switch {
+    display: inline-flex;
+    padding: 3px;
+    border-radius: 999px;
+    background: #eef0f4;
+
+    button {
+        border: 0;
+        background: transparent;
+        padding: 0.4rem 0.9rem;
+        border-radius: 999px;
+        cursor: pointer;
+        color: #626262;
+        font-family: inherit;
+        transition: all 0.2s ease;
+
+        &.active {
+            background: #fff;
+            color: rgba(var(--vs-primary), 1);
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
     }
-    .vx-card {
-        min-height: 200px ; // 306px
-    }
-    .B {
-        float: right;
-        margin-top: -15%;
-    }
-    .quarter-block{
-        float: right;
-    }
-    .switch-currency-block{
-        padding-bottom: 20px;
-        display: flex;
-        justify-content: flex-end;
-        width: 100%;
-    }
-    .switch-currency{
-        padding-right: 5px;
-    }
-    .date-rang-width{
-        min-width: 15%;
+}
+
+.toolbar-btn {
+    padding: 0.6rem;
+    border-radius: 50%;
+    background: #fff;
+    color: #626262;
+    cursor: pointer;
+    display: flex;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: rgba(var(--vs-primary), 1);
     }
 
+    &.spinning svg {
+        animation: dashboard-spin 0.8s linear infinite;
+    }
+}
+
+.kpi-card {
+    height: 100%;
+    min-height: 170px;
+    padding: 1.25rem 1.25rem 0;
+    border-radius: 1.25rem;
+    background: #fff;
+    box-shadow: 0 4px 24px rgba(34, 41, 47, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(34, 41, 47, 0.15);
+    }
+
+    &__label {
+        color: #8a90a0;
+        margin-bottom: 0.25rem;
+    }
+
+    &__value {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 0.15rem;
+        white-space: nowrap;
+    }
+
+    &__sub {
+        font-size: 0.85rem;
+        color: #8a90a0;
+    }
+
+    &__icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+}
+
+.quarter-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+
+    &__item {
+        flex: 1 1 140px;
+        display: flex;
+        flex-direction: column;
+        padding: 0.6rem 0.8rem;
+        border-radius: 0.75rem;
+        background: #f6f7fb;
+        font-size: 0.85rem;
+    }
+
+    &__label {
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+    }
+}
+
+.payment-split {
+    border-top: 1px solid #eef0f4;
+    padding-top: 1rem;
+}
+
+.legend-list {
+    li {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.6rem 0;
+        border-top: 1px solid #eef0f4;
+    }
+}
+
+.legend-dot {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+.empty-state {
+    height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #b0b5c1;
+
+    p {
+        margin-top: 0.75rem;
+    }
+}
+
+.skeleton,
+.skeleton-block {
+    background: linear-gradient(90deg, #f3f4f7 25%, #e9ebf0 37%, #f3f4f7 63%);
+    background-size: 400% 100%;
+    animation: dashboard-skeleton 1.4s ease infinite;
+    border-radius: 1rem;
+}
+
+@keyframes dashboard-skeleton {
+    0% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+}
+
+@keyframes dashboard-spin {
+    to { transform: rotate(360deg); }
+}
 </style>

@@ -442,6 +442,56 @@ public static function getOfficerPaymentSummary()
 
 
 
+    /**
+     * Income and expense per month for the date range, split by currency.
+     * Uses the same sources as the dashboard totals: income + member payments, expense + incentives.
+     */
+    public static function getMonthlyTrend($start_date = null, $end_date = null)
+    {
+        if (empty($start_date) || empty($end_date)) {
+            $year = date('Y');
+            $start_date = "$year-01-01";
+            $end_date   = "$year-12-31";
+        }
+
+        $sumByMonth = function (array $tables) use ($start_date, $end_date) {
+            $union = implode(' UNION ALL ', array_map(
+                fn ($table) => "SELECT issue_date, amount, currency_id FROM $table WHERE issue_date BETWEEN ? AND ?",
+                $tables
+            ));
+            $bindings = [];
+            foreach ($tables as $table) {
+                array_push($bindings, $start_date.' 00:00:00', $end_date.' 23:59:59');
+            }
+
+            return collect(DB::select("
+                SELECT DATE_FORMAT(issue_date, '%Y-%m') AS month,
+                    SUM(CASE WHEN currency_id = 1 THEN amount ELSE 0 END) AS khr,
+                    SUM(CASE WHEN currency_id = 2 THEN amount ELSE 0 END) AS usd
+                FROM ($union) AS t
+                GROUP BY month
+            ", $bindings))->keyBy('month');
+        };
+
+        $income = $sumByMonth(['tbl_income', 'tbl_officer_payment']);
+        $expense = $sumByMonth(['tbl_expense', 'tbl_officer_incentive']);
+
+        $months = [];
+        $end = new \DateTime($end_date);
+        for ($month = new \DateTime(substr($start_date, 0, 7).'-01'); $month <= $end; $month->modify('+1 month')) {
+            $months[] = $month->format('Y-m');
+        }
+        $series = fn ($rows, $currency) => array_map(fn ($month) => (float) ($rows[$month]->$currency ?? 0), $months);
+
+        return [
+            'months' => $months,
+            'income_khr' => $series($income, 'khr'),
+            'income_usd' => $series($income, 'usd'),
+            'expense_khr' => $series($expense, 'khr'),
+            'expense_usd' => $series($expense, 'usd'),
+        ];
+    }
+
 public static function getOfficerPaymentSummaryFilterByDate($start_date = null, $end_date = null)
 {
 
@@ -462,8 +512,9 @@ public static function getOfficerPaymentSummaryFilterByDate($start_date = null, 
                 SUM(CASE WHEN status = 15 AND currency_id = 1 THEN amount ELSE 0 END) AS unpaid_khr,
                 SUM(CASE WHEN status = 15 AND currency_id = 2 THEN amount ELSE 0 END) AS unpaid_usd
             FROM tbl_officer_payable
-            WHERE payment_date >= ?
-            AND payment_date <= ?
+            -- Period is by due date: unpaid payables have no payment_date yet.
+            WHERE due_date >= ?
+            AND due_date <= ?
             GROUP BY officer_id
         ),
         payments AS (
@@ -475,8 +526,8 @@ public static function getOfficerPaymentSummaryFilterByDate($start_date = null, 
             FROM tbl_officer_payment p
             INNER JOIN tbl_officer_payable pa 
                 ON p.ref_payable_id = pa.id
-            AND pa.payment_date >= ?
-            AND pa.payment_date <= ?
+            AND pa.due_date >= ?
+            AND pa.due_date <= ?
             GROUP BY p.officer_id
         )
         SELECT

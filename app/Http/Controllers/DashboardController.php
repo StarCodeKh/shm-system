@@ -270,6 +270,7 @@ class DashboardController extends BaseController
                         //     'ក្រសួងកសិកម្ម', 'ក្រសួងរ៉ែនិងថាមពល', 'ក្រសួងពាពិញ្ជកម្ម'
                         // ],
                     ],
+                    "monthlyTrend" => Dashboard::getMonthlyTrend($start_date, $end_date),
                     "monthlyIncomes" => Income::getMonthlyIncome(),
                     "incomeExpComparations" => [
                         "income" => Income::getMonthlyIncome(),
