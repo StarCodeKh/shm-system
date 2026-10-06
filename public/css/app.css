@@ -4932,22 +4932,37 @@ span.text-danger.text-sm[style*="display: none"] {
   gap: 12px;
 }
 
-.vs-notifications .vs-icon-noti {
+.vs-notifications .content-noti .vs-icon-noti {
   order: -1;
   flex: none;
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   font-size: 18px;
+  line-height: 1;
   color: rgb(var(--noti));
 }
 
-[dir] .vs-notifications .vs-icon-noti {
-  padding: 0;
+[dir] .vs-notifications .content-noti .vs-icon-noti {
+  padding: 0 !important;
+  margin: 0;
   border-radius: 50%;
-  background: rgba(var(--noti), 0.12);
+  background: rgba(var(--noti), 0.12) !important;
+}
+
+[dir=ltr] .vs-notifications .content-noti .vs-icon-noti {
+  animation: none;
+}
+
+[dir=rtl] .vs-notifications .content-noti .vs-icon-noti {
+  animation: none;
+}
+
+.vs-notifications .content-noti .vs-icon-noti::before {
+  display: block;
+  line-height: 1;
 }
 
 .vs-notifications h3 {

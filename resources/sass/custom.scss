@@ -613,19 +613,26 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
         gap: 12px;
     }
 
-    .vs-icon-noti {
+    // Same specificity as Vuesax's .vs-notifications .content-noti .vs-icon-noti, plus !important,
+    // so the icon is centred in its circle (Vuesax sets display: block and padding: 5px)
+    .content-noti .vs-icon-noti {
         order: -1;
         flex: none;
-        display: flex;
+        display: flex !important;
         align-items: center;
         justify-content: center;
-        width: 34px;
-        height: 34px;
-        padding: 0;
+        width: 36px;
+        height: 36px;
+        padding: 0 !important;
+        margin: 0;
         border-radius: 50%;
         font-size: 18px;
+        line-height: 1;
         color: rgb(var(--noti));
-        background: rgba(var(--noti), .12);
+        background: rgba(var(--noti), .12) !important;
+        animation: none;
+
+        &::before { display: block; line-height: 1; }
     }
 
     h3 {

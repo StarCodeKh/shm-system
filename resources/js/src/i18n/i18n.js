@@ -99,6 +99,27 @@ function wrap(fn, translate) {
   return wrapped
 }
 
+// The same toast (type, title and text) shown again within this time is skipped,
+// e.g. when several requests fail at once
+const REPEAT_WINDOW = 2500
+const recentToasts = {}
+
+function notOnRepeat(notify) {
+  if (!notify || notify.__deduped) return notify
+  const wrapped = function (options) {
+    if (options && typeof options === 'object') {
+      const key = [options.color, options.title, options.text].join('|')
+      const now = Date.now()
+      if (recentToasts[key] && now - recentToasts[key] < REPEAT_WINDOW) return
+      recentToasts[key] = now
+    }
+    return notify.call(this, options)
+  }
+  wrapped.__deduped = true
+  wrapped.__translated = true // already wraps the translated notify
+  return wrapped
+}
+
 // Adds `$tt(text)` and makes every $vs.notify / $vs.dialog follow the current language.
 // Must be installed after Vuesax: Vuesax re-assigns its functions in each component's
 // beforeCreate, so they are re-wrapped right after.
@@ -110,7 +131,7 @@ export function installPhraseTranslation(VueCtor) {
     beforeCreate() {
       const vs = this.$vs
       if (!vs) return
-      vs.notify = wrap(vs.notify, translateNotify)
+      vs.notify = notOnRepeat(wrap(vs.notify, translateNotify))
       vs.dialog = wrap(vs.dialog, translateDialog)
     }
   })
