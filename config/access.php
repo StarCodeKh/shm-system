@@ -10,6 +10,9 @@
 */
 
 return [
+    // Role that always has every permission, including ones added later (checked by name)
+    'super_admin_role' => 'Super Admin',
+
     // Report catalogue, on-screen viewer and PDF export (each report also needs its module's list permission)
     'reports' => 'report_sale',
 

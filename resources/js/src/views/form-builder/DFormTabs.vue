@@ -247,7 +247,7 @@ export default {
 
     &.is-ready {
       opacity: 1;
-      transition: transform .42s cubic-bezier(.22, 1, .36, 1), width .42s cubic-bezier(.22, 1, .36, 1), opacity .2s ease;
+      transition: transform var(--tab-move) var(--tab-ease), width var(--tab-move) var(--tab-ease), opacity var(--tab-tap) ease;
     }
   }
 
@@ -267,7 +267,7 @@ export default {
     border-radius: 999px;
     background: transparent;
     cursor: pointer;
-    transition: background .15s ease, border-color .15s ease, color .15s ease;
+    transition: background var(--tab-tap) ease, border-color var(--tab-tap) ease, color var(--tab-tap) ease;
 
     &:hover {
       background: #fff;
@@ -286,7 +286,7 @@ export default {
         box-shadow: 0 4px 10px -4px rgba(var(--vs-primary), .8);
 
         svg {
-          animation: d-tabform-icon .45s cubic-bezier(.22, 1, .36, 1);
+          animation: d-tabform-icon var(--tab-move) var(--tab-ease);
         }
       }
     }
@@ -310,7 +310,7 @@ export default {
     border-radius: 999px;
     color: #6b6d7a;
     background: #eef0f4;
-    transition: background .3s ease, color .3s ease, transform .3s cubic-bezier(.22, 1, .36, 1), box-shadow .3s ease;
+    transition: background var(--tab-move) var(--tab-ease), color var(--tab-move) var(--tab-ease), transform var(--tab-move) var(--tab-ease), box-shadow var(--tab-move) var(--tab-ease);
 
     .feather-icon {
       display: flex;
@@ -429,7 +429,7 @@ export default {
   // Content slides in from the side the user is moving towards
   .form-section {
     padding-top: 16px;
-    animation: d-tabform-next .36s cubic-bezier(.22, 1, .36, 1);
+    animation: d-tabform-next var(--tab-fade) var(--tab-ease) both;
   }
 
   &[data-dir="prev"] .form-section {
@@ -527,19 +527,18 @@ export default {
 }
 
 @keyframes d-tabform-next {
-  from { opacity: 0; transform: translateX(24px); }
+  from { opacity: 0; transform: translateX(12px); }
   to { opacity: 1; transform: none; }
 }
 
 @keyframes d-tabform-prev {
-  from { opacity: 0; transform: translateX(-24px); }
+  from { opacity: 0; transform: translateX(-12px); }
   to { opacity: 1; transform: none; }
 }
 
 @keyframes d-tabform-icon {
-  0% { transform: scale(.6) rotate(-12deg); }
-  60% { transform: scale(1.15) rotate(4deg); }
-  100% { transform: none; }
+  from { transform: scale(.7); opacity: .4; }
+  to { transform: none; opacity: 1; }
 }
 
 .d-tabform-pop-enter-active,

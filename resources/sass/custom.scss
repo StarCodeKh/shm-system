@@ -22,6 +22,18 @@
     --input-border: #d8d9e3;
     --input-border-hover: #c3c5d4;
     --field-gap: 20px;
+
+    // Tabs: every tab style (vs-tabs, form tabs, settings, profile) moves the same way
+    --tab-ease: cubic-bezier(.22, 1, .36, 1); // quick start, soft landing
+    --tab-move: .4s;   // active indicator sliding to the new tab
+    --tab-fade: .32s;  // new tab content fading in
+    --tab-tap: .15s;   // hover and colour changes on a tab
+}
+
+// New tab content rises slightly while fading in (shared by every tab style)
+@keyframes tab-content-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
 }
 
 
@@ -738,7 +750,6 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
                 white-space: nowrap;
                 color: #6e7091;
                 border-radius: 8px;
-                transition: color .2s ease, background .2s ease, box-shadow .2s ease;
             }
 
             &:hover:not(.activeChild) .vs-tabs--btn {
@@ -757,7 +768,7 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
             }
 
             .vs-tabs--btn {
-                transition: color .25s ease, background .2s ease, transform .15s ease;
+                transition: color var(--tab-tap) ease, background var(--tab-tap) ease, transform var(--tab-tap) ease;
             }
         }
 
@@ -774,7 +785,7 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
             background: #fff !important;
             box-shadow: 0 1px 2px rgba(23, 23, 74, .06), 0 2px 8px rgba(23, 23, 74, .1) !important;
             transform: translateX(var(--tab-pill-x, 0)) !important;
-            transition: transform .4s cubic-bezier(.65, 0, .25, 1.15), width .4s cubic-bezier(.65, 0, .25, 1.15) !important;
+            transition: transform var(--tab-move) var(--tab-ease), width var(--tab-move) var(--tab-ease) !important;
             pointer-events: none;
         }
 
@@ -788,13 +799,8 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
     // Tab content fades up when it appears
     > .con-slot-tabs > .vs-tabs--content {
         padding: 0;
-        animation: tab-content-in .3s ease both;
+        animation: tab-content-in var(--tab-fade) var(--tab-ease) both;
     }
-}
-
-@keyframes tab-content-in {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -866,7 +872,7 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
                 text-align: left;
                 color: #6e7091 !important;
                 border-radius: 10px;
-                transition: color .2s ease, background .2s ease;
+                transition: color var(--tab-tap) ease, background var(--tab-tap) ease;
 
                 .vs-tabs--btn-icon {
                     font-size: 1rem;
@@ -901,7 +907,7 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
             background: #fff !important;
             box-shadow: 0 2px 8px rgba(23, 23, 74, .12) !important;
             transform: none !important;
-            transition: top .3s cubic-bezier(.4, 0, .2, 1), height .3s cubic-bezier(.4, 0, .2, 1) !important;
+            transition: top var(--tab-move) var(--tab-ease), height var(--tab-move) var(--tab-ease) !important;
         }
     }
 
@@ -911,7 +917,7 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
 
         > .vs-tabs--content {
             padding: 0;
-            animation: tab-content-in .3s ease both;
+            animation: tab-content-in var(--tab-fade) var(--tab-ease) both;
         }
     }
 

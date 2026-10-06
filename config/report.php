@@ -12,6 +12,10 @@ return [
     // PDF export row cap; the viewer pages through everything
     'max_rows' => 20000,
 
+    // Minutes a built PDF is reused when the same report is printed or downloaded again
+    // with unchanged data (building a large PDF takes several seconds)
+    'pdf_cache_minutes' => 10,
+
     // On-screen page sizes
     'page_sizes' => [25, 50, 100],
     'default_page_size' => 25,

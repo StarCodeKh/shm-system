@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Services\Common;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -24,6 +26,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        // Super Admin passes every Gate / can() check as well (CommonService::permission covers the API)
+        Gate::before(fn ($user) => Common::isSuperAdmin($user) ? true : null);
     }
 }

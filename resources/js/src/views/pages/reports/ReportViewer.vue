@@ -21,7 +21,7 @@
                     :title="$t('dt_filter')" @click="showFilter = !showFilter">
                     <feather-icon icon="FilterIcon" svgClasses="h-4 w-4" />
                 </button>
-                <button type="button" class="dt-btn dt-btn--icon" :title="$t('report_refresh')" :disabled="loading" @click="load(page)">
+                <button type="button" class="dt-btn dt-btn--icon" :title="$t('report_refresh')" :disabled="loading" @click="load(page, true)">
                     <feather-icon icon="RefreshCwIcon" svgClasses="h-4 w-4" :class="{ 'report-spin': loading }" />
                 </button>
                 <button type="button" class="dt-btn" :disabled="!!pdfBusy" @click="openPdf">
@@ -111,7 +111,7 @@
 import axios from "@/axios.js";
 import vSelect from "vue-select";
 import DSearch from "@/views/form-builder/DSearch.vue";
-import { fetchReport, fetchReportPage, fetchReportTypes, saveBlob } from "./reportApi.js";
+import { cachedReportPage, fetchReport, fetchReportPage, fetchReportTypes, prefetchReportPage, saveBlob } from "./reportApi.js";
 
 export default {
     components: {
@@ -192,22 +192,29 @@ export default {
                 // The report still works without its title or filter fields.
             }
         },
-        async load(page = 1) {
+        // A page seen before shows at once and is refreshed quietly; `fresh` (the refresh button) waits for the server.
+        async load(page = 1, fresh = false) {
             const id = ++this.requestId; // ignore answers to older requests
-            this.loading = true;
+            const cached = !fresh && cachedReportPage(this.reportType, this.filters, page, this.limit);
+            if (cached) this.show(cached, page);
+            this.loading = !cached;
             this.error = null;
             try {
                 const data = await fetchReportPage(this.reportType, this.filters, page, this.limit);
                 if (id !== this.requestId) return;
-                this.columns = data.columns || [];
-                this.rows = data.rows || [];
-                this.total = data.total;
-                this.page = data.page || page;
-                if (data.summary) this.summary = data.summary;
+                this.show(data, page);
+                if (this.page < this.pages) prefetchReportPage(this.reportType, this.filters, this.page + 1, this.limit);
             } catch (message) {
-                if (id === this.requestId) this.error = message;
+                if (id === this.requestId && !cached) this.error = message;
             }
             if (id === this.requestId) this.loading = false;
+        },
+        show(data, page) {
+            this.columns = data.columns || [];
+            this.rows = data.rows || [];
+            this.total = data.total;
+            this.page = data.page || page;
+            if (data.summary) this.summary = data.summary;
         },
         applyFilters({ formAttribute }) {
             this.filters = this.formAttributes

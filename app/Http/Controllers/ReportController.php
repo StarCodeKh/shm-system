@@ -19,6 +19,7 @@ use CommonService;
 use View;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Mpdf\Mpdf;
 use Mpdf\Config\ConfigVariables;
@@ -203,8 +204,7 @@ class ReportController extends Controller
 
         $columns = $this->columns($report['fields'](), $rows);
         $user = auth()->user();
-
-        $html = View::make('reports.table', [
+        $data = [
             'title' => $this->text($type, 'title'),
             'description' => $this->text($type, 'description'),
             'color' => $report['color'],
@@ -216,7 +216,25 @@ class ReportController extends Controller
             'truncated' => count($rows) >= $maxRows,
             'organization' => $this->organization(),
             'moneyPattern' => config('report.columns.money'),
-        ])->render();
+        ];
+
+        // Building the PDF is the slow part (Khmer text shaping in mPDF), so keep each result for a few minutes.
+        // The key is the report's content, so any change in the data builds a fresh PDF.
+        $key = 'report_pdf:'.md5(json_encode([$type, App::getLocale(), $data]));
+        $pdf = Cache::remember($key, now()->addMinutes(config('report.pdf_cache_minutes')), fn () => $this->renderPdf($type, $report, $data));
+
+        $filename = $type.'-report-'.date('Y-m-d').'.pdf';
+        $disposition = $request->boolean('download') ? 'attachment' : 'inline';
+
+        return response($pdf, 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', $disposition.'; filename="'.$filename.'"');
+    }
+
+    /** Lay out one report as PDF bytes */
+    protected function renderPdf(string $type, array $report, array $data): string
+    {
+        $html = View::make('reports.table', $data)->render();
 
         // Large reports produce a big HTML string; mPDF needs more regex, memory and time to lay it out.
         ini_set('pcre.backtrack_limit', '50000000');
@@ -224,7 +242,7 @@ class ReportController extends Controller
         set_time_limit(300);
 
         // Narrow reports read better in portrait
-        $mpdf = $this->makePdf(count($columns) <= config('report.portrait_max_columns') ? 'P' : 'L');
+        $mpdf = $this->makePdf(count($data['columns']) <= config('report.portrait_max_columns') ? 'P' : 'L');
         $mpdf->SetTitle($this->text($type, 'title'));
         $mpdf->SetHTMLFooter(View::make('reports.footer', [
             'title' => $this->text($type, 'title'),
@@ -236,17 +254,10 @@ class ReportController extends Controller
         set_error_handler(fn ($severity, $message, $file) => str_contains($file, '/mpdf/'), E_WARNING | E_NOTICE);
         try {
             $mpdf->WriteHTML($html);
-            $pdf = $mpdf->Output('', 'S');
+            return $mpdf->Output('', 'S');
         } finally {
             restore_error_handler();
         }
-
-        $filename = $type.'-report-'.date('Y-m-d').'.pdf';
-        $disposition = $request->boolean('download') ? 'attachment' : 'inline';
-
-        return response($pdf, 200)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', $disposition.'; filename="'.$filename.'"');
     }
 
     /**

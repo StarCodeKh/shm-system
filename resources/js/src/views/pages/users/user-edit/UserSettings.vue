@@ -231,6 +231,15 @@ export default {
     margin: 18px 0 14px;
   }
 
+  // The panel shown by v-show replays the shared tab entrance each time it appears
+  &__body > * {
+    animation: tab-content-in var(--tab-fade) var(--tab-ease) both;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+  }
+
   &__tab {
     display: inline-flex;
     align-items: center;
@@ -245,7 +254,7 @@ export default {
     border-radius: 999px;
     background: #fff;
     cursor: pointer;
-    transition: all .15s ease;
+    transition: color var(--tab-tap) ease, background var(--tab-tap) ease, border-color var(--tab-tap) ease;
 
     .feather-icon {
       display: flex;
@@ -253,6 +262,10 @@ export default {
 
     &:hover {
       border-color: rgba(var(--vs-primary), .45);
+    }
+
+    &:active {
+      transform: scale(.96);
     }
 
     &.is-active {

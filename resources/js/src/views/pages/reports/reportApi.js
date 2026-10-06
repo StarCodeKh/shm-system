@@ -18,15 +18,40 @@ export function fetchReportTypes() {
     return typesRequest;
 }
 
+// Recently loaded report pages, so paging back and reopening a report show at once (then refresh).
+const PAGE_CACHE_SIZE = 50;
+const pageCache = new Map(); // key -> page data, oldest first
+const pending = new Map();   // key -> request in flight, shared by prefetch and the viewer
+const pageKey = (type, filters, page, limit) => JSON.stringify([type, filters, page, limit]);
+
+export function cachedReportPage(type, filters = [], page = 1, limit = 25) {
+    return pageCache.get(pageKey(type, filters, page, limit)) || null;
+}
+
 // One page of a report as JSON for the on-screen table: { columns, rows, total, page, limit, summary }.
-export async function fetchReportPage(type, filters = [], page = 1, limit = 25) {
-    try {
-        const response = await axios.post(`/api/v1/report/${type}/data`, { data: filters, page, limit });
-        return response.data;
-    } catch (error) {
-        const data = error.response && error.response.data;
-        throw (data && data.message) || defaultError();
+export function fetchReportPage(type, filters = [], page = 1, limit = 25) {
+    const key = pageKey(type, filters, page, limit);
+    if (!pending.has(key)) {
+        const request = axios.post(`/api/v1/report/${type}/data`, { data: filters, page, limit })
+            .then((response) => {
+                pageCache.delete(key);
+                pageCache.set(key, response.data);
+                if (pageCache.size > PAGE_CACHE_SIZE) pageCache.delete(pageCache.keys().next().value);
+                return response.data;
+            })
+            .catch((error) => {
+                const data = error.response && error.response.data;
+                throw (data && data.message) || defaultError();
+            })
+            .finally(() => pending.delete(key));
+        pending.set(key, request);
     }
+    return pending.get(key);
+}
+
+// Load a page in the background (e.g. the next page, or a report the pointer is over)
+export function prefetchReportPage(type, filters = [], page = 1, limit = 25) {
+    if (!cachedReportPage(type, filters, page, limit)) fetchReportPage(type, filters, page, limit).catch(() => {});
 }
 
 // Fetch a report PDF. Resolves { blob, filename }; rejects with a readable message.

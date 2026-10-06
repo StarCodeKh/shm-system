@@ -9,7 +9,8 @@
                         <span class="perm__icon"><feather-icon icon="ShieldIcon" svgClasses="h-5 w-5" /></span>
                         <div class="dt-toolbar__title">
                             <h3>{{ roleName || '—' }}</h3>
-                            <p>{{ $t('perm_granted', { n: grantedCount, total: allNames.length }) }}</p>
+                            <p v-if="superAdmin">{{ $t('perm_super_admin') }}</p>
+                            <p v-else>{{ $t('perm_granted', { n: grantedCount, total: allNames.length }) }}</p>
                         </div>
                     </div>
                     <div class="dt-toolbar__actions perm__tools">
@@ -17,7 +18,7 @@
                             <span class="dt-search__icon"><feather-icon icon="SearchIcon" svgClasses="h-4 w-4" /></span>
                             <input v-model.trim="keyword" type="text" :placeholder="$t('perm_search')">
                         </div>
-                        <button type="button" class="dt-btn" @click="setMany(visibleNames, !allVisibleOn)">
+                        <button v-if="!superAdmin" type="button" class="dt-btn" @click="setMany(visibleNames, !allVisibleOn)">
                             <feather-icon :icon="allVisibleOn ? 'XSquareIcon' : 'CheckSquareIcon'" svgClasses="h-4 w-4" />
                             <span>{{ allVisibleOn ? $t('perm_clear_all') : $t('perm_select_all') }}</span>
                         </button>
@@ -32,7 +33,7 @@
                                 <th class="perm__module-col">{{ $t('perm_module') }}</th>
                                 <th v-for="action in actions" :key="action" class="perm__action-col">
                                     <label class="perm__head" :title="$t('perm_toggle_column')">
-                                        <input type="checkbox" class="perm__check" :checked="columnState(action) === 'all'"
+                                        <input type="checkbox" class="perm__check" :checked="columnState(action) === 'all'" :disabled="superAdmin"
                                             :indeterminate.prop="columnState(action) === 'some'"
                                             @change="setMany(columnNames(action), $event.target.checked)">
                                         <span>{{ actionLabel(action) }}</span>
@@ -44,7 +45,7 @@
                             <tr v-for="row in rows" :key="row.module">
                                 <td class="perm__module-col">
                                     <label class="perm__module">
-                                        <input type="checkbox" class="perm__check" :checked="rowState(row) === 'all'"
+                                        <input type="checkbox" class="perm__check" :checked="rowState(row) === 'all'" :disabled="superAdmin"
                                             :indeterminate.prop="rowState(row) === 'some'"
                                             @change="setMany(row.names, $event.target.checked)">
                                         <span class="perm__module-text">
@@ -54,7 +55,7 @@
                                     </label>
                                 </td>
                                 <td v-for="action in actions" :key="action" class="perm__action-col">
-                                    <input v-if="row.cells[action]" type="checkbox" class="perm__check"
+                                    <input v-if="row.cells[action]" type="checkbox" class="perm__check" :disabled="superAdmin"
                                         :checked="!!granted[row.cells[action]]" :title="row.cells[action]"
                                         @change="setOne(row.cells[action], $event.target.checked)">
                                     <span v-else class="perm__none">—</span>
@@ -79,7 +80,7 @@
                         <template v-if="changedCount">{{ $t('perm_changed', { n: changedCount }) }}</template>
                     </span>
                     <button type="button" class="dt-btn" @click="showModalForm = false">{{ $t('perm_cancel') }}</button>
-                    <button v-if="canSave" type="button" class="dt-btn dt-btn--primary" :disabled="saving || loading" @click="save_changes">
+                    <button v-if="canSave && !superAdmin" type="button" class="dt-btn dt-btn--primary" :disabled="saving || loading" @click="save_changes">
                         <feather-icon :icon="saving ? 'LoaderIcon' : 'SaveIcon'" svgClasses="h-4 w-4" />
                         <span>{{ $t('perm_save') }}</span>
                     </button>
@@ -105,6 +106,7 @@ export default {
             loading: false,
             saving: false,
             role: null,
+            superAdmin: false, // Super Admin always has every permission: shown all on and locked
             modules: [],     // [{ name, permission: [{ name }] }] from the API
             granted: {},     // { permission_name: true|false }
             original: {},    // granted as loaded, to count unsaved changes
@@ -168,16 +170,19 @@ export default {
             this.loading = true
             this.keyword = ''
             this.role = data
+            this.superAdmin = false
             axios.get(this.api + "/" + data.id)
                 .then(({ data: response }) => {
                     const payload = response && response.data ? response.data : {}
                     this.role = payload.data || data
                     this.modules = payload.permission_lists || []
+                    this.superAdmin = !!payload.is_super_admin
                     // The API sends an object of name → boolean (or an empty array when nothing is granted)
                     const granted = payload.permission_by_roles && !Array.isArray(payload.permission_by_roles)
                         ? payload.permission_by_roles : {}
                     const normalized = {}
                     Object.keys(granted).forEach(name => { normalized[name] = !!granted[name] && granted[name] !== '0' })
+                    if (this.superAdmin) this.modules.forEach(m => (m.permission || []).forEach(({ name }) => { normalized[name] = true }))
                     this.granted = normalized
                     this.original = { ...normalized }
                 })

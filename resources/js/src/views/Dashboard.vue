@@ -38,21 +38,24 @@
         <!-- KPI cards -->
         <div class="vx-row">
             <div v-for="card in kpiCards" :key="card.key" class="vx-col w-full sm:w-1/2 xl:w-1/4 mb-base">
-                <div class="kpi-card" :class="{ skeleton: !summary }">
-                    <template v-if="summary">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <p class="kpi-card__label">{{ card.label }}</p>
-                                <h2 class="kpi-card__value">{{ card.value }}</h2>
-                                <p class="kpi-card__sub">{{ card.sub }}</p>
-                            </div>
-                            <div class="kpi-card__icon" :style="{ backgroundColor: card.color + '1f', color: card.color }">
-                                <feather-icon :icon="card.icon" svgClasses="h-6 w-6" />
-                            </div>
+                <dash-link v-if="summary" :to="card.to" tag="div" class="kpi-card" :class="{ 'is-link': card.to }" :aria-label="card.to ? `${card.label} · ${$t('dash_view_details')}` : null">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="kpi-card__label">{{ card.label }}</p>
+                            <h2 class="kpi-card__value">{{ card.value }}</h2>
+                            <p class="kpi-card__sub">{{ card.sub }}</p>
                         </div>
-                        <vue-apex-charts type="area" height="70" :options="sparkOptions(card.color)" :series="[{ name: card.label, data: card.trend }]" />
-                    </template>
-                </div>
+                        <div class="kpi-card__icon" :style="{ backgroundColor: card.color + '1f', color: card.color }">
+                            <feather-icon :icon="card.icon" svgClasses="h-6 w-6" />
+                        </div>
+                    </div>
+                    <vue-apex-charts type="area" height="70" :options="sparkOptions(card.color)" :series="[{ name: card.label, data: card.trend }]" />
+                    <span v-if="card.to" class="kpi-card__more" :style="{ color: card.color }">
+                        {{ $t('dash_view_details') }}
+                        <feather-icon icon="ArrowRightIcon" svgClasses="h-4 w-4" />
+                    </span>
+                </dash-link>
+                <div v-else class="kpi-card skeleton"></div>
             </div>
         </div>
 
@@ -60,13 +63,19 @@
         <div class="vx-row">
             <div class="vx-col w-full lg:w-2/3 mb-base">
                 <vx-card :title="$t('dash_monthly_income_expense')" class="h-full">
+                    <template v-if="links.income" #actions>
+                        <router-link :to="links.income" class="card-link">
+                            {{ $t('dash_view_all') }}
+                            <feather-icon icon="ChevronRightIcon" svgClasses="h-4 w-4" />
+                        </router-link>
+                    </template>
                     <div v-if="summary">
-                        <vue-apex-charts type="bar" height="300" :options="monthlyOptions" :series="monthlySeries" />
+                        <vue-apex-charts type="bar" height="300" :class="{ 'is-clickable': links.income || links.expense }" :options="monthlyOptions" :series="monthlySeries" />
                         <div class="quarter-strip">
                             <div v-for="q in quarters" :key="q.label" class="quarter-strip__item">
                                 <span class="quarter-strip__label">{{ q.label }}</span>
-                                <span class="text-success">+{{ money(q.income) }}</span>
-                                <span class="text-danger">−{{ money(q.expense) }}</span>
+                                <dash-link :to="links.income" class="text-success">+{{ money(q.income) }}</dash-link>
+                                <dash-link :to="links.expense" class="text-danger">−{{ money(q.expense) }}</dash-link>
                             </div>
                         </div>
                     </div>
@@ -76,17 +85,25 @@
 
             <div class="vx-col w-full lg:w-1/3 mb-base">
                 <vx-card :title="$t('dash_member_payments')" class="h-full">
+                    <template v-if="links.payments" #actions>
+                        <router-link :to="links.payments" class="card-link">
+                            {{ $t('dash_view_all') }}
+                            <feather-icon icon="ChevronRightIcon" svgClasses="h-4 w-4" />
+                        </router-link>
+                    </template>
                     <template v-if="summary">
-                        <vue-apex-charts type="radialBar" height="240" :options="paymentOptions" :series="[payment.percent]" />
+                        <dash-link :to="links.payments" tag="div" class="block">
+                            <vue-apex-charts type="radialBar" height="240" :class="{ 'is-clickable': links.payments }" :options="paymentOptions" :series="[payment.percent]" />
+                        </dash-link>
                         <div class="flex text-center payment-split">
-                            <div class="w-1/2">
+                            <dash-link :to="links.payments" tag="div" class="w-1/2 stat-link">
                                 <p class="text-grey">{{ $t('dash_paid') }}</p>
                                 <h3 class="text-success">{{ number(payment.paid) }}</h3>
-                            </div>
-                            <div class="w-1/2">
+                            </dash-link>
+                            <dash-link :to="links.payments" tag="div" class="w-1/2 stat-link">
                                 <p class="text-grey">{{ $t('dash_unpaid') }}</p>
                                 <h3 class="text-danger">{{ number(payment.unpaid) }}</h3>
-                            </div>
+                            </dash-link>
                         </div>
                         <p v-if="payment.unpaidAmount" class="text-center text-grey mt-3">
                             {{ $t('dash_unpaid_amount') }}: <b class="text-danger">{{ money(payment.unpaidAmount) }}</b>
@@ -101,15 +118,27 @@
         <div class="vx-row">
             <div class="vx-col w-full lg:w-1/2 mb-base">
                 <vx-card :title="$t('dash_member_status')" class="h-full">
+                    <template v-if="links.members" #actions>
+                        <router-link :to="links.members" class="card-link">
+                            {{ $t('dash_view_all') }}
+                            <feather-icon icon="ChevronRightIcon" svgClasses="h-4 w-4" />
+                        </router-link>
+                    </template>
                     <template v-if="summary">
-                        <vue-apex-charts type="donut" height="300" :options="memberStatusOptions" :series="memberStatus.map(s => s.value)" />
+                        <vue-apex-charts type="donut" height="300" :class="{ 'is-clickable': links.members }" :options="memberStatusOptions" :series="memberStatus.map(s => s.value)" />
                     </template>
                     <div v-else class="skeleton-block" style="height: 300px"></div>
                 </vx-card>
             </div>
             <div class="vx-col w-full lg:w-1/2 mb-base">
                 <vx-card :title="$t('dash_new_members_by_year')" class="h-full">
-                    <vue-apex-charts v-if="summary" type="bar" height="300" :options="growthOptions" :series="[{ name: $t('dash_new_members'), data: summary.officerStatisticSeries || [] }]" />
+                    <template v-if="links.members" #actions>
+                        <router-link :to="links.members" class="card-link">
+                            {{ $t('dash_view_all') }}
+                            <feather-icon icon="ChevronRightIcon" svgClasses="h-4 w-4" />
+                        </router-link>
+                    </template>
+                    <vue-apex-charts v-if="summary" type="bar" height="300" :class="{ 'is-clickable': links.members }" :options="growthOptions" :series="[{ name: $t('dash_new_members'), data: summary.officerStatisticSeries || [] }]" />
                     <div v-else class="skeleton-block" style="height: 300px"></div>
                 </vx-card>
             </div>
@@ -119,16 +148,24 @@
         <div class="vx-row">
             <div class="vx-col w-full lg:w-1/3 mb-base">
                 <vx-card :title="$t('dash_allowance_by_type')" class="h-full">
+                    <template v-if="links.allowances" #actions>
+                        <router-link :to="links.allowances" class="card-link">
+                            {{ $t('dash_view_all') }}
+                            <feather-icon icon="ChevronRightIcon" svgClasses="h-4 w-4" />
+                        </router-link>
+                    </template>
                     <template v-if="summary">
                         <template v-if="incentives.length">
-                            <vue-apex-charts type="donut" height="240" :options="incentiveOptions" :series="incentives.map(i => i.amount)" />
+                            <vue-apex-charts type="donut" height="240" :class="{ 'is-clickable': links.allowances }" :options="incentiveOptions" :series="incentives.map(i => i.amount)" />
                             <ul class="legend-list">
                                 <li v-for="(item, i) in incentives" :key="item.name">
-                                    <span class="flex items-center">
-                                        <span class="legend-dot" :style="{ backgroundColor: palette[i % palette.length] }"></span>
-                                        {{ item.name }}
-                                    </span>
-                                    <b>{{ money(item.amount) }}</b>
+                                    <dash-link :to="links.allowances" tag="div" class="legend-row">
+                                        <span class="flex items-center">
+                                            <span class="legend-dot" :style="{ backgroundColor: palette[i % palette.length] }"></span>
+                                            {{ item.name }}
+                                        </span>
+                                        <b>{{ money(item.amount) }}</b>
+                                    </dash-link>
                                 </li>
                             </ul>
                         </template>
@@ -142,8 +179,14 @@
             </div>
             <div class="vx-col w-full lg:w-2/3 mb-base">
                 <vx-card :title="$t('dash_income_by_entity') + ' (៛)'" class="h-full">
+                    <template v-if="links.income" #actions>
+                        <router-link :to="links.income" class="card-link">
+                            {{ $t('dash_view_all') }}
+                            <feather-icon icon="ChevronRightIcon" svgClasses="h-4 w-4" />
+                        </router-link>
+                    </template>
                     <template v-if="summary">
-                        <vue-apex-charts v-if="entityIncome.length" type="bar" :height="Math.max(220, entityIncome.length * 42)" :options="entityOptions" :series="[{ name: $t('dash_income'), data: entityIncome.map(e => e.amount) }]" />
+                        <vue-apex-charts v-if="entityIncome.length" type="bar" :class="{ 'is-clickable': links.income }" :height="Math.max(220, entityIncome.length * 42)" :options="entityOptions" :series="[{ name: $t('dash_income'), data: entityIncome.map(e => e.amount) }]" />
                         <div v-else class="empty-state">
                             <feather-icon icon="BarChart2Icon" svgClasses="h-8 w-8" />
                             <p>{{ $t('dash_no_income') }}</p>
@@ -162,6 +205,8 @@ import flatPickr from "vue-flatpickr-component"
 import "flatpickr/dist/flatpickr.css"
 import axios from "@/axios.js"
 import router from "@/router"
+import navMenuItems from "@/layouts/components/vertical-nav-menu/navMenuItems.js"
+import { storedPermissions, filterMenu } from "@/layouts/components/vertical-nav-menu/menuPermissions.js"
 
 const MONTHS = {
     kh: ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"],
@@ -174,9 +219,28 @@ const cssColor = (name, fallback) => {
     return value ? `rgb(${value})` : fallback
 }
 const toNumber = (value) => Number(String(value || 0).replace(/,/g, "")) || 0
+// Where each dashboard item leads. A target only becomes a link when the user can see
+// that page in the sidebar menu, so the dashboard follows the same role permissions.
+const TARGETS = {
+    members: "/officer",
+    income: "/account/income",
+    expense: "/account/expense",
+    balance: "/account/chart-account",
+    payments: "/account/officer-payment",
+    allowances: "/incentive",
+}
+
+// A router link when `to` is set, otherwise the same content in a plain `tag`
+const DashLink = {
+    functional: true,
+    props: { to: String, tag: { type: String, default: "span" } },
+    render(h, { props, data, children }) {
+        return props.to ? h("router-link", { ...data, props: { to: props.to } }, children) : h(props.tag, data, children)
+    },
+}
 
 export default {
-    components: { VueApexCharts, flatPickr },
+    components: { VueApexCharts, flatPickr, DashLink },
     data() {
         const year = new Date().getFullYear()
         return {
@@ -187,9 +251,23 @@ export default {
             currency: "KHR",
             dateRange: [`${year}-01-01`, `${year}-12-31`],
             dateConfig: { mode: "range", dateFormat: "Y-m-d", allowInput: true },
+            permissions: storedPermissions(),
         }
     },
     computed: {
+        // Target path per item, or null when the user may not open it
+        links() {
+            const visible = new Set()
+            const collect = items => items.forEach(item => {
+                if (item.url) visible.add(item.url)
+                collect(item.items || item.submenu || [])
+            })
+            collect(filterMenu(navMenuItems, this.permissions))
+            return Object.keys(TARGETS).reduce((links, key) => {
+                links[key] = visible.has(TARGETS[key]) ? TARGETS[key] : null
+                return links
+            }, {})
+        },
         tone() {
             const dark = this.$store.state.theme === "dark"
             return {
@@ -237,22 +315,22 @@ export default {
                     key: "members", label: this.$t("dash_total_members"), icon: "UsersIcon", color: this.tone.navy,
                     value: this.number(members.totalMembers),
                     sub: `${this.$t("dash_male")} ${this.number(members.totalMales)} · ${this.$t("dash_female")} ${this.number(members.totalFemales)}`,
-                    trend: s.officerStatisticSeries || [],
+                    trend: s.officerStatisticSeries || [], to: this.links.members,
                 },
                 {
                     key: "income", label: this.$t("dash_total_income"), icon: "TrendingUpIcon", color: this.tone.success,
                     value: this.money(pick(s.totalIncome, "total_in_khr", "total_in_usd")),
-                    sub: this.$t("dash_total_income_sub"), trend: this.trend.income,
+                    sub: this.$t("dash_total_income_sub"), trend: this.trend.income, to: this.links.income,
                 },
                 {
                     key: "expense", label: this.$t("dash_total_expense"), icon: "TrendingDownIcon", color: this.tone.danger,
                     value: this.money(pick(s.totalExpense, "total_in_khr", "total_in_usd")),
-                    sub: this.$t("dash_total_expense_sub"), trend: this.trend.expense,
+                    sub: this.$t("dash_total_expense_sub"), trend: this.trend.expense, to: this.links.expense,
                 },
                 {
                     key: "balance", label: this.$t("dash_cash_balance"), icon: "DollarSignIcon", color: this.tone.warning,
                     value: this.money(pick(s.totalRemainingBalance, "remaining_balance_khr", "remaining_balance_usd")),
-                    sub: this.$t("dash_cash_balance_sub"), trend: this.trend.balance,
+                    sub: this.$t("dash_cash_balance_sub"), trend: this.trend.balance, to: this.links.balance,
                 },
             ]
         },
@@ -269,7 +347,10 @@ export default {
         },
         monthlyOptions() {
             return {
-                chart: { foreColor: this.tone.text, toolbar: { show: false }, fontFamily: "inherit" },
+                chart: {
+                    foreColor: this.tone.text, toolbar: { show: false }, fontFamily: "inherit",
+                    events: { click: (e, chart, { seriesIndex }) => seriesIndex >= 0 && this.go(seriesIndex === 1 ? this.links.expense : this.links.income) },
+                },
                 colors: [this.tone.success, this.tone.danger],
                 plotOptions: { bar: { columnWidth: "45%", borderRadius: 4 } },
                 dataLabels: { enabled: false },
@@ -330,7 +411,7 @@ export default {
         },
         memberStatusOptions() {
             return {
-                chart: { foreColor: this.tone.text, fontFamily: "inherit" },
+                chart: { foreColor: this.tone.text, fontFamily: "inherit", events: { click: () => this.go(this.links.members) } },
                 labels: this.memberStatus.map(s => s.label),
                 colors: [this.tone.success, this.tone.warning, this.tone.info, this.tone.muted],
                 legend: { position: "bottom" },
@@ -349,7 +430,7 @@ export default {
         },
         growthOptions() {
             return {
-                chart: { foreColor: this.tone.text, toolbar: { show: false }, fontFamily: "inherit" },
+                chart: { foreColor: this.tone.text, toolbar: { show: false }, fontFamily: "inherit", events: { click: () => this.go(this.links.members) } },
                 colors: [this.tone.primary],
                 plotOptions: { bar: { columnWidth: "45%", borderRadius: 4, dataLabels: { position: "top" } } },
                 dataLabels: { enabled: true, offsetY: -20, style: { colors: [this.tone.text], fontWeight: 500 } },
@@ -367,7 +448,7 @@ export default {
         },
         incentiveOptions() {
             return {
-                chart: { foreColor: this.tone.text, fontFamily: "inherit" },
+                chart: { foreColor: this.tone.text, fontFamily: "inherit", events: { click: () => this.go(this.links.allowances) } },
                 labels: this.incentives.map(i => i.name),
                 colors: this.palette,
                 legend: { show: false },
@@ -386,7 +467,7 @@ export default {
         },
         entityOptions() {
             return {
-                chart: { foreColor: this.tone.text, toolbar: { show: false }, fontFamily: "inherit" },
+                chart: { foreColor: this.tone.text, toolbar: { show: false }, fontFamily: "inherit", events: { click: () => this.go(this.links.income) } },
                 colors: [this.tone.navy],
                 plotOptions: { bar: { horizontal: true, barHeight: "55%", borderRadius: 4 } },
                 dataLabels: { enabled: true, formatter: this.compact, style: { fontWeight: 500 } },
@@ -435,6 +516,9 @@ export default {
                 this.error = true
             }
             this.loading = false
+        },
+        go(path) {
+            if (path && this.$route.path !== path) this.$router.push(path).catch(() => {})
         },
         number(value) {
             return toNumber(value).toLocaleString("en-US")
@@ -533,6 +617,9 @@ export default {
 }
 
 .kpi-card {
+    position: relative;
+    display: block;
+    color: inherit;
     height: 100%;
     min-height: 170px;
     padding: 1.25rem 1.25rem 0;
@@ -542,9 +629,38 @@ export default {
     overflow: hidden;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-    &:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(34, 41, 47, 0.15);
+    &.is-link:hover,
+    &.is-link:focus-visible {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(34, 41, 47, 0.16);
+
+        .kpi-card__more {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    &.is-link:focus-visible {
+        outline: 2px solid rgba(var(--vs-primary), .6);
+        outline-offset: 2px;
+    }
+
+    &__more {
+        position: absolute;
+        right: 1.25rem;
+        bottom: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.85);
+        font-size: 0.8rem;
+        font-weight: 600;
+        opacity: 0;
+        transform: translateX(-6px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        pointer-events: none;
     }
 
     &__label {
@@ -575,6 +691,39 @@ export default {
     }
 }
 
+.card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 0.3rem 0.5rem 0.3rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgb(var(--vs-primary));
+    background: rgba(var(--vs-primary), .08);
+    transition: background 0.2s ease, gap 0.2s ease;
+
+    &:hover {
+        gap: 0.4rem;
+        background: rgba(var(--vs-primary), .16);
+    }
+}
+
+.is-clickable ::v-deep svg {
+    cursor: pointer;
+}
+
+.stat-link {
+    display: block;
+    padding: 0.5rem 0;
+    border-radius: 0.75rem;
+    transition: background 0.2s ease;
+
+    &[href]:hover {
+        background: rgba(var(--vs-primary), .06);
+    }
+}
+
 .quarter-strip {
     display: flex;
     flex-wrap: wrap;
@@ -589,6 +738,10 @@ export default {
         border-radius: 0.75rem;
         background: #f6f7fb;
         font-size: 0.85rem;
+
+        a:hover {
+            text-decoration: underline;
+        }
     }
 
     &__label {
@@ -604,10 +757,21 @@ export default {
 
 .legend-list {
     li {
+        border-top: 1px solid #eef0f4;
+    }
+
+    .legend-row {
         display: flex;
         justify-content: space-between;
-        padding: 0.6rem 0;
-        border-top: 1px solid #eef0f4;
+        padding: 0.6rem 0.5rem;
+        margin: 0 -0.5rem;
+        border-radius: 0.5rem;
+        color: inherit;
+        transition: background 0.2s ease;
+    }
+
+    a.legend-row:hover {
+        background: rgba(var(--vs-primary), .06);
     }
 }
 
@@ -658,6 +822,9 @@ export default {
     .kpi-card__label,
     .kpi-card__sub { color: #c2c6dc; }
     .kpi-card__value { color: #fff; }
+    .kpi-card__more { background: rgba(38, 44, 73, 0.9); }
+    .stat-link[href]:hover,
+    .legend-list a.legend-row:hover { background: rgba(255, 255, 255, 0.05); }
     .quarter-strip__item { background: #1e2340; }
     .payment-split,
     .legend-list li { border-color: #414561; }

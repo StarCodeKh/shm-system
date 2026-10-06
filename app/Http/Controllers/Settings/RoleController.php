@@ -129,6 +129,7 @@ class RoleController extends Controller
                 $boolen = true;
                 $message = trans('common.msg_successfully');
                 $data["data"] = $query;
+                $data["is_super_admin"] = CommonService::isSuperAdminRole($query);
                 $data["permission_lists"] = CommonService::getAllPermissionData();
                 $data["permission_by_roles"] = CommonService::getPermissionsViaRolesByUser($id);
             }else{
@@ -174,6 +175,10 @@ class RoleController extends Controller
             $input = $request->all();
             $dataFields = $this->dataForm($input);
             $table = $table=$this->db_table::find($id);
+            // The Super Admin role is found by its name, so it can't be renamed
+            if (CommonService::isSuperAdminRole($table) && isset($dataFields['name']) && $dataFields['name'] !== $table->name) {
+                return response()->json(['success' => false, 'message' => trans('common.msg_super_admin_locked')], 422);
+            }
             $table->update($dataFields);
             if($table){
                 $data = $this->db_table::findOrFail($id);
@@ -217,6 +222,9 @@ class RoleController extends Controller
     {
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_DELETE]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_DELETE] == true){
             $table=$this->db_table::find($id);
+            if (CommonService::isSuperAdminRole($table)) {
+                return response()->json(['success' => false, 'message' => trans('common.msg_super_admin_locked')], 422);
+            }
             $table->update(["status" => 4]);
             if($table){
                 $status = 200;
@@ -246,6 +254,11 @@ class RoleController extends Controller
             return response()->json(['success' => false, 'message' => trans('common.msg_no_permission_access')], 403);
         }
         $input = $request->all();
+        // Super Admin always has every permission; there is nothing to change
+        $role = RoleUser::find(data_get($input, 'role_info.id'));
+        if (CommonService::isSuperAdminRole($role)) {
+            return response()->json(['success' => false, 'message' => trans('common.msg_super_admin_locked')], 422);
+        }
         $check = RoleUser::setPermission($input);
         $status = $check ? 200 : 404;
         $boolen = (bool) $check;

@@ -33,7 +33,8 @@
         <template v-else>
             <div v-if="filteredReports.length" class="report-grid">
                 <button v-for="(report, i) in filteredReports" :key="report.key" type="button" class="report-card"
-                    :style="{ '--accent': hexToRgb(report.color), '--delay': (i * 40) + 'ms' }" @click="openReport(report)">
+                    :style="{ '--accent': hexToRgb(report.color), '--delay': (i * 40) + 'ms' }" @click="openReport(report)"
+                    @mouseenter="prefetch(report)" @focus="prefetch(report)">
                     <span class="report-card__icon"><feather-icon :icon="report.icon" svgClasses="h-5 w-5" /></span>
                     <span class="report-card__text">
                         <strong>{{ report.title }}</strong>
@@ -58,7 +59,7 @@
 </template>
 
 <script>
-import { downloadReport, fetchReportTypes } from "./reportApi.js";
+import { downloadReport, fetchReportTypes, prefetchReportPage } from "./reportApi.js";
 
 export default {
     data() {
@@ -92,6 +93,10 @@ export default {
                 this.error = true;
             }
             this.loading = false;
+        },
+        // Start loading the first page while the pointer is on the card, so the report opens ready
+        prefetch(report) {
+            prefetchReportPage(report.key);
         },
         openReport(report) {
             this.$router.push({ name: "report", params: { report_type: report.key } });

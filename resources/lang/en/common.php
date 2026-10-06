@@ -55,6 +55,7 @@ return [
     'error_message'            => 'Some information is invalid. Please check the form.',
     'entry_problem'            => 'Problem',
     'msg_no_permission_access' => 'You don\'t have permission to do this.',
+    'msg_super_admin_locked' => 'Super Admin always has every permission; its name and permissions can\'t be changed and it can\'t be deleted.',
     'msg_exist'                => 'This email or username is already in use. Please choose another.',
     'msg_request_code_exist'   => 'Your request code :code already exists.',
     'required_field'           => 'Please fill in the required fields.',

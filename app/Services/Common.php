@@ -31,12 +31,25 @@
 			$user = Auth::user();
 			if (!$user) return [];
 			if (!array_key_exists($user->id, $cache)) {
-				$cache[$user->id] = User::find($user->id)
-					->getPermissionsViaRoles()
-					->mapWithKeys(fn ($permission) => [$permission->name => true])
-					->all();
+				// Super Admin gets every permission that exists, so new ones never need ticking by hand
+				$permissions = self::isSuperAdmin($user)
+					? Permission::pluck('name')
+					: User::find($user->id)->getPermissionsViaRoles()->pluck('name');
+				$cache[$user->id] = $permissions->mapWithKeys(fn ($name) => [$name => true])->all();
 			}
 			return $cache[$user->id];
+		}
+
+		/** Whether the user (default: signed-in) has the Super Admin role from config/access.php */
+		public static function isSuperAdmin($user = null){
+			$user = $user ?: Auth::user();
+			$role = config('access.super_admin_role');
+			return $user && $role && User::find($user->id)->hasRole($role);
+		}
+
+		/** Whether a role is the Super Admin role (its permissions and name are fixed) */
+		public static function isSuperAdminRole($role){
+			return $role && $role->name === config('access.super_admin_role');
 		}
 
 		/** Whether the signed-in user has a permission (by name, or by a feature key in config/access.php) */

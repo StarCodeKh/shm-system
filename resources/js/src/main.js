@@ -57,6 +57,9 @@ import './plugins/autosize'
 // Clicked tab scrolls into view in scrollable tab bars
 import './plugins/tabsScroll'
 
+// Opened tabs keep their content and refresh quietly when shown again
+import './plugins/keepTabs'
+
 // Vuesax Admin Filters
 import './filters/filters'
 

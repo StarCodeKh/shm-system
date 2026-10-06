@@ -16,7 +16,7 @@
       <nav class="setting-nav__list">
         <button v-for="(tab, i) in visibleTabs" :key="tab.key" type="button" class="setting-nav__item"
           :class="{ 'is-active': tab.key === activeKey }" :style="{ '--tile': tab.color, '--delay': (i * 40) + 'ms' }"
-          @click="select(tab.key)">
+          @click="select(tab.key)" @mouseenter="preload(tab)" @focus="preload(tab)">
           <span class="setting-tile">
             <feather-icon :icon="tab.icon" svgClasses="h-4 w-4" />
           </span>
@@ -31,46 +31,51 @@
 
     <!-- Active section; accents follow the section's color -->
     <section class="setting-content" :style="{ '--tile': activeTab ? activeTab.color : null }">
-      <transition name="setting-swap" mode="out-in">
-          <div v-if="activeTab" :key="activeTab.key" class="setting-content__inner">
-            <div class="setting-content__head">
-              <span class="setting-tile" :style="{ '--tile': activeTab.color }">
-                <feather-icon :icon="activeTab.icon" svgClasses="h-5 w-5" />
-              </span>
-              <div>
-                <h2>{{ $t(activeTab.title) }}</h2>
-                <p>{{ $t(activeTab.desc) }}</p>
-              </div>
+      <div v-if="activeTab" class="setting-content__inner">
+        <transition name="setting-swap" mode="out-in">
+          <div :key="activeTab.key" class="setting-content__head">
+            <span class="setting-tile" :style="{ '--tile': activeTab.color }">
+              <feather-icon :icon="activeTab.icon" svgClasses="h-5 w-5" />
+            </span>
+            <div>
+              <h2>{{ $t(activeTab.title) }}</h2>
+              <p>{{ $t(activeTab.desc) }}</p>
             </div>
+          </div>
+        </transition>
 
-            <vx-card v-if="activeTab.card">
+        <!-- Sections stay alive once opened: coming back is instant, then their lists refresh quietly -->
+        <transition name="setting-swap" mode="out-in" @after-enter="onShown">
+          <keep-alive>
+            <vx-card v-if="activeTab.card" :key="activeTab.key" ref="section">
               <component :is="activeTab.component" />
             </vx-card>
-            <component v-else :is="activeTab.component" />
-          </div>
-      </transition>
+            <component v-else :is="activeTab.component" :key="activeTab.key" ref="section" />
+          </keep-alive>
+        </transition>
+      </div>
     </section>
   </div>
 </template>
 
 <script>
 import { can } from "@/acl/access.js";
-import axios from "@/axios.js";
-import SettingGeneral from "./SettingGeneral.vue";
-import SettingChangePassword from "./SettingChangePassword.vue";
-import SettingBackup from "./SettingBackup.vue";
-import SettingStructure from "./SettingStructure.vue";
-import SettingInfo from "./SettingInfo.vue";
-import SettingRole from "./SettingRole.vue";
-import SettingAccountAdmin from "./SettingAccountAdmin.vue";
-import SettingSocialLinks from "./SettingSocialLinks.vue";
-import SettingNotifications from "./SettingNotifications.vue";
-import SettingEntity from "./SettingEntity.vue";
-import SettingBudgetArrangement from "./SettingBudgetArrangement.vue";
-import SettingAudit from "./SettingAudit.vue";
-import apiConfig from "../../../apiConfig";
+import { refreshLists } from "@/plugins/keepTabs.js";
+
+// Each section's code loads the first time it is needed (or when the pointer reaches its menu item)
+const SECTIONS = {
+  "setting-general": () => import("./SettingGeneral.vue"),
+  "setting-role": () => import("./SettingRole.vue"),
+  "setting-account-admin": () => import("./SettingAccountAdmin.vue"),
+  "setting-budget-arrangement": () => import("./SettingBudgetArrangement.vue"),
+  "setting-entity": () => import("./SettingEntity.vue"),
+  "setting-backup": () => import("./SettingBackup.vue"),
+  "setting-notifications": () => import("./SettingNotifications.vue"),
+  "setting-audit": () => import("./SettingAudit.vue"),
+};
 
 export default {
+  components: SECTIONS,
   data() {
     return {
       tab_account_admin: true,
@@ -81,27 +86,20 @@ export default {
       tab_back_up: true,
       tab_notification: true,
       tab_autdit: true,
-      roleMenuTab: ""
     }
-  },
-  components: {
-    SettingGeneral,
-    SettingChangePassword,
-    SettingBackup,
-    SettingAccountAdmin,
-    SettingStructure,
-    SettingInfo,
-    SettingRole,
-    SettingSocialLinks,
-    SettingNotifications,
-    SettingEntity,
-    SettingBudgetArrangement,
-    SettingAudit
   },
   methods: {
     select(key) {
       if (key === this.activeKey) return
       this.$router.replace({ query: { ...this.$route.query, tab: key } }).catch(() => {})
+    },
+    preload(tab) {
+      SECTIONS[tab.component]().catch(() => {})
+    },
+    // A section shown again comes from the cache; reload its lists so the data is current
+    onShown() {
+      if (this.opened[this.activeKey]) refreshLists(this.$refs.section)
+      this.opened[this.activeKey] = true
     },
   },
   computed: {
@@ -135,32 +133,11 @@ export default {
       return this.visibleTabs.find(tab => tab.key === this.activeKey)
     }
   },
-  mounted() {
-
-  },
   created() {
-    this.$vs.loading();
-    // Parse data from localStorage
-    const stored = JSON.parse(localStorage.getItem("role_menus")) || [];
-    if (stored) {
-      // try {
-      //   this.roleMenuTab = stored;
-      //   this.tab_account_admin = !!this.roleMenuTab.list_account_adminstraion;
-      //   this.tab_roles = !!this.roleMenuTab.list_roles;
-      //   this.tab_general = !!this.roleMenuTab.list_general;
-      //   this.tab_budget_info = !!this.roleMenuTab.list_budget_information;
-      //   this.tab_entity = !!this.roleMenuTab.list_unit;
-      //   this.tab_back_up = !!this.roleMenuTab.list_back_up;
-      //   this.tab_notification = !!this.roleMenuTab.list_notification;
-      //   this.tab_autdit = !!this.roleMenuTab.list_audit;
-      //   console.log(this.tab_account_admin);
-      // } catch (e) {
-      //   this.tab_account_admin = false;
-      //   this.tab_roles = false;
-      //   console.error("Invalid localStorage format for role_menus_1", e);
-      // }
-    }
-    this.$vs.loading.close();
+    this.opened = {} // sections already shown once (not reactive)
+  },
+  mounted() {
+    if (this.activeKey) this.opened[this.activeKey] = true
   },
 }
 </script>
@@ -254,20 +231,7 @@ export default {
     cursor: pointer;
     animation: setting-item-in .35s ease both;
     animation-delay: var(--delay);
-    transition: background .2s ease, box-shadow .2s ease;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 10px;
-      bottom: 10px;
-      width: 3px;
-      border-radius: 3px;
-      background: rgb(var(--tile));
-      transform: scaleY(0);
-      transition: transform .25s ease;
-    }
+    transition: background var(--tab-tap) ease, box-shadow var(--tab-tap) ease;
 
     &:hover {
       background: #fff;
@@ -278,13 +242,10 @@ export default {
       }
     }
 
+    // Active: soft tint of the section color with a thin matching outline
     &.is-active {
       background: rgba(var(--tile), .09);
-      box-shadow: none;
-
-      &::before {
-        transform: scaleY(1);
-      }
+      box-shadow: inset 0 0 0 1px rgba(var(--tile), .2);
 
       .setting-tile {
         color: #fff;
@@ -345,23 +306,8 @@ export default {
   flex: 1;
   min-width: 0;
   padding: 24px 28px 28px;
-  // Soft tint of the active section's color fading into the page background
-  background:
-    linear-gradient(180deg, rgba(var(--tile), .05), rgba(var(--tile), 0) 180px),
-    #f7f8fb;
-  transition: background .3s ease;
-
-  // Thin accent bar along the top edge
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, rgb(var(--tile)), rgba(var(--tile), 0));
-    transition: background .3s ease;
-  }
+  // Plain surface: the section's color shows only in its header icon
+  background: #f7f8fb;
 
   &__head {
     display: flex;
@@ -412,17 +358,15 @@ export default {
   }
 }
 
-.setting-swap-enter-active,
-.setting-swap-leave-active {
-  transition: opacity .25s ease, transform .25s ease;
+// Same motion as every other tab: the old section fades out quickly, the new one rises in
+.setting-swap-enter-active {
+  animation: tab-content-in var(--tab-fade) var(--tab-ease) both;
 }
-.setting-swap-enter {
-  opacity: 0;
-  transform: translateY(12px);
+.setting-swap-leave-active {
+  transition: opacity var(--tab-tap) ease;
 }
 .setting-swap-leave-to {
   opacity: 0;
-  transform: translateY(-8px);
 }
 
 @keyframes setting-item-in {
@@ -472,10 +416,6 @@ export default {
       background: #fff;
       scroll-snap-align: start;
 
-      &::before {
-        display: none;
-      }
-
       .setting-tile {
         width: 30px;
         height: 30px;
@@ -513,7 +453,8 @@ export default {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .setting-nav__item {
+  .setting-nav__item,
+  .setting-swap-enter-active {
     animation: none;
   }
 }
@@ -530,9 +471,7 @@ export default {
     .setting-nav { background: #10163a; }
     .setting-nav__item { background: #10163a; border-color: #414561; }
   }
-  .setting-content {
-    background: linear-gradient(180deg, rgba(var(--tile), .18), rgba(var(--tile), 0) 220px), #1b2142;
-  }
+  .setting-content { background: #1b2142; }
   .setting-content__head { border-color: #414561; }
   .setting-content__head h2 { color: #fff; }
   .setting-content__head p { color: #a8abc4; }

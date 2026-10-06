@@ -72,6 +72,7 @@ export default {
 		// Role permissions
 		perm_title: 'កំណត់សិទ្ធិ',
 		perm_granted: 'បានផ្តល់ {n} / {total} សិទ្ធិ',
+		perm_super_admin: 'មានសិទ្ធិគ្រប់យ៉ាងជានិច្ច រួមទាំងសិទ្ធិថ្មីៗ (មិនអាចកែបាន)',
 		perm_search: 'ស្វែងរកម៉ូឌុល...',
 		perm_select_all: 'ជ្រើសទាំងអស់',
 		perm_clear_all: 'ដកទាំងអស់',
@@ -291,6 +292,8 @@ export default {
 		dash_status_deceased: 'ទទួលមរណភាព',
 		dash_total: 'សរុប',
 		dash_people: '{n} នាក់',
+		dash_view_all: 'មើលទាំងអស់',
+		dash_view_details: 'មើលលម្អិត',
 		// Sidebar menu
 		menu_system: 'មុខងារប្រព័ន្ធ',
 		menu_members: 'គ្រប់គ្រងសមាជិក',
@@ -1232,6 +1235,7 @@ export default {
 		// Role permissions
 		perm_title: 'Permissions',
 		perm_granted: '{n} of {total} permissions granted',
+		perm_super_admin: 'Always has every permission, including new ones (locked)',
 		perm_search: 'Search modules...',
 		perm_select_all: 'Select all',
 		perm_clear_all: 'Clear all',
@@ -1451,6 +1455,8 @@ export default {
 		dash_status_deceased: 'Deceased',
 		dash_total: 'Total',
 		dash_people: '{n} people',
+		dash_view_all: 'View all',
+		dash_view_details: 'View details',
 		// Sidebar menu
 		menu_system: 'System',
 		menu_members: 'Members',
