@@ -186,39 +186,16 @@ class RoleUser extends Model implements Auditable
     //   // $role->givePermissionTo($permission);
     // }
     // dd($input["role_info"]["name"]);
-    $roleName = $input["role_info"]["name"];
-    $role = Role::findByName($roleName);
-    // dd($role->id);
-    DB::table("role_has_permissions")->where("role_id", $role->id)->delete();
-    // $role = RoleUser::where("name", $roleName)->first();
-    if($role){
-      $permissions = [];
-      $verifyPermission = $input["permission"];
-      $allPermissions = Permission::get();
-      foreach ($allPermissions as $permission) {
-        $permissionInfo = Permission::findByName($permission->name);
-        if($permission->name == $verifyPermission[$permission->name] && $verifyPermission[$permission->name] == true){
-          // $user->givePermissionTo($permission->name);
-          $role->givePermissionTo($permission->name);
-        }
-        // $permissions[] = $permission->name;
-        // foreach ($permission as $key => $value) {
-        //   $permissions[$permission->name] = $permission->name;//CommonService::enablePermission($permission->name)?true:false;
-        // }
-      }
-      // dd($permissions);
-      // foreach($permissions as $permission){
-      //   if($verifyPermission[$permission->name] == $permission->id){
-      //     $role->givePermissionTo($permission);
-      //   }
-      // }
-      
-      // // foreach ($allPermissions as $permission) {
-      //   foreach ($allPermissions as $key) {
-      //     $permissions[] = $key;//CommonService::enablePermission($permission->name)?true:false;
-      //   }
-      // // }
+    $role = Role::where("name", $input["role_info"]["name"] ?? null)->first();
+    if (!$role) {
+      return false;
     }
+    // { permission_name: true|false }; names that are missing or false are revoked
+    $granted = collect($input["permission"] ?? [])
+      ->filter(fn ($value) => $value === true || $value === 1 || $value === "1" || $value === "true")
+      ->keys();
+    $names = Permission::where("guard_name", $role->guard_name)->whereIn("name", $granted)->pluck("name")->all();
+    $role->syncPermissions($names);
     return true;
   }
 

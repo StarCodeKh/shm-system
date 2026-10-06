@@ -210,7 +210,8 @@ class OfficerPayable extends Model implements Auditable
     return $summary;
   } 
 
-  public static function getOfficerPayables($filter){
+  // Report rows before paging: shared by the paged rows and the exact count
+  public static function getOfficerPayablesQuery($filter){
     $query = DB::table("officer_payable as of")
               ->select("of.*", DB::raw("CONCAT(first_name, ' ', last_name, '-', identity_member_no) AS officer_id"), "c.name_kh as currency_id", "ms.title_kh as status" ,"pm.name_kh as payment_method_id")
               ->LeftJoin("officer as f", "f.id", "=", "of.officer_id")
@@ -241,10 +242,18 @@ class OfficerPayable extends Model implements Auditable
       }
     }
 
-    $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);
-    $whereClause->limit($filter["limit"]);
-    $data = collect($whereClause->get());
-    return $data;
+    return $whereClause;
+  }
+
+  public static function getOfficerPayables($filter){
+    return collect(self::getOfficerPayablesQuery($filter)
+      ->offset(($filter["page_number"] - 1) * $filter["limit"])
+      ->limit($filter["limit"])
+      ->get());
+  }
+
+  public static function countOfficerPayables($filter){
+    return self::getOfficerPayablesQuery($filter)->count();
   }
 
   public static function getPayableInfoByOfficer($request){

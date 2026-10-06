@@ -7,30 +7,30 @@
             <d-file-manager ref="refModelFileManager" @clicked="initPassProps"></d-file-manager>
         </template>
         <div class="vx-col lg:w-2/3 w-full mt-5">
-            <d-form-tabs ref="tabs" v-model="tab" :sections="sections" :errors="errors" icon="CreditCardIcon"
+            <d-form-tabs ref="tabs" v-model="tab" :sections="tabSections" :errors="errors" icon="CreditCardIcon"
                 :title="$t('payable_form_title')" :subtitle="$t('payable_form_subtitle')">
                 <form id="paymentForm" @submit.prevent="submitForm">
                     <!-- Member -->
                     <div class="form-section" data-section="member" v-show="tab === 'member'">
                         <div class="form-grid">
                             <div class="form-group half-width">
-                                <label>ស្វែងរកឈ្មោះសមាជិក <span class="required"></span></label>
+                                <label>{{ $t('pay_search_member') }} <span class="required"></span></label>
                                 <v-select label="label" name="officer_id" v-validate="'required'" :options="data"
                                     v-model="officer_id" @search="onSearchOfficer" @input="onSelectOfficer($event)"
                                     :filterable="false" :dir="$vs.rtl ? 'rtl' : 'ltr'" />
                                 <span class="text-danger" v-show="errors.has('officer_id')">{{ $t('payable_required_officer') }}</span>
                             </div>
                             <div class="form-group">
-                                <label>អត្ថលេខសមាជិក</label>
-                                <input readonly v-model="identity_member_no" type="text" placeholder="អត្ថលេខសមាជិក">
+                                <label>{{ $t('pay_member_no') }}</label>
+                                <input readonly v-model="identity_member_no" type="text" :placeholder="$t('pay_member_no')">
                             </div>
                             <div class="form-group">
-                                <label>អង្គភាព</label>
-                                <input readonly v-model="department" type="text" placeholder="អង្គភាព">
+                                <label>{{ $t('pay_department') }}</label>
+                                <input readonly v-model="department" type="text" :placeholder="$t('pay_department')">
                             </div>
                             <div class="form-group">
-                                <label>នាយកដ្ឋាន</label>
-                                <input readonly v-model="entity" type="text" placeholder="នាយកដ្ឋាន">
+                                <label>{{ $t('pay_entity') }}</label>
+                                <input readonly v-model="entity" type="text" :placeholder="$t('pay_entity')">
                             </div>
                         </div>
                     </div>
@@ -39,30 +39,30 @@
                     <div class="form-section" data-section="payment" v-show="tab === 'payment'">
                         <div class="form-grid">
                             <div class="form-group">
-                                <label>ប្រាក់នៅជំពាក់តាមឆ្នាំ <span class="required"></span></label>
+                                <label>{{ $t('pay_year_owed') }} <span class="required"></span></label>
                                 <v-select label="label" name="payable" v-validate="'required'" :options="payables"
                                     v-model="payable" @input="onSelectPayable($event)" :filterable="false"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" />
                                 <span class="text-danger" v-show="errors.has('payable')">{{ $t('payable_required_year') }}</span>
                             </div>
                             <div class="form-group">
-                                <label>ចំនួនទឹកប្រាក់ (សរុប)</label>
+                                <label>{{ $t('pay_amount_total') }}</label>
                                 <input type="number" v-model="amount" placeholder="0.00" readonly>
                             </div>
                             <div class="form-group">
-                                <label>កាលបរិច្ឆេទបង់ប្រាក់ <span class="required"></span></label>
+                                <label>{{ $t('pay_date') }} <span class="required"></span></label>
                                 <flat-pickr v-model="payment_date" name="payment_date" v-validate="'required'" class="w-full" />
                                 <span class="text-danger" v-show="errors.has('payment_date')">{{ $t('payable_required_date') }}</span>
                             </div>
                             <div class="form-group">
-                                <label>វិធីបង់ប្រាក់ <span class="required"></span></label>
+                                <label>{{ $t('pay_method') }} <span class="required"></span></label>
                                 <v-select label="label" name="payment_method_id" v-validate="'required'"
                                     :options="paymentMethods" v-model="payment_method_id" :filterable="false"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" />
                                 <span class="text-danger" v-show="errors.has('payment_method_id')">{{ $t('payable_required_method') }}</span>
                             </div>
                             <div class="form-group">
-                                <label>ស្ថានភាពបង់ប្រាក់ <span class="required"></span></label>
+                                <label>{{ $t('pay_status') }} <span class="required"></span></label>
                                 <v-select label="label" name="status" v-validate="'required'" :options="paymentStatus"
                                     v-model="status" :filterable="false" :dir="$vs.rtl ? 'rtl' : 'ltr'" />
                                 <span class="text-danger" v-show="errors.has('status')">{{ $t('payable_required_status') }}</span>
@@ -74,11 +74,11 @@
                     <div class="form-section" data-section="extra" v-show="tab === 'extra'">
                         <div class="form-grid">
                             <div class="form-group half-width">
-                                <label>ការកំណត់សម្គាល់</label>
-                                <textarea v-model="remark" placeholder="បញ្ចូលការកំណត់សម្គាល់ (បើមាន)"></textarea>
+                                <label>{{ $t('pay_remark') }}</label>
+                                <textarea v-model="remark" :placeholder="$t('pay_remark_placeholder')"></textarea>
                             </div>
                             <div class="form-group">
-                                <label>ឯកសារភ្ជាប់ <span class="badge">Optional</span></label>
+                                <label>{{ $t('pay_attachment') }} <span class="badge">{{ $t('form_optional') }}</span></label>
                                 <d-file-picker name="attach" :value="attach || ''"
                                     @browse="initOpenFileManager('attach')"
                                     @clear="attach = null; iconThumnail = null" />
@@ -103,7 +103,7 @@
           <div class="payable-history">
             <div class="payable-history__head">
                 <span class="payable-history__icon"><feather-icon icon="ClockIcon" svgClasses="h-4 w-4" /></span>
-                <h3>ប្រវត្តិបង់ប្រាក់</h3>
+                <h3>{{ $t('pay_history') }}</h3>
             </div>
 
             <!-- <div id="data-list-list-view" class="data-list-container"> -->
@@ -145,9 +145,9 @@ export default {
     return {
         tab: 'member',
         sections: [
-            { key: 'member', icon: 'UserIcon', title: 'ព័ត៌មានសមាជិក' },
-            { key: 'payment', icon: 'CreditCardIcon', title: 'ព័ត៌មានការបង់ប្រាក់' },
-            { key: 'extra', icon: 'PaperclipIcon', title: 'កំណត់សម្គាល់ និងឯកសារ' },
+            { key: 'member', icon: 'UserIcon', titleKey: 'pay_tab_member' },
+            { key: 'payment', icon: 'CreditCardIcon', titleKey: 'pay_tab_payment' },
+            { key: 'extra', icon: 'PaperclipIcon', titleKey: 'pay_tab_extra' },
         ],
         apiPayable: apiConfig._apiOfficerPayable,
         api: apiConfig._apiOfficerPayableInfo,
@@ -192,6 +192,10 @@ export default {
         'v-select': vSelect,
     },
   computed: {
+    // Tab titles follow the current language
+    tabSections() {
+      return this.sections.map(section => ({ ...section, title: this.$t(section.titleKey) }))
+    },
     historyRows() {
       return Array.isArray(this.paymentHistories) ? this.paymentHistories : []
     },

@@ -3,7 +3,7 @@
         <template title="modal" class="modal">
             <d-file-manager ref="refModelFileManager" @clicked="initPassProps"></d-file-manager>
         </template>
-        <d-form-tabs ref="tabs" v-model="tab" :sections="sections" :errors="errors" icon="UserPlusIcon"
+        <d-form-tabs ref="tabs" v-model="tab" :sections="tabSections" :errors="errors" icon="UserPlusIcon"
             :title="$t('officer_form_title')" :subtitle="$t('officer_form_subtitle')">
             <form id="memberForm" class="officer-form__form" @submit.prevent="submitForm">
                 <!-- Personal Information Section -->
@@ -11,7 +11,7 @@
                     <div class="form-grid">
 
                         <div class="form-group">
-                            <label>រូបថត <span class="badge">Optional</span></label>
+                            <label>{{ $t('of_photo') }} <span class="badge">{{ $t('form_optional') }}</span></label>
                             <d-file-picker name="photo" :value="officer.photo || ''"
                                 @browse="initOpenFileManager('photo')"
                                 @clear="officer.photo = null; iconThumnail = null" />
@@ -70,7 +70,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>ថ្ងៃខែឆ្នាំកំណើត <span class="required"></span></label>
+                            <label>{{ $t('of_dob') }} <span class="required"></span></label>
                             <!-- <input type="date" v-model="officer.dob" required> -->
                              <flat-pickr v-validate="'required'" name="dob"
                                 v-model="officer.dob" class="mt-1 w-full" />
@@ -80,7 +80,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>លេខអត្តសញ្ញាណប័ណ្ណ</label>
+                            <label>{{ $t('of_identity_no') }}</label>
                             <div class="input-icon">
                                 <i class="fas fa-id-card"></i>
                                 <vs-input v-model="officer.identity_no" :placeholder="$t('identity_no')" :name="'identity_no'" class="mt-1 w-full" />
@@ -89,7 +89,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>សញ្ជាតិ</label>
+                            <label>{{ $t('of_nationality') }}</label>
                             <vs-input v-model="officer.nationality" :placeholder="$t('nationality')" :name="'nationality'" class="mt-1 w-full" />
                             <!-- <input type="text" placeholder="សញ្ជាតិ" v-model="officer.nationality" required> -->
                             <!-- <select required>
@@ -111,9 +111,9 @@
                         </div> -->
 
                         <div class="form-group">
-                            <label>ស្ថានភាពរៀបការ</label>
+                            <label>{{ $t('of_married_status') }}</label>
                             <v-select v-model="officer.married_status"
-                                    name="married_status" :options="marriedStatus"
+                                    name="married_status" :options="translated(marriedStatus)"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                         </div>
 
@@ -147,7 +147,7 @@
                     <div class="form-grid">
 
                         <div class="form-group">
-                            <label>អង្គភាព<span class="required"></span></label>
+                            <label>{{ $t('of_department') }} <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-envelope"></i>
                                 <v-select
@@ -163,7 +163,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>នាយកដ្ឋាន  <span class="required"></span></label>
+                            <label>{{ $t('of_entity') }} <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-phone"></i>
                                 <v-select
@@ -176,7 +176,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>ងារ</label>
+                            <label>{{ $t('of_title') }}</label>
                             <div class="input-icon">
                                 <i class="fas fa-phone"></i>
                                 <v-select
@@ -190,7 +190,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>តួរនាទី</label>
+                            <label>{{ $t('of_duty') }}</label>
                             <div class="input-icon">
                                 <i class="fas fa-envelope"></i>
                                 <v-select
@@ -211,7 +211,7 @@
                 <div class="form-section" data-section="contact" v-show="tab === 'contact'">
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>លេខទូរស័ព្ទ <span class="required"></span></label>
+                            <label>{{ $t('of_phone') }} <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-phone"></i>
                                 <vs-input v-validate="'required'" v-model="officer.telephone_1" :placeholder="$t('telephone_1')" :name="'telephone_1'" class="mt-1 w-full" />
@@ -223,7 +223,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>អ៊ីមែល</label>
+                            <label>{{ $t('of_email') }}</label>
                             <div class="input-icon">
                                 <i class="fas fa-envelope"></i>
                                 <vs-input v-model="officer.email" :placeholder="$t('email')" :name="'email'" class="mt-1 w-full" />
@@ -259,7 +259,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>បណ្តាញសង្គមផ្សេងៗ</label>
+                            <label>{{ $t('of_social') }}</label>
                             <!-- <input type="text" placeholder="បញ្ចូលបណ្តាញសង្គមផ្សេង" v-model="officer.social_media_alt"> -->
                             <vs-input v-model="officer.social_media_alt" :placeholder="$t('social_media_alt')" :name="'social_media_alt'" class="mt-1 w-full" />
                         </div>
@@ -270,20 +270,20 @@
                 <div class="form-section" data-section="emergency" v-show="tab === 'emergency'">
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>ឈ្មោះអ្នកទំនាក់ទំនងបន្ទាន់</label>
+                            <label>{{ $t('of_emergency_person') }}</label>
                             <vs-input v-model="officer.emergency_person" :placeholder="$t('emergency_person')" :name="'emergency_person'" class="mt-1 w-full" />
                             <!-- <input type="text" placeholder="ឈ្មោះអ្នកទំនាក់ទំនង" v-model="officer.emergency_person"> -->
                         </div>
 
                         <div class="form-group">
-                            <label>ត្រូវជា</label>
+                            <label>{{ $t('of_emergency_relative') }}</label>
                             <v-select v-model="officer.emergency_relative"
-                                    name="emergencyRelatives" :options="emergencyRelatives"
+                                    name="emergencyRelatives" :options="translated(emergencyRelatives)"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                         </div>
 
                         <div class="form-group">
-                            <label>លេខទូរស័ព្ទបន្ទាន់</label>
+                            <label>{{ $t('of_emergency_phone') }}</label>
                             <!-- <input type="tel" placeholder="012 xxx xxx" v-model="officer.telephone_2"> -->
                             <vs-input v-model="officer.telephone_2" :placeholder="$t('telephone_2')" :name="'telephone_2'" class="mt-1 w-full" />
                         </div>
@@ -294,7 +294,7 @@
                 <div class="form-section" data-section="additional" v-show="tab === 'additional'">
                     <div class="form-grid">
                         <div class="form-group full-width">
-                            <label>ចំណុចពិសេស ឬ ការកត់សម្គាល់</label>
+                            <label>{{ $t('of_remark') }}</label>
                             <!-- <textarea placeholder="បញ្ចូលព័ត៌មានបន្ថែម..." rows="3" v-model="officer.remark"></textarea> -->
                              <vs-textarea v-model="officer.remark" :placeholder="$t('remark')" :name="'remark'" class="mt-1 w-full" />
                         </div>
@@ -314,7 +314,7 @@
                     
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>ថ្ងៃខែចុះឈ្មោះ <span class="required"></span></label>
+                            <label>{{ $t('of_register_date') }} <span class="required"></span></label>
                             <!-- <input type="date" v-model="officer.dob" required> -->
                                 <flat-pickr v-validate="'required'" name="register_date"
                                 v-model="officer.register_date" class="mt-1 w-full" />
@@ -323,7 +323,7 @@
                             }}</span>
                         </div>
                         <div class="form-group">
-                            <label>តើសមាជិកមានប័ណ្ណបសស? <span class="required"></span></label>
+                            <label>{{ $t('of_nssf') }} <span class="required"></span></label>
                             <v-select
                                     v-validate="'required'" v-model="officer.is_nssf_member"
                                     name="is_nssf_member" :options="nssfs"
@@ -334,7 +334,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>ស្ថានភាព <span class="required"></span></label>
+                            <label>{{ $t('of_status') }} <span class="required"></span></label>
                             <v-select
                                     v-validate="'required'" v-model="officer.status"
                                     name="status" :options="statuses"
@@ -383,12 +383,12 @@ export default {
     return {
       tab: 'personal',
       sections: [
-        { key: 'personal', icon: 'UserIcon', title: 'ព័ត៌មានផ្ទាល់ខ្លួន' },
-        { key: 'work', icon: 'BriefcaseIcon', title: 'ទីកន្លែងបំពេញការងារ និងតួនាទី' },
-        { key: 'contact', icon: 'PhoneIcon', title: 'ព័ត៌មានទំនាក់ទំនង' },
-        { key: 'emergency', icon: 'AlertCircleIcon', title: 'ទំនាក់ទំនងបន្ទាន់' },
-        { key: 'additional', icon: 'InfoIcon', title: 'ព័ត៌មានបន្ថែម' },
-        { key: 'status', icon: 'CheckCircleIcon', title: 'ស្ថានភាព' },
+        { key: 'personal', icon: 'UserIcon', titleKey: 'of_tab_personal' },
+        { key: 'work', icon: 'BriefcaseIcon', titleKey: 'of_tab_work' },
+        { key: 'contact', icon: 'PhoneIcon', titleKey: 'of_tab_contact' },
+        { key: 'emergency', icon: 'AlertCircleIcon', titleKey: 'of_tab_emergency' },
+        { key: 'additional', icon: 'InfoIcon', titleKey: 'of_tab_additional' },
+        { key: 'status', icon: 'CheckCircleIcon', titleKey: 'of_tab_status' },
       ],
       api: apiConfig._apiOfficer,
       apiEntityByDept: apiConfig._apiEntityByDept,
@@ -444,45 +444,45 @@ export default {
       statuses: [],
       marriedStatus: [
         {
-            label: "នៅលីវ",
+            label: "នៅលីវ", labelKey: "of_married_single",
             value: "នៅលីវ"
         },
         {
-            label: "រៀបការហើយ",
+            label: "រៀបការហើយ", labelKey: "of_married_married",
             value: "រៀបការហើយ"
         },
         {
-            label: "លែងលះ",
+            label: "លែងលះ", labelKey: "of_married_divorced",
             value: "លែងលះ"
         },
         {
-            label: "មេម៉ាយ",
+            label: "មេម៉ាយ", labelKey: "of_married_widowed",
             value: "មេម៉ាយ"
         },
       ],
       emergencyRelatives:[
         {
-            label: "ឪពុក",
+            label: "ឪពុក", labelKey: "of_rel_father",
             value: "ឪពុក"
         },
         {
-            label: "ម្តាយ",
+            label: "ម្តាយ", labelKey: "of_rel_mother",
             value: "ម្តាយ"
         },
         {
-            label: "ស្វាមី/ភរិយា",
+            label: "ស្វាមី/ភរិយា", labelKey: "of_rel_spouse",
             value: "ស្វាមី/ភរិយា"
         },
         {
-            label: "បងប្អូន",
+            label: "បងប្អូន", labelKey: "of_rel_sibling",
             value: "បងប្អូន"
         },
         {
-            label: "មិត្តភក្តិ",
+            label: "មិត្តភក្តិ", labelKey: "of_rel_friend",
             value: "មិត្តភក្តិ"
         },
         {
-            label: "ផ្សេងៗ",
+            label: "ផ្សេងៗ", labelKey: "of_rel_other",
             value: "ផ្សេងៗ"
         },
       ],
@@ -492,6 +492,10 @@ export default {
     }
   },
   computed: {
+    // Tab titles follow the current language
+    tabSections() {
+      return this.sections.map(section => ({ ...section, title: this.$t(section.titleKey) }))
+    },
     validateForm() {
         return !this.errors.any()
     },
@@ -509,6 +513,10 @@ export default {
     }
   },
   methods: {
+    // Option labels in the current language; the stored value stays the same
+    translated(options) {
+      return (options || []).map(option => option.labelKey ? { ...option, label: this.$t(option.labelKey) } : option)
+    },
     clearForm(){
         this.iconThumnail = null;
         this.officer.photo = null;

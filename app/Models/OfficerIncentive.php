@@ -150,7 +150,8 @@ class OfficerIncentive extends Model implements Auditable
   }
 
   
-  public static function getOfficerReports($filter){
+  // Report rows before paging: shared by the paged rows and the exact count
+  public static function getOfficerReportsQuery($filter){
     $query = DB::table("officer as f")
               ->select("oi.*", "ms.title_kh as status", "c.name_kh as currency_id", DB::raw("CONCAT(first_name, ' ', last_name, '-', identity_member_no) AS officer_id"), "pm.name_kh as payment_method_id")
               ->Join("officer_incentive as oi", "oi.officer_id", "=", "f.id")
@@ -181,9 +182,17 @@ class OfficerIncentive extends Model implements Auditable
     }
 
     $whereClause->whereNotIn("f.status", [4]);
-    $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);
-    $whereClause->limit($filter["limit"]);
-    $data = collect($whereClause->get());
-    return $data;
+    return $whereClause;
+  }
+
+  public static function getOfficerReports($filter){
+    return collect(self::getOfficerReportsQuery($filter)
+      ->offset(($filter["page_number"] - 1) * $filter["limit"])
+      ->limit($filter["limit"])
+      ->get());
+  }
+
+  public static function countOfficerReports($filter){
+    return self::getOfficerReportsQuery($filter)->count();
   }
 }

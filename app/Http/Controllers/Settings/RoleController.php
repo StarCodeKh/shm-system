@@ -244,9 +244,9 @@ class RoleController extends Controller
     public function setPermission(Request $request){
         $input = $request->all();
         $check = RoleUser::setPermission($input);
-        $status = 200;
-        $boolen = true;
-        $message = trans('common.msg_successfully');
+        $status = $check ? 200 : 404;
+        $boolen = (bool) $check;
+        $message = $check ? trans('common.msg_successfully') : trans('common.error_msg');
         $data = array(
             "success" => $boolen,
             "message" => $message

@@ -2,6 +2,17 @@ import navbarSearchAndPinList from "@/layouts/components/navbar/navbarSearchAndP
 import themeConfig from "@/../themeConfig.js"
 import colors from "@/../themeConfig.js"
 
+// Sidebar collapsed/expanded as the user last chose it (saved by the menu's collapse button)
+export const SIDEBAR_COLLAPSED_KEY = "sidebarCollapsed"
+const savedSidebarCollapsed = (() => {
+  try {
+    const saved = localStorage.getItem(SIDEBAR_COLLAPSED_KEY)
+    return saved === null ? themeConfig.sidebarCollapsed : saved === "true"
+  } catch (e) {
+    return themeConfig.sidebarCollapsed
+  }
+})()
+
 // /////////////////////////////////////////////
 // Helper
 // /////////////////////////////////////////////
@@ -47,7 +58,7 @@ const state = {
     isVerticalNavMenuActive : true,
     mainLayoutType          : themeConfig.mainLayoutType || "horizontal",
     navbarSearchAndPinList  : navbarSearchAndPinList,
-    reduceButton            : themeConfig.sidebarCollapsed,
+    reduceButton            : savedSidebarCollapsed,
     verticalNavMenuWidth    : "default",
     verticalNavMenuItemsMin : false,
     scrollY                 : 0,

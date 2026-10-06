@@ -9,7 +9,7 @@
                   icon="UsersIcon"
                   icon-right
                   :statistic="dataTables.total"
-                  statisticTitle="ចំនួនសមាជិកសរុប" />
+                  :statisticTitle="$t('stat_members_total')" />
             </div>
 
             <div class="vx-col w-full md:w-1/3 lg:w-1/3 xl:w-1/3">
@@ -19,7 +19,7 @@
                   icon="UserIcon"
                   icon-right
                   :statistic="dataTables.summary.male"
-                  statisticTitle="ប្រុសសរុប"
+                  :statisticTitle="$t('stat_male_total')"
                   color="success" />
             </div>
             
@@ -30,7 +30,7 @@
                   icon="UserIcon"
                   icon-right
                   :statistic="dataTables.summary.female"
-                  statisticTitle="ស្រីសរុប"
+                  :statisticTitle="$t('stat_female_total')"
                   color="success" />
             </div>
         </div>
@@ -44,7 +44,7 @@
                   icon="ServerIcon"
                   icon-right
                   :statistic="dataTables.summary.approved"
-                  statisticTitle="បានអនុម័ត"
+                  :statisticTitle="$t('stat_approved')"
                   color="success" />
             </div>
 
@@ -55,7 +55,7 @@
                   icon="CpuIcon"
                   icon-right
                   :statistic="dataTables.summary.in_review"
-                  statisticTitle="កំពុងត្រួតពិនិត្យ" />
+                  :statisticTitle="$t('stat_reviewing')" />
             </div>
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
@@ -65,7 +65,7 @@
                   icon="ServerIcon"
                   icon-right
                    :statistic="dataTables.summary.in_progress"
-                  statisticTitle="កំពុងដំណើរការ"
+                  :statisticTitle="$t('stat_processing')"
                   color="success" />
             </div>
 
@@ -76,7 +76,7 @@
                   icon="CpuIcon"
                   icon-right
                   statistic="17"
-                  statisticTitle="រង់ចាំការអនុវត្ត" />
+                  :statisticTitle="$t('stat_pending')" />
             </div> -->
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
@@ -86,7 +86,7 @@
                   icon="ServerIcon"
                   icon-right
                   :statistic="dataTables.summary.rejected"
-                  statisticTitle="បដិសេដ"
+                  :statisticTitle="$t('stat_rejected')"
                   color="success" />
             </div>
         </div>
@@ -99,7 +99,7 @@
                   icon="CashIcon"
                   icon-right
                   :statistic="dataTables.total"
-                  statisticTitle="សរុបរួម" />
+                  :statisticTitle="$t('stat_grand_total')" />
             </div>
 
             <div class="vx-col w-full md:w-1/3 lg:w-1/3 xl:w-1/3">
@@ -109,7 +109,7 @@
                   icon="DollarIcon"
                   icon-right
                   :statistic="dataTables.total_amount"
-                  statisticTitle="បានបើកផ្តល់សរុប (គិតជារៀល)"
+                  :statisticTitle="$t('stat_incentive_paid_riel')"
                   color="success" />
             </div>
         </div>
@@ -123,7 +123,7 @@
                   icon="NumberSignIcon"
                   icon-right
                   :statistic="dataTables.total"
-                  statisticTitle="សរុបរួម"
+                  :statisticTitle="$t('stat_grand_total')"
                   color="success" /></small>
             </div>
 
@@ -134,7 +134,7 @@
                   icon="CpuIcon"
                   icon-right
                   :statistic="dataTables.summary.total_paid_khr"
-                  :statisticTitle="'បានបង់ (រៀល)'" /></small>
+                  :statisticTitle="$t('stat_paid_riel')" /></small>
             </div>
 
             <div class="vx-col w-full md:w-1/3 lg:w-1/3 xl:w-1/3">
@@ -144,7 +144,7 @@
                   icon="DollarSignIcon"
                   icon-right
                   :statistic="dataTables.summary.total_unpaid_khr"
-                  :statisticTitle="'មិនទាន់បង់ (រៀល)'" /></small>
+                  :statisticTitle="$t('stat_unpaid_riel')" /></small>
             </div>
 
         </div>
@@ -157,7 +157,7 @@
                   icon="CpuIcon"
                   icon-right
                   :statistic="dataTables.total"
-                  statisticTitle="សរុបរួម" />
+                  :statisticTitle="$t('stat_grand_total')" />
             </div>
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
@@ -167,7 +167,7 @@
                   icon="ServerIcon"
                   icon-right
                   :statistic="dataTables.summary.paid"
-                  statisticTitle="បានបង់"
+                  :statisticTitle="$t('stat_paid')"
                   color="success" />
             </div>
 
@@ -178,7 +178,7 @@
                   icon="ServerIcon"
                   icon-right
                   :statistic="dataTables.summary.void"
-                  statisticTitle="មោឃៈ"
+                  :statisticTitle="$t('stat_void')"
                   color="success" />
             </div>
 
@@ -189,7 +189,7 @@
                   icon="CpuIcon"
                   icon-right
                   :statistic="dataTables.summary.exceptional"
-                  statisticTitle="លើកលែង" />
+                  :statisticTitle="$t('stat_exempt')" />
             </div>
 
         </div>

@@ -98,7 +98,7 @@
             <div class="dt-filter-panel__actions">
                 <button type="button" class="dt-btn" @click="resetSearch">
                     <feather-icon icon="RotateCcwIcon" svgClasses="h-4 w-4" />
-                    <span>{{ $t('audit_clear') }}</span>
+                    <span>{{ $t('form_clear') }}</span>
                 </button>
                 <button type="button" class="dt-btn dt-btn--primary" @click.prevent="initSearch">
                     <feather-icon icon="SearchIcon" svgClasses="h-4 w-4" />

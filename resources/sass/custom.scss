@@ -7,6 +7,7 @@
     // Corner radius shared by every form control (inputs, selects, textareas, date pickers)
     --input-radius: 10px;
     --input-height: 42px;
+    --control-sm-height: 34px; // compact controls: pagination, page-size selects, table footers
     --input-border: #d8d9e3;
     --input-border-hover: #c3c5d4;
     --field-gap: 20px;
@@ -2212,12 +2213,22 @@ textarea:disabled {
 }
 
 
-/* --- TEXTAREA AUTO-GROW: starts at input height, grows with its text (JS fallback in plugins/autosize.js) --- */
-textarea:not([rows]),
-textarea.vs-textarea:not([rows]) {
+/* --- TEXTAREA: one line at input height so form rows stay even; expands to its text while being edited
+       (JS fallback for browsers without field-sizing in plugins/autosize.js) --- */
+textarea:not([rows]):not(:focus),
+textarea.vs-textarea:not([rows]):not(:focus) {
+    height: var(--input-height) !important;
+    white-space: nowrap;   // one clean line: no half-visible second line
+    overflow: hidden;
+    resize: none;
+}
+textarea:not([rows]):focus,
+textarea.vs-textarea:not([rows]):focus {
     field-sizing: content;
     height: auto;
+    min-height: var(--input-height);
     max-height: 220px;
+    white-space: pre-wrap;
     overflow-y: auto;
 }
 
@@ -3108,4 +3119,170 @@ input.vs-input--input.large {
 .theme-dark .dt-list .dt-file {
   background: #10163a;
   border-color: #414561;
+}
+
+
+/* --- PAGINATION: compact controls (--control-sm-height) with the input radius/border --- */
+.con-vs-pagination {
+    .vs-pagination--nav {
+        gap: 4px;
+    }
+
+    .vs-pagination--ul {
+        gap: 4px;
+        padding: 0 !important;
+        margin: 0;
+        background: transparent !important;
+        border-radius: 0;
+    }
+
+    .vs-pagination--li,
+    .vs-pagination--buttons {
+        box-sizing: border-box;
+        min-width: var(--control-sm-height);
+        width: auto;
+        height: var(--control-sm-height);
+        margin: 0 !important;
+        padding: 0 8px;
+        font-size: .82rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        color: #4b4d68;
+        border: 1px solid var(--input-border);
+        border-radius: calc(var(--input-radius) - 2px) !important;
+        background: #fff;
+        box-shadow: none;
+        transform: none !important;
+        transition: background .15s ease, border-color .15s ease, color .15s ease;
+
+        .effect {
+            display: none;
+        }
+
+        &:hover:not(.is-current):not(:disabled):not(.disabled) {
+            color: rgb(var(--vs-primary)) !important;
+            border-color: rgba(var(--vs-primary), .5);
+            background: rgba(var(--vs-primary), .06) !important;
+        }
+    }
+
+    .vs-pagination--li.is-current {
+        color: #fff !important;
+        border-color: rgb(var(--vs-primary));
+        background: rgb(var(--vs-primary)) !important;
+        box-shadow: 0 6px 14px -8px rgba(var(--vs-primary), .9);
+    }
+
+    .vs-pagination--buttons {
+        &.disabled,
+        &:disabled {
+            opacity: .45;
+        }
+
+        i,
+        .material-icons {
+            font-size: 1rem;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .vs-pagination--li,
+        .vs-pagination--buttons {
+            min-width: 30px;
+            height: 30px;
+            padding: 0 5px;
+            font-size: .78rem;
+        }
+    }
+}
+
+.theme-dark .con-vs-pagination {
+    .vs-pagination--li:not(.is-current),
+    .vs-pagination--buttons {
+        color: #c2c6dc;
+        border-color: #414561;
+        background: #10163a;
+    }
+}
+
+
+/* --- COMPACT SELECT: page-size and other small selects (add .is-compact, or any select in a list footer) --- */
+.v-select.is-compact,
+.dt-footer .v-select {
+    .vs__dropdown-toggle {
+        height: var(--control-sm-height) !important;
+        min-height: var(--control-sm-height) !important;
+        padding: 0 6px 0 10px !important;
+        border-radius: calc(var(--input-radius) - 2px) !important;
+    }
+
+    .vs__selected {
+        font-size: .82rem;
+        font-weight: 600;
+    }
+
+    .vs__actions {
+        padding-left: 4px;
+    }
+
+    .vs__open-indicator {
+        transform: scale(.8);
+    }
+
+    &.vs--open .vs__open-indicator {
+        transform: rotate(180deg) scale(.8);
+    }
+
+    // Compact menu: wider than the box, right-aligned, smaller rows
+    .vs__dropdown-menu {
+        left: auto !important;
+        right: 0;
+        min-width: 96px;
+        margin-top: 4px;
+        padding: 4px;
+        border-radius: 10px !important;
+    }
+
+    .vs__dropdown-option {
+        min-height: 30px;
+        padding: 5px 28px 5px 10px;
+        font-size: .82rem;
+        font-variant-numeric: tabular-nums;
+        border-radius: 7px;
+
+        &--selected::after {
+            right: 8px;
+            width: 13px;
+            height: 13px;
+            margin-top: -6.5px;
+        }
+    }
+}
+
+// In list footers (bottom of the card) compact menus open upwards
+.dt-footer .v-select .vs__dropdown-menu {
+    top: auto !important;
+    bottom: 100%;
+    margin: 0 0 4px;
+}
+
+// Non-searchable selects keep showing their value while open (nothing is being typed)
+.v-select.vs--single.vs--open.vs--unsearchable .vs__selected {
+    position: static;
+    opacity: 1;
+}
+
+
+/* --- SIDEBAR: page and top bar slide together when the menu opens (pin button or hover) --- */
+#content-area {
+    transition: margin-left .3s cubic-bezier(.22, 1, .36, 1);
+}
+.vx-navbar-wrapper {
+    transition: width .3s cubic-bezier(.22, 1, .36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+    #content-area,
+    .vx-navbar-wrapper {
+        transition: none;
+    }
 }

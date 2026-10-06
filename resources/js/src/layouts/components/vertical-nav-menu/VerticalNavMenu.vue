@@ -109,6 +109,7 @@ import VNavMenuItem from './VerticalNavMenuItem.vue'
 
 import Logo from "../Logo.vue"
 import { storedPermissions, fetchPermissions, filterMenu } from './menuPermissions.js'
+import { SIDEBAR_COLLAPSED_KEY } from "@/store/state.js"
 
 export default {
   name: 'v-nav-menu',
@@ -177,6 +178,9 @@ export default {
     reduceButton() { this.setVerticalNavMenuWidth() },
     windowWidth()  { this.setVerticalNavMenuWidth() }
   },
+  beforeDestroy() {
+    clearTimeout(this.hoverTimer)
+  },
   methods: {
     // handleWindowResize(event) {
     //   this.windowWidth = event.currentTarget.innerWidth;
@@ -191,13 +195,27 @@ export default {
     psSectionScroll() {
       this.showShadowBottom = this.$refs.verticalNavMenuPs.$el.scrollTop > 0 ? true : false
     },
+    // Hovering a collapsed menu opens it like the pin button does: the page moves aside instead of being covered.
+    // A short delay ignores the pointer just passing over the menu.
     mouseEnter() {
-      if (this.reduce) this.$store.commit('UPDATE_VERTICAL_NAV_MENU_ITEMS_MIN', false)
-      this.isMouseEnter = true
+      clearTimeout(this.hoverTimer)
+      if (!this.reduce) {
+        this.isMouseEnter = true
+        return
+      }
+      this.hoverTimer = setTimeout(() => {
+        this.$store.commit('UPDATE_VERTICAL_NAV_MENU_ITEMS_MIN', false)
+        this.isMouseEnter = true
+        this.$store.dispatch('updateVerticalNavMenuWidth', 'default')
+      }, 120)
     },
     mouseLeave() {
-      if (this.reduce) this.$store.commit('UPDATE_VERTICAL_NAV_MENU_ITEMS_MIN', true)
-      this.isMouseEnter = false;
+      clearTimeout(this.hoverTimer)
+      if (this.reduce && this.isMouseEnter) {
+        this.$store.commit('UPDATE_VERTICAL_NAV_MENU_ITEMS_MIN', true)
+        this.$store.dispatch('updateVerticalNavMenuWidth', 'reduced')
+      }
+      this.isMouseEnter = false
     },
     setVerticalNavMenuWidth() {
 
@@ -285,6 +303,8 @@ export default {
     toggleReduce(val) {
       this.reduceButton = val
       this.setVerticalNavMenuWidth()
+      // Remember the user's choice across reloads (pages that collapse the menu temporarily don't save)
+      try { localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(val)) } catch (e) { /* storage unavailable */ }
     },
   },
   created() {

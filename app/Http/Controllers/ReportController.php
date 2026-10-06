@@ -13,16 +13,19 @@ use App\Models\Entity;
 use App\Models\IncentiveToOfficer;
 use App\Models\Income;
 use App\Models\Expense;
+use App\Models\Configuration;
 use DB;
 use CommonService;
 use View;
+use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Str;
 use Mpdf\Mpdf;
 use Mpdf\Config\ConfigVariables;
 use Mpdf\Config\FontVariables;
 
 class ReportController extends Controller
 {
-    private const REPORT_MAX_ROWS = 20000;
 
     protected $PERMISSION_ACTION_SALE_REPORT;
     public $path = "admin/setting";
@@ -36,79 +39,74 @@ class ReportController extends Controller
         $this->PERMISSION_ACTION_SALE_REPORT = "report_sale";
     }
     /**
-     * Printable PDF reports, served by POST /api/v1/report/{type}.
-     * To add a report, add an entry here; the list page and viewer pick it up automatically.
+     * Printable reports: POST /api/v1/report/{type} (PDF) and /{type}/data (paged JSON).
+     * To add a report, add an entry here plus its texts in resources/lang/{kh,en}/report.php
+     * (report.types.{key}.title / description / summary.*); the list, viewer and PDF pick it up.
      */
     protected function reports(): array
     {
         return [
             'officers' => [
-                'title' => 'របាយការណ៍សមាជិក',
-                'description' => 'បញ្ជីសមាជិកទាំងអស់ រួមទាំងចំនួនប្រុស និងស្រី',
                 'icon' => 'UsersIcon',
                 'color' => '#7367F0',
                 'field_api' => '/api/v1/officer/payable/get_field',
                 'fields' => fn () => Officer::dataFields(),
                 'rows' => fn ($filter) => Officer::getData($filter),
+                'total' => fn ($filter) => Officer::getTotal($filter),
+                // Keys are labelled by report.types.officers.summary.*
                 'summary' => fn ($filter) => [
-                    'សមាជិកសរុប' => Officer::getTotal($filter),
-                    'ប្រុស' => Officer::getTotalOfficerByGender($filter, 'male'),
-                    'ស្រី' => Officer::getTotalOfficerByGender($filter, 'female'),
+                    'total' => Officer::getTotal($filter),
+                    'male' => Officer::getTotalOfficerByGender($filter, 'male'),
+                    'female' => Officer::getTotalOfficerByGender($filter, 'female'),
                 ],
             ],
             'income' => [
-                'title' => 'របាយការណ៍ចំណូល',
-                'description' => 'ចំណូលទាំងអស់តាមគណនី និងអង្គភាព',
                 'icon' => 'TrendingUpIcon',
                 'color' => '#28C76F',
                 'field_api' => '/api/v1/income/get_field',
                 'fields' => fn () => Income::dataFields(),
                 'rows' => fn ($filter) => Income::getData($filter),
+                'total' => fn ($filter) => Income::getTotal($filter),
             ],
             'expense' => [
-                'title' => 'របាយការណ៍ចំណាយ',
-                'description' => 'ចំណាយទាំងអស់តាមគណនី និងអង្គភាព',
                 'icon' => 'TrendingDownIcon',
                 'color' => '#EA5455',
                 'field_api' => '/api/v1/expense/get_field',
                 'fields' => fn () => Expense::dataFields(),
                 'rows' => fn ($filter) => Expense::getData($filter),
+                'total' => fn ($filter) => Expense::getTotal($filter),
             ],
             'officer_incentive' => [
-                'title' => 'របាយការណ៍បើកផ្តល់ប្រាក់ឧបត្ថម្ភ',
-                'description' => 'ប្រាក់ឧបត្ថម្ភដែលបានផ្តល់ជូនសមាជិក',
                 'icon' => 'GiftIcon',
                 'color' => '#FF9F43',
                 'field_api' => '/api/v1/officer/incentive/get_field',
                 'fields' => fn () => OfficerIncentive::dataFields(),
                 'rows' => fn ($filter) => OfficerIncentive::getOfficerReports($filter),
+                'total' => fn ($filter) => OfficerIncentive::countOfficerReports($filter),
             ],
             'officers_payment' => [
-                'title' => 'របាយការណ៍បង់ប្រាក់',
-                'description' => 'សមាជិកដែលបានបង់ប្រាក់រួច',
                 'icon' => 'CheckCircleIcon',
                 'color' => '#00CFE8',
                 'field_api' => '/api/v1/officer/payment/get_field',
                 'fields' => fn () => OfficerPayment::dataFields(),
                 'rows' => fn ($filter) => OfficerPayment::getOfficerPaymentReports($filter),
+                'total' => fn ($filter) => OfficerPayment::countOfficerPaymentReports($filter),
             ],
             'officers_payable' => [
-                'title' => 'របាយការណ៍មិនទាន់បង់ប្រាក់',
-                'description' => 'សមាជិកដែលមិនទាន់បង់ប្រាក់',
                 'icon' => 'ClockIcon',
                 'color' => '#F35588',
                 'field_api' => '/api/v1/officer/payable/get_field',
                 'fields' => fn () => OfficerPayable::dataFields(),
                 'rows' => fn ($filter) => OfficerPayable::getOfficerPayables($filter),
+                'total' => fn ($filter) => OfficerPayable::countOfficerPayables($filter),
             ],
             'officers_request' => [
-                'title' => 'របាយការណ៍សំណើ',
-                'description' => 'សំណើរបស់សមាជិក',
                 'icon' => 'FileTextIcon',
                 'color' => '#4A5F9D',
                 'field_api' => '/api/v1/officer/request/get_field',
                 'fields' => fn () => OfficerRequest::dataFields(),
                 'rows' => fn ($filter) => OfficerRequest::getOfficerRequestReports($filter),
+                'total' => fn ($filter) => OfficerRequest::countOfficerRequestReports($filter),
             ],
         ];
     }
@@ -116,18 +114,60 @@ class ReportController extends Controller
     /**
      * List the available reports for the report menu page.
      */
-    public function types()
+    public function types(Request $request)
     {
+        $this->useRequestLocale($request);
         $reports = collect($this->reports())->map(fn ($report, $key) => [
             'key' => $key,
-            'title' => $report['title'],
-            'description' => $report['description'],
+            'title' => $this->text($key, 'title'),
+            'description' => $this->text($key, 'description'),
             'icon' => $report['icon'],
             'color' => $report['color'],
             'field_api' => $report['field_api'],
         ])->values();
 
         return response()->json($reports);
+    }
+
+    /**
+     * One page of a report as JSON for the on-screen viewer (fast; the PDF is only built on download/print).
+     * Body: { data: search fields, page, limit }. Summary is computed on the first page only.
+     */
+    public function preview(Request $request, string $type)
+    {
+        if (empty(CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT])) {
+            return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
+        }
+
+        $this->useRequestLocale($request);
+        $report = $this->reports()[$type] ?? abort(404);
+        $sizes = config('report.page_sizes');
+        $page = max(1, (int) $request->input('page', 1));
+        $limit = (int) $request->input('limit', config('report.default_page_size'));
+        $limit = in_array($limit, $sizes, true) ? $limit : config('report.default_page_size');
+        $filter = [
+            'sort' => 'id',
+            'order' => 'asc',
+            'page_number' => $page,
+            'limit' => $limit,
+            'search_field' => $request->input('data') ?: null,
+        ];
+
+        $fields = $report['fields']();
+        $total = isset($report['total']) ? (int) $report['total']($filter) : null;
+
+        $summary = $page === 1 ? $this->summaryTiles($type, $report, $filter, $total) : null;
+
+        $rows = $report['rows']($filter)->values();
+
+        return response()->json([
+            'columns' => $this->columns($fields, $rows),
+            'rows' => $rows,
+            'total' => $total,
+            'page' => $page,
+            'limit' => $limit,
+            'summary' => $summary,
+        ]);
     }
 
     /**
@@ -139,28 +179,35 @@ class ReportController extends Controller
             return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
         }
 
+        $this->useRequestLocale($request);
         $report = $this->reports()[$type] ?? abort(404);
+        $maxRows = (int) config('report.max_rows');
         $filter = [
             'sort' => 'id',
             'order' => 'asc',
             'page_number' => 1,
-            'limit' => self::REPORT_MAX_ROWS,
+            'limit' => $maxRows,
             'search_field' => $request->input('data') ?: null,
         ];
 
         $rows = $report['rows']($filter);
-        $summary = isset($report['summary'])
-            ? $report['summary']($filter)
-            : ['ចំនួនសរុប' => count($rows)];
+        $summary = $this->summaryTiles($type, $report, $filter, count($rows));
+
+        $columns = $this->columns($report['fields'](), $rows);
+        $user = auth()->user();
 
         $html = View::make('reports.table', [
-            'title' => $report['title'],
+            'title' => $this->text($type, 'title'),
+            'description' => $this->text($type, 'description'),
             'color' => $report['color'],
-            'fields' => $report['fields'](),
+            'columns' => $columns,
             'rows' => $rows,
             'summary' => $summary,
-            'truncated' => count($rows) >= self::REPORT_MAX_ROWS,
-            'logo' => public_path('images/logo.png'),
+            'filters' => $this->filterLabels($request->input('data') ?: []),
+            'printedBy' => $user ? ($user->username ?? $user->email ?? '') : '',
+            'truncated' => count($rows) >= $maxRows,
+            'organization' => $this->organization(),
+            'moneyPattern' => config('report.columns.money'),
         ])->render();
 
         // Large reports produce a big HTML string; mPDF needs more regex, memory and time to lay it out.
@@ -168,9 +215,14 @@ class ReportController extends Controller
         ini_set('memory_limit', '1024M');
         set_time_limit(300);
 
-        $mpdf = $this->makePdf();
-        $mpdf->SetTitle($report['title']);
-        $mpdf->SetHTMLFooter(View::make('reports.footer')->render());
+        // Narrow reports read better in portrait
+        $mpdf = $this->makePdf(count($columns) <= config('report.portrait_max_columns') ? 'P' : 'L');
+        $mpdf->SetTitle($this->text($type, 'title'));
+        $mpdf->SetHTMLFooter(View::make('reports.footer', [
+            'title' => $this->text($type, 'title'),
+            'color' => $report['color'],
+            'organization' => $this->organization(),
+        ])->render());
 
         // mPDF's Khmer shaper emits harmless warnings on some malformed text; don't let them abort the report.
         set_error_handler(fn ($severity, $message, $file) => str_contains($file, '/mpdf/'), E_WARNING | E_NOTICE);
@@ -187,6 +239,100 @@ class ReportController extends Controller
         return response($pdf, 200)
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', $disposition.'; filename="'.$filename.'"');
+    }
+
+    /**
+     * Reports answer in the user's language: the app sends X-Locale (kh | en); Khmer by default.
+     */
+    protected function useRequestLocale(Request $request): void
+    {
+        $locale = $request->header('X-Locale', 'kh');
+        App::setLocale(in_array($locale, ['kh', 'en'], true) ? $locale : 'kh');
+    }
+
+    /** report.types.{key}.{part}, falling back to a readable key */
+    protected function text(string $key, string $part): string
+    {
+        $id = "report.types.$key.$part";
+        return Lang::has($id) ? trans($id) : ($part === 'title' ? Str::headline($key) : '');
+    }
+
+    /** Summary tiles: the report's own counts (labelled from translations) or the row total */
+    protected function summaryTiles(string $type, array $report, array $filter, ?int $total): array
+    {
+        if (!isset($report['summary'])) {
+            return [trans('report.total') => $total];
+        }
+        $labels = [];
+        foreach ($report['summary']($filter) as $key => $value) {
+            $id = "report.types.$type.summary.$key";
+            $labels[Lang::has($id) ? trans($id) : Str::headline($key)] = $value;
+        }
+        return $labels;
+    }
+
+    /** Organisation name, logo and footer from the system settings (configuration table) */
+    protected function organization(): array
+    {
+        static $organization = null;
+        if ($organization !== null) return $organization;
+
+        $settings = Configuration::whereIn('key', ['config_owner', 'config_name', 'config_logo', 'config_footer'])
+            ->pluck('value', 'key');
+        $logo = ltrim((string) ($settings['config_logo'] ?? ''), '/');
+        $logoPath = $logo && is_file(public_path($logo)) ? public_path($logo) : public_path(config('report.default_logo'));
+
+        return $organization = [
+            'name' => $settings['config_owner'] ?? config('app.name'),
+            'system' => $settings['config_name'] ?? '',
+            'logo' => $logoPath,
+            'footer' => $settings['config_footer'] ?? '',
+        ];
+    }
+
+    /**
+     * Column definitions shared by the on-screen table and the PDF:
+     * label from the `common` translations, numeric = every value on the page is a number
+     * (ids, codes, phone numbers and dates excluded), date = name ends in _date / _at or is dob.
+     */
+    protected function columns(array $fields, $rows): array
+    {
+        $rows = collect($rows);
+
+        return collect($fields)->map(function ($field) use ($rows) {
+            $isDate = (bool) preg_match(config('report.columns.date'), $field);
+            $values = $rows->map(fn ($row) => data_get($row, $field))
+                ->filter(fn ($value) => $value !== null && $value !== '' && !is_array($value) && !is_object($value));
+            $numeric = !$isDate
+                && !preg_match(config('report.columns.not_numeric'), $field)
+                && $values->isNotEmpty()
+                && $values->every(fn ($value) => is_numeric(str_replace(',', '', (string) $value)));
+
+            return [
+                'key' => $field,
+                'label' => Lang::has('common.'.$field) ? trans('common.'.$field) : Str::headline($field),
+                'numeric' => $numeric,
+                'date' => $isDate,
+            ];
+        })->values()->all();
+    }
+
+    /**
+     * Active filters as "label => value" for the PDF header.
+     * Input: [{ field: value }, …] where value may be a { label, value } option.
+     */
+    protected function filterLabels(array $filters): array
+    {
+        $labels = [];
+        foreach ($filters as $item) {
+            foreach ((array) $item as $field => $value) {
+                $text = is_array($value) ? ($value['label'] ?? $value['value'] ?? '') : $value;
+                if ($text === null || $text === '') continue;
+                $label = Lang::has('common.'.$field) ? trans('common.'.$field) : Str::headline($field);
+                $labels[$label] = (string) $text;
+            }
+        }
+        return $labels;
     }
 
     protected function makePdf(string $orientation = 'L'): Mpdf

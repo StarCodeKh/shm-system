@@ -1,55 +1,88 @@
 <template>
     <div>
-        <vs-popup class="d-modal d-modal--xl" classContent="popup-example" title="កំណត់សិទ្ធ" :active.sync="showModalForm">
-            <div id="user-edit-tab-info">
-                <!-- Permissions -->
-                <vx-card class="mt-base" no-shadow card-border>
-                <div class="vx-row">
-                    <div class="vx-col w-full">
-                    <div class="flex items-end px-3">
-                        <feather-icon svgClasses="w-6 h-6" icon="LockIcon" class="mr-2" />
-                        <span class="font-medium text-lg leading-none">កំណត់សិទ្ធប្រើប្រាស់: {{ data.data.data.name }}</span>
+        <vs-popup class="d-modal d-modal--xl perm-modal" classContent="perm-modal__content" :title="$t('perm_title')"
+            :active.sync="showModalForm">
+            <div class="dt-list perm">
+                <!-- Toolbar -->
+                <div class="dt-toolbar">
+                    <div class="perm__title">
+                        <span class="perm__icon"><feather-icon icon="ShieldIcon" svgClasses="h-5 w-5" /></span>
+                        <div class="dt-toolbar__title">
+                            <h3>{{ roleName || '—' }}</h3>
+                            <p>{{ $t('perm_granted', { n: grantedCount, total: allNames.length }) }}</p>
+                        </div>
                     </div>
-                    <vs-divider />
+                    <div class="dt-toolbar__actions perm__tools">
+                        <div class="dt-cell dt-search">
+                            <span class="dt-search__icon"><feather-icon icon="SearchIcon" svgClasses="h-4 w-4" /></span>
+                            <input v-model.trim="keyword" type="text" :placeholder="$t('perm_search')">
+                        </div>
+                        <button type="button" class="dt-btn" @click="setMany(visibleNames, !allVisibleOn)">
+                            <feather-icon :icon="allVisibleOn ? 'XSquareIcon' : 'CheckSquareIcon'" svgClasses="h-4 w-4" />
+                            <span>{{ allVisibleOn ? $t('perm_clear_all') : $t('perm_select_all') }}</span>
+                        </button>
                     </div>
                 </div>
 
-                <div class="block overflow-x-auto">
-                    <table class="w-full">
-                    <tr>
-                        <!--
-                        You can also use `Object.keys(Object.values(data_local.permissions)[0])` this logic if you consider,
-                        our data structure. You just have to loop over above variable to get table headers.
-                        Below we made it simple. So, everyone can understand.
-                        -->
-                        <th class="font-semibold text-base text-left px-3 py-2" v-for="heading in ['Module', 'View List', 'Create', 'Show', 'Edit', 'Update', 'Delete']" :key="heading">{{ heading }}</th>
-                    </tr>
-                    
-                    <tr v-if="data.data.permission_lists" v-for="(tr, index) in data.data.permission_lists" :key="index">
-                        <td class="px-3 py-2">{{ tr.name }}</td>
-                        <td v-for="(ctr, cindex) in tr.permission" class="px-3 py-2" :key="index+cindex">
-                          <!-- { ctr.name }} -->
-                          <span>
-                            <vs-checkbox v-model="form.permission_by_roles[ctr.name]">
-                              {{ $t(ctr.name) }}
-                            </vs-checkbox>
-                          </span>
-                          <!-- <vs-checkbox v-model="val[ctr.name]" /> {{ ctr.name }} -->
-                        </td>
-                    </tr>
+                <!-- Matrix: modules × actions, built from the permission names (action_module) -->
+                <div class="dt-table-wrap perm__wrap">
+                    <table v-if="!loading && rows.length" class="dt-table perm__table">
+                        <thead>
+                            <tr>
+                                <th class="perm__module-col">{{ $t('perm_module') }}</th>
+                                <th v-for="action in actions" :key="action" class="perm__action-col">
+                                    <label class="perm__head" :title="$t('perm_toggle_column')">
+                                        <input type="checkbox" class="perm__check" :checked="columnState(action) === 'all'"
+                                            :indeterminate.prop="columnState(action) === 'some'"
+                                            @change="setMany(columnNames(action), $event.target.checked)">
+                                        <span>{{ actionLabel(action) }}</span>
+                                    </label>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="row in rows" :key="row.module">
+                                <td class="perm__module-col">
+                                    <label class="perm__module">
+                                        <input type="checkbox" class="perm__check" :checked="rowState(row) === 'all'"
+                                            :indeterminate.prop="rowState(row) === 'some'"
+                                            @change="setMany(row.names, $event.target.checked)">
+                                        <span class="perm__module-text">
+                                            <strong>{{ moduleLabel(row.module) }}</strong>
+                                            <small>{{ rowCount(row) }} / {{ row.names.length }}</small>
+                                        </span>
+                                    </label>
+                                </td>
+                                <td v-for="action in actions" :key="action" class="perm__action-col">
+                                    <input v-if="row.cells[action]" type="checkbox" class="perm__check"
+                                        :checked="!!granted[row.cells[action]]" :title="row.cells[action]"
+                                        @change="setOne(row.cells[action], $event.target.checked)">
+                                    <span v-else class="perm__none">—</span>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
+
+                    <div v-else-if="loading" class="perm__loading">
+                        <span v-for="n in 6" :key="n" />
+                    </div>
+
+                    <div v-else class="dt-empty">
+                        <span class="dt-empty__icon"><feather-icon icon="SearchIcon" svgClasses="h-6 w-6" /></span>
+                        <strong>{{ $t('perm_empty') }}</strong>
+                    </div>
                 </div>
 
-                </vx-card>
-
-                <!-- Save & Reset Button -->
-                <div class="vx-row">
-                  <div class="vx-col w-full">
-                      <div class="mt-8 flex flex-wrap items-center justify-end">
-                      <vs-button class="ml-auto mt-2" @click="save_changes" :disabled="!validateForm">Save Changes</vs-button>
-                      <!-- <vs-button class="ml-4 mt-2" type="border" color="warning" @click="reset_data">Reset</vs-button> -->
-                      </div>
-                  </div>
+                <!-- Footer -->
+                <div class="perm__footer">
+                    <span class="perm__changes">
+                        <template v-if="changedCount">{{ $t('perm_changed', { n: changedCount }) }}</template>
+                    </span>
+                    <button type="button" class="dt-btn" @click="showModalForm = false">{{ $t('perm_cancel') }}</button>
+                    <button type="button" class="dt-btn dt-btn--primary" :disabled="saving || loading" @click="save_changes">
+                        <feather-icon :icon="saving ? 'LoaderIcon' : 'SaveIcon'" svgClasses="h-4 w-4" />
+                        <span>{{ $t('perm_save') }}</span>
+                    </button>
                 </div>
             </div>
         </vs-popup>
@@ -59,165 +92,385 @@
 <script>
 import axios from "@/axios.js"
 import apiConfig from "@/apiConfig.js"
-import { ref } from 'vue';
-import vSelect from 'vue-select'
-// Store Module
-import moduleUserManagement from '@/store/user-management/moduleUserManagement.js'
+
+// Column order for known actions; any other action found in the data is appended after these
+const ACTION_ORDER = ['list', 'show', 'create', 'edit', 'update', 'delete', 'download', 'import', 'export', 'print', 'execute']
+
 export default {
-  components: {
-    vSelect
-  },
-//   props: {
-//     data: {
-//       type: Object,
-//       required: true,
-//     },
-//   },
-  data() {
-    return {
-      title: "setting_role",
-      api: apiConfig._apiRole,
-      showModalForm: false,
-      data: {
-        data: [
-            {}
-        ],
-        limit: 10,
-        total: 3,
-      },
-      data_local: [],
-      // data_local: JSON.parse(JSON.stringify(this.data)),
-      statusOptions: [
-        { label: "Active",  value: "active" },
-        { label: "Blocked",  value: "blocked" },
-        { label: "Deactivated",  value: "deactivated" },
-      ],
-      roleOptions: [
-        { label: "Admin",  value: "admin" },
-        { label: "User",  value: "user" },
-        { label: "Staff",  value: "staff" },
-      ],
-      _checkPermissions: "",
-      form: {permission_by_roles: {}},
-      permission_list: [
-
-      ],
-      permissions: {
-        "users": {
-          "read": true,
-          "write": false,
-          "create": false,
-          "delete": false
-        },
-        "posts": {
-          "read": true,
-          "write": true,
-          "create": true,
-          "delete": true
-        },
-        "comments": {
-          "read": true,
-          "write": false,
-          "create": true,
-          "delete": false
-        },
-
-      }
-    }
-  },
-    computed: {
-        validateForm() {
-            return !this.errors.any()
+    data() {
+        return {
+            api: apiConfig._apiRole,
+            showModalForm: false,
+            loading: false,
+            saving: false,
+            role: null,
+            modules: [],     // [{ name, permission: [{ name }] }] from the API
+            granted: {},     // { permission_name: true|false }
+            original: {},    // granted as loaded, to count unsaved changes
+            keyword: '',
         }
     },
-    created() {
-        this.$vs.loading();
-    },
-    watch: {
+    computed: {
+        roleName() {
+            return this.role && this.role.name
+        },
+        // One row per module; each permission name "action_module" lands in its action's column
+        allRows() {
+            return this.modules.map(module => {
+                const cells = {}
+                const names = []
+                ;(module.permission || []).forEach(({ name }) => {
+                    if (!name) return
+                    const suffix = '_' + module.name
+                    const action = name.endsWith(suffix) ? name.slice(0, -suffix.length) : name.split('_')[0]
+                    cells[action] = name
+                    names.push(name)
+                })
+                return { module: module.name, cells, names }
+            })
+        },
+        rows() {
+            const keyword = this.keyword.toLowerCase()
+            if (!keyword) return this.allRows
+            return this.allRows.filter(row =>
+                (row.module + ' ' + this.moduleLabel(row.module)).toLowerCase().includes(keyword))
+        },
+        actions() {
+            const found = new Set()
+            this.allRows.forEach(row => Object.keys(row.cells).forEach(action => found.add(action)))
+            const known = ACTION_ORDER.filter(action => found.has(action))
+            const others = [...found].filter(action => !ACTION_ORDER.includes(action)).sort()
+            return known.concat(others)
+        },
+        allNames() {
+            return this.allRows.reduce((list, row) => list.concat(row.names), [])
+        },
+        visibleNames() {
+            return this.rows.reduce((list, row) => list.concat(row.names), [])
+        },
+        allVisibleOn() {
+            return this.visibleNames.length > 0 && this.visibleNames.every(name => this.granted[name])
+        },
+        grantedCount() {
+            return this.allNames.filter(name => this.granted[name]).length
+        },
+        changedCount() {
+            return this.allNames.filter(name => !!this.granted[name] !== !!this.original[name]).length
+        },
     },
     methods: {
         showForm(data) {
-          this.form.permission_by_roles = [];
-          this.showModalForm = true;
-            return new Promise((resolve, reject) => {
-              axios.get(this.api + "/" + data.id)
-              .then((response) => {
-                if (response.data) {
-                  this.data = response.data;
-                  let _checkPermissions;
-                  // let index;
-                  this.form.permission_by_roles = response.data.data.permission_by_roles;
-                } else {
-                  this.data = data;
-                }
-                this.$vs.loading.close();
-            }).catch((error) => {
-                // reject(error)
-                this.$vs.notify({
-                  title: 'Message',
-                  text: "Error, while trying to do action or no permission allow!",
-                  iconPack: 'feather',
-                  icon: 'icon-check-circle',
-                  color: 'danger'
+            this.showModalForm = true
+            this.loading = true
+            this.keyword = ''
+            this.role = data
+            axios.get(this.api + "/" + data.id)
+                .then(({ data: response }) => {
+                    const payload = response && response.data ? response.data : {}
+                    this.role = payload.data || data
+                    this.modules = payload.permission_lists || []
+                    // The API sends an object of name → boolean (or an empty array when nothing is granted)
+                    const granted = payload.permission_by_roles && !Array.isArray(payload.permission_by_roles)
+                        ? payload.permission_by_roles : {}
+                    const normalized = {}
+                    Object.keys(granted).forEach(name => { normalized[name] = !!granted[name] && granted[name] !== '0' })
+                    this.granted = normalized
+                    this.original = { ...normalized }
                 })
-                this.$vs.loading.close();
-            })
-          })
-          // this.data = data;
+                .catch(() => this.notify('Error, while trying to do action or no permission allow!', 'danger'))
+                .finally(() => { this.loading = false })
         },
-        save_changes(){
-          this.$vs.loading();
-          let _data = {
-            "role_info": this.data.data.data,
-            "permission": this.form.permission_by_roles
-          }
-          this.showModalForm = true;
-          return new Promise((resolve, reject) => {
-            axios.post(this.api + '/set_permission', _data)
-                .then((response) => {
-                  console.log("message", response.data);
-                    if (response.data.success == false) {
-                        this.$vs.notify({
-                            title: 'Message',
-                            text: response.data.message,
-                            iconPack: 'feather',
-                            icon: 'icon-check-circle',
-                            color: 'danger',
-                            position: 'top-right'
-                        })
-                        this.showModalForm = true;
+        setOne(name, value) {
+            this.$set(this.granted, name, value)
+        },
+        setMany(names, value) {
+            names.forEach(name => this.$set(this.granted, name, value))
+        },
+        columnNames(action) {
+            return this.rows.map(row => row.cells[action]).filter(Boolean)
+        },
+        state(names) {
+            const on = names.filter(name => this.granted[name]).length
+            return on === 0 ? 'none' : on === names.length ? 'all' : 'some'
+        },
+        columnState(action) {
+            return this.state(this.columnNames(action))
+        },
+        rowState(row) {
+            return this.state(row.names)
+        },
+        rowCount(row) {
+            return row.names.filter(name => this.granted[name]).length
+        },
+        actionLabel(action) {
+            const key = 'perm_action_' + action
+            return this.$te(key) ? this.$t(key) : action.replace(/_/g, ' ')
+        },
+        moduleLabel(module) {
+            return this.$te(module) ? this.$t(module) : module.replace(/_/g, ' ')
+        },
+        save_changes() {
+            this.saving = true
+            // Send every known permission: ones not shown in the matrix keep their loaded value
+            const permission = { ...this.original }
+            Object.keys(this.granted).forEach(name => { permission[name] = !!this.granted[name] })
+            axios.post(this.api + '/set_permission', { role_info: this.role, permission })
+                .then(({ data }) => {
+                    if (data.success === false) {
+                        this.notify(data.message, 'danger')
                     } else {
-                        this.$vs.notify({
-                            title: 'Message',
-                            text: response.data.message,
-                            iconPack: 'feather',
-                            icon: 'icon-check-circle',
-                            color: 'primary',
-                            position: 'top-right'
-                        })
-                        // this.$emit('clickForm', '');
-                        this.showModalForm = true;
+                        this.original = { ...this.granted }
+                        this.notify(data.message, 'primary')
                     }
-                    this.$vs.loading.close();
-                    // this.$router.push('/account/expense').catch(() => { })
-                }).catch((error) => {
-                    reject(error)
-                    this.$vs.notify({
-                        title: 'Message',
-                        text: 'Error, while trying to do action or no permission allow!',
-                        iconPack: 'feather',
-                        icon: 'icon-check-circle',
-                        color: 'danger',
-                        position: 'top-right'
-                    })
-                    this.$vs.loading.close();
                 })
-        })
+                .catch(() => this.notify('Error, while trying to do action or no permission allow!', 'danger'))
+                .finally(() => { this.saving = false })
         },
-        reset_data(){
-            this.permissions
+        notify(text, color) {
+            this.$vs.notify({ title: 'Message', text, iconPack: 'feather', icon: 'icon-check-circle', color, position: 'top-right' })
+        },
+    },
+}
+</script>
+
+<style lang="scss">
+.perm-modal .perm-modal__content {
+    padding-bottom: 0 !important;
+}
+
+.perm {
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    &__icon {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        color: rgb(var(--vs-primary));
+        background: rgba(var(--vs-primary), .12);
+
+        .feather-icon {
+            display: flex;
         }
     }
 
+    &__tools {
+        flex: 1 1 420px;
+        justify-content: flex-end;
+
+        .dt-search {
+            flex: 1 1 220px;
+            max-width: 300px;
+        }
+    }
+
+    // Matrix scrolls inside the popup; header row and module column stay in view
+    &__wrap {
+        max-height: calc(100vh - 300px);
+        overflow: auto;
+    }
+
+    &__table {
+        border-collapse: separate;
+        border-spacing: 0;
+
+        th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        th,
+        td {
+            border-bottom: 1px solid #f1f2f6;
+        }
+
+        tbody tr:hover td {
+            background: #fafbfd;
+        }
+    }
+
+    &__module-col {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        min-width: 220px;
+        background: #fff;
+        box-shadow: 1px 0 0 #eceef4;
+
+        th & {
+            z-index: 3;
+            background: #f6f7fb;
+        }
+    }
+
+    &__action-col {
+        min-width: 86px;
+        text-align: center !important;
+    }
+
+    &__head {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        font-size: .75rem;
+        font-weight: 700;
+        text-transform: capitalize;
+        cursor: pointer;
+    }
+
+    &__module {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+    }
+
+    &__module-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.35;
+
+        strong {
+            font-size: .88rem;
+            font-weight: 600;
+            color: #2c2e45;
+            text-transform: capitalize;
+        }
+
+        small {
+            font-size: .72rem;
+            color: #8a8ca5;
+            font-variant-numeric: tabular-nums;
+        }
+    }
+
+    // Native checkbox restyled to the theme colour (supports the indeterminate state for "some")
+    &__check {
+        appearance: none;
+        -webkit-appearance: none;
+        position: relative;
+        flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+        margin: 0;
+        padding: 0 !important;
+        border: 1.5px solid #c9ccd6 !important;
+        border-radius: 6px !important;
+        background: #fff !important;
+        cursor: pointer;
+        transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
+        vertical-align: middle;
+
+        &:hover {
+            border-color: rgb(var(--vs-primary)) !important;
+        }
+
+        &:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(var(--vs-primary), .2);
+        }
+
+        &:checked,
+        &:indeterminate {
+            border-color: rgb(var(--vs-primary)) !important;
+            background: rgb(var(--vs-primary)) !important;
+        }
+
+        &:checked::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        &:indeterminate::after {
+            content: '';
+            position: absolute;
+            left: 4px;
+            right: 4px;
+            top: 8px;
+            height: 2px;
+            border-radius: 2px;
+            background: #fff;
+        }
+    }
+
+    &__none {
+        color: #d3d5dc;
+    }
+
+    &__loading {
+        display: grid;
+        gap: 10px;
+        padding: 16px;
+
+        span {
+            height: 18px;
+            border-radius: 6px;
+            background: linear-gradient(90deg, #f1f2f5 25%, #e7e9ee 50%, #f1f2f5 75%);
+            background-size: 200% 100%;
+            animation: dt-shimmer 1.2s infinite;
+        }
+    }
+
+    // Sticky footer inside the popup
+    &__footer {
+        position: sticky;
+        bottom: 0;
+        z-index: 4;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 16px -24px 0;
+        padding: 14px 24px;
+        border-top: 1px solid #eef0f4;
+        background: rgba(255, 255, 255, .96);
+        backdrop-filter: blur(6px);
+    }
+
+    &__changes {
+        flex: 1;
+        font-size: .82rem;
+        color: #d97706;
+    }
 }
-</script>
+
+.theme-dark .perm {
+    &__module-col {
+        background: #10163a;
+
+        th & {
+            background: #262c49;
+        }
+    }
+
+    &__module-text strong {
+        color: #fff;
+    }
+
+    &__check {
+        background: #10163a !important;
+        border-color: #414561 !important;
+    }
+
+    &__footer {
+        background: rgba(38, 44, 73, .96);
+        border-color: #414561;
+    }
+}
+</style>

@@ -422,6 +422,7 @@ Route::prefix('v1')->middleware(['auth:api', 'global_site', 'cors'])->group(func
 
         // PDF reports: officers, income, expense, officer_incentive, officers_payment, ...
         Route::get('types', 'types');
+        Route::post('{type}/data', 'preview')->where('type', '[a-z_]+');
         Route::post('{type}', 'generate')->where('type', '[a-z_]+');
     });
 

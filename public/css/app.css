@@ -4055,6 +4055,7 @@ input.vs-inputx.vs-input--input.small.hasValue {
   --brand-green: 47, 164, 73;
   --input-radius: 10px;
   --input-height: 42px;
+  --control-sm-height: 34px;
   --input-border: #d8d9e3;
   --input-border-hover: #c3c5d4;
   --field-gap: 20px;
@@ -7004,13 +7005,24 @@ input[type=file]:focus-visible {
   border-color: #414561 !important;
 }
 
-/* --- TEXTAREA AUTO-GROW: starts at input height, grows with its text (JS fallback in plugins/autosize.js) --- */
+/* --- TEXTAREA: one line at input height so form rows stay even; expands to its text while being edited
+       (JS fallback for browsers without field-sizing in plugins/autosize.js) --- */
 
-textarea:not([rows]),
-textarea.vs-textarea:not([rows]) {
+textarea:not([rows]):not(:focus),
+textarea.vs-textarea:not([rows]):not(:focus) {
+  height: var(--input-height) !important;
+  white-space: nowrap;
+  overflow: hidden;
+  resize: none;
+}
+
+textarea:not([rows]):focus,
+textarea.vs-textarea:not([rows]):focus {
   field-sizing: content;
   height: auto;
+  min-height: var(--input-height);
   max-height: 220px;
+  white-space: pre-wrap;
   overflow-y: auto;
 }
 
@@ -8178,6 +8190,242 @@ input.vs-input--input.large {
 [dir] .theme-dark .dt-list .dt-file {
   background: #10163a;
   border-color: #414561;
+}
+
+/* --- PAGINATION: compact controls (--control-sm-height) with the input radius/border --- */
+
+.con-vs-pagination .vs-pagination--nav {
+  gap: 4px;
+}
+
+.con-vs-pagination .vs-pagination--ul {
+  gap: 4px;
+}
+
+[dir] .con-vs-pagination .vs-pagination--ul {
+  padding: 0 !important;
+  margin: 0;
+  background: transparent !important;
+  border-radius: 0;
+}
+
+.con-vs-pagination .vs-pagination--li,
+.con-vs-pagination .vs-pagination--buttons {
+  box-sizing: border-box;
+  min-width: var(--control-sm-height);
+  width: auto;
+  height: var(--control-sm-height);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #4b4d68;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+[dir] .con-vs-pagination .vs-pagination--li, [dir] .con-vs-pagination .vs-pagination--buttons {
+  margin: 0 !important;
+  padding: 0 8px;
+  border: 1px solid var(--input-border);
+  border-radius: calc(var(--input-radius) - 2px) !important;
+  background: #fff;
+  box-shadow: none;
+  transform: none !important;
+}
+
+.con-vs-pagination .vs-pagination--li .effect,
+.con-vs-pagination .vs-pagination--buttons .effect {
+  display: none;
+}
+
+.con-vs-pagination .vs-pagination--li:hover:not(.is-current):not(:disabled):not(.disabled),
+.con-vs-pagination .vs-pagination--buttons:hover:not(.is-current):not(:disabled):not(.disabled) {
+  color: rgb(var(--vs-primary)) !important;
+}
+
+[dir] .con-vs-pagination .vs-pagination--li:hover:not(.is-current):not(:disabled):not(.disabled), [dir] .con-vs-pagination .vs-pagination--buttons:hover:not(.is-current):not(:disabled):not(.disabled) {
+  border-color: rgba(var(--vs-primary), 0.5);
+  background: rgba(var(--vs-primary), 0.06) !important;
+}
+
+.con-vs-pagination .vs-pagination--li.is-current {
+  color: #fff !important;
+}
+
+[dir] .con-vs-pagination .vs-pagination--li.is-current {
+  border-color: rgb(var(--vs-primary));
+  background: rgb(var(--vs-primary)) !important;
+  box-shadow: 0 6px 14px -8px rgba(var(--vs-primary), 0.9);
+}
+
+.con-vs-pagination .vs-pagination--buttons.disabled,
+.con-vs-pagination .vs-pagination--buttons:disabled {
+  opacity: 0.45;
+}
+
+.con-vs-pagination .vs-pagination--buttons i,
+.con-vs-pagination .vs-pagination--buttons .material-icons {
+  font-size: 1rem;
+}
+
+@media (max-width: 640px) {
+  .con-vs-pagination .vs-pagination--li,
+  .con-vs-pagination .vs-pagination--buttons {
+    min-width: 30px;
+    height: 30px;
+    font-size: 0.78rem;
+  }
+  [dir] .con-vs-pagination .vs-pagination--li, [dir] .con-vs-pagination .vs-pagination--buttons {
+    padding: 0 5px;
+  }
+}
+
+.theme-dark .con-vs-pagination .vs-pagination--li:not(.is-current),
+.theme-dark .con-vs-pagination .vs-pagination--buttons {
+  color: #c2c6dc;
+}
+
+[dir] .theme-dark .con-vs-pagination .vs-pagination--li:not(.is-current), [dir] .theme-dark .con-vs-pagination .vs-pagination--buttons {
+  border-color: #414561;
+  background: #10163a;
+}
+
+/* --- COMPACT SELECT: page-size and other small selects (add .is-compact, or any select in a list footer) --- */
+
+.v-select.is-compact .vs__dropdown-toggle,
+.dt-footer .v-select .vs__dropdown-toggle {
+  height: var(--control-sm-height) !important;
+  min-height: var(--control-sm-height) !important;
+}
+
+[dir] .v-select.is-compact .vs__dropdown-toggle, [dir] .dt-footer .v-select .vs__dropdown-toggle {
+  border-radius: calc(var(--input-radius) - 2px) !important;
+}
+
+[dir=ltr] .v-select.is-compact .vs__dropdown-toggle, [dir=ltr] .dt-footer .v-select .vs__dropdown-toggle {
+  padding: 0 6px 0 10px !important;
+}
+
+[dir=rtl] .v-select.is-compact .vs__dropdown-toggle, [dir=rtl] .dt-footer .v-select .vs__dropdown-toggle {
+  padding: 0 10px 0 6px !important;
+}
+
+.v-select.is-compact .vs__selected,
+.dt-footer .v-select .vs__selected {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+[dir=ltr] .v-select.is-compact .vs__actions, [dir=ltr] .dt-footer .v-select .vs__actions {
+  padding-left: 4px;
+}
+
+[dir=rtl] .v-select.is-compact .vs__actions, [dir=rtl] .dt-footer .v-select .vs__actions {
+  padding-right: 4px;
+}
+
+[dir] .v-select.is-compact .vs__open-indicator, [dir] .dt-footer .v-select .vs__open-indicator {
+  transform: scale(0.8);
+}
+
+[dir=ltr] .v-select.is-compact.vs--open .vs__open-indicator, [dir=ltr] .dt-footer .v-select.vs--open .vs__open-indicator {
+  transform: rotate(180deg) scale(0.8);
+}
+
+[dir=rtl] .v-select.is-compact.vs--open .vs__open-indicator, [dir=rtl] .dt-footer .v-select.vs--open .vs__open-indicator {
+  transform: rotate(-180deg) scale(0.8);
+}
+
+.v-select.is-compact .vs__dropdown-menu,
+.dt-footer .v-select .vs__dropdown-menu {
+  min-width: 96px;
+}
+
+[dir] .v-select.is-compact .vs__dropdown-menu, [dir] .dt-footer .v-select .vs__dropdown-menu {
+  margin-top: 4px;
+  padding: 4px;
+  border-radius: 10px !important;
+}
+
+[dir=ltr] .v-select.is-compact .vs__dropdown-menu, [dir=ltr] .dt-footer .v-select .vs__dropdown-menu {
+  left: auto !important;
+  right: 0;
+}
+
+[dir=rtl] .v-select.is-compact .vs__dropdown-menu, [dir=rtl] .dt-footer .v-select .vs__dropdown-menu {
+  right: auto !important;
+  left: 0;
+}
+
+.v-select.is-compact .vs__dropdown-option,
+.dt-footer .v-select .vs__dropdown-option {
+  min-height: 30px;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+
+[dir] .v-select.is-compact .vs__dropdown-option, [dir] .dt-footer .v-select .vs__dropdown-option {
+  border-radius: 7px;
+}
+
+[dir=ltr] .v-select.is-compact .vs__dropdown-option, [dir=ltr] .dt-footer .v-select .vs__dropdown-option {
+  padding: 5px 28px 5px 10px;
+}
+
+[dir=rtl] .v-select.is-compact .vs__dropdown-option, [dir=rtl] .dt-footer .v-select .vs__dropdown-option {
+  padding: 5px 10px 5px 28px;
+}
+
+.v-select.is-compact .vs__dropdown-option--selected::after,
+.dt-footer .v-select .vs__dropdown-option--selected::after {
+  width: 13px;
+  height: 13px;
+}
+
+[dir] .v-select.is-compact .vs__dropdown-option--selected::after, [dir] .dt-footer .v-select .vs__dropdown-option--selected::after {
+  margin-top: -6.5px;
+}
+
+[dir=ltr] .v-select.is-compact .vs__dropdown-option--selected::after, [dir=ltr] .dt-footer .v-select .vs__dropdown-option--selected::after {
+  right: 8px;
+}
+
+[dir=rtl] .v-select.is-compact .vs__dropdown-option--selected::after, [dir=rtl] .dt-footer .v-select .vs__dropdown-option--selected::after {
+  left: 8px;
+}
+
+.dt-footer .v-select .vs__dropdown-menu {
+  top: auto !important;
+  bottom: 100%;
+}
+
+[dir] .dt-footer .v-select .vs__dropdown-menu {
+  margin: 0 0 4px;
+}
+
+.v-select.vs--single.vs--open.vs--unsearchable .vs__selected {
+  position: static;
+  opacity: 1;
+}
+
+/* --- SIDEBAR: page and top bar slide together when the menu opens (pin button or hover) --- */
+
+[dir=ltr] #content-area {
+  transition: margin-left 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[dir=rtl] #content-area {
+  transition: margin-right 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.vx-navbar-wrapper {
+  transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #content-area,
+  .vx-navbar-wrapper {
+    transition: none;
+  }
 }
 
 [dir] .con-vs-alert {
