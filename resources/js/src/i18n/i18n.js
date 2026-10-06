@@ -35,13 +35,37 @@ export function translatePhrase(text) {
   return (entry && entry[i18n.locale]) || text
 }
 
-// Generic toast titles are replaced by one that matches the toast's color
-const TITLE_BY_COLOR = { danger: 'Error', success: 'Success', primary: 'Success', warning: 'Warning' }
+// Every toast gets the look of its type, whatever the calling screen passed:
+// one color, icon, title and display time per type, always in the top-right corner.
+const NOTIFY_TYPES = {
+  success: { color: 'success', icon: 'icon-check-circle', title: 'Success', time: 3500 },
+  danger: { color: 'danger', icon: 'icon-x-circle', title: 'Error', time: 6000 },
+  warning: { color: 'warning', icon: 'icon-alert-triangle', title: 'Warning', time: 5000 },
+  info: { color: 'primary', icon: 'icon-info', title: 'Info', time: 3500 },
+}
+const GENERIC_TITLES = ['Message', 'Success', 'Error', 'Warning', 'Info']
+const INFO_MESSAGES = ['msg.loading']
+
+function notifyType(options) {
+  if (INFO_MESSAGES.includes(options.text)) return 'info'
+  if (options.color === 'danger' || options.color === 'warning') return options.color
+  return 'success' // screens send success as 'primary' or 'success'
+}
 
 function translateNotify(options) {
   if (!options || typeof options !== 'object') return options
-  const title = options.title === 'Message' && TITLE_BY_COLOR[options.color] || options.title
-  return { ...options, title: translatePhrase(title), text: translatePhrase(options.text) }
+  const type = NOTIFY_TYPES[notifyType(options)]
+  const title = !options.title || GENERIC_TITLES.includes(options.title) ? type.title : options.title
+  return {
+    ...options,
+    color: type.color,
+    icon: type.icon,
+    iconPack: 'feather',
+    position: 'top-right',
+    time: options.fixed ? options.time : type.time,
+    title: translatePhrase(title),
+    text: translatePhrase(options.text),
+  }
 }
 
 function translateDialog(options) {

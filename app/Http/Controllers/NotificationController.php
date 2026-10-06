@@ -286,12 +286,12 @@ class NotificationController extends Controller
             // }
             $data = array(
                 "success" => true,
-                "message" => "Notification has been sent."
+                "message" => __('common.notification_sent')
             );
         }else{
             $data = array(
                 "success" => false,
-                "message" => "Fail to send notification!"
+                "message" => __('common.notification_failed')
             );
         }
         return response()->json($data);
@@ -310,7 +310,7 @@ class NotificationController extends Controller
         $user->unreadNotifications()->where("id", $input["notification_id"])->update(['read_at' => now()]);
         $data = array(
             "success" => true,
-            "message" => "Read Notification!"
+            "message" => __('common.notification_read')
         );
         return response()->json($data);
     }

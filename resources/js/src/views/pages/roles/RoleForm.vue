@@ -40,8 +40,8 @@
     <div class="vx-row">
       <div class="vx-col w-full">
         <div class="mt-8 flex flex-wrap items-center justify-end">
-          <vs-button class="ml-auto mt-2" @click="save_changes" :disabled="!validateForm">Save Changes</vs-button>
-          <vs-button class="ml-4 mt-2" type="border" color="warning" @click="reset_data">Reset</vs-button>
+          <vs-button color="primary" type="filled" class="ml-auto mt-2" @click="save_changes" :disabled="!validateForm">{{ $t('btn_save_changes') }}</vs-button>
+          <vs-button color="warning" type="border" class="ml-4 mt-2" @click="reset_data">{{ $t('btn_reset') }}</vs-button>
         </div>
       </div>
     </div>

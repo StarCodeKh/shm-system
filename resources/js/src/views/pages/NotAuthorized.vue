@@ -5,7 +5,7 @@
             <img src="@assets/images/pages/not-authorized.png" alt="graphic-not-authorized" class="mx-auto mb-4">
             <h1 class="sm:mx-0 mx-4 sm:mb-12 mb-8 text-5xl d-theme-heading-color">You are not authorized!</h1>
             <p class="sm:mx-0 mx-4 sm:mb-12 mb-8 d-theme-text-inverse">paraphonic unassessable foramination Caulopteris worral Spirophyton encrimson esparcet aggerate chondrule restate whistler shallopy biosystematy area bertram plotting unstarting quarterstaff.</p>
-            <vs-button size="large" to="/">Back to Home</vs-button>
+            <vs-button color="primary" type="filled" size="large" to="/">{{ $t('btn_back_home') }}</vs-button>
         </div>
     </div>
 </template>

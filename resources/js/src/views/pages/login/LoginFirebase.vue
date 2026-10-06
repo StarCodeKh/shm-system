@@ -83,7 +83,7 @@ export default {
 
         this.$vs.notify({
           title: 'Login Attempt',
-          text: 'You are already logged in!',
+          text: 'msg.already_signed_in',
           iconPack: 'feather',
           icon: 'icon-alert-circle',
           color: 'warning'

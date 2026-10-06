@@ -50,8 +50,8 @@
     </VuePerfectScrollbar>
 
     <div class="flex flex-wrap items-center p-6" slot="footer">
-      <vs-button class="mr-6" @click="submitData" :disabled="!isFormValid">Save</vs-button>
-      <vs-button type="border" color="danger" @click="isSidebarActiveLocal = false">Cancel</vs-button>
+      <vs-button color="primary" type="filled" class="mr-6" @click="submitData" :disabled="!isFormValid">{{ $t('btn_save') }}</vs-button>
+      <vs-button color="dark" type="border" @click="isSidebarActiveLocal = false">{{ $t('btn_cancel') }}</vs-button>
     </div>
   </vs-sidebar>
 </template>
@@ -235,7 +235,7 @@ export default {
             if(this.dataId !== null && this.dataId >= 0) {
               this.$vs.notify({
                 title: 'Message',
-                text: 'ពត៌មានត្រូវបានកែប្រែ.',
+                text: 'msg.updated',
                 iconPack: 'feather',
                 icon: 'icon-check-circle',
                 color: 'primary'
@@ -247,7 +247,7 @@ export default {
               this.$store.dispatch("dataList/addItem", obj).catch(err => { console.error(err) })
               this.$vs.notify({
                 title: 'Message',
-                text: 'ពត៌មានត្រូវបានបង្កើត.',
+                text: 'msg.saved',
                 iconPack: 'feather',
                 icon: 'icon-check-circle',
                 color: 'primary'

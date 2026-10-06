@@ -120,7 +120,7 @@ export default {
           }
         })
         .catch(() => {
-          this.$vs.notify({ title: 'Message', text: 'Error, while trying to do action or no permission allow!', iconPack: 'feather', icon: 'icon-alert-circle', color: 'danger' })
+          this.$vs.notify({ title: 'Message', text: 'msg.action_failed', iconPack: 'feather', icon: 'icon-alert-circle', color: 'danger' })
         })
         .finally(() => { this.loading = false })
     },

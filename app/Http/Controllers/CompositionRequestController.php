@@ -89,11 +89,11 @@ class CompositionRequestController extends Controller
         if($table){
             $status = 200;
             $boolen = true;
-            $message = trans('incentive_officer.message_success');
+            $message = trans('common.msg_save_successfully');
         }else{
             $status = 500;
             $boolen = false;
-            $message = trans('incentive_officer.message_error');
+            $message = trans('common.error_msg');
         }
         $data = array(
             "success" => $boolen,
@@ -215,11 +215,11 @@ class CompositionRequestController extends Controller
         if($table){
             $status = 200;
             $boolen = true;
-            $message = trans('incentive_officer.message_update');
+            $message = trans('common.msg_update_successfully');
         }else{
             $status = 500;
             $boolen = false;
-            $message = trans('incentive_officer.message_error');
+            $message = trans('common.error_msg');
         }
         $data = array(
             "success" => $boolen,
@@ -241,11 +241,11 @@ class CompositionRequestController extends Controller
         if($table){
             $status = 200;
             $boolen = true;
-            $message = trans('incentive_officer.message_delete');
+            $message = trans('common.msg_delete_successfully');
         }else{
             $status = 500;
             $boolen = false;
-            $message = trans('incentive_officer.message_error');
+            $message = trans('common.error_msg');
         }
         $data = array(
             "success" => $boolen,

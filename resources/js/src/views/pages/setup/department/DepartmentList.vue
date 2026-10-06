@@ -104,8 +104,8 @@
                 <vs-popup class="holamundo d-modal--sm"  title="Are you sure?" :active.sync="popupActive">
                     <p>
                       <center>
-                        <vs-button @click="deleteData(tr.id); popupActive=false" color="primary" type="filled">Yes</vs-button>
-                        <vs-button @click="popupActive=false" color="danger" type="filled">No</vs-button>
+                        <vs-button color="primary" type="filled" @click="deleteData(tr.id); popupActive=false">{{ $t('btn_yes') }}</vs-button>
+                        <vs-button color="dark" type="border" @click="popupActive=false">{{ $t('btn_no') }}</vs-button>
                       </center>
                     </p>
                 </vs-popup>
@@ -167,7 +167,7 @@ export default {
       this.$store.dispatch("dataList/removeItem", obj).catch(err => { console.error(err) })
       this.$vs.notify({
         title: 'Message',
-        text: 'ពត៌មានត្រូវបានលុប.',
+        text: 'msg.deleted',
         iconPack: 'feather',
         icon: 'icon-check-circle',
         color: 'primary'

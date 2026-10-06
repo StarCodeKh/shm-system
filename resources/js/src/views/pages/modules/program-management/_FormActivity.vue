@@ -127,7 +127,7 @@ export default {
                         reject(error)
                         this.$vs.notify({
                             title: 'Message',
-                            text: "Error, while trying to do action or no permission allow!",
+                            text: 'msg.action_failed',
                             iconPack: 'feather',
                             icon: 'icon-check-circle',
                             color: 'danger',
@@ -180,7 +180,7 @@ export default {
                                     reject(error)
                                     this.$vs.notify({
                                         title: 'Message',
-                                        text: "Error, while trying to do action or no permission allow!",
+                                        text: 'msg.action_failed',
                                         iconPack: 'feather',
                                         icon: 'icon-check-circle',
                                         color: 'danger',
@@ -207,7 +207,7 @@ export default {
                                     reject(error)
                                     this.$vs.notify({
                                         title: 'Message',
-                                        text: "Error, while trying to do action or no permission allow!",
+                                        text: 'msg.action_failed',
                                         iconPack: 'feather',
                                         icon: 'icon-check-circle',
                                         color: 'danger',

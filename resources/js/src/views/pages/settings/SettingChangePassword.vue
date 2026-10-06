@@ -25,7 +25,7 @@
     <!-- Save & Reset Button -->
     <div class="flex flex-wrap items-center justify-end">
       <vs-button class="ml-auto mt-2" @click="saveGeneral()">{{ $t("btn_save")}}</vs-button>
-      <!-- <vs-button class="ml-4 mt-2" type="border" color="warning">Reset</vs-button> -->
+      <!-- <vs-button color="warning" type="border" class="ml-4 mt-2">{{ $t('btn_reset') }}</vs-button> -->
     </div>
   </vx-card>
 </template>
@@ -72,7 +72,7 @@ export default {
           reject(error)
           this.$vs.notify({
             title: 'Message',
-            text: "Error, while trying to do action or no permission allow!",
+            text: 'msg.action_failed',
             iconPack: 'feather',
             icon: 'icon-check-circle',
             color: 'danger'
@@ -107,7 +107,7 @@ export default {
                   reject(error)
                   this.$vs.notify({
                     title: 'Message',
-                    text: "មិនអាចធ្វើបច្ចុប្បន្នភាពបានទេ,​ សូមត្រួតពិនិត្យពត៌មានឡើងវិញ។",
+                    text: 'msg.update_failed',
                     iconPack: 'feather',
                     icon: 'icon-check-circle',
                     color: 'danger'

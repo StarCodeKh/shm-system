@@ -515,11 +515,11 @@ class DashboardController extends BaseController
 
             return $this->successResponse(
                 ['status_list' => $status],
-                'Status list fetched successfully.'
+                __('common.msg_successfully')
             );
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return $this->errorResponse('Validation failed', 422, $e->errors());
+            return $this->errorResponse(__('common.validation_failed'), 422, $e->errors());
 
         } catch (Exception $e) {
             return $this->errorResponse($e->getMessage(), 500);
@@ -533,7 +533,7 @@ class DashboardController extends BaseController
 
             return $this->successResponse(
                 ['titles' => $titles],
-                'Title list fetched successfully.'
+                __('common.msg_successfully')
             );
 
         } catch (Exception $e) {
@@ -548,7 +548,7 @@ class DashboardController extends BaseController
 
             return $this->successResponse(
                 ['payment_methods' => $data],
-                'Payment method list fetched successfully.'
+                __('common.msg_successfully')
             );
 
         } catch (Exception $e) {
@@ -563,7 +563,7 @@ class DashboardController extends BaseController
 
             return $this->successResponse(
                 ['accounts' => $data],
-                'Account list fetched successfully.'
+                __('common.msg_successfully')
             );
 
         } catch (Exception $e) {
@@ -578,7 +578,7 @@ class DashboardController extends BaseController
 
             return $this->successResponse(
                 ['duties' => $data],
-                'Duty list fetched successfully.'
+                __('common.msg_successfully')
             );
 
         } catch (Exception $e) {
@@ -593,7 +593,7 @@ class DashboardController extends BaseController
 
             return $this->successResponse(
                 ['positions' => $data],
-                'Position list fetched successfully.'
+                __('common.msg_successfully')
             );
 
         } catch (Exception $e) {
@@ -608,7 +608,7 @@ class DashboardController extends BaseController
 
             return $this->successResponse(
                 ['entities' => $data],
-                'Entity list fetched successfully.'
+                __('common.msg_successfully')
             );
 
         } catch (Exception $e) {

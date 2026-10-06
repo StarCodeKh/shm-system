@@ -166,11 +166,11 @@ $table->update(["status" => 4]);
         if($table){
             $status = 200;
             $boolen = true;
-            $message = trans('account_group.message_delete');
+            $message = trans('common.msg_delete_successfully');
         }else{
             $status = 500;
             $boolen = false;
-            $message = trans('account_group.message_error');
+            $message = trans('common.error_msg');
         }
         $data = array(
             "success" => $boolen,

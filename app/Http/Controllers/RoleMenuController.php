@@ -188,7 +188,7 @@ class RoleMenuController extends Controller
             if(isset($dataFields["password"]) && isset($dataFields["confirm_password"]) && $dataFields["password"] !== $dataFields["confirm_password"]){
                 $status = 200;
                 $boolen = false;
-                $message = "លេខសម្ងាត់បញ្ជាក់ពុំផ្ទៀងផ្ទាត់គ្នា!";
+                $message = __('common.password_mismatch');
             }else{
                 if(isset($dataFields["password"])){
                     $dataFields["password"] = bcrypt($dataFields["password"]);

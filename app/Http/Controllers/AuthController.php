@@ -39,7 +39,7 @@ class AuthController extends Controller
         ]);
         $user->save();
         return response()->json([
-            'message' => 'Successfully created user!'
+            'message' => __('common.user_created')
         ], 201);
     }
     /**
@@ -69,7 +69,7 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
         if(!Auth::attempt($credentials))
             return response()->json([
-                'message' => 'Wrong email or password.'
+                'message' => __('common.wrong_credentials')
             ], 200);
         $user = $request->user();
         $tokenResult = $user->createToken('Personal Access Token');
@@ -98,7 +98,7 @@ class AuthController extends Controller
         // $credentials = request(['username', 'password']);
         if(!Auth::attempt($credentials))
             return response()->json([
-                'message' => 'Unauthorized'
+                'message' => __('common.unauthorized')
             ], 401);
         $user = $request->user();
         // register user device
@@ -142,12 +142,12 @@ class AuthController extends Controller
             $data = array(        
                 "success" => true,
                 "optCode" => $otp["optCode"],
-                "message" => "Opt code has been sent."
+                "message" => __('common.otp_sent')
             );
         }else{
             $data = array(        
                 "success" => false,
-                "message" => "Your account not yet exist!"
+                "message" => __('common.account_not_found')
             );
         }
         return response()->json([
@@ -168,7 +168,7 @@ class AuthController extends Controller
                             );
             if(!Auth::attempt($credentials))
                 return response()->json([
-                    'message' => 'Unauthorized'
+                    'message' => __('common.unauthorized')
                 ], 401);
             $user = $request->user();
             // register user device
@@ -193,7 +193,7 @@ class AuthController extends Controller
         }else{
             $data = array(        
                 "success" => false,
-                "message" => "Invalid OTP or expired code!"
+                "message" => __('common.otp_invalid')
             );
         }
         return response()->json([
@@ -216,11 +216,11 @@ class AuthController extends Controller
             if($table){
                 $status = 200;
                 $boolen = true;
-                $message = trans('account.message_success');
+                $message = trans('common.msg_save_successfully');
             }else{
                 $status = 500;
                 $boolen = false;
-                $message = trans('account.message_error');
+                $message = trans('common.error_msg');
             }
             $data = array(
                 "success" => $boolen,
@@ -230,7 +230,7 @@ class AuthController extends Controller
             $status = 200;
             $data = array(
                 "success" => true,
-                "message" => "Account is already exist"
+                "message" => __('common.account_exists')
             );
         }
         
@@ -253,11 +253,11 @@ class AuthController extends Controller
             if($table){
                 $status = 200;
                 $boolen = true;
-                $message = trans('account.message_success');
+                $message = trans('common.msg_save_successfully');
             }else{
                 $status = 500;
                 $boolen = false;
-                $message = trans('account.message_error');
+                $message = trans('common.error_msg');
             }
             $data = array(
                 "success" => $boolen,
@@ -267,7 +267,7 @@ class AuthController extends Controller
             $status = 200;
             $data = array(
                 "success" => true,
-                "message" => "Account is already exist"
+                "message" => __('common.account_exists')
             );
         }
         
@@ -284,7 +284,7 @@ class AuthController extends Controller
     {
         $request->user()->token()->revoke();
         $data = array(
-            "message" => "Successfully logged out.",
+            "message" => __('common.logged_out'),
             "success" => true
         );
         return response()->json([

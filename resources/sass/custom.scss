@@ -351,6 +351,97 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
     }
 }
 
+// ---------------------------------------------------------------- Buttons: one style per action
+// Main action (Save, Yes…)  color="primary" type="filled"
+// Back out (Cancel, No…)    color="dark"    type="border"   neutral outline, styled below
+// Reset                     color="warning" type="border"
+// Remove / delete           color="danger"  type="border"
+.vs-button-dark.vs-button-border {
+    border-color: var(--input-border) !important;
+    color: #5e5873 !important;
+
+    &:hover { background: rgba(94, 88, 115, .06) !important; }
+    .vs-button--text.isActive { color: #5e5873 !important; }
+    .vs-button-backgroundx {
+        background: rgba(94, 88, 115, .1) !important;
+        box-shadow: none !important;
+    }
+}
+
+.theme-dark .vs-button-dark.vs-button-border {
+    border-color: #414561 !important;
+    color: #c2c6dc !important;
+
+    &:hover { background: rgba(255, 255, 255, .06) !important; }
+    .vs-button--text.isActive { color: #c2c6dc !important; }
+    .vs-button-backgroundx { background: rgba(255, 255, 255, .08) !important; }
+}
+
+// ---------------------------------------------------------------- Toasts ($vs.notify): white card, colored accent and icon
+// Color, icon, title and time come from the toast's type (see translateNotify in i18n/i18n.js).
+.vs-notifications {
+    --noti: var(--vs-primary);
+    width: 360px;
+    max-width: calc(100vw - 32px);
+    min-width: 0;
+    padding: 12px 14px 12px 12px;
+    border-radius: 12px;
+    background: #fff !important;
+    border-left: 4px solid rgb(var(--noti));
+    box-shadow: 0 14px 34px -10px rgba(17, 20, 45, .32), 0 0 0 1px rgba(17, 20, 45, .06);
+
+    &.vs-noti-success { --noti: var(--vs-success); }
+    &.vs-noti-danger  { --noti: var(--vs-danger); }
+    &.vs-noti-warning { --noti: var(--vs-warning); }
+
+    .filling { display: none; } // the default solid color fill
+
+    .content-noti {
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .vs-icon-noti {
+        order: -1;
+        flex: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        border-radius: 50%;
+        font-size: 18px;
+        color: rgb(var(--noti));
+        background: rgba(var(--noti), .12);
+    }
+
+    h3 {
+        padding: 0;
+        margin: 1px 0 2px;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #2c2c3a !important;
+    }
+
+    p {
+        padding: 0;
+        font-size: 13px;
+        line-height: 1.5;
+        color: #6e6b7b !important;
+        word-break: break-word;
+    }
+}
+
+.theme-dark .vs-notifications {
+    background: #262c49 !important;
+    box-shadow: 0 14px 34px -10px rgba(0, 0, 0, .55), 0 0 0 1px rgba(255, 255, 255, .06);
+
+    h3 { color: #fff !important; }
+    p { color: #c2c6dc !important; }
+}
+
 // ---------------------------------------------------------------- Tabs (vs-tabs): segmented track with sliding pill
 .con-vs-tabs.vs-tabs-position-top {
     > .con-ul-tabs {

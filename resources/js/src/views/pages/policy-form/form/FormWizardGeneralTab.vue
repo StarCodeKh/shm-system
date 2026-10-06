@@ -164,7 +164,7 @@
                             <div class="vx-col md:w-1/2 w-full mt-5">
                                 <div class="vx-col md:w-1/1 w-full mt-5">
                                     <input accept=".xlsx" type="file" id="files" ref="files" v-on:change="handleFileUploads($event)"/>
-                                    <vs-button type="border" color="danger">Remove</vs-button>
+                                    <vs-button color="danger" type="border">{{ $t('btn_remove') }}</vs-button>
                                     <p class="text-sm mt-2">File Allowed(word, excel, pdf, image, etc..,) <a target="_blank" href="/sample/sample-income.xlsx">Download Sample</a></p>
                                 </div>
                             </div>
@@ -638,7 +638,7 @@ export default {
                         reject(error)
                         this.$vs.notify({
                             title: 'Message',
-                            text: "មិនអាចធ្វើបច្ចុប្បន្នភាពបានទេ,​ សូមត្រួតពិនិត្យពត៌មានឡើងវិញ។",
+                            text: 'msg.update_failed',
                             iconPack: 'feather',
                             icon: 'icon-check-circle',
                             color: 'danger'
@@ -652,7 +652,7 @@ export default {
                     this.$store.dispatch("dataList/addItem", obj).catch(err => { console.error(err) })
                         this.$vs.notify({
                             title: 'Message',
-                            text: 'ពត៌មានត្រូវបានបង្កើត.',
+                            text: 'msg.saved',
                             iconPack: 'feather',
                             icon: 'icon-check-circle',
                             color: 'primary'
@@ -729,7 +729,7 @@ export default {
                 reject(error)
                 this.$vs.notify({
                     title: 'Message',
-                    text: "Error, while trying to do action or no permission allow!",
+                    text: 'msg.action_failed',
                     iconPack: 'feather',
                     icon: 'icon-check-circle',
                     color: 'danger'

@@ -5,7 +5,7 @@
             <img src="@assets/images/pages/500.png" alt="graphic-500" class="mx-auto mb-4">
             <h1 class="sm:mx-0 mx-4 mb-4 sm:mb-12 text-5xl d-theme-heading-color">Internal Server Error!</h1>
             <p class="sm:mx-0 mx-4 mb-4 sm:mb-16 d-theme-text-inverse">susceptive nonturbinated indoctrination formulary dyskinetic deafforest Strumella frolicsomeness encrustment portia myelination lachrymatory bestain hoople piscator pyramidoidal parter clipt.</p>
-            <vs-button size="large" to="/">Back to Home</vs-button>
+            <vs-button color="primary" type="filled" size="large" to="/">{{ $t('btn_back_home') }}</vs-button>
         </div>
     </div>
 </template>

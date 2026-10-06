@@ -164,7 +164,7 @@ import DTableList from '@/views/form-builder/DTableList.vue'
                     }).catch((error) => {
                         this.$vs.notify({
                             title: 'Message',
-                            text: "Error, while trying to do action or no permission allow!",
+                            text: 'msg.action_failed',
                             iconPack: 'feather',
                             icon: 'icon-check-circle',
                             color: 'danger'

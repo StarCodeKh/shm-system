@@ -533,7 +533,7 @@ export default {
                 .then((response) => {
                     this.$vs.notify({
                         title: 'Message',
-                        text: "Loading...",
+                        text: 'msg.loading',
                         iconPack: 'feather',
                         icon: 'icon-check-circle',
                         color: 'primary',
@@ -555,7 +555,7 @@ export default {
                     reject(error)
                     this.$vs.notify({
                         title: 'Message',
-                        text: "មិនអាចដំណើរកាបានទេ,​ សូមត្រួតពិនិត្យពត៌មានឡើងវិញ។",
+                        text: 'msg.save_failed',
                         iconPack: 'feather',
                         icon: 'icon-check-circle',
                         color: 'danger',
@@ -696,7 +696,7 @@ export default {
                             reject(error)
                             this.$vs.notify({
                                 title: 'Message',
-                                text: 'Error, while trying to do action or no permission allow!',
+                                text: 'msg.action_failed',
                                 iconPack: 'feather',
                                 icon: 'icon-check-circle',
                                 color: 'danger',
@@ -709,7 +709,7 @@ export default {
                 this.$refs.tabs.focusFirstError();
                 this.$vs.notify({
                     title: 'ការជូនដំណឹង',
-                    text: 'ព័ត៌មានពុំទាន់គ្រប់ជ្រុងជ្រោយ',
+                    text: 'msg.incomplete',
                     iconPack: 'feather',
                     icon: 'icon-check-circle',
                     color: 'danger',

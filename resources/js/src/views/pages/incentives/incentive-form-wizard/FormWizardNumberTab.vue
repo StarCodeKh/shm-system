@@ -493,7 +493,7 @@ export default {
                             this.$vs.loading.close()
                             this.$vs.notify({
                                 title: 'Message',
-                                text: "មានបញ្ហាពេលទាញពត៌មាន!",
+                                text: 'msg.load_failed',
                                 iconPack: 'feather',
                                 icon: 'icon-check-circle',
                                 color: 'danger'
@@ -503,7 +503,7 @@ export default {
                         reject("correct all values");
                         this.$vs.notify({
                             title: 'Message',
-                            text: "ពត៌មានមិនទាន់បំពេញគ្រប់ សូមពិនិត្យឡើងវិញ!",
+                            text: 'msg.incomplete',
                             iconPack: 'feather',
                             icon: 'icon-check-circle',
                             color: 'danger'
@@ -542,7 +542,7 @@ export default {
         //     })
         // },
         successUpload() {
-            this.$vs.notify({ color: 'success', title: 'Upload Success', text: 'Lorem ipsum dolor sit amet, consectetur' })
+            this.$vs.notify({ color: 'success', title: 'Upload Success', text: 'msg.file_uploaded' })
         },
         formSubmitted() {
             this.$vs.loading()
@@ -589,7 +589,7 @@ export default {
                                     this.$vs.loading.close()
                                     this.$vs.notify({
                                         title: 'Message',
-                                        text: "មិនអាចធ្វើបច្ចុប្បន្នភាពបានទេ,​ សូមត្រួតពិនិត្យពត៌មានឡើងវិញ។",
+                                        text: 'msg.update_failed',
                                         iconPack: 'feather',
                                         icon: 'icon-check-circle',
                                         color: 'danger'
@@ -600,7 +600,7 @@ export default {
                                 this.$vs.loading.close()
                                 this.$vs.notify({
                                     title: 'Message',
-                                    text: "មិនអាចធ្វើបច្ចុប្បន្នភាពបានទេ,​ សូមត្រួតពិនិត្យពត៌មានឡើងវិញ។",
+                                    text: 'msg.update_failed',
                                     iconPack: 'feather',
                                     icon: 'icon-check-circle',
                                     color: 'danger'
@@ -627,7 +627,7 @@ export default {
                                     this.$vs.loading.close()
                                     this.$vs.notify({
                                         title: 'Message',
-                                        text: "មិនអាចធ្វើបច្ចុប្បន្នភាពបានទេ,​ សូមត្រួតពិនិត្យពត៌មានឡើងវិញ។",
+                                        text: 'msg.update_failed',
                                         iconPack: 'feather',
                                         icon: 'icon-check-circle',
                                         color: 'danger'
@@ -637,7 +637,7 @@ export default {
                                 reject(error)
                                 this.$vs.notify({
                                     title: 'Message',
-                                    text: "មិនអាចធ្វើបច្ចុប្បន្នភាពបានទេ,​ សូមត្រួតពិនិត្យពត៌មានឡើងវិញ។",
+                                    text: 'msg.update_failed',
                                     iconPack: 'feather',
                                     icon: 'icon-check-circle',
                                     color: 'danger'
@@ -649,7 +649,7 @@ export default {
                         // this.$store.dispatch("dataList/addItem", obj).catch(err => { console.error(err) })
                         //     this.$vs.notify({
                         //         title: 'Message',
-                        //         text: 'ពត៌មានត្រូវបានបង្កើត.',
+                        //         text: 'msg.saved',
                         //         iconPack: 'feather',
                         //         icon: 'icon-check-circle',
                         //         color: 'primary'
@@ -661,7 +661,7 @@ export default {
                 }else{
                     this.$vs.notify({
                         title: 'Message',
-                        text: "ពត៌មានមិនទាន់បំពេញគ្រប់ សូមពិនិត្យឡើងវិញ!",
+                        text: 'msg.incomplete',
                         iconPack: 'feather',
                         icon: 'icon-check-circle',
                         color: 'danger'

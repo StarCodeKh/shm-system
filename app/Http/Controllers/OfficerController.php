@@ -130,7 +130,7 @@
                 );
                 $status = 200;
                 $boolen = true;
-                $message = "Success";
+                $message = __('common.msg_successfully');
                 $data = array(
                     "success" => $boolen,
                     "message" => $message,
@@ -367,9 +367,9 @@
             $path = $request->file('file')->getRealPath();
             $rows = Excel::import(new OfficerImport, $path);
             if($rows){
-                return response()->json(['success'=>true,'message'=>'File uploaded successfully.'], 200);
+                return response()->json(['success'=>true,'message'=>__('common.file_uploaded')], 200);
             }else{
-                return response()->json(['success'=>false,'message'=>'File upload is failed!'], 500);
+                return response()->json(['success'=>false,'message'=>__('common.file_upload_failed')], 500);
             }
         }
 
@@ -395,7 +395,7 @@
                     ]);
                 }
             }
-            $message = trans('incentive_officer.message_update');
+            $message = trans('common.msg_update_successfully');
             $data = array(
                 "success" => true,
                 "message" => $message
@@ -599,10 +599,10 @@
                 if ($inserted) {
                     return $this->successResponse(
                         ['officer' => $validated],
-                        'Officer record inserted successfully.'
+                        __('common.msg_save_successfully')
                     );
                 }
-                return $this->errorResponse('Failed to insert officer record.');
+                return $this->errorResponse(__('common.error_msg'));
 
             } catch (\Illuminate\Validation\ValidationException $e) {
                 return $this->errorResponse(

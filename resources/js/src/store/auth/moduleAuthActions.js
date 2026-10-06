@@ -54,7 +54,7 @@ export default {
 
             payload.notify({
                 title: 'Login Attempt',
-                text: 'You are already logged in!',
+                text: 'msg.already_signed_in',
                 iconPack: 'feather',
                 icon: 'icon-alert-circle',
                 color: 'warning'
@@ -117,7 +117,7 @@ export default {
         if (state.isUserLoggedIn()) {
             payload.notify({
                 title: 'Login Attempt',
-                text: 'You are already logged in!',
+                text: 'msg.already_signed_in',
                 iconPack: 'feather',
                 icon: 'icon-alert-circle',
                 color: 'warning'
@@ -147,7 +147,7 @@ export default {
         if (state.isUserLoggedIn()) {
             payload.notify({
                 title: 'Login Attempt',
-                text: 'You are already logged in!',
+                text: 'msg.already_signed_in',
                 iconPack: 'feather',
                 icon: 'icon-alert-circle',
                 color: 'warning'
@@ -177,7 +177,7 @@ export default {
         if (state.isUserLoggedIn()) {
             payload.notify({
                 title: 'Login Attempt',
-                text: 'You are already logged in!',
+                text: 'msg.already_signed_in',
                 iconPack: 'feather',
                 icon: 'icon-alert-circle',
                 color: 'warning'
@@ -207,7 +207,7 @@ export default {
         if (state.isUserLoggedIn()) {
             payload.notify({
                 title: 'Login Attempt',
-                text: 'You are already logged in!',
+                text: 'msg.already_signed_in',
                 iconPack: 'feather',
                 icon: 'icon-alert-circle',
                 color: 'warning'

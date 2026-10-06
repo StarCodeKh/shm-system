@@ -18,7 +18,7 @@
 
                                 <div class="flex justify-between flex-wrap">
                                     <router-link to="/pages/login" class="mb-4">Are you not John Doe?</router-link>
-                                    <vs-button class="ml-2">Unlock</vs-button>
+                                    <vs-button color="primary" type="filled" class="ml-2">{{ $t('btn_unlock') }}</vs-button>
                                 </div>
 
                             </div>

@@ -21,7 +21,7 @@
           <!-- <vs-file-input accept="image/*" class="mr-4 sm:mb-0 mb-2">Upload File</vs-file-input> -->
           <!-- <v-file-input class="mr-4 sm:mb-0 mb-2" accept="image/*" label="File input"></v-file-input> -->
           <input accept=".xlsx" type="file" id="files" ref="files" v-on:change="handleFileUploads($event)"/>
-          <vs-button type="border" color="danger">Remove</vs-button>
+          <vs-button color="danger" type="border">{{ $t('btn_remove') }}</vs-button>
           <p class="text-sm mt-2">Allowed Only(.xlsx) <a target="_blank" href="/sample/sample-income.xlsx">Download Sample</a></p>
           
         </div>
@@ -70,7 +70,7 @@
 
     <!-- Save & Reset Button -->
     <div class="flex flex-wrap items-center justify-end">
-      <vs-button class="ml-auto mt-2" @click="saveGeneral()">Save Changes</vs-button>
+      <vs-button color="primary" type="filled" class="ml-auto mt-2" @click="saveGeneral()">{{ $t('btn_save_changes') }}</vs-button>
     </div>
   </vx-card>
 </template>
@@ -168,7 +168,7 @@ export default {
             reject(error)
               this.$vs.notify({
                 title: 'Message',
-                text: "Error, while trying to do action or no permission allow!",
+                text: 'msg.action_failed',
                 iconPack: 'feather',
                 icon: 'icon-check-circle',
                 color: 'danger',
@@ -285,7 +285,7 @@ export default {
                 reject(error)
                 this.$vs.notify({
                   title: 'Message',
-                  text: "Error, while trying to do action or no permission allow!",
+                  text: 'msg.action_failed',
                   iconPack: 'feather',
                   icon: 'icon-check-circle',
                   color: 'danger',
@@ -327,7 +327,7 @@ export default {
       //             reject(error)
       //             this.$vs.notify({
       //               title: 'Message',
-      //               text: "Error, while trying to do action or no permission allow!",
+      //               text: 'msg.action_failed',
       //               iconPack: 'feather',
       //               icon: 'icon-check-circle',
       //               color: 'danger'
@@ -351,7 +351,7 @@ export default {
       //             reject(error)
       //             this.$vs.notify({
       //               title: 'Message',
-      //               text: "Error, while trying to do action or no permission allow!",
+      //               text: 'msg.action_failed',
       //               iconPack: 'feather',
       //               icon: 'icon-check-circle',
       //               color: 'danger'

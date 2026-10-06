@@ -10,8 +10,8 @@
 
     <!-- Save & Reset Button -->
     <div class="flex flex-wrap items-center justify-end">
-      <vs-button class="ml-auto mt-2">រក្សាទុក</vs-button>
-      <vs-button class="ml-4 mt-2" type="border" color="warning">Reset</vs-button>
+      <vs-button color="primary" type="filled" class="ml-auto mt-2">{{ $t('btn_save') }}</vs-button>
+      <vs-button color="warning" type="border" class="ml-4 mt-2">{{ $t('btn_reset') }}</vs-button>
     </div>
   </vx-card>
 </template>

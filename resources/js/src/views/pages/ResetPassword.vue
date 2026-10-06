@@ -19,8 +19,8 @@
                                 <vs-input type="password" label-placeholder="Confirm Password" v-model="value3" class="w-full mb-8" />
 
                                 <div class="flex flex-wrap justify-between flex-col-reverse sm:flex-row">
-                                    <vs-button type="border" to="/pages/login" class="w-full sm:w-auto mb-8 sm:mb-auto mt-3 sm:mt-auto">Go Back To Login</vs-button>
-                                    <vs-button class="w-full sm:w-auto">Reset</vs-button>
+                                    <vs-button color="dark" type="border" to="/pages/login" class="w-full sm:w-auto mb-8 sm:mb-auto mt-3 sm:mt-auto">{{ $t('btn_back_to_login') }}</vs-button>
+                                    <vs-button color="primary" type="filled" class="w-full sm:w-auto">{{ $t('btn_reset') }}</vs-button>
                                 </div>
 
                             </div>

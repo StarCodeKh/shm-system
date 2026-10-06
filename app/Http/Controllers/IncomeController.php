@@ -287,14 +287,14 @@ class IncomeController extends BaseController
             if ($inserted) {
                 return $this->successResponse(
                     ['income' => $validated],
-                    'Income record inserted successfully.'
+                    __('common.msg_save_successfully')
                 );
             }
 
-            return $this->errorResponse('Failed to insert income record.');
+            return $this->errorResponse(__('common.error_msg'));
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return $this->errorResponse('Validation failed', 422, $e->errors());
+            return $this->errorResponse(__('common.validation_failed'), 422, $e->errors());
         } catch (Exception $e) {
             return $this->errorResponse($e->getMessage(), 500);
         }

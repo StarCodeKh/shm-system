@@ -45,8 +45,8 @@
 					</div>
 					<div class="vx-row">
 						<div class="vx-col w-full">
-							<vs-button class="mr-3 mb-2">Save</vs-button>
-							<vs-button color="warning" type="border" class="mb-2" @click="input25 = input26 = input27 = input28 = input29 = input30 = ''; check7 = false;">Reset</vs-button>
+							<vs-button color="primary" type="filled" class="mr-3 mb-2">{{ $t('btn_save') }}</vs-button>
+							<vs-button color="warning" type="border" class="mb-2" @click="input25 = input26 = input27 = input28 = input29 = input30 = ''; check7 = false;">{{ $t('btn_reset') }}</vs-button>
 						</div>
 					</div>
 				</vx-card>
