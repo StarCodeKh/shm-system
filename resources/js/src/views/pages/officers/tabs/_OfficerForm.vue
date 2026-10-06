@@ -57,7 +57,7 @@
                             <label>{{ $t('gender') }} <span class="required"></span></label>
                             <v-select
                                     v-validate="'required'" v-model="officer.gender"
-                                    name="gender" :options="genders"
+                                    name="gender" :options="translated(genders)"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                                     <span class="text-danger text-sm" v-show="errors.has('gender')">{{
                                         $t("required_" + 'gender')
@@ -442,50 +442,9 @@ export default {
       positions: [],
       nssfs: [],
       statuses: [],
-      marriedStatus: [
-        {
-            label: "នៅលីវ", labelKey: "of_married_single",
-            value: "នៅលីវ"
-        },
-        {
-            label: "រៀបការហើយ", labelKey: "of_married_married",
-            value: "រៀបការហើយ"
-        },
-        {
-            label: "លែងលះ", labelKey: "of_married_divorced",
-            value: "លែងលះ"
-        },
-        {
-            label: "មេម៉ាយ", labelKey: "of_married_widowed",
-            value: "មេម៉ាយ"
-        },
-      ],
-      emergencyRelatives:[
-        {
-            label: "ឪពុក", labelKey: "of_rel_father",
-            value: "ឪពុក"
-        },
-        {
-            label: "ម្តាយ", labelKey: "of_rel_mother",
-            value: "ម្តាយ"
-        },
-        {
-            label: "ស្វាមី/ភរិយា", labelKey: "of_rel_spouse",
-            value: "ស្វាមី/ភរិយា"
-        },
-        {
-            label: "បងប្អូន", labelKey: "of_rel_sibling",
-            value: "បងប្អូន"
-        },
-        {
-            label: "មិត្តភក្តិ", labelKey: "of_rel_friend",
-            value: "មិត្តភក្តិ"
-        },
-        {
-            label: "ផ្សេងៗ", labelKey: "of_rel_other",
-            value: "ផ្សេងៗ"
-        },
-      ],
+      // Loaded from the officer form endpoint (mef_status lookups)
+      marriedStatus: [],
+      emergencyRelatives: [],
       // Data Sidebar
     }
   },
@@ -513,7 +472,8 @@ export default {
   methods: {
     // Option labels in the current language; the stored value stays the same
     translated(options) {
-      return (options || []).map(option => option.labelKey ? { ...option, label: this.$t(option.labelKey) } : option)
+      const en = this.$i18n.locale === 'en'
+      return (options || []).map(option => en && option.label_en ? { ...option, label: option.label_en } : option)
     },
     clearForm(){
         this.iconThumnail = null;
@@ -648,6 +608,8 @@ export default {
                     this.positions = response.data.data.position;
                     this.titles = response.data.data.title;
                     this.genders = response.data.data.gender;
+                    this.marriedStatus = response.data.data.married_status || [];
+                    this.emergencyRelatives = response.data.data.emergency_relative || [];
                     this.nssfs = response.data.data.is_nssf_member;
                     this.statuses = response.data.data.status;
                     // console.log("Payable Form", response.data);
@@ -688,7 +650,7 @@ export default {
             {is_nssf_member: this.officer.is_nssf_member?this.officer.is_nssf_member.value:null},
             {nssf_card_no: this.officer.nssf_card_no},
             {order_level: this.officer.order_level},
-            {married_status: this.officer.married_status},
+            {married_status: this.officer.married_status?this.officer.married_status.value:null},
             {status: this.officer.status?this.officer.status.value:null},
             {social_media_fb: this.officer.social_media_fb},
             {social_media_telegram: this.officer.social_media_telegram},

@@ -86,7 +86,10 @@ class Status extends Model implements Auditable
     }else{
       $whereClause->where("group", $groupStatus);
     }
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+    // Grouped so deleted rows are excluded without dropping the group filter
+    $whereClause->where(function ($q) {
+      $q->whereNotIn("status", [4])->orWhereNull("status");
+    });
     $queries = collect($whereClause->get());
     $data = array();
     foreach($queries as $row){
@@ -98,6 +101,25 @@ class Status extends Model implements Auditable
     return $data;
   }
 
+  // Options for fields that store a text value (e.g. gender "male") instead of the status id.
+  // The stored value comes from `criteria`, falling back to `title_kh`.
+  public static function getValueOpt($group){
+    $queries = Status::where("group", $group)
+      ->where(function ($q) {
+        $q->whereNotIn("status", [4])->orWhereNull("status");
+      })
+      ->orderBy("order_level")
+      ->get();
+    $data = array();
+    foreach($queries as $row){
+      $data[] = array(
+        "label" => $row->title_kh,
+        "label_en" => $row->title_en,
+        "value" => $row->criteria ?: $row->title_kh,
+      );
+    }
+    return $data;
+  }
   public static function checkQuery($filter){
     $whereClause = "";
     $query = Status::orderBy($filter["sort"], $filter["order"]);

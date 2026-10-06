@@ -85,7 +85,9 @@
                     "position" => CommonService::getSingleOpt(new Position, $filter),
                     "bank" => CommonService::getSingleOpt(new Bank, $filter),
                     "title" => CommonService::getSingleOpt(new Title, $filter),
-                    "gender" => array(["label" => "ប្រុស (Male)", "value" => "male"], ["label" => "ស្រី (Female)", "value" => "female"]),
+                    "gender" => Status::getValueOpt("GENDER"),
+                    "married_status" => Status::getValueOpt("MARRIED_STATUS"),
+                    "emergency_relative" => Status::getValueOpt("RELATIONSHIP"),
                     "status" => Status::getSingleOpt(["STATUS", "OFFICER"]),
                     "is_nssf_member" => Status::getSingleOpt("NSSF"),
                 );
@@ -120,7 +122,9 @@
                     "position" => CommonService::getSingleOpt(new Position, $filter),
                     "bank" => CommonService::getSingleOpt(new Bank, $filter),
                     "title" => CommonService::getSingleOpt(new Title, $filter),
-                    "gender" => array(["label" => "ប្រុស (Male)", "value" => "male"], ["label" => "ស្រី (Female)", "value" => "female"]),
+                    "gender" => Status::getValueOpt("GENDER"),
+                    "married_status" => Status::getValueOpt("MARRIED_STATUS"),
+                    "emergency_relative" => Status::getValueOpt("RELATIONSHIP"),
                     "status" => Status::getSingleOpt(["STATUS", "OFFICER"]),
                     "is_nssf_member" => Status::getSingleOpt("NSSF"),
                 );
