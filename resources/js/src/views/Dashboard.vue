@@ -187,7 +187,6 @@ export default {
             currency: "KHR",
             dateRange: [`${year}-01-01`, `${year}-12-31`],
             dateConfig: { mode: "range", dateFormat: "Y-m-d", allowInput: true },
-            palette: PALETTE,
         }
     },
     computed: {
