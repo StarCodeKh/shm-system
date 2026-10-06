@@ -41,7 +41,7 @@ class SubProgram extends Model
     }
 
     public static function getSubPrograms(){
-      $query = SubProgram::where("is_active", 1)->orderBy("order_level")->get();
+      $query = SubProgram::where("is_active", 1)->orderByLevel()->get();
       $data = array();
       foreach($query as $row){
         $data[] = array(
@@ -53,7 +53,7 @@ class SubProgram extends Model
     }
 
     public static function getSubProgramsByProgs($param){
-      $queryData = SubProgram::where("is_active", 1)->orderBy("order_level");
+      $queryData = SubProgram::where("is_active", 1)->orderByLevel();
       $whereClause = $queryData;
       if(!empty( $param["param"]["value"])){
         $whereClause->where("program_id", $param["param"]["value"]);
@@ -88,9 +88,9 @@ class SubProgram extends Model
 
     public static function getSubProgramByProgram($filter){
       $data = array();
-      $queryObj = Program::orderBy($filter["sort"], $filter["order"]);
+      $queryObj = Program::orderByFilter($filter);
       $whereClause = $queryObj;
-      $whereClause->whereNotIn("status", [4])->orWhere("status", null);
+      $whereClause->whereNotDeleted();
       $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
       $whereClause->limit($filter["limit"]);
 
@@ -110,7 +110,7 @@ class SubProgram extends Model
         $parentId = $row->id;
         $cdata = array(); //cdata = children data
        
-        $querySPrograms = SubProgram::orderBy("order_level");
+        $querySPrograms = SubProgram::orderByLevel();
         $whereClauseSPro = $querySPrograms;
         $whereClauseSPro->where("program_id", $parentId);
 
@@ -205,11 +205,11 @@ class SubProgram extends Model
 
     public static function _getSubProgramByProgram($filter){
       $data = array();
-      $query = Program::orderBy("order_level")->get();
+      $query = Program::orderByLevel()->get();
       foreach($query as $row){
         $parentId = $row->id;
         $cdata = array(); //cdata = children data
-        $querySubPrograms = SubProgram::where("program_id", $parentId)->orderBy("order_level")->get();
+        $querySubPrograms = SubProgram::where("program_id", $parentId)->orderByLevel()->get();
         foreach($querySubPrograms as $crow){
           
           $indicators = array(
@@ -262,9 +262,9 @@ class SubProgram extends Model
     }
 
     public static function getCount($filter){
-      $query = SubProgram::orderBy($filter["sort"], $filter["order"]);
+      $query = SubProgram::orderByFilter($filter);
       $whereClause = $query;
-      $whereClause->whereNotIn("status", [4])->orWhere("status", null);
+      $whereClause->whereNotDeleted();
       if($filter["search_field"]){
         $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
         $dataFields = $arraySingle;

@@ -21,7 +21,7 @@ class Category extends Model
   public $timestamps = false;
 
   public static function getCategories($params){
-    $query = Category::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = Category::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(

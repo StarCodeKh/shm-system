@@ -16,7 +16,7 @@ class AccountTypeExport implements FromCollection, WithHeadings
       "search_field" => array()
     );
     $whereClause = "";
-    $query = AccountType::orderBy($filter["sort"], $filter["order"]);
+    $query = AccountType::orderByFilter($filter);
     $whereClause = $query;
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
@@ -35,8 +35,7 @@ class AccountTypeExport implements FromCollection, WithHeadings
       }
     }
     
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     $results = collect($whereClause->get());
     return $results;
   }

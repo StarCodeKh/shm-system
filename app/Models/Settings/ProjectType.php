@@ -20,7 +20,7 @@ class ProjectType extends Model
     public $timestamps = false;
 
     public static function getProjectTypeOpts(){
-      $query = ProjectType::orderBy("order_level")->get();
+      $query = ProjectType::orderByLevel()->get();
       $data = array();
       foreach($query as $row){
         $data[] = array(
@@ -33,9 +33,9 @@ class ProjectType extends Model
 
     public static function getProjectTypes($filter){
       $data = array();
-      $query = ProjectType::orderBy($filter["sort"], $filter["order"]);
+      $query = ProjectType::orderByFilter($filter);
       $whereClause = $query;
-      $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+      $whereClause->whereNotDeleted();
       $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
       $whereClause->limit($filter["limit"]);
   
@@ -64,9 +64,9 @@ class ProjectType extends Model
     }
   
     public static function getCount($filter){
-      $query = ProjectType::orderBy($filter["sort"], $filter["order"]);
+      $query = ProjectType::orderByFilter($filter);
       $whereClause = $query;
-      $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+      $whereClause->whereNotDeleted();
       if($filter["search_field"]){
         $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
         $dataFields = $arraySingle;

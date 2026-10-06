@@ -36,10 +36,10 @@ class Incentive extends Model implements Auditable
 
   public static function getIncentiveByBanks($incentive_id){
     $query = DB::table("incentive_to_officer as i2o")
-              ->Select('i2o.bank_id', DB::raw('sum(incentive_after_tax) as total_incentive'), 'b.id as id', 'b.name as label')
+              ->Select('i2o.bank_id', DB::raw('sum(incentive_after_tax) as total_incentive'), 'b.id as id', 'b.name_kh as label')
               ->Join('bank as b', 'b.id', '=', 'i2o.bank_id')
               ->Where('i2o.incentive_id', '=', $incentive_id)
-              ->GroupBy('i2o.bank_id', 'id', 'name')
+              ->GroupBy('i2o.bank_id', 'b.id', 'b.name_kh')
               ->OrderBy('b.order_level')
               ->get();
     $incentiveArr = array();
@@ -66,12 +66,12 @@ class Incentive extends Model implements Auditable
 
   public static function getIncentiveOfficerByBanks($incentive_id, $bank_id){
     $query = DB::table("incentive_to_officer as i2o")
-              ->Select('i2o.entity_id', DB::raw('sum(incentive) as total_incentive'), DB::raw('sum(incentive_after_tax) as total_incentive_after_tax'), 'e.name as entity')
+              ->Select('i2o.entity_id', DB::raw('sum(incentive) as total_incentive'), DB::raw('sum(incentive_after_tax) as total_incentive_after_tax'), 'e.name_kh as entity')
               ->Join('entity as e', 'e.id', '=', 'i2o.entity_id')
               ->Where('i2o.incentive_id', '=', $incentive_id)
               ->Where('i2o.bank_id', '=', $bank_id)
               ->OrderBy('e.order_level')
-              ->GroupBy('i2o.entity_id', 'e.name')
+              ->GroupBy('i2o.entity_id', 'e.name_kh')
               ->get();
     $incentiveArr = array();
     $i = 1;
@@ -98,14 +98,14 @@ class Incentive extends Model implements Auditable
   public static function getIncentiveByEntities($incentive_id, $bank_id){
     if($bank_id > 0){
       $incentiveToEntities = DB::table("incentive_to_entity as i2e")
-                            ->Select("b.name as bank_name", "e.name as label", "e.code as code", "e.id as id")
+                            ->Select("b.name_kh as bank_name", "e.name_kh as label", "e.code as code", "e.id as id")
                             ->Join("incentive_to_officer as i2o", "i2o.entity_id", "=", "i2e.entity_id")
                             ->Join("entity as e", "e.id", "=", "i2e.entity_id")
                             ->Join("bank as b", "b.id", "=", "i2o.bank_id")
                             ->OrderBy('e.order_level')
                             ->Where('i2o.bank_id', '=', $bank_id)
                             ->Where('i2e.incentive_id', $incentive_id)
-                            ->GroupBy('b.name', 'i2e.entity_id', 'e.name', 'e.code', 'e.id', 'i2o.entity_id')
+                            ->GroupBy('b.name_kh', 'i2e.entity_id', 'e.name_kh', 'e.code', 'e.id', 'i2o.entity_id')
                             ->get();
       // $incentiveToEntities = DB::table("incentive_to_officer as i2o")
       //                       ->Select("")
@@ -118,7 +118,7 @@ class Incentive extends Model implements Auditable
       //                       ->get();
     }else{
       $incentiveToEntities = DB::table("incentive_to_entity as i2e")
-                            ->Select("e.name as label", "e.code as code", "e.id as id")
+                            ->Select("e.name_kh as label", "e.code as code", "e.id as id")
                             ->Join("entity as e", "e.id", "=", "i2e.entity_id")
                             ->OrderBy('e.order_level')
                             ->Where('incentive_id', $incentive_id)
@@ -408,12 +408,12 @@ class Incentive extends Model implements Auditable
   }
 
   public static function getIncentiveByOfficers($incentive_id){
-    $query = Officer::whereIn('entity', explode(',', $entity_id))->get();
+    $query = Officer::whereIn('entity_id', explode(',', $entity_id))->get();
     return $query;
   }
 
   public static function getIncentiveByStackholders($incentive_id){
-    $query = Officer::whereIn('entity', explode(',', $entity_id))->get();
+    $query = Officer::whereIn('entity_id', explode(',', $entity_id))->get();
     return $query;
   }
 
@@ -452,7 +452,7 @@ class Incentive extends Model implements Auditable
   }
 
   public static function getSingleOpt(){
-    $query = Incentive::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = Incentive::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -464,9 +464,9 @@ class Incentive extends Model implements Auditable
   }
 
   public static function checkQuery($filter){
-    $query = Incentive::orderBy($filter["sort"], $filter["order"]);
+    $query = Incentive::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
       $dataFields = $arraySingle;

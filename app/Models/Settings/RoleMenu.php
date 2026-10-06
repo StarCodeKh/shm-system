@@ -48,7 +48,7 @@ class RoleMenu extends Model implements Auditable
   }
 
   public static function getSingleOpt(){
-    $query = RoleMenu::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = RoleMenu::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -60,7 +60,7 @@ class RoleMenu extends Model implements Auditable
   }
 
   public static function getSingleOptById($param){
-    $query = RoleMenu::orderBy("order_level")->where("id", $param)->get();
+    $query = RoleMenu::orderByLevel()->where("id", $param)->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -73,7 +73,7 @@ class RoleMenu extends Model implements Auditable
 
   public static function checkQuery($filter){
     $whereClause = "";
-    $query = RoleMenu::orderBy($filter["sort"], $filter["order"]);
+    $query = RoleMenu::orderByFilter($filter);
     $whereClause = $query;
     // if($filter["search_field"]){
     //   $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);

@@ -22,9 +22,9 @@ class RevImplementBudget extends Model
 
     public static function getRevImpleBudget($filter){
         $data = array();
-        $queryObj = RevImplementBudget::orderBy($filter["sort"], $filter["order"]);
+        $queryObj = RevImplementBudget::orderByFilter($filter);
         $whereClause = $queryObj;
-        $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+        $whereClause->whereNotDeleted();
         $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
         $whereClause->limit($filter["limit"]);
         if($filter["search_field"]){

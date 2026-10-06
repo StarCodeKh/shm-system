@@ -18,7 +18,7 @@ class ExpenseExport implements FromCollection, WithHeadings,Auditable
       "search_field" => array()
     );
     $whereClause = "";
-    $query = Expense::orderBy($filter["sort"], $filter["order"]);
+    $query = Expense::orderByFilter($filter);
     $whereClause = $query;
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
@@ -37,8 +37,7 @@ class ExpenseExport implements FromCollection, WithHeadings,Auditable
       }
     }
     
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     $results = collect($whereClause->get());
     return $results;
   }

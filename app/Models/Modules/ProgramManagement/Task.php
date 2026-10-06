@@ -60,9 +60,9 @@ class Task extends Model
   public static function getTaskByAct($filter){
     $data = Activity::getActByCluster($filter);
     // $data = array();
-    // $queryObj = Activity::orderBy($filter["sort"], $filter["order"]);
+    // $queryObj = Activity::orderByFilter($filter);
     // $whereClause = $queryObj;
-    // $whereClause->whereNotIn("status", [4])->orWhere("status", null);
+    // $whereClause->whereNotDeleted();
     // $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
     // $whereClause->limit($filter["limit"]);
 
@@ -88,7 +88,7 @@ class Task extends Model
     // foreach($query as $row){
     //   $activityId = $row->id;
     //   $cdata = array(); //cdata = children data
-    //   $queryAct = Task::orderBy("order_level");
+    //   $queryAct = Task::orderByLevel();
     //   $whereClauseAct = $queryAct;
     //   $whereClauseAct->whereNull("status");
     //   $whereClauseAct->where("activity_id", $activityId);
@@ -192,8 +192,9 @@ class Task extends Model
     $data = array();
     $taskId = $dataInfo["data_info"]["id"];
     $query = CostingToEntity::where("task_id", $taskId)
-                ->whereNotIn("status", [4])->orWhere("status", null)
-                ->orderBy("order_level")
+                ->whereNotDeleted()
+                ->orderByLevel()
+                ->orderBy("id")
                 ->get();
     foreach($query as $row){
       $costingArr = array();
@@ -205,6 +206,7 @@ class Task extends Model
                         ->where("c2e.task_id", $taskId)
                         ->where("cd2e.costing_id", $taskId)
                         ->orderBy('cd2e.order_level')
+                        ->orderBy('cd2e.id')
                         ->get();
 
       foreach($queryCosting as $rowCosting){
@@ -277,11 +279,11 @@ class Task extends Model
   }
 
   public static function getTskByAct($filter, $input){
-    $queryData = Task::orderBy($filter["sort"], $filter["order"]);
+    $queryData = Task::orderByFilter($filter);
     $whereClause = $queryData;
     $whereClause->where("activity_id", $input["param"]["value"]);
-    $whereClause->whereNotIn("status", [4])->orWhere("status", null);
-    $whereClause->orderBy("order_level");
+    $whereClause->whereNotDeleted();
+    $whereClause->orderByLevel();
     $query = collect($whereClause->get());
     $data = array();
     foreach($query as $row){

@@ -114,7 +114,7 @@ class OfficerPaymentRecurring extends Model implements Auditable
   }
 
   public static function getSingleOpt(){
-    $query = OfficerPaymentRecurring::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = OfficerPaymentRecurring::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -134,7 +134,7 @@ class OfficerPaymentRecurring extends Model implements Auditable
     if(isset($filter["data"]["officer_id"])){
       $whereClause->where("officer_payment_recurring.officer_id", $filter["data"]["officer_id"]);
     }
-    $whereClause->orderBy($filter["sort"], $filter["order"]);
+    $whereClause->orderByFilter($filter);
     $d = "";
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
@@ -153,8 +153,7 @@ class OfficerPaymentRecurring extends Model implements Auditable
       }
     }
 
-    $whereClause->whereNotIn("officer_payment_recurring.status", [4]);
-    $whereClause->orWhereNull("officer_payment_recurring.status");
+    $whereClause->whereNotDeleted("officer_payment_recurring.status");
     return $whereClause;
   }
 

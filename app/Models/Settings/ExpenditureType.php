@@ -20,9 +20,9 @@ class ExpenditureType extends Model
 
   public static function getExpenditureTypes($filter){
     $data = array();
-    $query = ExpenditureType::orderBy($filter["sort"], $filter["order"]);
+    $query = ExpenditureType::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
     $whereClause->limit($filter["limit"]);
 
@@ -51,9 +51,9 @@ class ExpenditureType extends Model
   }
 
   public static function getCount($filter){
-    $query = ExpenditureType::orderBy($filter["sort"], $filter["order"]);
+    $query = ExpenditureType::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
       $dataFields = $arraySingle;

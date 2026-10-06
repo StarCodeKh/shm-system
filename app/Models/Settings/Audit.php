@@ -60,7 +60,7 @@ class Audit extends Model
   public static function checkQuery($filter)
   {
     $order = strtolower((string) $filter["order"]) === "asc" ? "asc" : "desc"; // newest first unless asked
-    $query = Audit::with("user")->orderBy($filter["sort"] ?: "id", $order);
+    $query = Audit::with("user")->orderByFilter(["sort" => $filter["sort"] ?: "id", "order" => $order]);
     $whereClause = $query;
     if ($filter["search_field"]) {
       $fields = call_user_func_array('array_merge', $filter["search_field"]);

@@ -35,12 +35,15 @@
     public $timestamps = true;
 
     public static function getRevenues($filter){
-      $accountTypeGroups = AccountTypeGroup::orderBy("order_level")->get();
+      $accountTypeGroups = AccountTypeGroup::orderByLevel()->get();
       $accountTypeGroupArr = array();
       foreach($accountTypeGroups as $accountTypeGroup){
         $accountTypeGroupId = $accountTypeGroup->id;
-        $accountTypes = AccountType::where("account_type_group_id", $accountTypeGroupId)
-                                      ->orderBy("order_level")
+        // account types are linked to their group through account_group_to_type
+        $accountTypes = AccountType::whereIn("id", DB::table("account_group_to_type")
+                                          ->where("account_type_group_id", $accountTypeGroupId)
+                                          ->pluck("account_type_id"))
+                                      ->orderByLevel()
                                       ->get();
         $accTypeArr = array();
         if($accountTypes){

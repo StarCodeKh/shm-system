@@ -39,7 +39,7 @@ class AccountType extends Model implements Auditable, FromCollection, WithHeadin
   }
 
   public static function getSingleOpt(){
-    $query = AccountType::whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = AccountType::whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -67,7 +67,7 @@ class AccountType extends Model implements Auditable, FromCollection, WithHeadin
 
   public static function getAccTypes()
   {
-    $query = AccountType::orderBy("order_level")->whereNotIn("status", [4])->orWhere("status", null)->get();
+    $query = AccountType::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach ($query as $row) {
       $data[] = array(
@@ -79,7 +79,7 @@ class AccountType extends Model implements Auditable, FromCollection, WithHeadin
   }
 
   public static function getAccTypeCode(){
-    $query = AccountType::orderBy("order_level")->whereNotIn("status", [4])->orWhere("status", null)->get();
+    $query = AccountType::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -92,7 +92,7 @@ class AccountType extends Model implements Auditable, FromCollection, WithHeadin
 
   public static function checkQuery($filter){
     $whereClause = "";
-    $query = AccountType::orderBy($filter["sort"], $filter["order"]);
+    $query = AccountType::orderByFilter($filter);
     $whereClause = $query;
     if ($filter["search_field"]) {
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
@@ -111,8 +111,7 @@ class AccountType extends Model implements Auditable, FromCollection, WithHeadin
       }
     }
 
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     return $whereClause;
   }
 

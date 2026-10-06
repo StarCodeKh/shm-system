@@ -19,9 +19,9 @@ class FinanceResource extends Model
   public $timestamps = false;
 
   public static function getFinanceResourceOpts(){
-    $query = FinanceResource::orderBy("order_level");
+    $query = FinanceResource::orderByLevel();
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhere("status", null);
+    $whereClause->whereNotDeleted();
     $queryResult = collect($whereClause->get());
     foreach($queryResult as $row){
       $data[] = array(
@@ -34,9 +34,9 @@ class FinanceResource extends Model
 
   public static function getFinanceResources($filter){
     $data = array();
-    $query = FinanceResource::orderBy($filter["sort"], $filter["order"]);
+    $query = FinanceResource::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
     $whereClause->limit($filter["limit"]);
 
@@ -64,9 +64,9 @@ class FinanceResource extends Model
   }
 
   public static function getCount($filter){
-    $query = FinanceResource::orderBy($filter["sort"], $filter["order"]);
+    $query = FinanceResource::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
       $dataFields = $arraySingle;

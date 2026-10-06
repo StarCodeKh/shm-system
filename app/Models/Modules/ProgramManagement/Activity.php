@@ -47,7 +47,7 @@ class Activity extends Model
   public static function getActivities($param){
     $queryData = Activity::where("is_active", 1);
     $whereClause = $queryData;
-    $whereClause->orderBy("order_level");
+    $whereClause->orderByLevel();
     if(!empty($param["param"]["value"])){
       $whereClause->where("cluster_activity_id", $param["param"]["value"]);
     }
@@ -63,9 +63,9 @@ class Activity extends Model
   }
   public static function getActByCluster($filter){
     $data = array();
-    $queryObj = ClusterActivity::orderBy($filter["sort"], $filter["order"]);
+    $queryObj = ClusterActivity::orderByFilter($filter);
     $whereClause = $queryObj;
-    $whereClause->whereNotIn("status", [4])->orWhere("status", null);
+    $whereClause->whereNotDeleted();
     $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
     $whereClause->limit($filter["limit"]);
 
@@ -84,9 +84,9 @@ class Activity extends Model
     foreach($query as $row){
       $parentId = $row->id;
       $cdata = array(); //cdata = children data
-      $queryAct = Activity::orderBy("order_level");
+      $queryAct = Activity::orderByLevel();
       $whereClauseAct = $queryAct;
-      $whereClauseAct->whereNotIn("status", [4])->orWhere("status", null);
+      $whereClauseAct->whereNotDeleted();
       $whereClauseAct->where("cluster_activity_id", $parentId);
       
       if($filter["search_field"]){
@@ -123,8 +123,8 @@ class Activity extends Model
           // Task
           $taskArr = array();
           $queryTask = Task::where("activity_id", $crow->id)
-                              ->orderBy("order_level")
-                              ->whereNotIn("status", [4])->orWhere("status", null)
+                              ->orderByLevel()
+                              ->whereNotDeleted()
                               ->get();
           
           foreach($queryTask as $task){
@@ -132,8 +132,8 @@ class Activity extends Model
             $costingArr = array();
             $queryCostings = DB::table("mef_costing_to_entity")
                                   ->where("task_id", $task->id)
-                                  ->orderBy("order_level")
-                                  ->whereNotIn("status", [4])->orWhere("status", null)
+                                  ->orderByLevel()
+                                  ->whereNotDeleted()
                                   // ->orWhere("status", 0)
                                   // ->where("planning_id", config_planning_year)
                                   ->get();
@@ -142,8 +142,8 @@ class Activity extends Model
             foreach($queryCostings as $costing){
               $queryCostingDetails = DB::table("mef_costing_detail_to_entity")
                                   ->where("costing_id", $costing->id)
-                                  ->orderBy("order_level")
-                                  ->whereNotIn("status", [4])->orWhere("status", null)
+                                  ->orderByLevel()
+                                  ->whereNotDeleted()
                                   ->get();
 
               $costingDetailArr = array();
@@ -309,9 +309,9 @@ class Activity extends Model
     return $data;
   }
   public static function getCount($filter){
-    $query = Activity::orderBy($filter["sort"], $filter["order"]);
+    $query = Activity::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhere("status", null);
+    $whereClause->whereNotDeleted();
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
       $dataFields = $arraySingle;

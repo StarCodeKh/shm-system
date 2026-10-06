@@ -21,7 +21,7 @@ class Objective extends Model
   public $timestamps = true;
 
   public static function getObjectives(){
-    $query = Objective::where("is_active", 1)->orderBy("order_level")->get();
+    $query = Objective::where("is_active", 1)->orderByLevel()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -34,9 +34,9 @@ class Objective extends Model
 
   public static function getAllClusterPrograms($filter){
     $data = array();
-    $queryObj = Objective::orderBy("order_level");
+    $queryObj = Objective::orderByLevel();
     $whereClause = $queryObj;
-    $whereClause->whereNotIn("status", [4])->orWhere("status", null);
+    $whereClause->whereNotDeleted();
     $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
     $whereClause->limit($filter["limit"]);
 
@@ -58,14 +58,14 @@ class Objective extends Model
     foreach($query as $row){
       $proArr = array();
       // Program
-      $queryPro = Program::where("is_active", 1)->where("objective_id", $row->id)->orderBy("order_level")->get();
+      $queryPro = Program::where("is_active", 1)->where("objective_id", $row->id)->orderByLevel()->get();
       foreach($queryPro as $pro){
         $subProArr = array();
         $proIndArr = array();
         $queryProIndicator = DB::table("mef_kpi_program")
                                 ->where("planning_id", config_planning_year)
                                 ->where("program_id", $pro->id)
-                                ->orderBy("order_level")
+                                ->orderByLevel()
                                 ->get();
         foreach($queryProIndicator as $proIndicator){
           $proIndArr[] = array(
@@ -76,14 +76,14 @@ class Objective extends Model
         }
 
         // Sub Program
-        $querySubPro = SubProgram::where("is_active", 1)->where("program_id", $pro->id)->orderBy("order_level")->get();
+        $querySubPro = SubProgram::where("is_active", 1)->where("program_id", $pro->id)->orderByLevel()->get();
         foreach($querySubPro as $subPro){
           $cluActArr = array();
           $subProInd = array();
           $querySubProIndicator = DB::table("mef_kpi_subprogram")
                                       ->where("planning_id", config_planning_year)
                                       ->where("sub_program_id", $pro->id)
-                                      ->orderBy("order_level")
+                                      ->orderByLevel()
                                       ->get();
           foreach($querySubProIndicator as $subProIndicator){
             $subProInd[] = array(
@@ -93,19 +93,19 @@ class Objective extends Model
             );
           }
           // Cluster Activity
-          $queryClusAct = ClusterActivity::where("is_active", 1)->where("sub_program_id", $subPro->id)->orderBy("order_level")->get();
+          $queryClusAct = ClusterActivity::where("is_active", 1)->where("sub_program_id", $subPro->id)->orderByLevel()->get();
           
           foreach($queryClusAct as $clusAct){
             $actArr = array();
             $clusActIndArr = array();
 
             // Activity
-            $queryAct = Activity::where("is_active", 1)->where("cluster_activity_id", $clusAct->id)->orderBy("order_level")->get();
+            $queryAct = Activity::where("is_active", 1)->where("cluster_activity_id", $clusAct->id)->orderByLevel()->get();
             
             $queryClusActIndicator = DB::table("mef_kpi_cluster_activity")
                                         ->where("cluster_activity_id", $pro->id)
                                         ->where("planning_id", config_planning_year)
-                                        ->orderBy("order_level")
+                                        ->orderByLevel()
                                         ->get();
             foreach($queryClusActIndicator as $clusActIndicator){
               $clusActIndArr[] = array(
@@ -120,7 +120,7 @@ class Objective extends Model
               $queryActIndicator = DB::table("mef_kpi_activity")
                                         ->where("activity_id", $act->id)
                                         ->where("planning_id", config_planning_year)
-                                        ->orderBy("order_level")
+                                        ->orderByLevel()
                                         ->get();
                 foreach($queryActIndicator as $actIndicator){
                   $actIndArr[] = array(
@@ -133,7 +133,7 @@ class Objective extends Model
                 $taskArr = array();
                 // $queryTask = DB::table("mef_task")
                 //                         ->where("activity_id", $act->id)
-                //                         ->orderBy("order_level")
+                //                         ->orderByLevel()
                 //                         ->whereNull("status")
                 //                         ->orWhere("status", 0)
                 //                         ->get();
@@ -142,7 +142,7 @@ class Objective extends Model
                 //   $costingArr = array();
                 //   $queryCostings = DB::table("mef_costing_to_entity")
                 //                         ->where("activity_id", $act->id)
-                //                         ->orderBy("order_level")
+                //                         ->orderByLevel()
                 //                         ->whereNull("status")
                 //                         ->orWhere("status", 0)
                 //                         ->where("planning_id", config_planning_year)
@@ -151,7 +151,7 @@ class Objective extends Model
                 //   foreach($queryCostings as $costing){
                 //     $queryCostingDetails = DB::table("mef_costing_detail_to_entity")
                 //                         ->where("costing_id", $costing->id)
-                //                         ->orderBy("order_level")
+                //                         ->orderByLevel()
                 //                         ->whereNull("status")
                 //                         ->orWhere("status", 0)
                 //                         ->get();
@@ -294,9 +294,9 @@ class Objective extends Model
   }
 
   public static function getCount($filter){
-    $queryObj = Objective::orderBy($filter["sort"], $filter["order"]);
+    $queryObj = Objective::orderByFilter($filter);
     $whereClause = $queryObj;
-    $whereClause->whereNotIn("status", [4])->orWhere("status", null);
+    $whereClause->whereNotDeleted();
     $total = $whereClause->count();
     return $total;
   }

@@ -40,7 +40,7 @@ class OfficerLookupSeeder extends Seeder
             foreach ($rows as $i => [$value, $titleKh, $titleEn]) {
                 DB::table('mef_status')->updateOrInsert(
                     ['group' => $group, 'criteria' => $value],
-                    ['title_kh' => $titleKh, 'title_en' => $titleEn, 'order_level' => $i + 1, 'status' => '']
+                    ['title_kh' => $titleKh, 'title_en' => $titleEn, 'order_level' => $i + 1, 'status' => null]
                 );
             }
         }

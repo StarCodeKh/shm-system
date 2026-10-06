@@ -56,7 +56,7 @@ class UserDevice extends Model implements Auditable
     $newUserId = explode(",", $userId);
     array_pop($newUserId);
     // dd($newUserId);
-    $query = UserDevice::whereIn("user_id", $newUserId)->orderBy($filter["sort"], $filter["order"]);
+    $query = UserDevice::whereIn("user_id", $newUserId)->orderByFilter($filter);
     $whereClause = $query;
     if(isset($filter["data"]["user_id"])){
       $whereClause->where("user_id", $filter["data"]["user_id"]);

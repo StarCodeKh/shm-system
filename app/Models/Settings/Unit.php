@@ -26,9 +26,9 @@ class Unit extends Model
     // $whereClause = CommonService::queryTable(Unit::class, $filter, $flag = 1); // Flag == 1 mean if query result limit by qty
     // $results = collect($whereClause->get());
     $data = array();
-    $query = Unit::orderBy($filter["sort"], $filter["order"]);
+    $query = Unit::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     if(!empty($filter["search_field"])){
       $whereClause->offset((1 - 1) * $filter["limit"]);       
     }else{

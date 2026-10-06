@@ -24,9 +24,9 @@ class Account extends Model
   public static function getAcc($param)
   {
     $data = array();
-    $query = Account::whereNotIn("status", [4])->orWhere("status", null);
+    $query = Account::whereNotDeleted();
     $whereClause = $query;
-    $whereClause->orderBy("order_level");
+    $whereClause->orderByLevel();
     if(!empty($param["param"]["value"])){
       $whereClause->where("account_type", $param["param"]["value"]);
     }
@@ -41,7 +41,7 @@ class Account extends Model
   }
 
   public static function getSingleOpt(){
-    $query = AccountType::whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = AccountType::whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -56,7 +56,7 @@ class Account extends Model
     $whereClause = "";
     
     
-    $query = Account::orderBy($filter["sort"], $filter["order"]);
+    $query = Account::orderByFilter($filter);
     $whereClause = $query;
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
@@ -75,13 +75,12 @@ class Account extends Model
       }
     }
     
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     return $whereClause;
   }
 
   public static function getChartAccountParentCode(){
-    $query = Account::WhereNull("parent_code")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = Account::WhereNull("parent_code")->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -93,7 +92,7 @@ class Account extends Model
   }
 
   public static function getAccountCodeList(){
-    $query = Account::whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = Account::whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -106,9 +105,9 @@ class Account extends Model
 
   // public static function getAccountByGroup($param){
   //   $data = array();
-  //   $query = Account::whereNotIn("status", [4])->orWhere("status", null);
+  //   $query = Account::whereNotDeleted();
   //   $whereClause = $query;
-  //   $whereClause->orderBy("order_level");
+  //   $whereClause->orderByLevel();
   //   if(!empty($param["param"]["value"])){
   //     $whereClause->where("account_group_id", $param["param"]["value"]);
   //   }
@@ -124,9 +123,9 @@ class Account extends Model
 
   public static function getSubAccount($param){
     $data = array();
-    $query = Account::whereNotIn("status", [4])->orWhere("status", null);
+    $query = Account::whereNotDeleted();
     $whereClause = $query;
-    $whereClause->orderBy("order_level");
+    $whereClause->orderByLevel();
     if (!empty($param["param"]["value"])) {
       $whereClause->where("parent_id", $param["param"]["value"]);
     }
@@ -143,9 +142,9 @@ class Account extends Model
   public static function getAccounts($filter)
   {
     $data = array();
-    $query = Account::orderBy($filter["sort"], $filter["order"]);
+    $query = Account::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     if (!empty($filter["search_field"])) {
       $whereClause->offset((1 - 1) * $filter["limit"]);
     } else {
@@ -193,7 +192,7 @@ class Account extends Model
   public static function getCount($filter)
   {
     $data = array();
-    $query = Account::orderBy($filter["sort"], $filter["order"]);
+    $query = Account::orderByFilter($filter);
     $whereClause = $query;
     if ($filter["search_field"]) {
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
@@ -219,7 +218,7 @@ class Account extends Model
   }
 
    public static function getAccountCode($accountType){
-    $query = Account::orderBy("order_level")->whereIn("account_type", $accountType)->whereNotIn("status", [4])->orWhere("status", null)->get();
+    $query = Account::orderByLevel()->whereIn("account_type", $accountType)->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(

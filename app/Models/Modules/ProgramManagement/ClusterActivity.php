@@ -35,11 +35,11 @@ class ClusterActivity extends Model
     }
   
     public static function getClusActBySprog($filter, $input){
-      $queryData = ClusterActivity::orderBy($filter["sort"], $filter["order"]);
+      $queryData = ClusterActivity::orderByFilter($filter);
       $whereClause = $queryData;
       $whereClause->where("sub_program_id", $input["param"]["value"]);
-      $whereClause->whereNotIn("status", [4])->orWhere("status", null);
-      $whereClause->orderBy("order_level");
+      $whereClause->whereNotDeleted();
+      $whereClause->orderByLevel();
       $query = collect($whereClause->get());
       $data = array();
       foreach($query as $row){
@@ -58,7 +58,7 @@ class ClusterActivity extends Model
 
       // If has param search_field
       if(isset($filter["search_field"])){
-        $whereClause->orderBy($filter["sort"], $filter["order"]);
+        $whereClause->orderByFilter($filter);
         $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
         $whereClause->limit($filter["limit"]);
 
@@ -87,8 +87,8 @@ class ClusterActivity extends Model
       foreach($query as $row){
         $parentId = $row->id;
         $cdata = array();
-        // $result = ClusterActivity::where("sub_program_id", $parentId)->orderBy("order_level")->get();
-        $queryClusAct = ClusterActivity::orderBy("order_level");
+        // $result = ClusterActivity::where("sub_program_id", $parentId)->orderByLevel()->get();
+        $queryClusAct = ClusterActivity::orderByLevel();
         $whereClauseClusAct = $queryClusAct;
         $whereClauseClusAct->where("is_active", 1);
         $whereClauseClusAct->where("sub_program_id", $parentId);
@@ -175,7 +175,7 @@ class ClusterActivity extends Model
     public static function getClusterActs($param){
       $queryData = ClusterActivity::where("is_active", 1);
       $whereClause = $queryData;
-      $whereClause->orderBy("order_level");
+      $whereClause->orderByLevel();
       if(!empty($param["param"]["value"])){
         $whereClause->where("sub_program_id", $param["param"]["value"]);
       }
@@ -191,9 +191,9 @@ class ClusterActivity extends Model
     }
 
     public static function getCount($filter){
-      $query = ClusterActivity::orderBy($filter["sort"], $filter["order"]);
+      $query = ClusterActivity::orderByFilter($filter);
       $whereClause = $query;
-      $whereClause->whereNotIn("status", [4])->orWhere("status", null);
+      $whereClause->whereNotDeleted();
       if($filter["search_field"]){
         $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
         $dataFields = $arraySingle;

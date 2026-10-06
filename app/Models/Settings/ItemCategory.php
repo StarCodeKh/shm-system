@@ -21,9 +21,9 @@ class ItemCategory extends Model
 
     public static function getItemCategories($filter){
       $data = array();
-      $query = ItemCategory::orderBy($filter["sort"], $filter["order"]);
+      $query = ItemCategory::orderByFilter($filter);
       $whereClause = $query;
-      $whereClause->whereNotIn("status", [4])->orWhere("status", null);
+      $whereClause->whereNotDeleted();
       $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
       $whereClause->limit($filter["limit"]);
   
@@ -55,9 +55,9 @@ class ItemCategory extends Model
     }
   
     public static function getCount($filter){
-      $query = ItemCategory::orderBy($filter["sort"], $filter["order"]);
+      $query = ItemCategory::orderByFilter($filter);
       $whereClause = $query;
-      $whereClause->whereNotIn("status", [4])->orWhere("status", null);
+      $whereClause->whereNotDeleted();
       if($filter["search_field"]){
         $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
         $dataFields = $arraySingle;

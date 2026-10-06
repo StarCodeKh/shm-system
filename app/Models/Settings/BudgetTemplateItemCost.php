@@ -52,18 +52,19 @@ class BudgetTemplateItemCost extends Model
 
   public static function getBudgetTemplateItemCosts($filter){
     $data = array();
-    $query = BudgetTemplateItemCost::orderBy($filter["sort"], $filter["order"]);
+    $query = BudgetTemplateItemCost::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
     $whereClause->limit($filter["limit"]);
-    if(isset($filter["search_field"])){
-      for($i=0 ; $i < count($filter["search_field"]); $i++){
-        $field = array_key_first($filter["search_field"][$i]);
-        if (in_array($field, $dataFields)) {
-          $whereClause->orWhere($field, "Like","%".$filter["search_field"][$i][$field]."%");
+    if(!empty($filter["search_field"])){
+      // Any of the search fields may match, but the other filters still apply
+      $whereClause->where(function ($q) use ($filter) {
+        foreach ($filter["search_field"] as $search) {
+          $field = array_key_first($search);
+          $q->orWhere($field, "Like", "%".$search[$field]."%");
         }
-      }
+      });
     }
     if(isset($filter["data"]["data_info"])){
       $whereClause->where("budget_template_id", $filter["data"]["data_info"]["id"]);
@@ -109,16 +110,17 @@ class BudgetTemplateItemCost extends Model
 
   public static function getCount($filter){
     $data = array();
-    $query = BudgetTemplateItemCost::orderBy($filter["sort"], $filter["order"]);
+    $query = BudgetTemplateItemCost::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
-    if(isset($filter["search_field"])){
-      for($i=0 ; $i < count($filter["search_field"]); $i++){
-        $field = array_key_first($filter["search_field"][$i]);
-        if (in_array($field, $dataFields)) {
-          $whereClause->orWhere($field, "Like","%".$filter["search_field"][$i][$field]."%");
+    $whereClause->whereNotDeleted();
+    if(!empty($filter["search_field"])){
+      // Any of the search fields may match, but the other filters still apply
+      $whereClause->where(function ($q) use ($filter) {
+        foreach ($filter["search_field"] as $search) {
+          $field = array_key_first($search);
+          $q->orWhere($field, "Like", "%".$search[$field]."%");
         }
-      }
+      });
     }
     if(isset($filter["data"]["data_info"])){
       $whereClause->where("budget_template_id", $filter["data"]["data_info"]["id"]);

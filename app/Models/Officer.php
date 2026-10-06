@@ -126,7 +126,7 @@ class Officer extends Model implements Auditable
   }
 
   public static function getSingleOpt(){
-    $query = Officer::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = Officer::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -138,7 +138,7 @@ class Officer extends Model implements Auditable
   }
 
   public static function getSingleOptById($param){
-    $query = Officer::orderBy("order_level")->where("id", $param)->get();
+    $query = Officer::orderByLevel()->where("id", $param)->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -151,7 +151,7 @@ class Officer extends Model implements Auditable
 
   public static function checkQueryResult($filter, $gender){
     $whereClause = "";
-    $query = Officer::orderBy($filter["sort"], $filter["order"]);
+    $query = Officer::orderByFilter($filter);
     $whereClause = $query;
     $whereClause->with("status")->with("department")->with("entity")->with("title");
     if(isset($filter["officer_id"])){
@@ -180,15 +180,14 @@ class Officer extends Model implements Auditable
       }
     }
     
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     return $whereClause;
     
   }
 
   public static function checkQuery($filter){
     $whereClause = "";
-    $query = Officer::orderBy($filter["sort"], $filter["order"]);
+    $query = Officer::orderByFilter($filter);
     $whereClause = $query;
     $whereClause->with("nssf")->with("status")->with("department")->with("entity");
     if(isset($filter["officer_id"])){
@@ -215,13 +214,15 @@ class Officer extends Model implements Auditable
     }
     
     if(isset($filter["keysearch"]["keyword"]) && $filter["keysearch"]["keyword"] != null){
+      $keyword = '%'.$filter["keysearch"]["keyword"].'%';
       $whereClause->whereNotIn("status", [4]);
-      $whereClause->Where("first_name", 'Like', '%'.$filter["keysearch"]["keyword"].'%');
-      $whereClause->orWhere("last_name", 'Like', '%'.$filter["keysearch"]["keyword"].'%');
-      $whereClause->orWhere("identity_member_no", 'Like', '%'.$filter["keysearch"]["keyword"].'%');
+      $whereClause->where(function ($q) use ($keyword) {
+        $q->where("first_name", 'Like', $keyword)
+          ->orWhere("last_name", 'Like', $keyword)
+          ->orWhere("identity_member_no", 'Like', $keyword);
+      });
     }else{
-      $whereClause->whereNotIn("status", [4]);
-      $whereClause->orWhereNull("status");
+      $whereClause->whereNotDeleted();
     }
     return $whereClause;
   }
@@ -372,55 +373,35 @@ class Officer extends Model implements Auditable
 
    public static function insertOfficer($data)
   {
-        $sql = "
-            INSERT INTO tbl_officer
-            (
-                user_id, photo, first_name, last_name, latin, identity_no, 
-                identity_member_no, dob, nationality, title, duty, entity_id,
-                department_id, gender, address, email, bank, bank_code,
-                bank_account_no, updated_bank_acc, `position`, telephone_1,
-                telephone_2, status, created_by, created_at
-            )
-            VALUES
-            (
-                :user_id, :photo, :first_name, :last_name, :latin, :identity_no,
-                :identity_member_no, :dob, :nationality, :title, :duty, :entity_id,
-                :department_id, :gender, :address, :email, :bank,
-                :bank_code, :bank_account_no, :updated_bank_acc, :position,
-                :telephone_1, :telephone_2, :status, :created_by, NOW()
-            )
-        ";
-
-        // Fill missing optional fields with null automatically
-        $params = [
-            'user_id'             => $data['user_id'] ?? null,
-            'photo'               => $data['photo'],
-            'first_name'          => $data['first_name'],
-            'last_name'           => $data['last_name'],
-            'latin'               => $data['latin'],
-            'identity_no'         => $data['identity_no'],
-            'identity_member_no'  => $data['identity_member_no'],
-            'dob'                 => $data['dob'],
-            'nationality'         => $data['nationality'] ?? null,
-            'title'               => $data['title'],
-            'duty'                => $data['duty'] ?? null,
-            'entity_id'           => $data['entity_id'] ?? null,
-            'department_id'       => $data['department_id'] ?? null,
-            'gender'              => $data['gender'] ?? null,
-            'address'             => $data['address'] ?? null,
-            'email'               => $data['email'] ?? null,
-            'bank'                => $data['bank'] ?? null,
-            'bank_code'           => $data['bank_code'] ?? null,
-            'bank_account_no'     => $data['bank_account_no'] ?? null,
-            'updated_bank_acc'    => $data['updated_bank_acc'] ?? null,
-            'position'            => $data['position'] ?? null,
-            'telephone_1'         => $data['telephone_1'] ?? null,
-            'telephone_2'         => $data['telephone_2'] ?? null,
-            'status'              => $data['status'],
-            'created_by'          => $data['created_by']
+        $optional = [
+            'user_id', 'nationality', 'duty', 'entity_id', 'department_id', 'gender', 'address', 'email',
+            'bank_code', 'bank_account_no', 'updated_bank_acc', 'position', 'telephone_1', 'telephone_2',
+            'register_date', 'married_status', 'emergency_person', 'emergency_relative', 'is_nssf_member',
+            'nssf_card_no', 'social_media_fb', 'social_media_telegram', 'social_media_whatsapp',
+            'social_media_alt', 'remark', 'order_level',
         ];
+        $row = [
+            'photo'              => $data['photo'],
+            'first_name'         => $data['first_name'],
+            'last_name'          => $data['last_name'],
+            'latin'              => $data['latin'],
+            'identity_no'        => $data['identity_no'],
+            'identity_member_no' => $data['identity_member_no'],
+            'dob'                => $data['dob'],
+            'title'              => $data['title'],
+            'status'             => $data['status'],
+            'bank'               => $data['bank'] ?? $data['bank_name'] ?? null,
+            'created_by'         => $data['created_by'],
+            'created_at'         => now(),
+        ];
+        // Optional fields that weren't sent keep the column default
+        foreach ($optional as $field) {
+            if (array_key_exists($field, $data)) {
+                $row[$field] = $data[$field];
+            }
+        }
 
-        return DB::insert($sql, $params);
+        return DB::table('officer')->insert($row);
   }
 
 

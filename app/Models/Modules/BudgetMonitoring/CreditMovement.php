@@ -30,9 +30,9 @@ class CreditMovement extends Model
   
   public static function getCredMovement($filter){
     $data = array();
-    $queryObj = CreditMovement::orderBy($filter["sort"], $filter["order"]);
+    $queryObj = CreditMovement::orderByFilter($filter);
     $whereClause = $queryObj;
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
     $whereClause->limit($filter["limit"]);
     if($filter["search_field"]){

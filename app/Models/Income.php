@@ -85,7 +85,7 @@ class Income extends Model implements Auditable
   }
 
   public static function getSingleOpt(){
-    $query = Income::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = Income::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -99,7 +99,7 @@ class Income extends Model implements Auditable
   public static function checkQuery($filter){
     $query = Income::with("department")->with("entity")->with("currency")->with("account")->with("status")->with("PaymentMethod");
     $whereClause = $query;
-    $whereClause->orderBy($filter["sort"], $filter["order"]);
+    $whereClause->orderByFilter($filter);
     $d = "";
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
@@ -118,8 +118,7 @@ class Income extends Model implements Auditable
       }
     }
 
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     return $whereClause;
   }
 

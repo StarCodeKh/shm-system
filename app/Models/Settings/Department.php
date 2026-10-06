@@ -16,9 +16,9 @@ class Department extends Model implements Auditable
 
     public static function getSingleOpt(){
       $data = array();
-      $query = Department::whereNotIn("status", [4])->orWhereNull("status");
+      $query = Department::whereNotDeleted();
       $whereClause = $query;
-      $whereClause->orderBy("order_level");
+      $whereClause->orderByLevel();
       if(Auth::user()->entity_id !=0 || Auth::user()->entity_id !=null){
         $whereClause->where("id", Auth::user()->entity_id);
       }
@@ -34,7 +34,7 @@ class Department extends Model implements Auditable
 
     public static function checkQuery($filter){
       $whereClause = "";
-      $query = Department::orderBy($filter["sort"], $filter["order"]);
+      $query = Department::orderByFilter($filter);
       $whereClause = $query;
       if($filter["search_field"]){
         $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
@@ -53,8 +53,7 @@ class Department extends Model implements Auditable
         }
     }
     
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     return $whereClause;
   }
 

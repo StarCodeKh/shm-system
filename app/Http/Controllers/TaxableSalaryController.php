@@ -22,7 +22,7 @@ class TaxableSalaryController extends Controller
             "sort" => isset($input["sort"]) ? $input["sort"] : config_sort,
             "order" => isset($input["order"]) ? $input["order"] : config_order
         );
-        $table = TaxableSalary::orderBy($filter["sort"], $filter["order"])
+        $table = TaxableSalary::orderByFilter($filter)
                                 ->offset($filter["offset"])
                                 ->limit($filter["limit"])
                                 ->get();

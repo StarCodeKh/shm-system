@@ -50,7 +50,7 @@ class FileManager extends Model implements Auditable
   }
 
   public static function getSingleOpt(){
-    $query = FileManager::orderBy($filter["sort"], $filter["order"])->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = FileManager::orderByFilter($filter)->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -62,12 +62,10 @@ class FileManager extends Model implements Auditable
   }
 
   public static function checkQuery($filter){
-    $query = FileManager::orderBy($filter["sort"], $filter["order"]);
+    $query = FileManager::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->orderBy($filter["sort"], $filter["order"]);
-    
-    $whereClause->WhereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+
+    $whereClause->whereNotDeleted();
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
       $dataFields = $arraySingle;

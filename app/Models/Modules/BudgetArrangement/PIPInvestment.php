@@ -63,11 +63,11 @@ class PIPInvestment extends Model
     public static function getPIPInvestment($filter){
         $summary = array();
         for($i=0; $i <= 1-1; $i++){
-            // $programs = Program::orderBy("order_level", "ASC")->get();
+            // $programs = Program::orderByLevel('asc')->get();
             $data = array();
-            $queryPro = Program::orderBy($filter["sort"], $filter["order"]);
+            $queryPro = Program::orderByFilter($filter);
             $whereClause = $queryPro;
-            $whereClause->whereNotIn("status", [4])->orWhere("status", null);
+            $whereClause->whereNotDeleted();
             $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
             $whereClause->limit($filter["limit"]);
 
@@ -97,7 +97,7 @@ class PIPInvestment extends Model
 
             foreach($query as $program){
                 $programId = $program->id;
-                $querySubPro = SubProgram::orderBy("order_level", "ASC");
+                $querySubPro = SubProgram::orderByLevel('asc');
                 $clauseSubPro = $querySubPro;
                 $clauseSubPro->where("program_id", $programId);
 
@@ -139,7 +139,7 @@ class PIPInvestment extends Model
                                         ->join("mef_project_type as pt", "pt.id", "=", "pip.project_type_id")
                                         ->join("mef_finance_resource as fr", "fr.id", "=", "pip.finance_resource_id");
                     
-                    // PIPInvestment::orderBy("order_level");
+                    // PIPInvestment::orderByLevel();
                     $clausePIPInv = $queryPIPInv;
                     $clausePIPInv->where("pip.sub_program_id", $subProgramId);
                     $clausePIPInv->where("pip.planning_id", config_planning_year);
@@ -410,15 +410,15 @@ class PIPInvestment extends Model
     }
 
     public static function __getPIPInvestment(){
-        $programs = Program::orderBy("order_level", "ASC")->get();
+        $programs = Program::orderByLevel('asc')->get();
         $data = array();
         // foreach($programs as $program){
         //     $programId = $program->id;
-        //     $subPrograms = SubProgram::orderBy("order_level", "ASC")->where("program_id", $programId)->get();
+        //     $subPrograms = SubProgram::orderByLevel('asc')->where("program_id", $programId)->get();
         //     $subProgs = array();
         //     foreach($subPrograms as $subProgram){
         //         $subProgramId = $subProgram->id;
-        //         $pipInvestments = PIPInvestment::where("sub_program_id", $subProgramId)->where("planning_id", config_planning_year)->orderBy("order_level")->get();
+        //         $pipInvestments = PIPInvestment::where("sub_program_id", $subProgramId)->where("planning_id", config_planning_year)->orderByLevel()->get();
         //         $pipInvPros = array();
         //         foreach($pipInvestments as $pipInvestment){
         //             $pipInvestmentId = $pipInvestment->id;

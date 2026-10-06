@@ -60,7 +60,7 @@ class PaymentType extends Model implements Auditable
   }
 
   public static function getSingleOpt(){
-    $query = PaymentType::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = PaymentType::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -73,7 +73,7 @@ class PaymentType extends Model implements Auditable
 
   public static function checkQuery($filter){
     $whereClause = "";
-    $query = PaymentType::orderBy($filter["sort"], $filter["order"]);
+    $query = PaymentType::orderByFilter($filter);
     $whereClause = $query;
     $whereClause->with("status")->with("currency");
     if($filter["search_field"]){
@@ -92,8 +92,7 @@ class PaymentType extends Model implements Auditable
         }
       }
     }
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     return $whereClause;
   }
 

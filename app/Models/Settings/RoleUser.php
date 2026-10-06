@@ -50,7 +50,7 @@ class RoleUser extends Model implements Auditable
   }
 
   public static function getSingleOpt(){
-    $query = RoleUser::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = RoleUser::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -62,7 +62,7 @@ class RoleUser extends Model implements Auditable
   }
 
   public static function getSingleValueOpt(){
-    $query = RoleUser::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = RoleUser::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -74,7 +74,7 @@ class RoleUser extends Model implements Auditable
   }
 
   public static function getSingleOptById($param){
-    $query = RoleUser::orderBy("order_level")->where("id", $param)->get();
+    $query = RoleUser::orderByLevel()->where("id", $param)->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -87,7 +87,7 @@ class RoleUser extends Model implements Auditable
 
   public static function checkQuery($filter){
     $whereClause = "";
-    $query = RoleUser::orderBy($filter["sort"], $filter["order"]);
+    $query = RoleUser::orderByFilter($filter);
     $whereClause = $query;
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
@@ -106,8 +106,7 @@ class RoleUser extends Model implements Auditable
       }
     }
     
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     return $whereClause;
   }
 

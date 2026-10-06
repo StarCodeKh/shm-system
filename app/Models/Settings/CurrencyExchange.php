@@ -58,7 +58,7 @@ class CurrencyExchange extends Model implements Auditable
   }
 
   public static function getSingleOpt(){
-    $query = CurrencyExchange::whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = CurrencyExchange::whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -70,9 +70,9 @@ class CurrencyExchange extends Model implements Auditable
   }
 
   public static function checkQuery($filter){
-    $query = CurrencyExchange::orderBy($filter["sort"], $filter["order"]);
+    $query = CurrencyExchange::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->orderBy($filter["sort"], $filter["order"]);
+    $whereClause->orderByFilter($filter);
     $d = "";
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
@@ -91,8 +91,7 @@ class CurrencyExchange extends Model implements Auditable
       }
     }
 
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     return $whereClause;
   }
 

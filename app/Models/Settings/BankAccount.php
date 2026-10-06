@@ -43,7 +43,7 @@ class BankAccount extends Model
 
   public static function getSingleOpt()
   {
-    $query = BankAccount::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = BankAccount::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach ($query as $row) {
       $data[] = array(
@@ -56,9 +56,9 @@ class BankAccount extends Model
 
   public static function checkQuery($filter)
   {
-    $query = BankAccount::orderBy($filter["sort"], $filter["order"]);
+    $query = BankAccount::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     if (isset($filter["search_field"])) {
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
       $dataFields = $arraySingle;

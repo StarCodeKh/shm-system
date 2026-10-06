@@ -49,7 +49,7 @@ class Bank extends Model implements Auditable
 
 
   public static function getSingleOpt(){
-    $query = Bank::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = Bank::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -61,7 +61,7 @@ class Bank extends Model implements Auditable
   }
 
     public static function getBankByName(){
-    $query = Bank::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = Bank::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -76,7 +76,7 @@ class Bank extends Model implements Auditable
     $whereClause = "";
     
     
-    $query = Bank::orderBy($filter["sort"], $filter["order"]);
+    $query = Bank::orderByFilter($filter);
     $whereClause = $query;
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
@@ -95,8 +95,7 @@ class Bank extends Model implements Auditable
       }
     }
     
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     return $whereClause;
   }
 

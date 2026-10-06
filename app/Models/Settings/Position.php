@@ -48,7 +48,7 @@ class Position extends Model implements Auditable
   }
 
   public static function getSingleOpt(){
-    $query = Position::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = Position::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -63,7 +63,7 @@ class Position extends Model implements Auditable
     $whereClause = "";
     
     
-    $query = Position::orderBy($filter["sort"], $filter["order"]);
+    $query = Position::orderByFilter($filter);
     $whereClause = $query;
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
@@ -82,8 +82,7 @@ class Position extends Model implements Auditable
       }
     }
     
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     return $whereClause;
   }
 

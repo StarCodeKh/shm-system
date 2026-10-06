@@ -31,7 +31,7 @@ class PBCosting extends Model
 
   public static function getPBCostingByEntities($filter){
     $data = array();
-    $queryPro = Program::orderBy($filter["sort"], $filter["order"]);
+    $queryPro = Program::orderByFilter($filter);
     $whereProClause = $queryPro;
     $whereProClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
     $whereProClause->limit($filter["limit"]);
@@ -48,7 +48,7 @@ class PBCosting extends Model
     $resultPro = collect($whereProClause->get());
     foreach($resultPro as $pro){
         $proId = $pro->id;
-        $querySubPro = SubProgram::orderBy("order_level");
+        $querySubPro = SubProgram::orderByLevel();
         $whereSubPro = $querySubPro;
         $whereSubPro->where("program_id", $proId);
         if($filter["search_field"]){
@@ -65,7 +65,7 @@ class PBCosting extends Model
         $subProArr = array();
         foreach($resultSubPro as $subPro){
             $subProId = $subPro->id;
-            $queryClusAct = ClusterActivity::orderBy("order_level");
+            $queryClusAct = ClusterActivity::orderByLevel();
             $whereClusAct = $queryClusAct;
             $whereClusAct->where("sub_program_id", $subProId);
             // $whereClusAct->offset(($filter["page_number"] - 1) * $filter["limit"]);
@@ -84,7 +84,7 @@ class PBCosting extends Model
             $clusArr = array();
             foreach($resultClusAct as $clusAct){
                 $clusActId = $clusAct->id;
-                $queryAct = Activity::orderBy("order_level");
+                $queryAct = Activity::orderByLevel();
                 $whereAct = $queryAct;
                 $whereAct->where("cluster_activity_id", $clusActId);
                 // $whereAct->offset(($filter["page_number"] - 1) * $filter["limit"]);       
@@ -100,7 +100,7 @@ class PBCosting extends Model
                 $actArr = array();
                 foreach($resultAct as $act){
                     $actId = $act->id;
-                    // $queryCosting = PBCosting::orderBy($filter["sort"], $filter["order"]);
+                    // $queryCosting = PBCosting::orderByFilter($filter);
                     // $whereCostingClause = $queryCosting;
                     // // $whereCostingClause->where("activity_id");
                     // $whereCostingClause->where("is_active", 1);

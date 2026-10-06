@@ -65,7 +65,7 @@ class ProgramController extends Controller
         );
         return response()->json($data);
 
-        // $query = $this->db_table::orderBy($filter["sort"], $filter["order"]);
+        // $query = $this->db_table::orderByFilter($filter);
         // $whereClause = $query;
         // $whereClause->offset(($input["page_number"] - 1) * $filter["limit"]);       
         // $whereClause->limit($filter["limit"]);

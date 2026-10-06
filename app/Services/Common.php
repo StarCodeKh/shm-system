@@ -347,7 +347,7 @@
 
 
 		public static function getSingleOpt($model, $field_name){
-			$query = $model::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+			$query = $model::orderByLevel()->whereNotDeleted()->get();
 			$data = array();
 			foreach($query as $row){
 				$data[] = array(
@@ -748,9 +748,9 @@
 		}
 
 		public static function queryTable($db_table, $filter, $flag){
-			$query = $db_table::orderBy($filter["sort"], $filter["order"]);
+			$query = $db_table::orderByFilter($filter);
 			$whereClause = $query;
-			$whereClause->whereNotIn("status", [4])->orWhereNull("status");
+			$whereClause->whereNotDeleted();
 			if($flag != 1 && $flag != 2){
 				$whereClause->limit($filter["limit"]);
 				$whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       

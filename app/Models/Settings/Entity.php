@@ -30,10 +30,12 @@ class Entity extends Model implements Auditable
 
     public static function getSingleOpt(){
       $data = array();
-      $query = Entity::whereNotIn("status", [4])->orWhereNull("status");
+      $query = Entity::whereNotDeleted();
       $whereClause = $query;
-      $whereClause->orderBy("order_level");
-      $whereClause->where("parent_id", 0)->orWhere("parent_id", null);
+      $whereClause->orderByLevel();
+      $whereClause->where(function ($q) {
+        $q->where("parent_id", 0)->orWhereNull("parent_id");
+      });
       if(Auth::user()->entity_id !=0 || Auth::user()->entity_id !=null){
         $whereClause->where("id", Auth::user()->entity_id);
       }
@@ -51,7 +53,7 @@ class Entity extends Model implements Auditable
       $data = array();
       $query = Entity::where("department_id", $deptId);
       $whereClause = $query;
-      $whereClause->orderBy("order_level");
+      $whereClause->orderByLevel();
       // $whereClause->where("parent_id", 0)->orWhere("parent_id", null);
       // if(Auth::user()->entity_id !=0 || Auth::user()->entity_id !=null){
       //   $whereClause->where("id", Auth::user()->entity_id);
@@ -68,7 +70,7 @@ class Entity extends Model implements Auditable
 
     public static function checkQuery($filter){
       $whereClause = "";
-      $query = Entity::with("department")->orderBy($filter["sort"], $filter["order"]);
+      $query = Entity::with("department")->orderByFilter($filter);
       $whereClause = $query;
       if($filter["search_field"]){
         $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
@@ -87,8 +89,7 @@ class Entity extends Model implements Auditable
         }
     }
     
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     return $whereClause;
   }
 

@@ -37,7 +37,7 @@ class CeilingEntity extends Model
 
     public static function getCeilingEntities(){
       $ceilingGroupDataArr = array();
-      $ceilingGroups = DB::table("mef_ceiling_exp_group")->orderBy("order_level")->get();
+      $ceilingGroups = DB::table("mef_ceiling_exp_group")->orderByLevel()->get();
       foreach($ceilingGroups as $ceilingGroup){
         $ceilingEntityArr = array();
         $ceilingGroupId = $ceilingGroup->id;
@@ -53,7 +53,7 @@ class CeilingEntity extends Model
                           "e.order_level",
                           "e.abbreviation",
                           "e.deputy_commissionerofficer",
-                          "e.professional_offier",
+                          "e.professional_officer as professional_offier",
                           "spro.sub_code",
                           "spro.structure_name_kh",
                           "spro.structure_name_en",)

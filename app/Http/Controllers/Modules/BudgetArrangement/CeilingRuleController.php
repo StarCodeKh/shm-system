@@ -47,17 +47,20 @@ class CeilingRuleController extends Controller
             "sort" => isset($input["sort"]) ? $input["sort"] : config_sort,
             "order" => isset($input["order"]) ? $input["order"] : config_order
         );
-        $query = $this->db_table::orderBy($filter["sort"], $filter["order"]);
+        $query = $this->db_table::orderByFilter($filter);
         $whereClause = $query;
         $whereClause->offset(($input["page_number"] - 1) * config_limit);       
         $whereClause->limit($filter["limit"]);
-        if(isset($input["search_field"])){
-            for($i=0 ; $i < count($input["search_field"]); $i++){
-                $field = array_key_first($input["search_field"][$i]); //array('key1', 'key2', 'key3');
-                if (in_array($field, $dataFields)) {
-                    $whereClause->orWhere($field, "Like","%".$input["search_field"][$i][$field]."%");
+        if(!empty($input["search_field"])){
+            // Any of the search fields may match, but the other filters still apply
+            $whereClause->where(function ($q) use ($input, $dataFields) {
+                foreach ($input["search_field"] as $search) {
+                    $field = array_key_first($search);
+                    if (in_array($field, $dataFields)) {
+                        $q->orWhere($field, "Like","%".$search[$field]."%");
+                    }
                 }
-            }
+            });
         }
         
         $table = collect($whereClause->get());

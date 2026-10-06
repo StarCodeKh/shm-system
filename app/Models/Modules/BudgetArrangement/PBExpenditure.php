@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Models\Modules\BudgetArrangement;
-use App\Models\Modules\Settings\AccountGroup;
-use App\Models\Modules\Settings\Account;
+use App\Models\Settings\AccountGroup;
+use App\Models\Settings\Account;
 use Illuminate\Database\Eloquent\Model;
 
 class PBExpenditure extends Model
@@ -43,15 +43,15 @@ class PBExpenditure extends Model
 
   public static function getExpenditures($filters){
     $accGroupArr = array();
-    $queryAccountGroups = AccountGroup::where("group", 2)->orderBy("order_level")->get();
+    $queryAccountGroups = AccountGroup::where("group", 2)->orderByLevel()->get();
     foreach($queryAccountGroups as $accGroup){
       $accArr = array();
       $accGroupId = $accGroup->id;
-      $queryAccounts = Account::where("account_group_id", $accGroupId)->orderBy("order_level")->get();
+      $queryAccounts = Account::where("account_group_id", $accGroupId)->orderByLevel()->get();
       foreach($queryAccounts as $acc){
         $subAccArr = array();
         $accId = $acc->id;
-        $querySubAccounts = Account::where("parent_id", $accId)->orderBy("order_level")->get();
+        $querySubAccounts = Account::where("parent_id", $accId)->orderByLevel()->get();
         foreach($querySubAccounts as $subAcc){
           $subAccArr[] = array(
             "code" => ""

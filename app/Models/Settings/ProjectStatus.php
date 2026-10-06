@@ -19,7 +19,7 @@ class ProjectStatus extends Model
     public $timestamps = false;
 
     public static function getProjectStatusOpt(){
-      $query = ProjectStatus::orderBy("order_level")->get();
+      $query = ProjectStatus::orderByLevel()->get();
       $data = array();
       foreach($query as $row){
         $data[] = array(
@@ -33,9 +33,9 @@ class ProjectStatus extends Model
 
     public static function getProjectStatus($filter){
       $data = array();
-      $query = ProjectStatus::orderBy($filter["sort"], $filter["order"]);
+      $query = ProjectStatus::orderByFilter($filter);
       $whereClause = $query;
-      $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+      $whereClause->whereNotDeleted();
       $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
       $whereClause->limit($filter["limit"]);
   
@@ -64,9 +64,9 @@ class ProjectStatus extends Model
     }
   
     public static function getCount($filter){
-      $query = ProjectStatus::orderBy($filter["sort"], $filter["order"]);
+      $query = ProjectStatus::orderByFilter($filter);
       $whereClause = $query;
-      $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+      $whereClause->whereNotDeleted();
       if($filter["search_field"]){
         $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
         $dataFields = $arraySingle;

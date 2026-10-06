@@ -79,7 +79,7 @@ class Status extends Model implements Auditable
 
   public static function getSingleOpt($groupStatus){
     $whereClause = "";
-    $query = Status::orderBy("order_level");
+    $query = Status::orderByLevel();
     $whereClause = $query;
     if(is_array($groupStatus)){
       $whereClause->whereIn("group", $groupStatus);
@@ -88,7 +88,7 @@ class Status extends Model implements Auditable
     }
     // Grouped so deleted rows are excluded without dropping the group filter
     $whereClause->where(function ($q) {
-      $q->whereNotIn("status", [4])->orWhereNull("status");
+      $q->whereNotDeleted();
     });
     $queries = collect($whereClause->get());
     $data = array();
@@ -106,9 +106,9 @@ class Status extends Model implements Auditable
   public static function getValueOpt($group){
     $queries = Status::where("group", $group)
       ->where(function ($q) {
-        $q->whereNotIn("status", [4])->orWhereNull("status");
+        $q->whereNotDeleted();
       })
-      ->orderBy("order_level")
+      ->orderByLevel()
       ->get();
     $data = array();
     foreach($queries as $row){
@@ -122,7 +122,7 @@ class Status extends Model implements Auditable
   }
   public static function checkQuery($filter){
     $whereClause = "";
-    $query = Status::orderBy($filter["sort"], $filter["order"]);
+    $query = Status::orderByFilter($filter);
     $whereClause = $query;
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
@@ -141,8 +141,7 @@ class Status extends Model implements Auditable
       }
     }
     
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     return $whereClause;
   }
 

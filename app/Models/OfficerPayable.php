@@ -124,7 +124,7 @@ class OfficerPayable extends Model implements Auditable
   }
 
   public static function getSingleOpt(){
-    $query = OfficerPayable::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = OfficerPayable::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -141,7 +141,7 @@ class OfficerPayable extends Model implements Auditable
     if(isset($filter["data"]["officer_id"])){
       $whereClause->where("officer_id", $filter["data"]["officer_id"]);
     }
-    $whereClause->orderBy($filter["sort"], $filter["order"]);
+    $whereClause->orderByFilter($filter);
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
       $dataFields = $arraySingle;
@@ -223,7 +223,7 @@ class OfficerPayable extends Model implements Auditable
     if(isset($filter["data"]["officer_id"])){
       // $whereClause->where("officer_id", (int)$filter["data"]["officer_id"]);
     }
-    $whereClause->orderBy($filter["sort"], $filter["order"]);
+    $whereClause->orderByFilter($filter);
     $d = "";
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);

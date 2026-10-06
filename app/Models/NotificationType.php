@@ -45,7 +45,7 @@ class NotificationType extends Model implements Auditable
   }
 
   public static function getSingleOpt(){
-    $query = NotificationType::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = NotificationType::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -57,7 +57,7 @@ class NotificationType extends Model implements Auditable
   }
 
   public static function checkQuery($filter){
-    $query = NotificationType::orderBy($filter["sort"], $filter["order"]);
+    $query = NotificationType::orderByFilter($filter);
     $whereClause = $query;
     $d = "";
     if($filter["search_field"]){
@@ -77,8 +77,7 @@ class NotificationType extends Model implements Auditable
       }
     }
     
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     return $whereClause;
   }
 

@@ -21,7 +21,7 @@ class PaymentMethodController extends Controller
             "sort" => isset($input["sort"]) ? $input["sort"] : config_sort,
         "order" => isset($input["order"]) ? $input["order"] : config_order
         );
-        $table = PaymentMethod::orderBy($filter["sort"], $filter["order"])
+        $table = PaymentMethod::orderByFilter($filter)
                                 ->offset($filter["offset"])
                                 ->limit($filter["limit"])
                                 ->get();

@@ -21,9 +21,9 @@ class AccountTypeGroup extends Model
   public static function getAccountTypeGroupOptions($filter)
   {
     $data = array();
-    $query = AccountTypeGroup::orderBy($filter["sort"], $filter["order"]);
+    $query = AccountTypeGroup::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhere("status", null);
+    $whereClause->whereNotDeleted();
     $results = collect($whereClause->get());
     foreach ($results as $row) {
       $data[] = array(
@@ -37,23 +37,20 @@ class AccountTypeGroup extends Model
   public static function getAccountTypeGroups($filter)
   {
     $data = array();
-    $query = AccountTypeGroup::orderBy($filter["sort"], $filter["order"]);
+    $query = AccountTypeGroup::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhere("status", null);
+    $whereClause->whereNotDeleted();
     $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);
     $whereClause->limit($filter["limit"]);
 
     if ($filter["search_field"]) {
-      $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
-      $dataFields = $arraySingle;
-      if (isset($input["search_field"])) {
-        for ($i = 0; $i < count($input["search_field"]); $i++) {
-          $field = array_key_first($input["search_field"][$i]); //array('key1', 'key2', 'key3');
-          if (in_array($field, $dataFields)) {
-            $whereClause->orWhere($field, "Like", "%" . $input["search_field"][$i][$field] . "%");
-          }
+      // Any of the search fields may match, but the other filters still apply
+      $whereClause->where(function ($q) use ($filter) {
+        foreach ($filter["search_field"] as $search) {
+          $field = array_key_first($search);
+          $q->orWhere($field, "Like", "%" . $search[$field] . "%");
         }
-      }
+      });
     }
 
     $results = collect($whereClause->get());
@@ -77,20 +74,17 @@ class AccountTypeGroup extends Model
   public static function getCount($filter)
   {
     $data = array();
-    $query = AccountTypeGroup::orderBy($filter["sort"], $filter["order"]);
+    $query = AccountTypeGroup::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhere("status", null);
+    $whereClause->whereNotDeleted();
     if ($filter["search_field"]) {
-      $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
-      $dataFields = $arraySingle;
-      if (isset($input["search_field"])) {
-        for ($i = 0; $i < count($input["search_field"]); $i++) {
-          $field = array_key_first($input["search_field"][$i]); //array('key1', 'key2', 'key3');
-          if (in_array($field, $dataFields)) {
-            $whereClause->orWhere($field, "Like", "%" . $input["search_field"][$i][$field] . "%");
-          }
+      // Any of the search fields may match, but the other filters still apply
+      $whereClause->where(function ($q) use ($filter) {
+        foreach ($filter["search_field"] as $search) {
+          $field = array_key_first($search);
+          $q->orWhere($field, "Like", "%" . $search[$field] . "%");
         }
-      }
+      });
     }
     $total = $whereClause->count();
     return $total;

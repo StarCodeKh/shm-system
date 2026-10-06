@@ -61,7 +61,7 @@ class OfficerDocument extends Model implements Auditable
     if(isset($filter["data"]["officer_id"])){
       $whereClause->where("officer_id", $filter["data"]["officer_id"]);
     }
-    $whereClause->orderBy($filter["sort"], $filter["order"]);
+    $whereClause->orderByFilter($filter);
     $d = "";
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
@@ -80,8 +80,7 @@ class OfficerDocument extends Model implements Auditable
       }
     }
 
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     return $whereClause;
   }
 

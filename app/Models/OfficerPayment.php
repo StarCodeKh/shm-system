@@ -72,7 +72,7 @@ class OfficerPayment extends Model implements Auditable
   }
 
   public static function getSingleOpt(){
-    $query = OfficerPayment::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = OfficerPayment::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -93,7 +93,7 @@ class OfficerPayment extends Model implements Auditable
     if(isset($filter["data"]["officer_id"])){
       $whereClause->where("officer_payment.officer_id", $filter["data"]["officer_id"]);
     }
-    $whereClause->orderBy($filter["sort"], $filter["order"]);
+    $whereClause->orderByFilter($filter);
     $d = "";
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
@@ -112,13 +112,12 @@ class OfficerPayment extends Model implements Auditable
       }
     }
 
-    $whereClause->whereNotIn("officer_payment.status", [4]);
-    $whereClause->orWhereNull("officer_payment.status");
+    $whereClause->whereNotDeleted("officer_payment.status");
     return $whereClause;
   }
 
   public static function checkQueryResult($filter,$status){
-    $query = OfficerPayment::orderBy($filter["sort"], $filter["order"]);
+    $query = OfficerPayment::orderByFilter($filter);
     $whereClause = $query;
     if(isset($filter["data"]["officer_id"])){
       $whereClause->where("officer_payment.officer_id", $filter["data"]["officer_id"]);
@@ -126,7 +125,7 @@ class OfficerPayment extends Model implements Auditable
     if(isset($status)){
       $whereClause->where("status", $status);
     }
-    $whereClause->orderBy($filter["sort"], $filter["order"]);
+    $whereClause->orderByFilter($filter);
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
       $dataFields = $arraySingle;
@@ -144,8 +143,9 @@ class OfficerPayment extends Model implements Auditable
       }
     }
 
-    $whereClause->whereIn("officer_payment.status", [19]);
-    $whereClause->orWhereNull("officer_payment.status");
+    $whereClause->where(function ($q) {
+      $q->whereIn("officer_payment.status", [19])->orWhereNull("officer_payment.status");
+    });
     return $whereClause;
   }
 
@@ -186,7 +186,7 @@ class OfficerPayment extends Model implements Auditable
     if(isset($filter["data"]["officer_id"])){
       // $whereClause->where("officer_id", (int)$filter["data"]["officer_id"]);
     }
-    $whereClause->orderBy($filter["sort"], $filter["order"]);
+    $whereClause->orderByFilter($filter);
     $d = "";
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);

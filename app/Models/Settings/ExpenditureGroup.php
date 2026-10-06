@@ -21,9 +21,9 @@ class ExpenditureGroup extends Model
 
   public static function getExpenditureGroups($filter){
     $data = array();
-    $query = ExpenditureGroup::orderBy($filter["sort"], $filter["order"]);
+    $query = ExpenditureGroup::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
     $whereClause->limit($filter["limit"]);
 
@@ -52,9 +52,9 @@ class ExpenditureGroup extends Model
   }
 
   public static function getCount($filter){
-    $query = ExpenditureGroup::orderBy($filter["sort"], $filter["order"]);
+    $query = ExpenditureGroup::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
       $dataFields = $arraySingle;

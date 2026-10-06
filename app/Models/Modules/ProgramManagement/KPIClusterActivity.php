@@ -35,9 +35,9 @@ class KPIClusterActivity extends Model
     }
 
     public static function dataQuery($filter, $dataInfo, $fillable = array()){
-      $query = KPIClusterActivity::orderBy("order_level");
+      $query = KPIClusterActivity::orderByLevel();
       $whereClause = $query;   
-      $whereClause->orderBy($filter["sort"], $filter["order"]);
+      $whereClause->orderByFilter($filter);
       $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
       $whereClause->limit($filter["limit"]);
         // dd($dataInfo);

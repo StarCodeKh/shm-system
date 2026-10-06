@@ -578,6 +578,19 @@
                     'position'             => 'nullable|string|max:255',
                     'telephone_1'          => 'nullable|string|max:45',
                     'telephone_2'          => 'nullable|string|max:45',
+                    'bank'                 => 'nullable|string|max:255',
+                    'register_date'        => 'nullable|date',
+                    'married_status'       => 'nullable|string|max:50',
+                    'emergency_person'     => 'nullable|string|max:255',
+                    'emergency_relative'   => 'nullable|string|max:50',
+                    'is_nssf_member'       => 'nullable',
+                    'nssf_card_no'         => 'nullable|string|max:100',
+                    'social_media_fb'      => 'nullable|string|max:255',
+                    'social_media_telegram'=> 'nullable|string|max:255',
+                    'social_media_whatsapp'=> 'nullable|string|max:255',
+                    'social_media_alt'     => 'nullable|string|max:255',
+                    'remark'               => 'nullable|string',
+                    'order_level'          => 'nullable|integer',
                     'created_by'           => 'required|integer'
                 ]);
 

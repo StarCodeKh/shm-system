@@ -94,7 +94,7 @@ class User extends Authenticatable implements Auditable
     if(isset($filter["data"]["officer_id"])){
       $query = User::with('roles')->with('permissions')->with('officer')->with('status')->where("officer_id", (int)$filter["data"]["officer_id"]);
     }else{
-      $query = User::with('roles')->with('permissions')->with('status')->orderBy($filter["sort"], $filter["order"]);
+      $query = User::with('roles')->with('permissions')->with('status')->orderByFilter($filter);
     }
     $whereClause = $query;
     // $whereClause->orwhereNull("status");
@@ -123,8 +123,7 @@ class User extends Authenticatable implements Auditable
       }
     }
     
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     if(!isset($filter["data"]["officer_id"])){
     }
     return $whereClause;

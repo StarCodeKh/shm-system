@@ -33,9 +33,9 @@ class RevProgram extends Model
   
   public static function getRevPro($filter){
     $data = array();
-    $queryObj = RevProgram::orderBy($filter["sort"], $filter["order"]);
+    $queryObj = RevProgram::orderByFilter($filter);
     $whereClause = $queryObj;
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
     $whereClause->limit($filter["limit"]);
     if($filter["search_field"]){
@@ -48,8 +48,8 @@ class RevProgram extends Model
     $query = collect($whereClause->get());
     $children  = array();
     foreach($query as $row){ 
-      $queryRevProDetails = RevProgramDetail::orderBy($filter["sort"], $filter["order"])
-                            ->whereNotIn("status", [4])->orWhereNull("status")
+      $queryRevProDetails = RevProgramDetail::orderByFilter($filter)
+                            ->whereNotDeleted()
                             ->where("rev_pro_id", $row->id)
                             ->get();
 

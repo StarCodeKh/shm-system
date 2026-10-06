@@ -27,7 +27,7 @@ class AccountGroup extends Model
   }
   public static function getAccGroupOpts($filter)
   {
-    $query = AccountGroup::orderBy("order_level")->get();
+    $query = AccountGroup::orderByLevel()->get();
     $data = array();
     foreach ($query as $row) {
       $data[] = array(
@@ -39,7 +39,7 @@ class AccountGroup extends Model
   }
   
   public static function getSingleOpt(){
-    $query = AccountGroup::whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = AccountGroup::whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -53,7 +53,7 @@ class AccountGroup extends Model
   public static function getAccountGroups($filter)
   {
     $data = array();
-    $query = AccountGroup::orderBy($filter["sort"], $filter["order"]);
+    $query = AccountGroup::orderByFilter($filter);
     $whereClause = $query;
     $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);
     $whereClause->limit($filter["limit"]);
@@ -94,9 +94,9 @@ class AccountGroup extends Model
   }
   public static function getCount($filter)
   {
-    $query = AccountGroup::orderBy($filter["sort"], $filter["order"]);
+    $query = AccountGroup::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhere("status", null);
+    $whereClause->whereNotDeleted();
     if ($filter["search_field"]) {
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
       $dataFields = $arraySingle;

@@ -9,7 +9,7 @@ use App\Models\OfficerPayable;
 use App\Models\OfficerPayment;
 use App\Models\OfficerRequest;
 use App\Models\OfficerIncentive;
-use App\Models\Entity;
+use App\Models\Settings\Entity;
 use App\Models\IncentiveToOfficer;
 use App\Models\Income;
 use App\Models\Expense;

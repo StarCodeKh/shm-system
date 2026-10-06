@@ -78,7 +78,7 @@ class Expense extends Model implements Auditable
   }
 
   public static function getSingleOpt(){
-    $query = Expense::orderBy($filter["sort"], $filter["order"])->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = Expense::orderByFilter($filter)->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -92,7 +92,7 @@ class Expense extends Model implements Auditable
   public static function checkQuery($filter){
     $query = Expense::with("currency")->with("account")->with("status")->with("PaymentMethod")->with("entity");
     $whereClause = $query;
-    $whereClause->orderBy($filter["sort"], $filter["order"]);
+    $whereClause->orderByFilter($filter);
     $d = "";
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
@@ -111,8 +111,7 @@ class Expense extends Model implements Auditable
       }
     }
 
-    $whereClause->whereNotIn("status", [4]);
-    $whereClause->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     return $whereClause;
   }
 

@@ -65,7 +65,7 @@ class ItemController extends Controller
             //     "sort" => isset($input["sort"]) ? $input["sort"] : config_sort,
             //     "order" => isset($input["order"]) ? $input["order"] : config_order
             // );
-            // $query = $this->db_table::orderBy($filter["sort"], $filter["order"]);
+            // $query = $this->db_table::orderByFilter($filter);
             // $whereClause = $query;
             // $whereClause->offset(($input["page_number"] - 1) * $filter["limit"]);       
             // $whereClause->limit($filter["limit"]);

@@ -43,10 +43,10 @@ class EntityMember extends Model
   
   public static function getMemberByEntity($filter){
     $data = array();
-    $query = EntityMember::orderBy($filter["sort"], $filter["order"]);
+    $query = EntityMember::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
-    $whereClause->orderBy("order_level")->get();
+    $whereClause->whereNotDeleted();
+    $whereClause->orderByLevel()->get();
     if(Auth::user()->entity_id !=0 || Auth::user()->entity_id !=null){
       $whereClause->where("entity_id", Auth::user()->entity_id);
     }
@@ -82,7 +82,7 @@ class EntityMember extends Model
   }
   
   public static function getMembers(){
-    $query = EntityMember::whereNotIn("status", [4])->orWhereNull("status")->orderBy("order_level")->get();
+    $query = EntityMember::whereNotDeleted()->orderByLevel()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -94,7 +94,7 @@ class EntityMember extends Model
   }
 
   public static function getMemberByEntityID($param){
-    $query = EntityMember::whereNotIn("status", [4])->orWhereNull("status")->orderBy("order_level")->where("entity_id", $param["param"]["value"])->get();
+    $query = EntityMember::whereNotDeleted()->orderByLevel()->where("entity_id", $param["param"]["value"])->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -107,9 +107,9 @@ class EntityMember extends Model
 
   public static function getEntityMembers($filter){
     $data = array();
-    $query = Entity::orderBy($filter["sort"], $filter["order"]);
+    $query = Entity::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
     $whereClause->limit($filter["limit"]);
 
@@ -155,9 +155,9 @@ class EntityMember extends Model
   }
 
   public static function getCount($filter){
-    $query = EntityMember::orderBy($filter["sort"], $filter["order"]);
+    $query = EntityMember::orderByFilter($filter);
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhereNull("status");
+    $whereClause->whereNotDeleted();
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
       $dataFields = $arraySingle;

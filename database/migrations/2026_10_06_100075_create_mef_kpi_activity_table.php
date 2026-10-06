@@ -1,0 +1,43 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('mef_kpi_activity', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+            $table->id();
+            $table->unsignedBigInteger('planning_id')->nullable();
+            $table->unsignedBigInteger('activity_id')->nullable();
+            $table->unsignedBigInteger('activity_to_entity_id')->nullable();
+            $table->unsignedBigInteger('kpi_clus_act_id')->nullable();
+            $table->string('code', 50)->nullable();
+            $table->longText('kpi_name_en');
+            $table->longText('kpi_name_kh');
+            $table->integer('order_level')->nullable();
+            $table->longText('remark')->nullable();
+            $table->longText('attachment')->nullable();
+            $table->year('year')->nullable();
+            $table->integer('assign_to')->nullable();
+            $table->integer('responsible_by')->nullable();
+            $table->unsignedBigInteger('status')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('modified_by')->nullable();
+            $table->timestamps();
+            $table->index('planning_id');
+            $table->index('activity_id');
+            $table->index('activity_to_entity_id');
+            $table->index('kpi_clus_act_id');
+            $table->index('status');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('mef_kpi_activity');
+    }
+};

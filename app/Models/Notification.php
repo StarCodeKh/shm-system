@@ -57,7 +57,7 @@ class Notification extends Model implements Auditable
   }
 
   public static function getSingleOpt(){
-    $query = Notification::orderBy("order_level")->whereNotIn("status", [4])->orWhereNull("status")->get();
+    $query = Notification::orderByLevel()->whereNotDeleted()->get();
     $data = array();
     foreach($query as $row){
       $data[] = array(
@@ -69,7 +69,7 @@ class Notification extends Model implements Auditable
   }
 
   public static function checkQuery($filter){
-    $query = Notification::orderBy($filter["sort"], $filter["order"]);
+    $query = Notification::orderByFilter($filter);
     $whereClause = $query;
     $whereClause->with("status")->with("user");
     $whereClause->where("notifiable_id", Auth::user()->id);

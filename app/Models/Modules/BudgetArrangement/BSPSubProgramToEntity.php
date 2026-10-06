@@ -28,11 +28,11 @@ class BSPSubProgramToEntity extends Model
 
     public static function getDataBySubProgs(){
         $objArr = array();
-        $objectives = Objective::orderBy("order_level")->get();
+        $objectives = Objective::orderByLevel()->get();
         foreach($objectives as $objective){
             $objId = $objective->id;
             $proArr = array();
-            $programs = Program::where("objective_id", $objId)->orderBy("order_level")->get();
+            $programs = Program::where("objective_id", $objId)->orderByLevel()->get();
             foreach($programs as $program){
                 $progId = $program->id;
                 $subProgsArr = array();
@@ -118,7 +118,7 @@ class BSPSubProgramToEntity extends Model
         $indicators = DB::table("mef_kpi_subprogram")
                         ->where("planning_id", config_planning_year)
                         ->where("subprog_to_entity_id", $id)
-                        ->orderBy("order_level")->get();
+                        ->orderByLevel()->get();
         foreach($indicators as $indicator){
             $indicatorArr[] = array(
                 "kpi_name_en" => $indicator->kpi_name_en,

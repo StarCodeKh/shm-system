@@ -36,9 +36,9 @@ class KPIProgram extends Model
 
     public static function dataQuery($filter, $dataInfo, $fillable = array()){
       // dd($dataInfo);
-      $query = KPIProgram::orderBy("order_level");
+      $query = KPIProgram::orderByLevel();
       $whereClause = $query;   
-      $whereClause->orderBy($filter["sort"], $filter["order"]);
+      $whereClause->orderByFilter($filter);
       $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
       $whereClause->limit($filter["limit"]);
       

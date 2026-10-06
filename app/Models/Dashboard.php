@@ -344,11 +344,11 @@ public static function getQuarterlyIncomeExpense($year = null, $quarter = null)
                     END AS expense_khr
                 FROM (
                     -- Unified source data (UNION ALL)
-                    SELECT amount, currency AS currency_id, created_at, 'income' AS src FROM tbl_income
+                    SELECT amount, currency_id, created_at, 'income' AS src FROM tbl_income
                     UNION ALL
                     SELECT amount, currency_id, created_at, 'income' AS src FROM tbl_officer_payment
                     UNION ALL
-                    SELECT amount, currency AS currency_id, created_at, 'expense' AS src FROM tbl_expense
+                    SELECT amount, currency_id, created_at, 'expense' AS src FROM tbl_expense
                     UNION ALL
                     SELECT amount, currency_id, created_at, 'expense' AS src FROM tbl_officer_incentive
                 ) AS all_data
@@ -660,7 +660,7 @@ public static function getIncomeListing($limit = 10, $offset = 0)
 
     $sql = "
         SELECT
-            income_title      AS title,
+            title_kh          AS title,
             amount            AS amount,
             currency_id          AS currency,
             exchange_rate     AS exchangeRate,
@@ -707,7 +707,7 @@ public static function getExpenseListing($limit = 10, $offset = 0)
 
     $sql = "
         SELECT
-            expense_title     AS title,
+            title_kh          AS title,
             amount            AS amount,
             currency_id          AS currency,
             exchange_rate     AS exchangeRate,
@@ -934,12 +934,13 @@ public static function getOfficersListing($limit = 10, $offset = 0)
             A.dob                                     AS dateOfBirth,
             A.nationality                             AS nationality,
             A.title                                   AS title,
-            A.department                              AS department,
+            D.name_kh                                 AS department,
             A.gender                                  AS gender,
             A.address                                 AS address,
             A.email                                   AS email,
             A.photo                                   AS photo
         FROM tbl_officer A
+        LEFT JOIN tbl_department D ON D.id = A.department_id
         WHERE A.status = 13
         ORDER BY A.id DESC
         LIMIT $limit OFFSET $offset
@@ -1021,6 +1022,8 @@ public static function getAllPaymentMethods()
             'name_en',
             'name_kh'
         )
+        ->orderByLevel()
+        ->orderBy('id')
         ->get();
 }
 
@@ -1032,6 +1035,7 @@ public static function getAllAccounts()
             'name_en',
             'name_kh'
         )
+        ->orderBy('code')
         ->get();
 }
 
@@ -1043,6 +1047,8 @@ public static function getDutyList()
             'name_en',
             'name_kh'
         )
+        ->orderByLevel()
+        ->orderBy('id')
         ->get();
 }
 
@@ -1054,6 +1060,8 @@ public static function getPositionList()
             'name_en',
             'name_kh'
         )
+        ->orderByLevel()
+        ->orderBy('id')
         ->get();
 }
 

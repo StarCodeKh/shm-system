@@ -35,9 +35,9 @@ class Item extends Model
 
   public static function getItems(){
     $data = array();
-    $query = Item::orderBy("order_level");
+    $query = Item::orderByLevel();
     $whereClause = $query;
-    $whereClause->whereNotIn("status", [4])->orWhere("status", null);
+    $whereClause->whereNotDeleted();
     $queryResult = collect($whereClause->get());
     foreach($queryResult as $row){
       $data[] = array(
@@ -51,9 +51,11 @@ class Item extends Model
 
   public static function getItem($filter){
     $data = array();
-    $queryObj = Item::orderBy($filter["sort"], $filter["order"]);
+    $queryObj = Item::orderByFilter($filter);
     $whereClause = $queryObj;
-    $whereClause->whereIn("status", [13])->orWhere("status", null);
+    $whereClause->where(function ($q) {
+      $q->whereIn("status", [13])->orWhereNull("status");
+    });
     $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);       
     $whereClause->limit($filter["limit"]);
     if($filter["search_field"]){
@@ -103,9 +105,11 @@ class Item extends Model
   }
 
   public static function getCount($filter){
-    $queryObj = Item::orderBy($filter["sort"], $filter["order"]);
+    $queryObj = Item::orderByFilter($filter);
     $whereClause = $queryObj;
-    $whereClause->whereIn("status", [13])->orWhere("status", null);
+    $whereClause->where(function ($q) {
+      $q->whereIn("status", [13])->orWhereNull("status");
+    });
     if($filter["search_field"]){
       $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
       $dataFields = $arraySingle;

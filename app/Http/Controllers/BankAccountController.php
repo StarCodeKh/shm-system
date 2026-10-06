@@ -22,7 +22,7 @@ class BankAccountController extends Controller
             "sort" => isset($input["sort"]) ? $input["sort"] : config_sort,
         "order" => isset($input["order"]) ? $input["order"] : config_order
         );
-        $table = BankAccount::orderBy($filter["sort"], $filter["order"])
+        $table = BankAccount::orderByFilter($filter)
                                 ->offset($filter["offset"])
                                 ->limit($filter["limit"])
                                 ->get();
