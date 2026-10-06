@@ -1,141 +1,96 @@
 <template>
-  <vx-card no-shadow>
+  <div class="dt-list user-form d-form">
+    <div class="user-form__section">
+      <feather-icon icon="LockIcon" svgClasses="h-4 w-4" />
+      <span>{{ $t('profile_tab_password') }}</span>
+    </div>
+    <p class="user-form__hint">{{ $t('profile_password_rule') }}</p>
 
     <div class="vx-row">
-      <div class="vx-col md:w-1/2 w-full mt-5">
-        <vs-input aria-disabled="true" label="អ្នកប្រើប្រាស់" disabled="disabled" autocomplete="off" name="username" v-model="username" class="w-full" v-validate="'required'"/>
-        <span class="text-danger">{{ errors.first('username') }}</span>
+      <div :class="grid" class="d-field">
+        <label>{{ $t('profile_username') }}</label>
+        <input :value="profile && profile.username" type="text" readonly>
       </div>
 
-      <div class="vx-col md:w-1/2 w-full mt-5">
-        <vs-input type="password" label="លេខសម្ងាត់" :autocomplete="password" name="password" v-model="password" class="w-full" v-validate="'required'"/>
-        <span class="text-danger">{{ errors.first('password') }}</span>
+      <div :class="grid" class="d-field">
+        <label>{{ $t('profile_password_new') }} <span>*</span></label>
+        <vs-input v-model="password" type="password" name="password" autocomplete="new-password" class="w-full"
+          v-validate="'required|min:6'" />
+        <span class="text-danger" v-show="errors.has('password')">{{ $t('profile_password_short') }}</span>
       </div>
 
-      <div class="vx-col md:w-1/2 w-full mt-5">
-        <vs-input type="password" label="បញ្ជាក់លេខសម្ងាត់" :autocomplete="confirm_password" name="confirm_password" v-model="confirm_password" class="w-full" v-validate="'required'"/>
-        <span class="text-danger">{{ errors.first('confirm_password') }}</span>
+      <div :class="grid" class="d-field">
+        <label>{{ $t('profile_password_confirm') }} <span>*</span></label>
+        <vs-input v-model="confirmPassword" type="password" name="confirm_password" autocomplete="new-password"
+          class="w-full" v-validate="'required'" />
+        <span class="text-danger" v-show="mismatch">{{ $t('profile_password_mismatch') }}</span>
       </div>
     </div>
-    <!-- <vs-input class="w-full mb-base" label-placeholder="អ្នកប្រើប្រាស់" v-model="username" />
-    <span class="text-danger">{{ errors.first('first_name') }}</span>
-    <vs-input class="w-full mb-base" label-placeholder="លេខសម្ងាត់" v-model="password" />
-    <vs-input class="w-full mb-base" label-placeholder="បញ្ជាក់លេខសម្ងាត់" v-model="confirm_password" /> -->
 
-    <!-- Save & Reset Button -->
-    <div class="flex flex-wrap items-center justify-end">
-      <vs-button class="ml-auto mt-2" @click="saveGeneral()">រក្សាទុក</vs-button>
-      <!-- <vs-button class="ml-4 mt-2" type="border" color="warning">Reset</vs-button> -->
+    <div class="user-form__actions">
+      <button type="button" class="dt-btn dt-btn--primary" :disabled="saving || !profile" @click="save">
+        <feather-icon :icon="saving ? 'LoaderIcon' : 'SaveIcon'" svgClasses="h-4 w-4" />
+        <span>{{ $t('profile_password_change') }}</span>
+      </button>
     </div>
-  </vx-card>
+  </div>
 </template>
 
 <script>
-import vSelect from 'vue-select'
-import { Validator } from 'vee-validate';
 import axios from "@/axios.js"
-const dict = {
-  custom: {
-    username: {
-      required: 'សំុបញ្ជូលឈ្មោះអ្នកប្រើប្រព័ន្ធ',
-      alpha: "First name may only contain alphabetic characters"
-    },
-    new_password: {
-      required: 'សំុបញ្ជូលលេខសម្ងាត់',
-      alpha: "First name may only contain alphabetic characters"
-    },
-    confirm_password: {
-      required: 'សំុបញ្ជាក់លេខសម្ងាត់',
-      alpha: "First name may only contain alphabetic characters"
-    },
-  }
-};
-Validator.localize('en', dict);
+import apiConfig from "@/apiConfig.js"
+import { gridClass } from "@/formGrid.js"
+
 export default {
+  props: {
+    profile: { type: Object, default: null },
+    userId: { type: [String, Number], required: true },
+  },
   data() {
     return {
-      username: "",
-      password: "",
-      confirm_password: "",
-      user_id: ""
-    }
-  },
-  created(){
-    if(this.$route.params.userId){
-      let _id = this.$route.params.userId
-      return new Promise((resolve, reject) => {
-        axios.get("/api/v1/user/" + _id)
-            .then((response) => {
-            let _data = response.data;
-            this.username = _data.data.data.username;
-            this.password = "";
-            this.confirm_password = "";
-        }).catch((error) => { 
-          reject(error)
-          this.$vs.notify({
-            title: 'Message',
-            text: "Error, while trying to do action or no permission allow!",
-            iconPack: 'feather',
-            icon: 'icon-check-circle',
-            color: 'danger'
-          })
-        })
-      })
-    }
-  },
-  methods: {
-    saveGeneral(){
-      let _id = this.$route.params.userId;
-      this.$validator.validateAll().then(result => {
-        if(result){
-          let _data = {
-            id: _id,
-            username: this.username,
-            password: this.password,
-            confirm_password: this.confirm_password
-          }
-          if(this.$route.params.userId){
-            return new Promise((resolve, reject) => {
-                axios.put("/api/v1/user/" + _id, _data)
-                    .then((response) => {
-                  if(response.data.success == false){
-                    this.$vs.notify({
-                      title: 'Message',
-                      text: response.data.message,
-                      iconPack: 'feather',
-                      icon: 'icon-check-circle',
-                      color: 'danger'
-                    })
-                  }else{
-                    this.$vs.notify({
-                      title: 'Message',
-                      text: response.data.message,
-                      iconPack: 'feather',
-                      icon: 'icon-check-circle',
-                      color: 'primary'
-                    })
-                  }
-                  // this.$router.push('/user/list').catch(() => {})
-                }).catch((error) => { 
-                  reject(error)
-                  this.$vs.notify({
-                    title: 'Message',
-                    text: "មិនអាចធ្វើបច្ចុប្បន្នភាពបានទេ,​ សូមត្រួតពិនិត្យពត៌មានឡើងវិញ។",
-                    iconPack: 'feather',
-                    icon: 'icon-check-circle',
-                    color: 'danger'
-                  })
-                })
-            })
-          }
-        }
-      });
+      grid: gridClass('3grid'),
+      password: '',
+      confirmPassword: '',
+      saving: false,
+      touched: false,
     }
   },
   computed: {
-    activeUserInfo() {
-      return this.$store.state.AppActiveUser
+    // Shown once the user tries to save (or both fields are filled)
+    mismatch() {
+      return (this.touched || this.confirmPassword.length > 0) && this.password !== this.confirmPassword
     },
-  }
+  },
+  methods: {
+    async save() {
+      this.touched = true
+      if (!(await this.$validator.validateAll()) || this.password !== this.confirmPassword) return
+      // Same list-of-fields shape as the general form; the API checks password === password_confirmation
+      const payload = [
+        { username: this.profile.username },
+        { email: this.profile.email },
+        { password: this.password },
+        { password_confirmation: this.confirmPassword },
+      ]
+      this.saving = true
+      axios.put(`${apiConfig._apiUser}/${this.userId}`, payload)
+        .then(({ data }) => {
+          const ok = data && data.success !== false
+          const message = data && data.message
+          const text = message && typeof message === 'object' ? Object.values(message).flat().join(' ') : message
+          this.$vs.notify({ title: 'Message', text, iconPack: 'feather', icon: 'icon-check-circle', color: ok ? 'primary' : 'danger' })
+          if (ok) {
+            this.password = ''
+            this.confirmPassword = ''
+            this.touched = false
+            this.$nextTick(() => this.$validator.reset())
+          }
+        })
+        .catch(() => {
+          this.$vs.notify({ title: 'Message', text: 'Error, while trying to do action or no permission allow!', iconPack: 'feather', icon: 'icon-alert-circle', color: 'danger' })
+        })
+        .finally(() => { this.saving = false })
+    },
+  },
 }
 </script>

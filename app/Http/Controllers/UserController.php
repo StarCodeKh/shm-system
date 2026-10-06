@@ -152,10 +152,9 @@ class UserController extends Controller
             if($query){
                 $arraySingle = call_user_func_array('array_merge', $input);
                 $user = User::find($query->id);
-                $user->assignRole($arraySingle["role"]);
-                $permissions = Permission::get();
-                foreach ($permissions as $permission) {
-                    $user->givePermissionTo($permissions);
+                // Permissions come from the role; no direct grants
+                if (!empty($arraySingle["role"])) {
+                    $user->syncRoles([$arraySingle["role"]]);
                 }
                 $data["data"] = $query;
                 $status = 200;
@@ -306,13 +305,10 @@ class UserController extends Controller
             $table = $this->db_table::find($id);
             $table->update($dataFields);
             if($table){
-                // Assign Role to user
+                // One role per user: replace it (permissions come from the role, never granted one by one)
                 $user = User::findOrFail($id);
-                $user->assignRole($arraySingle["role"]);
-                // Assign Permission to User
-                $permissions = Permission::get();
-                foreach ($permissions as $permission) {
-                    $user->givePermissionTo($permissions);
+                if (!empty($arraySingle["role"])) {
+                    $user->syncRoles([$arraySingle["role"]]);
                 }
                 // Reponse Result
                 $data = $this->db_table::findOrFail($id);
@@ -441,10 +437,15 @@ class UserController extends Controller
             }else{
                 $id = null;
             }
+        }elseif(!empty($input["user_id"]) && (int) $input["user_id"] !== (int) Auth::user()->id){
+            // Someone else's profile: needs the users "show" permission
+            if (!CommonService::can('show_users')) {
+                return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
+            }
+            $id = (int) $input["user_id"];
         }else{
             $id = Auth::user()->id;
         }
-        // dd($this->db_table::getProfile($id));
         $data["data"] = $this->db_table::getProfile($id);
         $data["form_attributes"] = $this->db_table::formAttributes();
         $data["role"] = RoleUser::getSingleValueOpt();

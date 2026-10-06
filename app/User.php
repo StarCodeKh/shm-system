@@ -154,7 +154,7 @@ class User extends Authenticatable implements Auditable
   }
 
   public static function getProfile($id){
-    $query = User::with('permissions')->with('officer')->with("entity")->where("id", (int)$id);
+    $query = User::with('officer')->with("entity")->where("id", (int)$id);
     $whereClause = $query;
     if(Auth::user()->entity_id !=0 || Auth::user()->entity_id !=null){
       $whereClause->where("entity_id", Auth::user()->entity_id);
