@@ -3,6 +3,9 @@
         <div class="dt-filter-panel__head">
             <span class="dt-filter-panel__icon"><feather-icon icon="FilterIcon" svgClasses="h-4 w-4" /></span>
             <h4>{{ $t('text_search') }}</h4>
+            <transition name="dt-filter-count">
+                <span v-if="activeCount" class="dt-filter-panel__count">{{ activeCount }}</span>
+            </transition>
         </div>
             <!-- Responsive grid: fields fill the columns, the buttons take the last cell of the row -->
             <div class="dt-filter-panel__grid">
@@ -68,13 +71,12 @@
                         </span>
                     </div>
 
-                    <!-- Form Textarea -->
-                    <template v-if="formAttribute.type == 'textarea' && formAttribute.required" :class="styleClass"
-                        dclass="mt-4">
+                    <!-- Form Textarea: searched as one line of text -->
+                    <div v-if="formAttribute.type == 'textarea' && formAttribute.required" :class="styleClass" class="d-field">
                         <label>{{ $tField(formAttribute.name) }}</label>
-                        <vs-textarea label="Label in Textarea" v-model="form.attribute[formAttribute.name]"
-                            class="mt-2 w-full" />
-                    </template>
+                        <vs-input :placeholder="$tField(formAttribute.name)" v-model="form.attribute[formAttribute.name]"
+                            :name="formAttribute.name" class="w-full" />
+                    </div>
 
                     <!-- Form Checkbox -->
                     <!-- <template v-if="formAttribute.type == 'checkbox' && formAttribute.required" :class="styleClass"
@@ -95,7 +97,7 @@
                     </div>
                 </template>
             <div class="dt-filter-panel__actions">
-                <button type="button" class="dt-btn" @click="resetSearch">
+                <button type="button" class="dt-btn" :disabled="!activeCount" @click="resetSearch">
                     <feather-icon icon="RotateCcwIcon" svgClasses="h-4 w-4" />
                     <span>{{ $t('form_clear') }}</span>
                 </button>
@@ -152,6 +154,13 @@ export default {
 
     },
     computed: {
+        // Filters with a value (shown as a count next to the title)
+        activeCount() {
+            return Object.keys(this.form.attribute).filter(key => {
+                const value = this.form.attribute[key]
+                return value !== null && value !== undefined && value !== '' && !(Array.isArray(value) && !value.length)
+            }).length
+        },
         validateForm() {
             return !this.errors.any()
         },

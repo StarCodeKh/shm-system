@@ -4053,9 +4053,17 @@ input.vs-inputx.vs-input--input.small.hasValue {
   --brand-navy: 31, 32, 103;
   --brand-gold: 196, 150, 28;
   --brand-green: 47, 164, 73;
-  --input-radius: 10px;
-  --input-height: 42px;
-  --control-sm-height: 34px;
+  --input-radius: var(--btn-radius);
+  --input-height: var(--btn-height);
+  --control-sm-height: var(--btn-height-sm);
+  --btn-height: 36px;
+  --btn-height-sm: 30px;
+  --btn-height-lg: 42px;
+  --btn-padding-x: 16px;
+  --btn-radius: 8px;
+  --btn-font-size: .875rem;
+  --btn-font-weight: 600;
+  --btn-icon-size: 16px;
   --input-border: #d8d9e3;
   --input-border-hover: #c3c5d4;
   --field-gap: 20px;
@@ -4078,17 +4086,17 @@ input.vs-inputx.vs-input--input.small.hasValue {
 .btn-add-new.border {
   box-sizing: border-box;
   gap: 6px;
-  height: var(--input-height);
-  font-size: 0.9rem !important;
-  font-weight: 500 !important;
+  height: var(--btn-height);
+  font-size: var(--btn-font-size) !important;
+  font-weight: var(--btn-font-weight) !important;
   line-height: 1;
   white-space: nowrap;
   transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s, filter 0.15s;
 }
 
 [dir] .btn-add-new.border {
-  padding: 0 16px !important;
-  border-radius: var(--input-radius) !important;
+  padding: 0 var(--btn-padding-x) !important;
+  border-radius: var(--btn-radius) !important;
 }
 
 .btn-add-new.border span {
@@ -4439,20 +4447,21 @@ textarea {
 
 .con-vs-dialog footer .vs-button {
   flex: 1;
-  height: 42px;
+  height: var(--btn-height);
   font-family: inherit;
-  font-weight: 600;
+  font-size: var(--btn-font-size);
+  font-weight: var(--btn-font-weight);
 }
 
 [dir] .con-vs-dialog footer .vs-button {
   margin: 0 !important;
-  padding: 0 16px !important;
-  border-radius: 10px !important;
+  padding: 0 var(--btn-padding-x) !important;
+  border-radius: var(--btn-radius) !important;
   box-shadow: none !important;
 }
 
 [dir] .con-vs-dialog footer .vs-button .vs-button-backgroundx {
-  border-radius: 10px !important;
+  border-radius: var(--btn-radius) !important;
 }
 
 .con-vs-dialog footer .vs-dialog-cancel-button {
@@ -6949,7 +6958,7 @@ textarea.vs-textarea:not([rows]):focus {
   overflow-y: auto;
 }
 
-/* --- CONTROL HEIGHT: every single-line control is exactly --input-height (42px) --- */
+/* --- CONTROL HEIGHT: every single-line control is exactly --input-height (= --btn-height) --- */
 
 input[type=text],
 input[type=email],
@@ -7115,17 +7124,17 @@ input.vs-input--input.large {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  height: var(--input-height, 42px);
+  height: var(--btn-height);
   font-family: inherit;
-  font-size: 0.9rem;
+  font-size: var(--btn-font-size);
   font-weight: 500;
   color: #5e6078;
   transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
 }
 
 [dir] .dt-list .dt-btn {
-  padding: 0 16px;
-  border-radius: var(--input-radius, 10px);
+  padding: 0 var(--btn-padding-x);
+  border-radius: var(--btn-radius);
   border: 1px solid var(--input-border, #d8d9e3);
   background: #fff;
   cursor: pointer;
@@ -7144,7 +7153,7 @@ input.vs-input--input.large {
 }
 
 .dt-list .dt-btn--icon {
-  width: var(--input-height, 42px);
+  width: var(--btn-height);
 }
 
 [dir] .dt-list .dt-btn--icon {
@@ -7173,6 +7182,18 @@ input.vs-input--input.large {
 .dt-list .dt-btn--primary:hover {
   color: #fff;
   filter: brightness(0.95);
+}
+
+.dt-list .dt-toolbar .dt-btn--primary {
+  font-weight: var(--btn-font-weight);
+}
+
+[dir=ltr] .dt-list .dt-toolbar .dt-btn--primary:hover:not(:disabled) .feather-icon svg {
+  transform: rotate(90deg);
+}
+
+[dir=rtl] .dt-list .dt-toolbar .dt-btn--primary:hover:not(:disabled) .feather-icon svg {
+  transform: rotate(-90deg);
 }
 
 [dir] .dt-list .vs-con-table {
@@ -7453,6 +7474,14 @@ input.vs-input--input.large {
 
 .theme-dark .dt-list .dt-toolbar__title h3 {
   color: #fff;
+}
+
+.theme-dark .dt-list .dt-btn:not(.dt-btn--primary):hover:not(:disabled) {
+  color: rgb(var(--vs-primary));
+}
+
+[dir] .theme-dark .dt-list .dt-btn:not(.dt-btn--primary):hover:not(:disabled) {
+  background: #2c3354;
 }
 
 .theme-dark .dt-list .dt-btn:not(.dt-btn--primary),
@@ -7976,18 +8005,18 @@ input.vs-input--input.large {
 
 [dir] .dt-filter-panel {
   margin-bottom: 16px;
-  padding: 16px 20px 18px;
+  padding: 14px 18px 16px;
   border: 1px solid #eceef4;
   border-radius: 12px;
   background: #fafbfd;
 }
 
 [dir=ltr] .dt-filter-panel {
-  animation: dt-panel-in 0.2s ease;
+  animation: dt-panel-in 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 [dir=rtl] .dt-filter-panel {
-  animation: dt-panel-in 0.2s ease;
+  animation: dt-panel-in 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .dt-filter-panel__head {
@@ -7997,22 +8026,47 @@ input.vs-input--input.large {
 }
 
 .dt-filter-panel__head h4 {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: #2c2e45;
+}
+
+.dt-filter-panel__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+[dir] .dt-filter-panel__count {
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgb(var(--vs-primary));
+}
+
+.dt-filter-panel .d-field > label {
+  font-size: 0.8125rem;
+}
+
+[dir] .dt-filter-panel .d-field > label {
+  margin-bottom: 4px !important;
 }
 
 .dt-filter-panel__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   color: rgb(var(--vs-primary));
 }
 
 [dir] .dt-filter-panel__icon {
-  border-radius: 9px;
+  border-radius: var(--btn-radius);
   background: rgba(var(--vs-primary), 0.12);
 }
 
@@ -8022,13 +8076,13 @@ input.vs-input--input.large {
 
 .dt-filter-panel__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: var(--field-gap, 20px) 16px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px 14px;
   align-items: end;
 }
 
 [dir] .dt-filter-panel__grid {
-  margin-top: 14px;
+  margin-top: 12px;
 }
 
 .dt-filter-panel__grid > .d-field {
@@ -8054,6 +8108,10 @@ input.vs-input--input.large {
   flex: 0 1 auto;
 }
 
+.dt-filter-panel__actions .dt-btn:disabled {
+  opacity: 0.5;
+}
+
 @media (max-width: 640px) {
   .dt-filter-panel__grid {
     grid-template-columns: minmax(0, 1fr);
@@ -8067,13 +8125,27 @@ input.vs-input--input.large {
 @keyframes dt-panel-in {
   from {
     opacity: 0;
-    transform: translateY(-4px);
+    transform: translateY(-6px);
   }
 
   to {
     opacity: 1;
     transform: none;
   }
+}
+
+.dt-filter-count-enter-active,
+.dt-filter-count-leave-active {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.15s ease;
+}
+
+.dt-filter-count-enter,
+.dt-filter-count-leave-to {
+  opacity: 0;
+}
+
+[dir] .dt-filter-count-enter, [dir] .dt-filter-count-leave-to {
+  transform: scale(0.5);
 }
 
 [dir] .theme-dark .dt-filter-panel {
@@ -8526,16 +8598,16 @@ label.vs-select--label {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  height: var(--input-height);
+  height: var(--btn-height);
   font-family: inherit;
-  font-size: 0.92rem;
-  font-weight: 600;
+  font-size: var(--btn-font-size);
+  font-weight: var(--btn-font-weight);
   line-height: 1;
 }
 
 [dir] .vs-button:not(.vs-button-small):not(.vs-button-large):not(.includeIconOnly):not(.vs-radius) {
-  padding: 0 18px !important;
-  border-radius: var(--input-radius) !important;
+  padding: 0 var(--btn-padding-x) !important;
+  border-radius: var(--btn-radius) !important;
 }
 
 .vs-button:not(.vs-button-small):not(.vs-button-large):not(.includeIconOnly):not(.vs-radius).block,
@@ -8551,6 +8623,47 @@ label.vs-select--label {
   margin: 0 !important;
 }
 
+.vs-button-small:not(.includeIconOnly):not(.vs-radius),
+.vs-button-large:not(.includeIconOnly):not(.vs-radius) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: inherit;
+  font-weight: var(--btn-font-weight);
+  line-height: 1;
+}
+
+[dir] .vs-button-small:not(.includeIconOnly):not(.vs-radius), [dir] .vs-button-large:not(.includeIconOnly):not(.vs-radius) {
+  border-radius: var(--btn-radius) !important;
+}
+
+[dir] .vs-button-small:not(.includeIconOnly):not(.vs-radius) .vs-button-backgroundx, [dir] .vs-button-large:not(.includeIconOnly):not(.vs-radius) .vs-button-backgroundx {
+  border-radius: inherit;
+}
+
+[dir] .vs-button-small:not(.includeIconOnly):not(.vs-radius) .vs-button--icon, [dir] .vs-button-large:not(.includeIconOnly):not(.vs-radius) .vs-button--icon {
+  margin: 0 !important;
+}
+
+.vs-button-small:not(.includeIconOnly):not(.vs-radius) {
+  height: var(--btn-height-sm);
+  font-size: 0.8125rem;
+}
+
+[dir] .vs-button-small:not(.includeIconOnly):not(.vs-radius) {
+  padding: 0 12px !important;
+}
+
+.vs-button-large:not(.includeIconOnly):not(.vs-radius) {
+  height: var(--btn-height-lg);
+  font-size: 0.95rem;
+}
+
+[dir] .vs-button-large:not(.includeIconOnly):not(.vs-radius) {
+  padding: 0 22px !important;
+}
+
 [dir] .vs-button-filled.vs-button-primary {
   box-shadow: 0 6px 14px -6px rgba(var(--vs-primary), 0.7) !important;
 }
@@ -8561,6 +8674,155 @@ label.vs-select--label {
 
 [dir] .vs-button-filled.vs-button-primary:hover {
   box-shadow: 0 8px 18px -8px rgba(var(--vs-primary), 0.8) !important;
+}
+
+.vs-button,
+.dt-btn,
+.d-form__btn,
+.d-tabform__btn,
+.d-fm__tool-btn,
+.toolbar-btn,
+.btn-add-new.border {
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.2s ease, transform 0.15s ease, filter 0.15s ease !important;
+}
+
+.vs-button .feather-icon svg,
+.vs-button .vs-button--icon,
+.dt-btn .feather-icon svg,
+.dt-btn .vs-button--icon,
+.d-form__btn .feather-icon svg,
+.d-form__btn .vs-button--icon,
+.d-tabform__btn .feather-icon svg,
+.d-tabform__btn .vs-button--icon,
+.d-fm__tool-btn .feather-icon svg,
+.d-fm__tool-btn .vs-button--icon,
+.toolbar-btn .feather-icon svg,
+.toolbar-btn .vs-button--icon,
+.btn-add-new.border .feather-icon svg,
+.btn-add-new.border .vs-button--icon {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[dir] .vs-button:hover:not(:disabled):not(.vs-button-disabled), [dir] .dt-btn:hover:not(:disabled):not(.vs-button-disabled), [dir] .d-form__btn:hover:not(:disabled):not(.vs-button-disabled), [dir] .d-tabform__btn:hover:not(:disabled):not(.vs-button-disabled), [dir] .d-fm__tool-btn:hover:not(:disabled):not(.vs-button-disabled), [dir] .toolbar-btn:hover:not(:disabled):not(.vs-button-disabled), [dir] .btn-add-new.border:hover:not(:disabled):not(.vs-button-disabled) {
+  transform: translateY(-1px);
+}
+
+[dir] .vs-button:hover:not(:disabled):not(.vs-button-disabled) .feather-icon svg, [dir] .vs-button:hover:not(:disabled):not(.vs-button-disabled) .vs-button--icon, [dir] .dt-btn:hover:not(:disabled):not(.vs-button-disabled) .feather-icon svg, [dir] .dt-btn:hover:not(:disabled):not(.vs-button-disabled) .vs-button--icon, [dir] .d-form__btn:hover:not(:disabled):not(.vs-button-disabled) .feather-icon svg, [dir] .d-form__btn:hover:not(:disabled):not(.vs-button-disabled) .vs-button--icon, [dir] .d-tabform__btn:hover:not(:disabled):not(.vs-button-disabled) .feather-icon svg, [dir] .d-tabform__btn:hover:not(:disabled):not(.vs-button-disabled) .vs-button--icon, [dir] .d-fm__tool-btn:hover:not(:disabled):not(.vs-button-disabled) .feather-icon svg, [dir] .d-fm__tool-btn:hover:not(:disabled):not(.vs-button-disabled) .vs-button--icon, [dir] .toolbar-btn:hover:not(:disabled):not(.vs-button-disabled) .feather-icon svg, [dir] .toolbar-btn:hover:not(:disabled):not(.vs-button-disabled) .vs-button--icon, [dir] .btn-add-new.border:hover:not(:disabled):not(.vs-button-disabled) .feather-icon svg, [dir] .btn-add-new.border:hover:not(:disabled):not(.vs-button-disabled) .vs-button--icon {
+  transform: scale(1.1);
+}
+
+[dir] .vs-button:active:not(:disabled):not(.vs-button-disabled), [dir] .dt-btn:active:not(:disabled):not(.vs-button-disabled), [dir] .d-form__btn:active:not(:disabled):not(.vs-button-disabled), [dir] .d-tabform__btn:active:not(:disabled):not(.vs-button-disabled), [dir] .d-fm__tool-btn:active:not(:disabled):not(.vs-button-disabled), [dir] .toolbar-btn:active:not(:disabled):not(.vs-button-disabled), [dir] .btn-add-new.border:active:not(:disabled):not(.vs-button-disabled) {
+  transform: translateY(0) scale(0.96);
+}
+
+.vs-button:focus-visible,
+.dt-btn:focus-visible,
+.d-form__btn:focus-visible,
+.d-tabform__btn:focus-visible,
+.d-fm__tool-btn:focus-visible,
+.toolbar-btn:focus-visible,
+.btn-add-new.border:focus-visible {
+  outline: none;
+}
+
+[dir] .vs-button:focus-visible, [dir] .dt-btn:focus-visible, [dir] .d-form__btn:focus-visible, [dir] .d-tabform__btn:focus-visible, [dir] .d-fm__tool-btn:focus-visible, [dir] .toolbar-btn:focus-visible, [dir] .btn-add-new.border:focus-visible {
+  box-shadow: 0 0 0 3px rgba(var(--vs-primary), 0.25) !important;
+}
+
+[dir] .vs-button:disabled, [dir] .vs-button.vs-button-disabled, [dir] .dt-btn:disabled, [dir] .dt-btn.vs-button-disabled, [dir] .d-form__btn:disabled, [dir] .d-form__btn.vs-button-disabled, [dir] .d-tabform__btn:disabled, [dir] .d-tabform__btn.vs-button-disabled, [dir] .d-fm__tool-btn:disabled, [dir] .d-fm__tool-btn.vs-button-disabled, [dir] .toolbar-btn:disabled, [dir] .toolbar-btn.vs-button-disabled, [dir] .btn-add-new.border:disabled, [dir] .btn-add-new.border.vs-button-disabled {
+  cursor: not-allowed;
+}
+
+.nav-icon-btn,
+.nav-brand__btn,
+.d-fm__icon-btn,
+.currency-switch button {
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.nav-icon-btn .feather-icon svg,
+.nav-brand__btn .feather-icon svg,
+.d-fm__icon-btn .feather-icon svg,
+.currency-switch button .feather-icon svg {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[dir] .nav-icon-btn:hover:not(:disabled) .feather-icon svg, [dir] .nav-brand__btn:hover:not(:disabled) .feather-icon svg, [dir] .d-fm__icon-btn:hover:not(:disabled) .feather-icon svg, [dir] .currency-switch button:hover:not(:disabled) .feather-icon svg {
+  transform: scale(1.1);
+}
+
+[dir] .nav-icon-btn:active:not(:disabled), [dir] .nav-brand__btn:active:not(:disabled), [dir] .d-fm__icon-btn:active:not(:disabled), [dir] .currency-switch button:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.nav-icon-btn:focus-visible,
+.nav-brand__btn:focus-visible,
+.d-fm__icon-btn:focus-visible,
+.currency-switch button:focus-visible {
+  outline: none;
+}
+
+[dir] .nav-icon-btn:focus-visible, [dir] .nav-brand__btn:focus-visible, [dir] .d-fm__icon-btn:focus-visible, [dir] .currency-switch button:focus-visible {
+  box-shadow: 0 0 0 3px rgba(var(--vs-primary), 0.25);
+}
+
+.dt-btn .feather-icon svg,
+.d-form__btn .feather-icon svg,
+.d-tabform__btn .feather-icon svg,
+.d-fm__tool-btn .feather-icon svg,
+.btn-add-new.border .feather-icon svg {
+  width: var(--btn-icon-size);
+  height: var(--btn-icon-size);
+}
+
+.dt-btn:not(.dt-btn--primary):hover:not(:disabled) {
+  color: rgb(var(--vs-primary));
+}
+
+[dir] .dt-btn:not(.dt-btn--primary):hover:not(:disabled) {
+  border-color: rgba(var(--vs-primary), 0.5);
+  background: rgba(var(--vs-primary), 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vs-button,
+  .vs-button .feather-icon svg,
+  .vs-button .vs-button--icon,
+  .dt-btn,
+  .dt-btn .feather-icon svg,
+  .dt-btn .vs-button--icon,
+  .d-form__btn,
+  .d-form__btn .feather-icon svg,
+  .d-form__btn .vs-button--icon,
+  .d-tabform__btn,
+  .d-tabform__btn .feather-icon svg,
+  .d-tabform__btn .vs-button--icon,
+  .d-fm__tool-btn,
+  .d-fm__tool-btn .feather-icon svg,
+  .d-fm__tool-btn .vs-button--icon,
+  .toolbar-btn,
+  .toolbar-btn .feather-icon svg,
+  .toolbar-btn .vs-button--icon,
+  .nav-icon-btn,
+  .nav-icon-btn .feather-icon svg,
+  .nav-icon-btn .vs-button--icon,
+  .nav-brand__btn,
+  .nav-brand__btn .feather-icon svg,
+  .nav-brand__btn .vs-button--icon,
+  .d-fm__icon-btn,
+  .d-fm__icon-btn .feather-icon svg,
+  .d-fm__icon-btn .vs-button--icon,
+  .currency-switch button,
+  .currency-switch button .feather-icon svg,
+  .currency-switch button .vs-button--icon,
+  .btn-add-new.border,
+  .btn-add-new.border .feather-icon svg,
+  .btn-add-new.border .vs-button--icon {
+    transition: none !important;
+  }
+  [dir] .vs-button, [dir] .vs-button .feather-icon svg, [dir] .vs-button .vs-button--icon, [dir] .dt-btn, [dir] .dt-btn .feather-icon svg, [dir] .dt-btn .vs-button--icon, [dir] .d-form__btn, [dir] .d-form__btn .feather-icon svg, [dir] .d-form__btn .vs-button--icon, [dir] .d-tabform__btn, [dir] .d-tabform__btn .feather-icon svg, [dir] .d-tabform__btn .vs-button--icon, [dir] .d-fm__tool-btn, [dir] .d-fm__tool-btn .feather-icon svg, [dir] .d-fm__tool-btn .vs-button--icon, [dir] .toolbar-btn, [dir] .toolbar-btn .feather-icon svg, [dir] .toolbar-btn .vs-button--icon, [dir] .nav-icon-btn, [dir] .nav-icon-btn .feather-icon svg, [dir] .nav-icon-btn .vs-button--icon, [dir] .nav-brand__btn, [dir] .nav-brand__btn .feather-icon svg, [dir] .nav-brand__btn .vs-button--icon, [dir] .d-fm__icon-btn, [dir] .d-fm__icon-btn .feather-icon svg, [dir] .d-fm__icon-btn .vs-button--icon, [dir] .currency-switch button, [dir] .currency-switch button .feather-icon svg, [dir] .currency-switch button .vs-button--icon, [dir] .btn-add-new.border, [dir] .btn-add-new.border .feather-icon svg, [dir] .btn-add-new.border .vs-button--icon {
+    transform: none !important;
+  }
 }
 
 .add-new-data-sidebar .vs-sidebar {

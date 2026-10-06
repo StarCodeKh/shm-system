@@ -1040,18 +1040,17 @@ export default {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    height: 42px;
-    min-width: 110px;
-    padding: 0 18px;
+    height: var(--btn-height);
+    min-width: 100px;
+    padding: 0 var(--btn-padding-x);
     font-family: inherit;
-    font-size: .92rem;
-    font-weight: 600;
+    font-size: var(--btn-font-size);
+    font-weight: var(--btn-font-weight);
     color: #5e6078;
     border: 1px solid #e3e5ee;
-    border-radius: 10px;
+    border-radius: var(--btn-radius);
     background: #fff;
     cursor: pointer;
-    transition: background .15s, filter .15s;
 
     .feather-icon {
       display: flex;

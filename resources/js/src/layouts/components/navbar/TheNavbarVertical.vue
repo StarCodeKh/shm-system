@@ -177,15 +177,14 @@ export default {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: var(--btn-height);
+  height: var(--btn-height);
   padding: 0;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--btn-radius);
   background: transparent;
   color: #5e6078;
   cursor: pointer;
-  transition: background .15s, color .15s;
 
   .feather-icon {
     display: flex;

@@ -430,15 +430,14 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
+    width: var(--btn-height-sm);
+    height: var(--btn-height-sm);
     padding: 0;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--btn-radius);
     color: #fff;
     background: rgba(255, 255, 255, .12);
     cursor: pointer;
-    transition: background .15s ease;
 
     .feather-icon {
       display: flex;

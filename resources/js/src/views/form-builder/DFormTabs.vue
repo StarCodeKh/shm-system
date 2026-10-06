@@ -359,17 +359,16 @@ export default {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    height: var(--input-height, 42px);
-    padding: 0 18px;
+    height: var(--btn-height);
+    padding: 0 var(--btn-padding-x);
     font-family: inherit;
-    font-size: .9rem;
-    font-weight: 600;
+    font-size: var(--btn-font-size);
+    font-weight: var(--btn-font-weight);
     color: #4b4d68;
     border: 1px solid var(--input-border, #d8d9e3);
-    border-radius: var(--input-radius, 10px);
+    border-radius: var(--btn-radius);
     background: #fff;
     cursor: pointer;
-    transition: all .15s ease;
 
     .feather-icon {
       display: flex;

@@ -4,10 +4,21 @@
     --brand-gold: 196, 150, 28;  // #C4961C bird
     --brand-green: 47, 164, 73;  // #2FA449 laurels
 
-    // Corner radius shared by every form control (inputs, selects, textareas, date pickers)
-    --input-radius: 10px;
-    --input-height: 42px;
-    --control-sm-height: 34px; // compact controls: pagination, page-size selects, table footers
+    // Every form control (inputs, selects, textareas, date pickers) is one button high with the
+    // button radius, so fields and buttons line up everywhere. Change --btn-height to resize both.
+    --input-radius: var(--btn-radius);
+    --input-height: var(--btn-height);
+    --control-sm-height: var(--btn-height-sm); // compact controls: pagination, page-size selects, table footers
+
+    // Buttons: every button type (vs-button, .dt-btn, .d-form__btn, dialogs…) reads these
+    --btn-height: 36px;
+    --btn-height-sm: 30px;   // vs-button size="small"
+    --btn-height-lg: 42px;   // vs-button size="large"
+    --btn-padding-x: 16px;
+    --btn-radius: 8px;
+    --btn-font-size: .875rem;
+    --btn-font-weight: 600;
+    --btn-icon-size: 16px;
     --input-border: #d8d9e3;
     --input-border-hover: #c3c5d4;
     --field-gap: 20px;
@@ -29,12 +40,12 @@
 .btn-add-new.border {
     box-sizing: border-box;
     gap: 6px;
-    height: var(--input-height);
-    padding: 0 16px !important;
-    font-size: .9rem !important;
-    font-weight: 500 !important;
+    height: var(--btn-height);
+    padding: 0 var(--btn-padding-x) !important;
+    font-size: var(--btn-font-size) !important;
+    font-weight: var(--btn-font-weight) !important;
     line-height: 1;
-    border-radius: var(--input-radius) !important;
+    border-radius: var(--btn-radius) !important;
     white-space: nowrap;
     transition: background .15s, border-color .15s, color .15s, box-shadow .15s, filter .15s;
 
@@ -316,16 +327,17 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
 
         .vs-button {
             flex: 1;
-            height: 42px;
+            height: var(--btn-height);
             margin: 0 !important;
-            padding: 0 16px !important;
-            border-radius: 10px !important;
+            padding: 0 var(--btn-padding-x) !important;
+            border-radius: var(--btn-radius) !important;
             font-family: inherit;
-            font-weight: 600;
+            font-size: var(--btn-font-size);
+            font-weight: var(--btn-font-weight);
             box-shadow: none !important;
 
             .vs-button-backgroundx {
-                border-radius: 10px !important;
+                border-radius: var(--btn-radius) !important;
             }
         }
 
@@ -2064,7 +2076,7 @@ textarea.vs-textarea:not([rows]):focus {
 }
 
 
-/* --- CONTROL HEIGHT: every single-line control is exactly --input-height (42px) --- */
+/* --- CONTROL HEIGHT: every single-line control is exactly --input-height (= --btn-height) --- */
 input[type="text"],
 input[type="email"],
 input[type="tel"],
@@ -2191,12 +2203,12 @@ input.vs-input--input.large {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    height: var(--input-height, 42px);
-    padding: 0 16px;
+    height: var(--btn-height);
+    padding: 0 var(--btn-padding-x);
     font-family: inherit;
-    font-size: .9rem;
+    font-size: var(--btn-font-size);
     font-weight: 500;
-    border-radius: var(--input-radius, 10px);
+    border-radius: var(--btn-radius);
     border: 1px solid var(--input-border, #d8d9e3);
     background: #fff;
     color: #5e6078;
@@ -2213,7 +2225,7 @@ input.vs-input--input.large {
     }
 
     &--icon {
-      width: var(--input-height, 42px);
+      width: var(--btn-height);
       padding: 0;
 
       &.is-active {
@@ -2233,6 +2245,15 @@ input.vs-input--input.large {
         color: #fff;
         filter: brightness(.95);
       }
+    }
+  }
+
+  // "Add new": bolder, and its "+" turns a quarter on hover
+  .dt-toolbar .dt-btn--primary {
+    font-weight: var(--btn-font-weight);
+
+    &:hover:not(:disabled) .feather-icon svg {
+      transform: rotate(90deg);
     }
   }
 
@@ -2437,6 +2458,7 @@ input.vs-input--input.large {
 
 .theme-dark .dt-list {
   .dt-toolbar__title h3 { color: #fff; }
+  .dt-btn:not(.dt-btn--primary):hover:not(:disabled) { color: rgb(var(--vs-primary)); background: #2c3354; }
   .dt-btn:not(.dt-btn--primary),
   .dt-action {
     color: #c2c6dc;
@@ -2832,11 +2854,11 @@ input.vs-input--input.large {
 // Filter panel opened from a list toolbar (DSearch)
 .dt-filter-panel {
   margin-bottom: 16px;
-  padding: 16px 20px 18px;
+  padding: 14px 18px 16px;
   border: 1px solid #eceef4;
   border-radius: 12px;
   background: #fafbfd;
-  animation: dt-panel-in .2s ease;
+  animation: dt-panel-in .25s cubic-bezier(.2, .8, .2, 1);
 
   &__head {
     display: flex;
@@ -2844,19 +2866,40 @@ input.vs-input--input.large {
     gap: 10px;
 
     h4 {
-      font-size: .95rem;
+      font-size: .9rem;
       font-weight: 700;
       color: #2c2e45;
     }
+  }
+
+  // Number of filters in use
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    font-size: .72rem;
+    font-weight: 700;
+    color: #fff;
+    border-radius: 999px;
+    background: rgb(var(--vs-primary));
+  }
+
+  // Labels: smaller than in add/edit forms
+  .d-field > label {
+    margin-bottom: 4px !important;
+    font-size: .8125rem;
   }
 
   &__icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 9px;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--btn-radius);
     color: rgb(var(--vs-primary));
     background: rgba(var(--vs-primary), .12);
 
@@ -2868,10 +2911,10 @@ input.vs-input--input.large {
   // Fields and buttons share one grid: as many ~240px columns as fit, buttons in the last cell
   &__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: var(--field-gap, 20px) 16px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px 14px;
     align-items: end;
-    margin-top: 14px;
+    margin-top: 12px;
 
     // Field wrappers carry column classes (vx-col, w-1/3, mt-4): the grid owns sizing and spacing here
     > .d-field {
@@ -2893,6 +2936,10 @@ input.vs-input--input.large {
     .dt-btn {
       flex: 0 1 auto;
     }
+
+    .dt-btn:disabled {
+      opacity: .5;
+    }
   }
 
   @media (max-width: 640px) {
@@ -2907,8 +2954,18 @@ input.vs-input--input.large {
 }
 
 @keyframes dt-panel-in {
-  from { opacity: 0; transform: translateY(-4px); }
+  from { opacity: 0; transform: translateY(-6px); }
   to { opacity: 1; transform: none; }
+}
+
+.dt-filter-count-enter-active,
+.dt-filter-count-leave-active {
+  transition: transform .2s cubic-bezier(.34, 1.56, .64, 1), opacity .15s ease;
+}
+.dt-filter-count-enter,
+.dt-filter-count-leave-to {
+  opacity: 0;
+  transform: scale(.5);
 }
 
 .theme-dark .dt-filter-panel {
@@ -3268,19 +3325,19 @@ label.vs-select--label {
     color: #4b4d68;
 }
 
-// Buttons: one control high, input radius, semibold (same as .d-form__btn); small/large/icon-only/radius keep Vuesax sizes
+// Buttons: --btn-* tokens (same as .d-form__btn, .dt-btn); icon-only and round buttons keep Vuesax sizes
 .vs-button:not(.vs-button-small):not(.vs-button-large):not(.includeIconOnly):not(.vs-radius) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    height: var(--input-height);
-    padding: 0 18px !important;
+    height: var(--btn-height);
+    padding: 0 var(--btn-padding-x) !important;
     font-family: inherit;
-    font-size: .92rem;
-    font-weight: 600;
+    font-size: var(--btn-font-size);
+    font-weight: var(--btn-font-weight);
     line-height: 1;
-    border-radius: var(--input-radius) !important;
+    border-radius: var(--btn-radius) !important;
 
     &.block,
     &.w-full {
@@ -3296,12 +3353,151 @@ label.vs-select--label {
     }
 }
 
+.vs-button-small:not(.includeIconOnly):not(.vs-radius),
+.vs-button-large:not(.includeIconOnly):not(.vs-radius) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: inherit;
+    font-weight: var(--btn-font-weight);
+    line-height: 1;
+    border-radius: var(--btn-radius) !important;
+
+    .vs-button-backgroundx {
+        border-radius: inherit;
+    }
+
+    .vs-button--icon {
+        margin: 0 !important;
+    }
+}
+
+.vs-button-small:not(.includeIconOnly):not(.vs-radius) {
+    height: var(--btn-height-sm);
+    padding: 0 12px !important;
+    font-size: .8125rem;
+}
+
+.vs-button-large:not(.includeIconOnly):not(.vs-radius) {
+    height: var(--btn-height-lg);
+    padding: 0 22px !important;
+    font-size: .95rem;
+}
+
 .vs-button-filled.vs-button-primary {
     box-shadow: 0 6px 14px -6px rgba(var(--vs-primary), .7) !important;
 
     &:hover {
         box-shadow: 0 8px 18px -8px rgba(var(--vs-primary), .8) !important;
         filter: brightness(.95);
+    }
+}
+
+// ---------------------------------------------------------------- Button motion, shared by every button type
+// Hover lifts 1px and the icon pops; press shrinks; keyboard focus shows a ring.
+.vs-button,
+.dt-btn,
+.d-form__btn,
+.d-tabform__btn,
+.d-fm__tool-btn,
+.toolbar-btn,
+.btn-add-new.border {
+    transition: background .15s ease, border-color .15s ease, color .15s ease, box-shadow .2s ease,
+        transform .15s ease, filter .15s ease !important;
+
+    .feather-icon svg,
+    .vs-button--icon {
+        transition: transform .25s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    &:hover:not(:disabled):not(.vs-button-disabled) {
+        transform: translateY(-1px);
+
+        .feather-icon svg,
+        .vs-button--icon {
+            transform: scale(1.1);
+        }
+    }
+
+    &:active:not(:disabled):not(.vs-button-disabled) {
+        transform: translateY(0) scale(.96);
+    }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(var(--vs-primary), .25) !important;
+    }
+
+    &:disabled,
+    &.vs-button-disabled {
+        cursor: not-allowed;
+    }
+}
+
+// Flat icon buttons (navbar, sidebar, row actions) and segmented switches: no lift, just
+// the icon pop, press and focus ring
+.nav-icon-btn,
+.nav-brand__btn,
+.d-fm__icon-btn,
+.currency-switch button {
+    transition: background .15s ease, color .15s ease, box-shadow .2s ease, transform .15s ease;
+
+    .feather-icon svg {
+        transition: transform .25s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    &:hover:not(:disabled) .feather-icon svg {
+        transform: scale(1.1);
+    }
+
+    &:active:not(:disabled) {
+        transform: scale(.94);
+    }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(var(--vs-primary), .25);
+    }
+}
+
+// Text and icon sizes inside buttons
+.dt-btn,
+.d-form__btn,
+.d-tabform__btn,
+.d-fm__tool-btn,
+.btn-add-new.border {
+    .feather-icon svg {
+        width: var(--btn-icon-size);
+        height: var(--btn-icon-size);
+    }
+}
+
+// Outlined buttons pick up a primary tint on hover
+.dt-btn:not(.dt-btn--primary):hover:not(:disabled) {
+    color: rgb(var(--vs-primary));
+    border-color: rgba(var(--vs-primary), .5);
+    background: rgba(var(--vs-primary), .06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .vs-button,
+    .dt-btn,
+    .d-form__btn,
+    .d-tabform__btn,
+    .d-fm__tool-btn,
+    .toolbar-btn,
+    .nav-icon-btn,
+    .nav-brand__btn,
+    .d-fm__icon-btn,
+    .currency-switch button,
+    .btn-add-new.border {
+        &,
+        .feather-icon svg,
+        .vs-button--icon {
+            transition: none !important;
+            transform: none !important;
+        }
     }
 }
 

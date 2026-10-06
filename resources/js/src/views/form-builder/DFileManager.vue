@@ -693,11 +693,14 @@ input.d-fm__input {
 
 .d-fm__drop-btn {
     flex-shrink: 0;
-    padding: 9px 18px;
-    font-size: .9rem;
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    height: var(--btn-height);
+    padding: 0 var(--btn-padding-x);
+    font-size: var(--btn-font-size);
+    font-weight: var(--btn-font-weight);
     color: #fff;
-    border-radius: var(--input-radius, 10px);
+    border-radius: var(--btn-radius);
     background: rgb(var(--vs-primary));
     box-shadow: 0 6px 14px -8px rgba(var(--vs-primary), .9);
 }
@@ -729,17 +732,16 @@ input.d-fm__input {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    height: var(--input-height, 42px);
-    padding: 0 16px;
+    height: var(--btn-height);
+    padding: 0 var(--btn-padding-x);
     font-family: inherit;
-    font-size: .875rem;
-    font-weight: 600;
+    font-size: var(--btn-font-size);
+    font-weight: var(--btn-font-weight);
     color: #4b4d68;
     border: 1px solid var(--input-border, #d8d9e3);
-    border-radius: var(--input-radius, 10px);
+    border-radius: var(--btn-radius);
     background: #fff;
     cursor: pointer;
-    transition: all .15s ease;
 
     .feather-icon {
         display: flex;
@@ -952,13 +954,13 @@ input.d-fm__input {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 34px;
-    height: 34px;
+    width: var(--btn-height-sm);
+    height: var(--btn-height-sm);
     margin-left: 6px;
     padding: 0;
     color: #8a8ca5;
     border: 0;
-    border-radius: 9px;
+    border-radius: var(--btn-radius);
     background: transparent;
     cursor: pointer;
 

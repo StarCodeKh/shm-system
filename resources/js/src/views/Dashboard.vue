@@ -21,9 +21,9 @@
                     </button>
                 </div>
                 <vx-tooltip :text="$t('dash_reload')" position="top">
-                    <div class="toolbar-btn mb-2" :class="{ spinning: loading }" @click="load">
-                        <feather-icon icon="RefreshCwIcon" svgClasses="h-5 w-5" />
-                    </div>
+                    <button type="button" class="toolbar-btn mb-2" :class="{ spinning: loading }" :aria-label="$t('dash_reload')" @click="load">
+                        <feather-icon icon="RefreshCwIcon" svgClasses="h-4 w-4" />
+                    </button>
                 </vx-tooltip>
             </div>
         </div>
@@ -484,18 +484,20 @@ export default {
 
 .currency-switch {
     display: inline-flex;
+    height: var(--btn-height);
     padding: 3px;
-    border-radius: 999px;
+    border-radius: var(--btn-radius);
     background: #eef0f4;
 
     button {
         border: 0;
         background: transparent;
-        padding: 0.4rem 0.9rem;
-        border-radius: 999px;
+        padding: 0 12px;
+        border-radius: calc(var(--btn-radius) - 2px);
         cursor: pointer;
         color: #626262;
         font-family: inherit;
+        font-size: var(--btn-font-size);
         transition: all 0.2s ease;
 
         &.active {
@@ -508,17 +510,21 @@ export default {
 }
 
 .toolbar-btn {
-    padding: 0.6rem;
-    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--btn-height);
+    height: var(--btn-height);
+    border: 1px solid var(--input-border, #d8d9e3);
+    border-radius: var(--btn-radius);
     background: #fff;
-    color: #626262;
+    color: #5e6078;
     cursor: pointer;
-    display: flex;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: color 0.2s ease;
 
     &:hover {
-        color: rgba(var(--vs-primary), 1);
+        color: rgb(var(--vs-primary));
+        border-color: rgba(var(--vs-primary), .5);
+        background: rgba(var(--vs-primary), .06);
     }
 
     &.spinning svg {
