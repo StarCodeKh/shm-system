@@ -240,6 +240,7 @@ export default {
   methods: {
     changeRouteTitle(title) {
       this.routeTitle = title
+      this.$emit('changeRouteTitle', title)
     },
     updateNavbar(val) {
       if (val == "static") this.updateNavbarColor(this.isThemeDark ? "#10163a" : "#fff")

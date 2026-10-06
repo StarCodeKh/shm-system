@@ -48,6 +48,7 @@ const router = new Router({
                         name: 'dashboard',
                         component: () => import('./views/Dashboard.vue'),
                         meta: {
+                            title: 'ផ្ទាំងគ្រប់គ្រង', // browser tab only (no page header)
                             rule: 'editor',
                         }
                     },
@@ -72,7 +73,7 @@ const router = new Router({
                             { title: 'អ្នកប្រើប្រាស់'},
                             { title: 'រាយនាមអ្នកប្រើប្រាស់', active: true },
                         ],
-                        pageTitle: 'អ្នកប្រើប្រាស់',
+                        pageTitle: 'រាយនាមអ្នកប្រើប្រាស់',
                         rule: 'editor'
                     },
                 },
@@ -83,10 +84,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'អ្នកប្រើប្រាស់', url: '/user'},
-                            { title: 'View', active: true },
+                            { title: 'អ្នកប្រើប្រាស់', url: '/user' },
+                            { title: 'ព័ត៌មានអ្នកប្រើប្រាស់', active: true },
                         ],
-                        // pageTitle: 'User View',
+                        pageTitle: 'ព័ត៌មានអ្នកប្រើប្រាស់',
                         rule: 'editor'
                     },
                 },
@@ -97,10 +98,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'អ្នកប្រើប្រាស់', url: '/user'},
-                            { title: 'ទិន្នន័យអ្នកប្រើប្រាស់', active: true },
+                            { title: 'អ្នកប្រើប្រាស់', url: '/user' },
+                            { title: 'កែប្រែអ្នកប្រើប្រាស់', active: true },
                         ],
-                        // pageTitle: 'User View',
+                        pageTitle: 'កែប្រែអ្នកប្រើប្រាស់',
                         rule: 'editor'
                     },
                 },
@@ -114,7 +115,7 @@ const router = new Router({
                             { title: 'កំណត់ហេតុ'},
                             { title: 'កំណត់ហេតុប្រើប្រាស់', active: true },
                         ],
-                        pageTitle: 'កំណត់ហេតុ',
+                        pageTitle: 'កំណត់ហេតុប្រើប្រាស់',
                         rule: 'editor'
                     },
                 },
@@ -128,8 +129,7 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'បញ្ជីសំណើរ'},
-                            { title: 'រាយនាមបញ្ជីសំណើរ', active: true },
+                            { title: 'បញ្ជីសំណើរ', active: true },
                         ],
                         pageTitle: 'បញ្ជីសំណើរ',
                         rule: 'editor'
@@ -142,10 +142,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'បញ្ជីសំណើរ'},
-                            { title: 'រាយនាមបញ្ជីសំណើរ', active: true },
+                            { title: 'បញ្ជីសំណើរ', url: '/policy/list' },
+                            { title: 'ទម្រង់សំណើរ', active: true },
                         ],
-                        pageTitle: 'អ្នកប្រើប្រាស់',
+                        pageTitle: 'ទម្រង់សំណើរ',
                         rule: 'editor'
                     },
                 },
@@ -159,10 +159,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'សិទ្ធិ'},
-                            { title: 'រាយឈ្មោះសិទ្ធិ', active: true },
+                            { title: 'សិទ្ធិ' },
+                            { title: 'គ្រប់គ្រងសិទ្ធិ', active: true },
                         ],
-                        pageTitle: 'សិទ្ធិ',
+                        pageTitle: 'គ្រប់គ្រងសិទ្ធិ',
                         rule: 'editor'
                     },
                 },
@@ -173,10 +173,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'សិទ្ធិ', url: '/role/list' },
-                            { title: 'រាយឈ្មោះសិទ្ធិ', active: true },
+                            { title: 'គ្រប់គ្រងសិទ្ធិ', url: '/role' },
+                            { title: 'ទម្រង់សិទ្ធិ', active: true },
                         ],
-                        pageTitle: 'សិទ្ធិ',
+                        pageTitle: 'ទម្រង់សិទ្ធិ',
                         rule: 'editor'
                     },
                 },
@@ -187,10 +187,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'សិទ្ធិ', url: '/role/list' },
-                            { title: 'រាយឈ្មោះសិទ្ធិ', active: true },
+                            { title: 'គ្រប់គ្រងសិទ្ធិ', url: '/role' },
+                            { title: 'សិទ្ធិម៉ឺនុយ', active: true },
                         ],
-                        pageTitle: 'សិទ្ធិ',
+                        pageTitle: 'សិទ្ធិម៉ឺនុយ',
                         rule: 'editor'
                     },
                 },
@@ -205,7 +205,6 @@ const router = new Router({
                         pageTitle: 'គ្រប់គ្រងកម្មវិធី',
                         breadcrumb: [
                             { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'ផ្ទាំងគ្រប់គ្រង' },
                             { title: 'គ្រប់គ្រងកម្មវិធី', active: true },
                         ],
                         rule: 'editor',
@@ -219,7 +218,7 @@ const router = new Router({
                         pageTitle: 'គោលបំណង',
                         breadcrumb: [
                             { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'ផ្ទាំងគ្រប់គ្រង' },
+                            { title: 'គ្រប់គ្រងកម្មវិធី', url: '/module/program-arrangement' },
                             { title: 'គោលបំណង', active: true },
                         ],
                         rule: 'editor',
@@ -236,7 +235,7 @@ const router = new Router({
                         pageTitle: 'កម្មវិធី',
                         breadcrumb: [
                             { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'ផ្ទាំងគ្រប់គ្រង' },
+                            { title: 'គ្រប់គ្រងកម្មវិធី', url: '/module/program-arrangement' },
                             { title: 'កម្មវិធី', active: true },
                         ],
                         rule: 'editor',
@@ -253,7 +252,7 @@ const router = new Router({
                         pageTitle: 'អនុកម្មវិធី',
                         breadcrumb: [
                             { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'ផ្ទាំងគ្រប់គ្រង' },
+                            { title: 'គ្រប់គ្រងកម្មវិធី', url: '/module/program-arrangement' },
                             { title: 'អនុកម្មវិធី', active: true },
                         ],
                         rule: 'editor',
@@ -270,7 +269,7 @@ const router = new Router({
                         pageTitle: 'ចង្កោមសកម្មភាព',
                         breadcrumb: [
                             { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'ផ្ទាំងគ្រប់គ្រង' },
+                            { title: 'គ្រប់គ្រងកម្មវិធី', url: '/module/program-arrangement' },
                             { title: 'ចង្កោមសកម្មភាព', active: true },
                         ],
                         rule: 'editor',
@@ -287,7 +286,7 @@ const router = new Router({
                         pageTitle: 'សកម្មភាព',
                         breadcrumb: [
                             { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'ផ្ទាំងគ្រប់គ្រង' },
+                            { title: 'គ្រប់គ្រងកម្មវិធី', url: '/module/program-arrangement' },
                             { title: 'សកម្មភាព', active: true },
                         ],
                         rule: 'editor',
@@ -304,7 +303,7 @@ const router = new Router({
                         pageTitle: 'ការងារ',
                         breadcrumb: [
                             { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'ផ្ទាំងគ្រប់គ្រង' },
+                            { title: 'គ្រប់គ្រងកម្មវិធី', url: '/module/program-arrangement' },
                             { title: 'ការងារ', active: true },
                         ],
                         rule: 'editor',
@@ -360,11 +359,11 @@ const router = new Router({
                     name: 'BudgetCeilingList',
                     component: () => import('@/views/pages/modules/budget-arrangement/budget-ceiling/List.vue'),
                     meta: {
-                        pageTitle: 'ពិដានថវិកា',
+                        pageTitle: 'បញ្ជីពិដានថវិកា',
                         breadcrumb: [
                             { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'កំណត់ពិដានថវិកា', url: '/module/budget-arrangement/budget-ceiling' },
-                            { title: 'ពិដានថវិកា', active: true },
+                            { title: 'ពិដានថវិកា', url: '/module/budget-arrangement/budget-ceiling' },
+                            { title: 'បញ្ជីពិដានថវិកា', active: true },
                         ],
                         rule: 'editor'
                     }
@@ -402,11 +401,11 @@ const router = new Router({
                     name: 'PB',
                     component: () => import('@/views/pages/modules/budget-arrangement/pb/index.vue'),
                     meta: {
-                        pageTitle: 'រៀបចំថវិកា',
+                        pageTitle: 'រៀបចំគម្រោងថវិកាប្រចាំឆ្នាំ',
                         breadcrumb: [
                             { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
                             { title: 'រៀបចំថវិកា', url: '/' },
-                            { title: 'គម្រោងវិនិយោគថវិកា', active: true },
+                            { title: 'រៀបចំគម្រោងថវិកាប្រចាំឆ្នាំ', active: true },
                         ],
                         rule: 'editor'
                     }
@@ -633,11 +632,11 @@ const router = new Router({
                     name: 'nofication',
                     component: () => import('@/views/pages/notification/Index.vue'),
                     meta: {
-                        // pageTitle: 'List View',
+                        pageTitle: 'បញ្ជីការជូនដំណឹង',
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គ្រប់គ្រងសមាជិក', url: '/notification' },
-                            { title: 'ការជូនដំណឹង', active: true },
+                            { title: 'គ្រប់គ្រងសមាជិក' },
+                            { title: 'បញ្ជីការជូនដំណឹង', active: true },
                         ],
                         rule: 'editor'
                     },
@@ -650,11 +649,11 @@ const router = new Router({
                     name: 'officer',
                     component: () => import('@/views/pages/officers/Index.vue'),
                     meta: {
-                        // pageTitle: 'List View',
+                        pageTitle: 'រាយនាមសមាជិក',
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គ្រប់គ្រងសមាជិក', url: '/officer' },
-                            { title: 'បញ្ជីសមាជិក', active: true },
+                            { title: 'គ្រប់គ្រងសមាជិក' },
+                            { title: 'រាយនាមសមាជិក', active: true },
                         ],
                         rule: 'editor'
                     },
@@ -664,11 +663,11 @@ const router = new Router({
                     name: 'officer-form',
                     component: () => import('@/views/pages/officers/tabs/_OfficerForm.vue'),
                     meta: {
-                        // pageTitle: 'List View',
+                        pageTitle: 'ចុះឈ្មោះសមាជិក',
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គ្រប់គ្រងសមាជិក', url: '/officer' },
-                            { title: 'បង្កើតសមាជិក', active: true },
+                            { title: 'រាយនាមសមាជិក', url: '/officer' },
+                            { title: 'ចុះឈ្មោះសមាជិក', active: true },
                         ],
                         rule: 'editor'
                     },
@@ -708,10 +707,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'បញ្ជីសមាជិក', url: '/officer' },
-                            { title: 'ពត៌មានលម្អិត', active: true },
+                            { title: 'រាយនាមសមាជិក', url: '/officer' },
+                            { title: 'ព័ត៌មានលម្អិតសមាជិក', active: true },
                         ],
-                        pageTitle: 'រាយនាមមន្ត្រី',
+                        pageTitle: 'ព័ត៌មានលម្អិតសមាជិក',
                         rule: 'editor'
                     },
                 },
@@ -722,10 +721,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'រាយនាមមន្ត្រី'},
+                            { title: 'គ្រប់គ្រងប្រាក់ឧបត្ថម្ភ' },
                             { title: 'រាយនាមមន្ត្រីផ្លាស់ប្តូរសមាសភាព', active: true },
                         ],
-                        pageTitle: 'គ្រប់គ្រងប្រាក់ឧបត្ថម្ភ',
+                        pageTitle: 'រាយនាមមន្ត្រីផ្លាស់ប្តូរសមាសភាព',
                         rule: 'editor'
                     },
                 },
@@ -736,10 +735,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'តារាង'},
-                            { title: 'ការផ្លាស់ប្តូរសមាសភាព', active: true },
+                            { title: 'គ្រប់គ្រងប្រាក់ឧបត្ថម្ភ' },
+                            { title: 'សំណើរផ្លាស់ប្តូរសមាសភាព', active: true },
                         ],
-                        pageTitle: 'គ្រប់គ្រងប្រាក់ឧបត្ថម្ភ',
+                        pageTitle: 'សំណើរផ្លាស់ប្តូរសមាសភាព',
                         rule: 'editor'
                     },
                 },
@@ -750,10 +749,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ទម្រង់', url: '/incentive/composition-request'},
-                            { title: 'ការផ្លាស់ប្តូរសមាសភាព', active: true },
+                            { title: 'សំណើរផ្លាស់ប្តូរសមាសភាព', url: '/incentive/composition-request' },
+                            { title: 'ទម្រង់បង្កើត', active: true },
                         ],
-                        pageTitle: 'គ្រប់គ្រងប្រាក់ឧបត្ថម្ភ',
+                        pageTitle: 'បង្កើតសំណើរផ្លាស់ប្តូរសមាសភាព',
                         rule: 'editor'
                     },
                 },
@@ -764,10 +763,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ទម្រង់', url: '/incentive/composition-request'},
-                            { title: 'ការផ្លាស់ប្តូរសមាសភាព', active: true },
+                            { title: 'សំណើរផ្លាស់ប្តូរសមាសភាព', url: '/incentive/composition-request' },
+                            { title: 'ទម្រង់កែប្រែ', active: true },
                         ],
-                        pageTitle: 'គ្រប់គ្រងប្រាក់ឧបត្ថម្ភ',
+                        pageTitle: 'កែប្រែសំណើរផ្លាស់ប្តូរសមាសភាព',
                         rule: 'editor'
                     },
                 },
@@ -779,10 +778,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គ្រប់គ្រងសមាជិក'},
-                            { title: 'តារាងបើកផ្តល់ប្រាក់ឧបត្ថម្ភ', active: true },
+                            { title: 'ហិរញ្ញវត្ថុ' },
+                            { title: 'បញ្ជីបើកផ្តល់ប្រាក់ឧបត្ថម្ភ', active: true },
                         ],
-                        // pageTitle: 'List View',
+                        pageTitle: 'បញ្ជីបើកផ្តល់ប្រាក់ឧបត្ថម្ភ',
                         rule: 'editor'
                     },
                 },
@@ -794,10 +793,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គ្រប់គ្រងសមាជិក'},
-                            { title: 'សំណើរ', active: true },
+                            { title: 'ហិរញ្ញវត្ថុ' },
+                            { title: 'ទិន្នន័យសំណើរ', active: true },
                         ],
-                        // pageTitle: 'List View',
+                        pageTitle: 'ទិន្នន័យសំណើរ',
                         rule: 'editor'
                     },
                 },
@@ -808,10 +807,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'បង្កើតប្រាក់ឧបត្ថម្ភ', url: '/incentive/list'},
+                            { title: 'បញ្ជីបើកផ្តល់ប្រាក់ឧបត្ថម្ភ', url: '/incentive' },
                             { title: 'ទម្រង់បង្កើត', active: true },
                         ],
-                        pageTitle: 'ការគ្រប់គ្រងប្រាក់ឧបត្ថម្ភ',
+                        pageTitle: 'បង្កើតប្រាក់ឧបត្ថម្ភ',
                         rule: 'editor'
                     },
                 },
@@ -822,10 +821,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'បង្កើតប្រាក់ឧបត្ថម្ភ', url: '/incentive/list'},
-                            { title: 'ទម្រង់បង្កើត', active: true },
+                            { title: 'បញ្ជីបើកផ្តល់ប្រាក់ឧបត្ថម្ភ', url: '/incentive' },
+                            { title: 'ទម្រង់កែប្រែ', active: true },
                         ],
-                        pageTitle: 'ការគ្រប់គ្រងប្រាក់ឧបត្ថម្ភ',
+                        pageTitle: 'កែប្រែប្រាក់ឧបត្ថម្ភ',
                         rule: 'editor'
                     },
                 },
@@ -836,10 +835,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'វិធីបង់ប្រាក់'},
+                            { title: 'វិធីបង់ប្រាក់' },
                             { title: 'បញ្ជី', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'វិធីបង់ប្រាក់',
                         rule: 'editor'
                     },
                 },
@@ -850,10 +849,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'វិធីបង់ប្រាក់'},
+                            { title: 'វិធីបង់ប្រាក់', url: '/account/payment-method' },
                             { title: 'ទម្រង់', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'ទម្រង់វិធីបង់ប្រាក់',
                         rule: 'editor'
                     },
                 },
@@ -865,10 +864,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'វិធីបង់ប្រាក់'},
+                            { title: 'ប្រភេទផលិតផល/សេវាកម្ម' },
                             { title: 'បញ្ជី', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'ប្រភេទផលិតផល/សេវាកម្ម',
                         rule: 'editor'
                     },
                 },
@@ -879,10 +878,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'វិធីបង់ប្រាក់'},
+                            { title: 'ប្រភេទផលិតផល/សេវាកម្ម', url: '/account/category' },
                             { title: 'ទម្រង់', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'ទម្រង់ប្រភេទផលិតផល/សេវាកម្ម',
                         rule: 'editor'
                     },
                 },
@@ -894,7 +893,7 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'វិធីបង់ប្រាក់'},
+                            { title: 'គណនី' },
                             { title: 'បញ្ជី', active: true },
                         ],
                         pageTitle: 'គណនី',
@@ -908,10 +907,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'វិធីបង់ប្រាក់'},
+                            { title: 'គណនី', url: '/account/account' },
                             { title: 'ទម្រង់', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'ទម្រង់គណនី',
                         rule: 'editor'
                     },
                 },
@@ -923,10 +922,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ក្រុមគណនីយ'},
+                            { title: 'ក្រុមគណនី' },
                             { title: 'បញ្ជី', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'ក្រុមគណនី',
                         rule: 'editor'
                     },
                 },
@@ -937,10 +936,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ក្រុមគណនីយ'},
+                            { title: 'ក្រុមគណនី', url: '/account/account-group' },
                             { title: 'ទម្រង់', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'ទម្រង់ក្រុមគណនី',
                         rule: 'editor'
                     },
                 },
@@ -952,10 +951,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ប្រភេទគណនី'},
+                            { title: 'ប្រភេទគណនី' },
                             { title: 'បញ្ជី', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'ប្រភេទគណនី',
                         rule: 'editor'
                     },
                 },
@@ -966,10 +965,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ប្រភេទគណនី'},
+                            { title: 'ប្រភេទគណនី', url: '/account/account-type' },
                             { title: 'ទម្រង់', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'ទម្រង់ប្រភេទគណនី',
                         rule: 'editor'
                     },
                 },
@@ -981,10 +980,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គណនីធនាគារ'},
+                            { title: 'គណនីធនាគារ' },
                             { title: 'បញ្ជី', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'គណនីធនាគារ',
                         rule: 'editor'
                     },
                 },
@@ -995,10 +994,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គណនីធនាគារ'},
+                            { title: 'គណនីធនាគារ', url: '/account/bank-account' },
                             { title: 'ទម្រង់', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'ទម្រង់គណនីធនាគារ',
                         rule: 'editor'
                     },
                 },
@@ -1009,10 +1008,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ការចំណាយ', url: '/account/expense'},
+                            { title: 'គ្រប់គ្រងចំណាយ', url: '/account/expense' },
                             { title: 'បញ្ជី', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'គ្រប់គ្រងចំណាយ',
                         rule: 'editor'
                     },
                 },
@@ -1023,10 +1022,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ការចំណាយ', url: '/account/expense'},
-                            { title: 'ទម្រង់', active: true },
+                            { title: 'គ្រប់គ្រងចំណាយ', url: '/account/expense' },
+                            { title: 'ទម្រង់បង្កើត', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'បង្កើតចំណាយ',
                         rule: 'editor'
                     },
                 },
@@ -1038,10 +1037,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ការចំណាយ', url: '/account/expense'},
-                            { title: 'ទម្រង់', active: true },
+                            { title: 'គ្រប់គ្រងចំណាយ', url: '/account/expense' },
+                            { title: 'ទម្រង់កែប្រែ', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'កែប្រែចំណាយ',
                         rule: 'editor'
                     },
                 },
@@ -1053,10 +1052,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'តារាងគណនី', url: '/account/chart-account'},
+                            { title: 'តារាងគណនី', url: '/account/chart-account' },
                             { title: 'បញ្ជី', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'តារាងគណនី',
                         rule: 'editor'
                     },
                 },
@@ -1067,10 +1066,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'តារាងគណនី', url: '/account/chart-account'},
-                            { title: 'ទម្រង់', active: true },
+                            { title: 'តារាងគណនី', url: '/account/chart-account' },
+                            { title: 'ទម្រង់បង្កើត', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'បង្កើតគណនី',
                         rule: 'editor'
                     },
                 },
@@ -1082,10 +1081,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'តារាងគណនី', url: '/account/chart-account'},
-                            { title: 'ទម្រង់', active: true },
+                            { title: 'តារាងគណនី', url: '/account/chart-account' },
+                            { title: 'ទម្រង់កែប្រែ', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'កែប្រែគណនី',
                         rule: 'editor'
                     },
                 },
@@ -1098,10 +1097,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ការគ្រប់គ្រងចំណូល', url: '/account/income'},
+                            { title: 'គ្រប់គ្រងចំណូល', url: '/account/income' },
                             { title: 'បញ្ជី', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'គ្រប់គ្រងចំណូល',
                         rule: 'editor'
                     },
                 },
@@ -1112,10 +1111,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ការគ្រប់គ្រងចំណូល', url: '/account/income'},
-                            { title: 'ទម្រង់', active: true },
+                            { title: 'គ្រប់គ្រងចំណូល', url: '/account/income' },
+                            { title: 'ទម្រង់បង្កើត', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'បង្កើតចំណូល',
                         rule: 'editor'
                     },
                 },
@@ -1126,10 +1125,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ការគ្រប់គ្រងចំណូល', url: '/account/income'},
-                            { title: 'ទម្រង់', active: true },
+                            { title: 'គ្រប់គ្រងចំណូល', url: '/account/income' },
+                            { title: 'ទម្រង់កែប្រែ', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'កែប្រែចំណូល',
                         rule: 'editor'
                     },
                 },
@@ -1140,10 +1139,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ការគណនាពន្ធ', url: '/account/taxable-salary'},
+                            { title: 'ការគណនាពន្ធ', url: '/account/taxable-salary' },
                             { title: 'បញ្ជី', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'ការគណនាពន្ធ',
                         rule: 'editor'
                     },
                 },
@@ -1154,10 +1153,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ការគណនាពន្ធ', url: '/account/taxable-salary'},
-                            { title: 'ទម្រង់', active: true },
+                            { title: 'ការគណនាពន្ធ', url: '/account/taxable-salary' },
+                            { title: 'ទម្រង់បង្កើត', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'បង្កើតការគណនាពន្ធ',
                         rule: 'editor'
                     },
                 },
@@ -1168,10 +1167,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ការគណនាពន្ធ', url: '/account/taxable-salary'},
-                            { title: 'ទម្រង់', active: true },
+                            { title: 'ការគណនាពន្ធ', url: '/account/taxable-salary' },
+                            { title: 'ទម្រង់កែប្រែ', active: true },
                         ],
-                        pageTitle: 'គណនី',
+                        pageTitle: 'កែប្រែការគណនាពន្ធ',
                         rule: 'editor'
                     },
                 },
@@ -1182,10 +1181,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គ្រប់គ្រងការបង់ប្រាក់'},
-                            { title: 'បញ្ជី', active: true },
+                            { title: 'ហិរញ្ញវត្ថុ' },
+                            { title: 'ទិន្នន័យបង់ប្រាក់', active: true },
                         ],
-                        pageTitle: 'ការបង់ប្រាក់',
+                        pageTitle: 'ទិន្នន័យបង់ប្រាក់',
                         rule: 'editor'
                     },
                 },
@@ -1196,10 +1195,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គ្រប់គ្រងការបង់ប្រាក់'},
-                            { title: 'បញ្ជី', active: true },
+                            { title: 'ហិរញ្ញវត្ថុ' },
+                            { title: 'ទទួលប្រាក់', active: true },
                         ],
-                        pageTitle: 'ការបង់ប្រាក់',
+                        pageTitle: 'ទទួលប្រាក់',
                         rule: 'editor'
                     },
                 },
@@ -1213,10 +1212,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'តារាងផ្នែក'},
-                            { title: 'List View', active: true },
+                            { title: 'រៀបចំទិន្នន័យ' },
+                            { title: 'ផ្នែក', active: true },
                         ],
-                        pageTitle: 'រៀបចំទិន្នន័យ',
+                        pageTitle: 'ផ្នែក',
                         rule: 'editor'
                     },
                 },
@@ -1227,10 +1226,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'រៀបចំទិន្នន័យ'},
+                            { title: 'ផ្នែក', url: '/setup/department' },
                             { title: 'ទម្រង់', active: true },
                         ],
-                        pageTitle: 'ទម្រង់បំពេញ',
+                        pageTitle: 'ទម្រង់ផ្នែក',
                         rule: 'editor'
                     },
                 },
@@ -1242,10 +1241,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'តារាងផ្នែក'},
-                            { title: 'List View', active: true },
+                            { title: 'រៀបចំទិន្នន័យ' },
+                            { title: 'សារាចរ', active: true },
                         ],
-                        pageTitle: 'រៀបចំទិន្នន័យ',
+                        pageTitle: 'សារាចរ',
                         rule: 'editor'
                     },
                 },
@@ -1256,10 +1255,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'រៀបចំទិន្នន័យ'},
+                            { title: 'សារាចរ', url: '/setup/circular' },
                             { title: 'ទម្រង់', active: true },
                         ],
-                        pageTitle: 'ទម្រង់បំពេញ',
+                        pageTitle: 'ទម្រង់សារាចរ',
                         rule: 'editor'
                     },
                 },
@@ -1271,10 +1270,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'តារាងផ្នែក'},
-                            { title: 'List View', active: true },
+                            { title: 'រៀបចំទិន្នន័យ' },
+                            { title: 'អង្គភាព', active: true },
                         ],
-                        pageTitle: 'រៀបចំទិន្នន័យ',
+                        pageTitle: 'អង្គភាព',
                         rule: 'editor'
                     },
                 },
@@ -1285,10 +1284,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'រៀបចំទិន្នន័យ'},
+                            { title: 'អង្គភាព', url: '/setup/entity' },
                             { title: 'ទម្រង់', active: true },
                         ],
-                        pageTitle: 'ទម្រង់បំពេញ',
+                        pageTitle: 'ទម្រង់អង្គភាព',
                         rule: 'editor'
                     },
                 },
@@ -1300,10 +1299,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'តារាងផ្នែក'},
-                            { title: 'List View', active: true },
+                            { title: 'រៀបចំទិន្នន័យ' },
+                            { title: 'សិទ្ធិប្រើប្រាស់', active: true },
                         ],
-                        pageTitle: 'រៀបចំទិន្នន័យ',
+                        pageTitle: 'សិទ្ធិប្រើប្រាស់',
                         rule: 'editor'
                     },
                 },
@@ -1314,10 +1313,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'រៀបចំទិន្នន័យ'},
+                            { title: 'សិទ្ធិប្រើប្រាស់', url: '/setup/role' },
                             { title: 'ទម្រង់', active: true },
                         ],
-                        pageTitle: 'ទម្រង់បំពេញ',
+                        pageTitle: 'ទម្រង់សិទ្ធិប្រើប្រាស់',
                         rule: 'editor'
                     },
                 },
@@ -1328,10 +1327,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'តារាងផ្នែក'},
-                            { title: 'List View', active: true },
+                            { title: 'រៀបចំទិន្នន័យ' },
+                            { title: 'វិស័យ', active: true },
                         ],
-                        pageTitle: 'រៀបចំទិន្នន័យ',
+                        pageTitle: 'វិស័យ',
                         rule: 'editor'
                     },
                 },
@@ -1342,10 +1341,10 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'រៀបចំទិន្នន័យ'},
+                            { title: 'វិស័យ', url: '/setup/sector' },
                             { title: 'ទម្រង់', active: true },
                         ],
-                        pageTitle: 'ទម្រង់បំពេញ',
+                        pageTitle: 'ទម្រង់វិស័យ',
                         rule: 'editor'
                     },
                 },
@@ -1360,7 +1359,7 @@ const router = new Router({
                             { title: 'គ្រប់គ្រងរបាយការណ៍', url: '/report'},
                             { title: 'របាយការណ៍', active: true },
                         ],
-                        // pageTitle: 'របាយការណ៍',
+                        pageTitle: 'របាយការណ៍',
                         rule: 'editor'
                     },
                 },
@@ -1375,7 +1374,6 @@ const router = new Router({
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ទំព័រដើម'},
                             { title: 'ការកំណត់', active: true },
                         ],
                         pageTitle: 'ការកំណត់',
@@ -1390,11 +1388,10 @@ const router = new Router({
                     name: 'file-manager',
                     component: () => import('./views/file-managers/Index.vue'),
                     meta: {
-                        pageTitle: 'ឃាំ្លងឯកសារ',
+                        pageTitle: 'ឃ្លាំងឯកសារ',
                         breadcrumb: [
-                            { title: 'Dashboard', url: '/' },
-                            { title: 'ឃាំ្លងឯកសារ', url: '/' },
-                            { title: 'ឃាំ្លងឯកសារ', active: true },
+                            { title: 'ទំព័រដើម', url: '/' },
+                            { title: 'ឃ្លាំងឯកសារ', active: true },
                         ],
                         rule: 'editor',
                     }
@@ -1426,6 +1423,7 @@ const router = new Router({
                     name: 'page-login',
                     component: () => import('@/views/pages/login/Login.vue'),
                     meta: {
+                        title: 'ចូលប្រើប្រាស់ប្រព័ន្ធ', // browser tab only (no page header)
                         rule: 'editor'
                     }
                 },
@@ -1434,6 +1432,7 @@ const router = new Router({
                     name: 'page-register',
                     component: () => import('@/views/pages/register/Register.vue'),
                     meta: {
+                        title: 'ចុះឈ្មោះ', // browser tab only (no page header)
                         rule: 'editor'
                     }
                 },
@@ -1442,6 +1441,7 @@ const router = new Router({
                     name: 'page-forgot-password',
                     component: () => import('@/views/pages/ForgotPassword.vue'),
                     meta: {
+                        title: 'ភ្លេចពាក្យសម្ងាត់', // browser tab only (no page header)
                         rule: 'editor'
                     }
                 },
@@ -1450,6 +1450,7 @@ const router = new Router({
                     name: 'page-reset-password',
                     component: () => import('@/views/pages/ResetPassword.vue'),
                     meta: {
+                        title: 'កំណត់ពាក្យសម្ងាត់ឡើងវិញ', // browser tab only (no page header)
                         rule: 'editor'
                     }
                 },
@@ -1458,6 +1459,7 @@ const router = new Router({
                     name: 'page-lock-screen',
                     component: () => import('@/views/pages/LockScreen.vue'),
                     meta: {
+                        title: 'ចាក់សោអេក្រង់', // browser tab only (no page header)
                         rule: 'editor'
                     }
                 },
@@ -1466,6 +1468,7 @@ const router = new Router({
                     name: 'page-coming-soon',
                     component: () => import('@/views/pages/ComingSoon.vue'),
                     meta: {
+                        title: 'មកដល់ឆាប់ៗ', // browser tab only (no page header)
                         rule: 'editor'
                     }
                 },
@@ -1474,6 +1477,7 @@ const router = new Router({
                     name: 'page-error-404',
                     component: () => import('@/views/pages/Error404.vue'),
                     meta: {
+                        title: 'រកមិនឃើញទំព័រ', // browser tab only (no page header)
                         rule: 'editor'
                     }
                 },
@@ -1482,6 +1486,7 @@ const router = new Router({
                     name: 'page-error-500',
                     component: () => import('@/views/pages/Error500.vue'),
                     meta: {
+                        title: 'កំហុសម៉ាស៊ីនមេ', // browser tab only (no page header)
                         rule: 'editor'
                     }
                 },
@@ -1490,6 +1495,7 @@ const router = new Router({
                     name: 'page-not-authorized',
                     component: () => import('@/views/pages/NotAuthorized.vue'),
                     meta: {
+                        title: 'គ្មានសិទ្ធិចូលប្រើ', // browser tab only (no page header)
                         rule: 'editor'
                     }
                 },
@@ -1498,6 +1504,7 @@ const router = new Router({
                     name: 'page-maintenance',
                     component: () => import('@/views/pages/Maintenance.vue'),
                     meta: {
+                        title: 'កំពុងថែទាំប្រព័ន្ធ', // browser tab only (no page header)
                         rule: 'editor'
                     }
                 },

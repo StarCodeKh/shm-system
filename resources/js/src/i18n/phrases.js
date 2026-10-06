@@ -30,6 +30,20 @@ export default {
   'ការកំណត់': { en: 'Settings' },
   'ការជូនដំណឹង': { en: 'Notifications' },
   'ឃាំ្លងឯកសារ': { en: 'File Manager' },
+  'ទម្រង់កែប្រែ': { en: 'Edit Form' },
+  'ឃ្លាំងឯកសារ': { en: 'File Manager' },
+
+  // Browser tab titles (pages without a header)
+  'ចូលប្រើប្រាស់ប្រព័ន្ធ': { en: 'Sign In' },
+  'ចុះឈ្មោះ': { en: 'Register' },
+  'ភ្លេចពាក្យសម្ងាត់': { en: 'Forgot Password' },
+  'កំណត់ពាក្យសម្ងាត់ឡើងវិញ': { en: 'Reset Password' },
+  'ចាក់សោអេក្រង់': { en: 'Lock Screen' },
+  'មកដល់ឆាប់ៗ': { en: 'Coming Soon' },
+  'រកមិនឃើញទំព័រ': { en: 'Page Not Found' },
+  'កំហុសម៉ាស៊ីនមេ': { en: 'Server Error' },
+  'គ្មានសិទ្ធិចូលប្រើ': { en: 'Not Authorized' },
+  'កំពុងថែទាំប្រព័ន្ធ': { en: 'Under Maintenance' },
 
   // Users & access
   'អ្នកប្រើប្រាស់': { en: 'Users' },
@@ -39,6 +53,12 @@ export default {
   'រាយឈ្មោះសិទ្ធិ': { en: 'Role List' },
   'កំណត់ហេតុ': { en: 'Audit Log' },
   'កំណត់ហេតុប្រើប្រាស់': { en: 'Usage Log' },
+  'ព័ត៌មានអ្នកប្រើប្រាស់': { en: 'User Details' },
+  'កែប្រែអ្នកប្រើប្រាស់': { en: 'Edit User' },
+  'គ្រប់គ្រងសិទ្ធិ': { en: 'Role Management' },
+  'ទម្រង់សិទ្ធិ': { en: 'Role Form' },
+  'សិទ្ធិម៉ឺនុយ': { en: 'Menu Permissions' },
+  'ទម្រង់សំណើរ': { en: 'Request Form' },
 
   // Members
   'គ្រប់គ្រងសមាជិក': { en: 'Member Management' },
@@ -50,6 +70,13 @@ export default {
   'បញ្ជីសំណើរ': { en: 'Requests' },
   'រាយនាមបញ្ជីសំណើរ': { en: 'Request List' },
   'សំណើរ': { en: 'Request' },
+  'រាយនាមសមាជិក': { en: 'Member List' },
+  'ចុះឈ្មោះសមាជិក': { en: 'Register Member' },
+  'ព័ត៌មានលម្អិតសមាជិក': { en: 'Member Details' },
+  'បញ្ជីការជូនដំណឹង': { en: 'Notification List' },
+  'សំណើរផ្លាស់ប្តូរសមាសភាព': { en: 'Membership Change Requests' },
+  'បង្កើតសំណើរផ្លាស់ប្តូរសមាសភាព': { en: 'New Membership Change Request' },
+  'កែប្រែសំណើរផ្លាស់ប្តូរសមាសភាព': { en: 'Edit Membership Change Request' },
 
   // Payments & allowances
   'គ្រប់គ្រងការបង់ប្រាក់': { en: 'Payment Management' },
@@ -60,6 +87,13 @@ export default {
   'បង្កើតប្រាក់ឧបត្ថម្ភ': { en: 'Create Allowance' },
   'តារាងបើកផ្តល់ប្រាក់ឧបត្ថម្ភ': { en: 'Allowance Disbursement Table' },
   'បញ្ជីសមាជិកបើកប្រាក់ឧបត្ថម្ភ': { en: 'Members Receiving Allowances' },
+  'ហិរញ្ញវត្ថុ': { en: 'Finance' },
+  'បញ្ជីបើកផ្តល់ប្រាក់ឧបត្ថម្ភ': { en: 'Allowance List' },
+  'កែប្រែប្រាក់ឧបត្ថម្ភ': { en: 'Edit Allowance' },
+  'ទិន្នន័យសំណើរ': { en: 'Requests' },
+  'ទិន្នន័យបង់ប្រាក់': { en: 'Payment Records' },
+  'ទទួលប្រាក់': { en: 'Receive Payment' },
+  'ទម្រង់វិធីបង់ប្រាក់': { en: 'Payment Method Form' },
 
   // Finance
   'ការគ្រប់គ្រងចំណូល': { en: 'Income Management' },
@@ -71,6 +105,35 @@ export default {
   'ការគណនាពន្ធ': { en: 'Tax Calculation' },
   'តារាងផ្នែក': { en: 'Departments' },
   'រៀបចំទិន្នន័យ': { en: 'Data Setup' },
+  'គ្រប់គ្រងចំណូល': { en: 'Income Management' },
+  'បង្កើតចំណូល': { en: 'New Income' },
+  'កែប្រែចំណូល': { en: 'Edit Income' },
+  'គ្រប់គ្រងចំណាយ': { en: 'Expense Management' },
+  'បង្កើតចំណាយ': { en: 'New Expense' },
+  'កែប្រែចំណាយ': { en: 'Edit Expense' },
+  'បង្កើតគណនី': { en: 'New Account' },
+  'កែប្រែគណនី': { en: 'Edit Account' },
+  'ទម្រង់គណនី': { en: 'Account Form' },
+  'ក្រុមគណនី': { en: 'Account Groups' },
+  'ទម្រង់ក្រុមគណនី': { en: 'Account Group Form' },
+  'ទម្រង់ប្រភេទគណនី': { en: 'Account Type Form' },
+  'ទម្រង់គណនីធនាគារ': { en: 'Bank Account Form' },
+  'ប្រភេទផលិតផល/សេវាកម្ម': { en: 'Product/Service Categories' },
+  'ទម្រង់ប្រភេទផលិតផល/សេវាកម្ម': { en: 'Product/Service Category Form' },
+  'បង្កើតការគណនាពន្ធ': { en: 'New Tax Calculation' },
+  'កែប្រែការគណនាពន្ធ': { en: 'Edit Tax Calculation' },
+
+  // Data setup
+  'ផ្នែក': { en: 'Departments' },
+  'ទម្រង់ផ្នែក': { en: 'Department Form' },
+  'សារាចរ': { en: 'Circulars' },
+  'ទម្រង់សារាចរ': { en: 'Circular Form' },
+  'អង្គភាព': { en: 'Entities' },
+  'ទម្រង់អង្គភាព': { en: 'Entity Form' },
+  'សិទ្ធិប្រើប្រាស់': { en: 'User Roles' },
+  'ទម្រង់សិទ្ធិប្រើប្រាស់': { en: 'User Role Form' },
+  'វិស័យ': { en: 'Sectors' },
+  'ទម្រង់វិស័យ': { en: 'Sector Form' },
 
   // Budget
   'រៀបចំថវិកា': { en: 'Budget Preparation' },
@@ -95,6 +158,8 @@ export default {
   'ចង្កោមសកម្មភាព': { en: 'Activity Clusters' },
   'សកម្មភាព': { en: 'Activities' },
   'ការងារ': { en: 'Tasks' },
+  'បញ្ជីពិដានថវិកា': { en: 'Budget Ceiling List' },
+  'រៀបចំគម្រោងថវិកាប្រចាំឆ្នាំ': { en: 'Annual Budget Preparation' },
 
   // Reports
   'គ្រប់គ្រងរបាយការណ៍': { en: 'Report Management' },

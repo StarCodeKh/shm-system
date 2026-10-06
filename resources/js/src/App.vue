@@ -1,6 +1,6 @@
 <template>
 	<div id="app" :class="vueAppClasses">
-		<router-view @setAppClasses="setAppClasses" />
+		<router-view @setAppClasses="setAppClasses" @changeRouteTitle="(title) => titleOverride = title" />
 	</div>
 </template>
 
@@ -9,13 +9,34 @@
 import themeConfig from '@/../themeConfig.js'
 import jwt         from "@/http/requests/auth/jwt/index.js"
 
+const APP_NAME = 'SHM-System'
+
 export default {
   data() {
     return {
       vueAppClasses: [],
+      titleOverride: null, // set by pages whose title is only known after loading (e.g. reports)
+    }
+  },
+  computed: {
+    // Browser tab title: "<page title> | SHM-System", following the current language
+    documentTitle() {
+      const meta = this.$route.meta || {}
+      const crumbs = meta.breadcrumb || []
+      const last = crumbs.length ? crumbs[crumbs.length - 1].title : null
+      const title = this.titleOverride || meta.title || meta.pageTitle || last
+      // Depend on the locale so the title is re-translated when the language changes
+      return title && this.$i18n.locale ? `${this.$tt(title)} | ${APP_NAME}` : APP_NAME
     }
   },
   watch: {
+    '$route'() {
+      this.titleOverride = null
+    },
+    documentTitle: {
+      handler(val) { document.title = val },
+      immediate: true
+    },
     '$store.state.theme'(val) {
       this.toggleClassInBody(val)
     },

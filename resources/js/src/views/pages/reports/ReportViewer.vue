@@ -182,6 +182,7 @@ export default {
             try {
                 const types = await fetchReportTypes();
                 this.report = types.find((report) => report.key === this.reportType) || null;
+                if (this.report && this.report.title) this.$emit("changeRouteTitle", this.report.title);
                 if (this.report && this.report.field_api) {
                     const fields = await axios.get(this.report.field_api);
                     this.fieldData = fields.data || {};
