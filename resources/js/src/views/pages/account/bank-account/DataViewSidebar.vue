@@ -10,10 +10,10 @@
     <VuePerfectScrollbar class="scroll-area--data-list-add-new" :settings="settings" :key="$vs.rtl">
       <div class="p-6">
 
-        <vs-input label="ឈ្មោះ" v-model="name" class="mt-5 w-full" name="name" v-validate="'required'" />
+        <vs-input :label="$tt('ឈ្មោះ')" v-model="name" class="mt-5 w-full" name="name" v-validate="'required'" />
         <span class="text-danger text-sm" v-show="errors.has('name')">{{ errors.first('name') }}</span>
 
-        <vs-input label="ឈ្មោះជាភាសារខ្មែរ" v-model="name_kh" class="mt-5 w-full" name="name_kh" v-validate="'required'" />
+        <vs-input :label="$tt('ឈ្មោះជាភាសារខ្មែរ')" v-model="name_kh" class="mt-5 w-full" name="name_kh" v-validate="'required'" />
         <span class="text-danger text-sm" v-show="errors.has('name_kh')">{{ errors.first('name_kh') }}</span>
         
         <br/><label for="" class="vs-input--label">ក្រុមគណនី</label>
@@ -24,27 +24,27 @@
         <v-select name="account_type" v-model="account_type" :options="accountTypes" :dir="$vs.rtl ? 'rtl' : 'ltr'" v-validate="'required'" />
         <span class="text-danger">{{ errors.first('account_type') }}</span>
       
-        <vs-input label="ឈ្មោះគណនី" v-model="account_name" class="mt-5 w-full" name="account_name" v-validate="'required'" />
+        <vs-input :label="$tt('ឈ្មោះគណនី')" v-model="account_name" class="mt-5 w-full" name="account_name" v-validate="'required'" />
         <span class="text-danger text-sm" v-show="errors.has('account_name')">{{ errors.first('account_name') }}</span>
         
-        <vs-input label="លេខគណនី" v-model="account_number" class="mt-5 w-full" name="account_number" />
+        <vs-input :label="$tt('លេខគណនី')" v-model="account_number" class="mt-5 w-full" name="account_number" />
 
-        <vs-input label="ទឹកប្រាក់" v-model="open_balance" class="mt-5 w-full" name="open_balance" v-validate="'required'" />
+        <vs-input :label="$tt('ទឹកប្រាក់')" v-model="open_balance" class="mt-5 w-full" name="open_balance" v-validate="'required'" />
         <span class="text-danger text-sm" v-show="errors.has('open_balance')">{{ errors.first('open_balance') }}</span>
 
         <br/><label for="" class="vs-input--label">រូបបីយវត្ថុ</label>
         <v-select name="currency" v-model="currency" :options="currencies" :dir="$vs.rtl ? 'rtl' : 'ltr'" v-validate="'required'" />
         <span class="text-danger">{{ errors.first('currency') }}</span>
       
-        <vs-input label="កូដ" v-model="code" class="mt-5 w-full" name="code" />
+        <vs-input :label="$tt('កូដ')" v-model="code" class="mt-5 w-full" name="code" />
 
-        <vs-input label="អាស័យដ្ឋាន" v-model="address" class="mt-5 w-full" name="address" />
+        <vs-input :label="$tt('អាស័យដ្ឋាន')" v-model="address" class="mt-5 w-full" name="address" />
 
         <br/><label for="" class="vs-input--label">ថ្ងៃដាក់ដំណើរការ</label>
-        <flat-pickr class="w-full" v-validate="'required'" placeholder="ថ្ងៃដាក់ដំណើរការ" name="issue_date" v-model="issue_date" />
+        <flat-pickr class="w-full" v-validate="'required'" :placeholder="$tt('ថ្ងៃដាក់ដំណើរការ')" name="issue_date" v-model="issue_date" />
         <span class="text-danger">{{ errors.first('step-1.issue_date') }}</span>
         
-        <vs-input label="សំគាល់" v-model="remark" class="mt-5 w-full" name="remark" />
+        <vs-input :label="$tt('សំគាល់')" v-model="remark" class="mt-5 w-full" name="remark" />
 
       </div>
     </VuePerfectScrollbar>

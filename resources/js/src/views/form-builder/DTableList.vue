@@ -210,7 +210,7 @@
 
         <vs-prompt title="Export To Excel" class="export-options" @cancle="clearFields" @accept="exportToExcel"
             accept-text="Export" @close="clearFields" :active.sync="activePrompt">
-            <vs-input v-model="fileName" placeholder="Enter File Name.." class="w-full" />
+            <vs-input v-model="fileName" :placeholder="$tt('Enter File Name..')" class="w-full" />
             <v-select v-model="selectedFormat" :options="formats" class="my-4" />
             <div class="flex">
                 <span class="mr-4">Cell Auto Width:</span>

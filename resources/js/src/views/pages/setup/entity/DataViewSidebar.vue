@@ -10,22 +10,22 @@
       <div class="p-6">
 
         <!-- NAME -->
-      <vs-input label="ឈ្មោះអង្គភាព" v-model="dataName" class="mt-5 w-full" name="name" v-validate="'required'" />
+      <vs-input :label="$tt('ឈ្មោះអង្គភាព')" v-model="dataName" class="mt-5 w-full" name="name" v-validate="'required'" />
         <span class="text-danger text-sm" v-show="errors.has('name')">{{ errors.first('name') }}</span>
 
-        <vs-input label="លេខ​កូដ" v-model="code" class="mt-5 w-full" name="code" v-validate="'required'" />
+        <vs-input :label="$tt('លេខ​កូដ')" v-model="code" class="mt-5 w-full" name="code" v-validate="'required'" />
         <span class="text-danger text-sm" v-show="errors.has('code')">{{ errors.first('code') }}</span>
 
-        <vs-input label="ពណ៌តំណាង" v-model="color" class="mt-5 w-full" name="color" v-validate="'required'" />
+        <vs-input :label="$tt('ពណ៌តំណាង')" v-model="color" class="mt-5 w-full" name="color" v-validate="'required'" />
         <span class="text-danger text-sm" v-show="errors.has('color')">{{ errors.first('color') }}</span>
 
-        <vs-input label="អក្សកាត់" v-model="abbreviation" class="mt-5 w-full" name="abbreviation" v-validate="'required'" />
+        <vs-input :label="$tt('អក្សកាត់')" v-model="abbreviation" class="mt-5 w-full" name="abbreviation" v-validate="'required'" />
         <span class="text-danger text-sm" v-show="errors.has('abbreviation')">{{ errors.first('abbreviation') }}</span>
 
-        <vs-input type="number" label="លំដាប់លេខរៀង" v-model="order_level" class="mt-5 w-full" name="order_level" v-validate="'required'" />
+        <vs-input type="number" :label="$tt('លំដាប់លេខរៀង')" v-model="order_level" class="mt-5 w-full" name="order_level" v-validate="'required'" />
         <span class="text-danger text-sm" v-show="errors.has('order_level')">{{ errors.first('order_level') }}</span>
 
-        <vs-input type="number" label="កំណត់ចំនួនសមាជិកបើកផ្តល់" v-model="limit_member" class="mt-5 w-full" name="limit_member" v-validate="'required'" />
+        <vs-input type="number" :label="$tt('កំណត់ចំនួនសមាជិកបើកផ្តល់')" v-model="limit_member" class="mt-5 w-full" name="limit_member" v-validate="'required'" />
         <span class="text-danger text-sm" v-show="errors.has('limit_member')">{{ errors.first('limit_member') }}</span>
         
         <!-- <vs-input label="ផ្នែក" v-model="department_id" class="mt-5 w-full" name="department_id" v-validate="'required'" />
@@ -53,7 +53,7 @@
           </div>
         </div>
         <!-- <span>
-          <vs-input​ type="number" label="លំដាប់លេខរៀង" v-model="order_level" class="mt-5 w-full" name="order_level" v-validate="'required'" />
+          <vs-input​ type="number" :label="$tt('លំដាប់លេខរៀង')" v-model="order_level" class="mt-5 w-full" name="order_level" v-validate="'required'" />
           <span class="text-danger text-sm" v-show="errors.has('order_level')">{{ errors.first('order_level') }}</span>
         </span> -->
 

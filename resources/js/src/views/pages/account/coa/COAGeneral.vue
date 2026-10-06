@@ -2,11 +2,11 @@
   <vx-card no-shadow>
     <!-- Info -->
     <!-- <vs-input class="w-full mb-base" label="Username" v-model="username"></vs-input> -->
-    <!-- <vs-input class="w-full" name="username" label="Name" v-model="username" v-validate="'required'" />
+    <!-- <vs-input class="w-full" name="username" :label="$tt('Name')" v-model="username" v-validate="'required'" />
     <span class="text-danger">{{ errors.first('username') }}</span>
-    <vs-input class="w-full" name="name" label="Name" v-model="name" v-validate="'required'"></vs-input>
+    <vs-input class="w-full" name="name" :label="$tt('Name')" v-model="name" v-validate="'required'"></vs-input>
     <span class="text-danger">{{ errors.first('name') }}</span>
-    <vs-input class="w-full" name="email" label="Email" v-model="email" v-validate="'required'"></vs-input>
+    <vs-input class="w-full" name="email" :label="$tt('Email')" v-model="email" v-validate="'required'"></vs-input>
     <span class="text-danger">{{ errors.first('email') }}</span> -->
 
     <!-- <vs-alert icon-pack="feather" icon="icon-info" class="h-full my-4" color="warning">
@@ -25,15 +25,15 @@
 
     <div class="vx-row">
       <div class="vx-col md:w-1/2 w-full mt-5">
-        <vs-input label="ចំណងជើង" autocomplete="off" name="title" v-model="title" class="w-full" v-validate="'required'"/>
+        <vs-input :label="$tt('ចំណងជើង')" autocomplete="off" name="title" v-model="title" class="w-full" v-validate="'required'"/>
         <span class="text-danger">{{ errors.first('title') }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
-        <vs-input label="លេខយោង" autocomplete="off" name="reference" v-model="reference" class="w-full"/>
+        <vs-input :label="$tt('លេខយោង')" autocomplete="off" name="reference" v-model="reference" class="w-full"/>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
         <label for="" class="vs-input--label">ថ្ងៃចំណាយ</label>
-        <flat-pickr class="w-full" v-validate="'required'" placeholder="ថ្ងៃចំណាយ" name="issue_date" v-model="issue_date" />
+        <flat-pickr class="w-full" v-validate="'required'" :placeholder="$tt('ថ្ងៃចំណាយ')" name="issue_date" v-model="issue_date" />
         <span class="text-danger">{{ errors.first('issue_date') }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
@@ -60,7 +60,7 @@
         <span class="text-danger">{{ errors.first('exchange_rate') }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
-        <vs-input label="ចំនួនទឹកប្រាក់" autocomplete="off" name="amount" v-model="amount" class="w-full" v-validate="'required'"/>
+        <vs-input :label="$tt('ចំនួនទឹកប្រាក់')" autocomplete="off" name="amount" v-model="amount" class="w-full" v-validate="'required'"/>
         <span class="text-danger">{{ errors.first('amount') }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
@@ -69,7 +69,7 @@
         <span class="text-danger">{{ errors.first('payment_method') }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
-        <vs-textarea label="ពិពណ៌នា" class="w-full" v-model="description" />
+        <vs-textarea :label="$tt('ពិពណ៌នា')" class="w-full" v-model="description" />
       </div>
     </div>
   

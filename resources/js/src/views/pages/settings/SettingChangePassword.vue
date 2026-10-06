@@ -37,20 +37,18 @@ import axios from "@/axios.js"
 const dict = {
   custom: {
     username: {
-      required: 'សំុបញ្ជូលឈ្មោះអ្នកប្រើប្រព័ន្ធ',
-      alpha: "First name may only contain alphabetic characters"
+      required: 'សំុបញ្ជូលឈ្មោះអ្នកប្រើប្រព័ន្ធ'
     },
     new_password: {
-      required: 'សំុបញ្ជូលលេខសម្ងាត់',
-      alpha: "First name may only contain alphabetic characters"
+      required: 'សំុបញ្ជូលលេខសម្ងាត់'
     },
     confirm_password: {
-      required: 'សំុបញ្ជាក់លេខសម្ងាត់',
-      alpha: "First name may only contain alphabetic characters"
+      required: 'សំុបញ្ជាក់លេខសម្ងាត់'
     },
   }
 };
-Validator.localize('en', dict);
+// Field messages for Khmer; merged without changing the app's validation language
+Validator.localize({ kh: dict });
 export default {
   data() {
     return {

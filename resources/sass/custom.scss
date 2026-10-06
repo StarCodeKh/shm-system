@@ -351,6 +351,38 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
     }
 }
 
+// ---------------------------------------------------------------- Field errors: same look on every form
+// <span class="text-danger text-sm" v-show="errors.has('x')">…</span> under a field
+$field-error-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='8' x2='12' y2='12'/%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'/%3E%3C/svg%3E");
+
+span.text-danger.text-sm {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 5px;
+    font-size: .78rem;
+    line-height: 1.4;
+
+    &::before {
+        content: "";
+        flex: none;
+        width: 13px;
+        height: 13px;
+        background: currentColor;
+        -webkit-mask: #{$field-error-icon} center / contain no-repeat;
+        mask: #{$field-error-icon} center / contain no-repeat;
+    }
+
+    &[style*="display: none"] { display: none !important; }
+}
+
+// The field itself turns red while its error is shown
+$field-error-shown: "+ span.text-danger.text-sm:not([style*='display: none'])";
+:is(.vs-con-input-label, .v-select, .con-select, .vs-textarea-primary):has(#{$field-error-shown}) {
+    .vs-inputx, .vs__dropdown-toggle, .vs-select--input, textarea { border-color: rgba(var(--vs-danger), .7) !important; }
+}
+input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-danger), .7) !important; }
+
 // ---------------------------------------------------------------- Buttons: one style per action
 // Main action (Save, Yes…)  color="primary" type="filled"
 // Back out (Cancel, No…)    color="dark"    type="border"   neutral outline, styled below

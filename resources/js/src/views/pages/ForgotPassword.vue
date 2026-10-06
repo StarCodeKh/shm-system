@@ -16,7 +16,7 @@
                                     <p>Please enter your email address and we'll send you instructions on how to reset your password.</p>
                                 </div>
 
-                                <vs-input type="email" label-placeholder="Email" v-model="value1" class="w-full mb-8" />
+                                <vs-input type="email" :label-placeholder="$tt('Email')" v-model="value1" class="w-full mb-8" />
                                 <vs-button color="dark" type="border" to="/pages/login" class="px-4 w-full md:w-auto">{{ $t('btn_back_to_login') }}</vs-button>
                                 <vs-button color="primary" type="filled" class="float-right px-4 w-full md:w-auto mt-3 mb-8 md:mt-0 md:mb-0">{{ $t('btn_recover_password') }}</vs-button>
                             </div>

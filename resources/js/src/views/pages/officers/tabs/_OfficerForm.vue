@@ -23,8 +23,7 @@
                                 <i class="fas fa-user"></i>
                                 <!-- <input type="text" ​name="first_name" :placeholder="$t('first_name')" v-model="officer.first_name" v-validate="'required'"> -->
                                 <vs-input v-validate="'required'" v-model="officer.first_name" :placeholder="$t('first_name')" :name="'first_name'" class="mt-1 w-full" />
-                                <span class="text-danger text-sm" v-show="errors.has('first_name')">{{ $t("required_" +
-                                    'first_name')
+                                <span class="text-danger text-sm" v-show="errors.has('first_name')">{{ $tRequired('first_name')
                                 }}</span>
                             </div>
                         </div>
@@ -35,8 +34,7 @@
                                 <i class="fas fa-user"></i>
                                 <!-- <input type="text" :placeholder="$t('last_name')" v-model="officer.last_name" required> -->
                                  <vs-input v-validate="'required'" v-model="officer.last_name" :placeholder="$t('last_name')" :name="'last_name'" class="mt-1 w-full" />
-                                <span class="text-danger text-sm" v-show="errors.has('last_name')">{{ $t("required_" +
-                                    'last_name')
+                                <span class="text-danger text-sm" v-show="errors.has('last_name')">{{ $tRequired('last_name')
                                 }}</span>
                             </div>
                         </div>
@@ -47,8 +45,7 @@
                                 <i class="fas fa-user"></i>
                                 <!-- <input type="text" :placeholder="$t('latin')" v-model="officer.latin" required> -->
                                  <vs-input v-validate="'required'" v-model="officer.latin" :placeholder="$t('latin')" :name="'latin'" class="mt-1 w-full" />
-                                <span class="text-danger text-sm" v-show="errors.has('latin')">{{ $t("required_" +
-                                    'latin')
+                                <span class="text-danger text-sm" v-show="errors.has('latin')">{{ $tRequired('latin')
                                 }}</span>
                             </div>
                         </div>
@@ -60,7 +57,7 @@
                                     name="gender" :options="translated(genders)"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                                     <span class="text-danger text-sm" v-show="errors.has('gender')">{{
-                                        $t("required_" + 'gender')
+                                        $tRequired('gender')
                                         }}</span>
                             <!-- <select required  v-model="officer.gender">
                                 <option value="">ជ្រើសរើសភេទ</option>
@@ -74,8 +71,7 @@
                             <!-- <input type="date" v-model="officer.dob" required> -->
                              <flat-pickr v-validate="'required'" name="dob"
                                 v-model="officer.dob" class="mt-1 w-full" />
-                            <span class="text-danger text-sm" v-show="errors.has('dob')">{{ $t("required_" +
-                                'dob')
+                            <span class="text-danger text-sm" v-show="errors.has('dob')">{{ $tRequired('dob')
                             }}</span>
                         </div>
 
@@ -156,7 +152,7 @@
                                     name="department_id" :options="departments"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                                     <span class="text-danger text-sm" v-show="errors.has('department_id')">{{
-                                        $t("required_" + 'department_id')
+                                        $tRequired('department_id')
                                         }}</span>
                                 <!-- <input type="email" placeholder="example@email.com"> -->
                             </div>
@@ -171,7 +167,7 @@
                                     name="entity_id" :options="entities"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                                     <span class="text-danger text-sm" v-show="errors.has('entity_id')">{{
-                                        $t("required_" + 'entity_id')
+                                        $tRequired('entity_id')
                                         }}</span>
                             </div>
                         </div>
@@ -184,7 +180,7 @@
                                     name="title" :options="titles"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                                     <span class="text-danger text-sm" v-show="errors.has('title')">{{
-                                        $t("required_" + 'title')
+                                        $tRequired('title')
                                         }}</span>
                             </div>
                         </div>
@@ -198,7 +194,7 @@
                                     name="position" :options="positions"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                                     <span class="text-danger text-sm" v-show="errors.has('position')">{{
-                                        $t("required_" + 'position')
+                                        $tRequired('position')
                                         }}</span>
                             </div>
                         </div>
@@ -215,8 +211,7 @@
                             <div class="input-icon">
                                 <i class="fas fa-phone"></i>
                                 <vs-input v-validate="'required'" v-model="officer.telephone_1" :placeholder="$t('telephone_1')" :name="'telephone_1'" class="mt-1 w-full" />
-                                <span class="text-danger text-sm" v-show="errors.has('telephone_1')">{{ $t("required_" +
-                                    'telephone_1')
+                                <span class="text-danger text-sm" v-show="errors.has('telephone_1')">{{ $tRequired('telephone_1')
                                 }}</span>
                                 <!-- <input type="tel" placeholder="012 xxx xxx" v-model="officer.telephone_1" required> -->
                             </div>
@@ -318,8 +313,7 @@
                             <!-- <input type="date" v-model="officer.dob" required> -->
                                 <flat-pickr v-validate="'required'" name="register_date"
                                 v-model="officer.register_date" class="mt-1 w-full" />
-                            <span class="text-danger text-sm" v-show="errors.has('register_date')">{{ $t("required_" +
-                                'register_date')
+                            <span class="text-danger text-sm" v-show="errors.has('register_date')">{{ $tRequired('register_date')
                             }}</span>
                         </div>
                         <div class="form-group">
@@ -329,7 +323,7 @@
                                     name="is_nssf_member" :options="nssfs"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                                     <span class="text-danger text-sm" v-show="errors.has('is_nssf_member')">{{
-                                        $t("required_" + 'is_nssf_member')
+                                        $tRequired('is_nssf_member')
                                         }}</span>
                         </div>
 
@@ -340,7 +334,7 @@
                                     name="status" :options="statuses"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                                     <span class="text-danger text-sm" v-show="errors.has('status')">{{
-                                        $t("required_" + 'status')
+                                        $tRequired('status')
                                         }}</span>
                         </div>
                         

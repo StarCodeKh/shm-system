@@ -199,7 +199,8 @@ const dict = {
 };
 
 // register custom messages
-Validator.localize('en', dict);
+// Field messages for Khmer; merged without changing the app's validation language
+Validator.localize({ kh: dict });
 
 export default {
   data() {
@@ -288,8 +289,7 @@ import { Validator } from 'vee-validate';
 const dict = {
     custom: {
         first_name: {
-            required: 'First name is required',
-            alpha: "First name may only contain alphabetic characters"
+            required: 'First name is required'
         },
         last_name: {
             required: 'Last name is required',
@@ -315,7 +315,8 @@ const dict = {
 };
 
 // register custom messages
-Validator.localize('en', dict);
+// Field messages for Khmer; merged without changing the app's validation language
+Validator.localize({ kh: dict });
 
 export default {
     data() {

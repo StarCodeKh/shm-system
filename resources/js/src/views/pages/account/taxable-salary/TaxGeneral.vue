@@ -2,11 +2,11 @@
   <vx-card no-shadow>
     <!-- Info -->
     <!-- <vs-input class="w-full mb-base" label="Username" v-model="username"></vs-input> -->
-    <!-- <vs-input class="w-full" name="username" label="Name" v-model="username" v-validate="'required'" />
+    <!-- <vs-input class="w-full" name="username" :label="$tt('Name')" v-model="username" v-validate="'required'" />
     <span class="text-danger">{{ errors.first('username') }}</span>
-    <vs-input class="w-full" name="name" label="Name" v-model="name" v-validate="'required'"></vs-input>
+    <vs-input class="w-full" name="name" :label="$tt('Name')" v-model="name" v-validate="'required'"></vs-input>
     <span class="text-danger">{{ errors.first('name') }}</span>
-    <vs-input class="w-full" name="email" label="Email" v-model="email" v-validate="'required'"></vs-input>
+    <vs-input class="w-full" name="email" :label="$tt('Email')" v-model="email" v-validate="'required'"></vs-input>
     <span class="text-danger">{{ errors.first('email') }}</span> -->
 
     <!-- <vs-alert icon-pack="feather" icon="icon-info" class="h-full my-4" color="warning">
@@ -25,7 +25,7 @@
 
     <div class="vx-row">
       <div class="vx-col md:w-1/2 w-full mt-5">
-        <vs-input label="ចំណងជើង" autocomplete="off" name="title" v-model="title" class="w-full" v-validate="'required'"/>
+        <vs-input :label="$tt('ចំណងជើង')" autocomplete="off" name="title" v-model="title" class="w-full" v-validate="'required'"/>
         <span class="text-danger">{{ errors.first('title') }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
@@ -34,11 +34,11 @@
         <span class="text-danger">{{ errors.first('currency_symbol') }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
-        <vs-input type="number" label="ភាគបៀវត្សជាប់ពន្ធចន្លោះពី" autocomplete="off" name="taxable_salary_monthly_from" v-model="taxable_salary_monthly_from" class="w-full" v-validate="'required'"/>
+        <vs-input type="number" :label="$tt('ភាគបៀវត្សជាប់ពន្ធចន្លោះពី')" autocomplete="off" name="taxable_salary_monthly_from" v-model="taxable_salary_monthly_from" class="w-full" v-validate="'required'"/>
         <span class="text-danger">{{ errors.first('taxable_salary_monthly_from') }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
-        <vs-input type="number" label="ភាគបៀវត្សជាប់ពន្ធរហូតដល់" autocomplete="off" name="taxable_salary_monthly_to" v-model="taxable_salary_monthly_to" class="w-full" v-validate="'required'"/>
+        <vs-input type="number" :label="$tt('ភាគបៀវត្សជាប់ពន្ធរហូតដល់')" autocomplete="off" name="taxable_salary_monthly_to" v-model="taxable_salary_monthly_to" class="w-full" v-validate="'required'"/>
         <span class="text-danger">{{ errors.first('taxable_salary_monthly_to') }}</span>
       </div>
       
@@ -48,15 +48,15 @@
         <span class="text-danger">{{ errors.first('rate') }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
-        <vs-input type="number" label="លម្អៀងលើសពន្ធតាមថ្នាក់" autocomplete="off" name="over_class_tax" v-model="over_class_tax" class="w-full" v-validate="'required'"/>
+        <vs-input type="number" :label="$tt('លម្អៀងលើសពន្ធតាមថ្នាក់')" autocomplete="off" name="over_class_tax" v-model="over_class_tax" class="w-full" v-validate="'required'"/>
         <span class="text-danger">{{ errors.first('over_class_tax') }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
-        <vs-input label="លំដាប់លេខ" autocomplete="off" name="order_level" v-model="order_level" class="w-full" v-validate="'required'"/>
+        <vs-input :label="$tt('លំដាប់លេខ')" autocomplete="off" name="order_level" v-model="order_level" class="w-full" v-validate="'required'"/>
         <span class="text-danger">{{ errors.first('order_level') }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
-        <vs-textarea label="ពិពណ៌នា" class="w-full" v-model="remark" />
+        <vs-textarea :label="$tt('ពិពណ៌នា')" class="w-full" v-model="remark" />
       </div>
     </div>
   
@@ -74,36 +74,30 @@ import axios from "@/axios.js"
 const dict = {
   custom: {
       title: {
-        required: 'សូមបញ្ចូលចំណងជើង',
-        alpha: "First name may only contain alphabetic characters"
+        required: 'សូមបញ្ចូលចំណងជើង'
       },
       taxable_salary_monthly_from: {
-        required: 'សូមបញ្ជូលភាគបៀវត្សជាប់ពន្ធចន្លោះពី',
-        alpha: "First name may only contain alphabetic characters"
+        required: 'សូមបញ្ជូលភាគបៀវត្សជាប់ពន្ធចន្លោះពី'
       },
       taxable_salary_monthly_to: {
-        required: 'សូមបញ្ជូលភាគបៀវត្សជាប់ពន្ធរហូតដល់',
-        alpha: "First name may only contain alphabetic characters"
+        required: 'សូមបញ្ជូលភាគបៀវត្សជាប់ពន្ធរហូតដល់'
       },
       rate: {
-        required: 'សូមបញ្ចូលអត្រា',
-        alpha: "First name may only contain alphabetic characters"
+        required: 'សូមបញ្ចូលអត្រា'
       },
       currency_symbol: {
-        required: 'សូមជ្រើសរើសរូបបីយវត្ថុ',
-        alpha: "First name may only contain alphabetic characters"
+        required: 'សូមជ្រើសរើសរូបបីយវត្ថុ'
       },
       over_class_tax: {
-        required: 'សូមបញ្ចូលចំនួលទឹកប្រាក់លម្អៀងលើសប្រាក់ពន្ធ',
-        alpha: "First name may only contain alphabetic characters"
+        required: 'សូមបញ្ចូលចំនួលទឹកប្រាក់លម្អៀងលើសប្រាក់ពន្ធ'
       },
       order_level: {
-        required: 'សូមបញ្ជូលលំដាប់លេខរៀង',
-        alpha: "First name may only contain alphabetic characters"
+        required: 'សូមបញ្ជូលលំដាប់លេខរៀង'
       }
   }
 };
-Validator.localize('en', dict);
+// Field messages for Khmer; merged without changing the app's validation language
+Validator.localize({ kh: dict });
 export default {
   components: {
     'v-select': vSelect

@@ -16,26 +16,26 @@
 				<vx-card title="Form">
 					<div class="vx-row">
 						<div class="vx-col sm:w-1/2 w-full mb-2">
-							<vs-input class="w-full" label="First Name" v-model="input25" />
+							<vs-input class="w-full" :label="$tt('First Name')" v-model="input25" />
 						</div>
 						<div class="vx-col sm:w-1/2 w-full mb-2">
-							<vs-input class="w-full" label="Last Name" v-model="input26" />
-						</div>
-					</div>
-					<div class="vx-row">
-						<div class="vx-col sm:w-1/2 w-full mb-2">
-							<vs-input class="w-full" label="City" v-model="input27" />
-						</div>
-						<div class="vx-col sm:w-1/2 w-full mb-2">
-							<vs-input class="w-full" label="Country" v-model="input28" />
+							<vs-input class="w-full" :label="$tt('Last Name')" v-model="input26" />
 						</div>
 					</div>
 					<div class="vx-row">
 						<div class="vx-col sm:w-1/2 w-full mb-2">
-							<vs-input class="w-full" label="Company" v-model="input29" />
+							<vs-input class="w-full" :label="$tt('City')" v-model="input27" />
+						</div>
+						<div class="vx-col sm:w-1/2 w-full mb-2">
+							<vs-input class="w-full" :label="$tt('Country')" v-model="input28" />
+						</div>
+					</div>
+					<div class="vx-row">
+						<div class="vx-col sm:w-1/2 w-full mb-2">
+							<vs-input class="w-full" :label="$tt('Company')" v-model="input29" />
 						</div>
 						<div class="vx-col sm:w-1/2 w-full mb-6">
-							<vs-input type="email" class="w-full" label="Email" v-model="input30" />
+							<vs-input type="email" class="w-full" :label="$tt('Email')" v-model="input30" />
 						</div>
 					</div>
 					<div class="vx-row">

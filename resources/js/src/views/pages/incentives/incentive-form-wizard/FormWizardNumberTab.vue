@@ -264,56 +264,45 @@ import axios from "@/axios.js"
 const dict = {
     custom: {
         title: {
-            required: 'សូមបំពេញចំណងជើង',
-            alpha: "First name may only contain alphabetic characters"
+            required: 'សូមបំពេញចំណងជើង'
         },
         reference: {
-            required: 'សូមបំពេញឯកសារយោង',
-            alpha: "First name may only contain alphabetic characters"
+            required: 'សូមបំពេញឯកសារយោង'
         },
         letter_type: {
-            required: 'សូមជ្រើសរើសប្រភេទលិខិត',
-            alpha: "First name may only contain alphabetic characters"
+            required: 'សូមជ្រើសរើសប្រភេទលិខិត'
         },
         issue_date: {
-            required: 'សូមជ្រើសរើសថ្ងៃបង្កើត',
-            alpha: "First name may only contain alphabetic characters"
+            required: 'សូមជ្រើសរើសថ្ងៃបង្កើត'
         },
         issue_from_date: {
-            required: 'សូមជ្រើសរើសថ្ងៃដាក់សំណើរពីថ្ងៃ',
-            alpha: "First name may only contain alphabetic characters"
+            required: 'សូមជ្រើសរើសថ្ងៃដាក់សំណើរពីថ្ងៃ'
         },
         issue_to_date: {
-            required: 'សូមជ្រើសរើសថ្ងៃដាក់សំណើរដល់ថ្ងៃ',
-            alpha: "First name may only contain alphabetic characters"
+            required: 'សូមជ្រើសរើសថ្ងៃដាក់សំណើរដល់ថ្ងៃ'
         },
         sent_to: {
-            required: 'ផ្ញើជូនអគ្គនាយករូបណា?',
-            alpha: "First name may only contain alphabetic characters"
+            required: 'ផ្ញើជូនអគ្គនាយករូបណា?'
         },
         prepare_by: {
-            required: 'សូមជ្រើសរើសអ្នករៀបចំ',
-            alpha: "First name may only contain alphabetic characters"
+            required: 'សូមជ្រើសរើសអ្នករៀបចំ'
         },
         seen_by: {
-            required: 'បានយើញនិង ពិនិត្យដោយអ្នកណា?',
-            alpha: "First name may only contain alphabetic characters"
+            required: 'បានយើញនិង ពិនិត្យដោយអ្នកណា?'
         },
         approved_by: {
-            required: 'បានយើញនិង ឯកភាពដោយអ្នកណា?',
-            alpha: "First name may only contain alphabetic characters"
+            required: 'បានយើញនិង ឯកភាពដោយអ្នកណា?'
         },
         entity: {
-            required: 'សូមជ្រើសរើសអង្គភាពសម្រាប់ប្រាក់ឧ​បត្ថម្ភ',
-            alpha: "First name may only contain alphabetic characters"
+            required: 'សូមជ្រើសរើសអង្គភាពសម្រាប់ប្រាក់ឧ​បត្ថម្ភ'
         },
         bank: {
-            required: 'សូមជ្រើសរើសធនាគារ',
-            alpha: "First name may only contain alphabetic characters"
+            required: 'សូមជ្រើសរើសធនាគារ'
         }
     }
 };
-Validator.localize('en', dict);
+// Field messages for Khmer; merged without changing the app's validation language
+Validator.localize({ kh: dict });
 export default {
     components: {
         FormWizard,

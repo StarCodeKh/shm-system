@@ -64,9 +64,8 @@ Vue.use(VueTour)
 require('vue-tour/dist/vue-tour.css')
 
 
-// VeeValidate
-import VeeValidate from 'vee-validate'
-Vue.use(VeeValidate);
+// VeeValidate, with messages in the user's language
+import './plugins/validation'
 
 
 // Google Maps

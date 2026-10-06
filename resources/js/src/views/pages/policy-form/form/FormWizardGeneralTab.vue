@@ -302,8 +302,7 @@ import axios from "@/axios.js"
 const dict = {
     custom: {
         request_title: {
-            required: 'សូមបំពេញចំណងជើង',
-            alpha: "First name may only contain alphabetic characters"
+            required: 'សូមបំពេញចំណងជើង'
         },
         entity: {
             required: 'សូមជ្រើសរើសអង្គភាពដោះដូរ',
@@ -322,7 +321,8 @@ const dict = {
         }
     }
 };
-Validator.localize('en', dict);
+// Field messages for Khmer; merged without changing the app's validation language
+Validator.localize({ kh: dict });
 export default {
     components: {
         CreateOfficerPopup,

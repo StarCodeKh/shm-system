@@ -22,21 +22,21 @@
       <template v-for="(formAttribute, i) in formAttributes">
           <!-- Form Input Text -->
           <div v-if="formAttribute.type == 'text'" :class="styleClass" class="d-field" dclass="mt-4">
-              <label class="mb-2">{{ $t(formAttribute.name) }}</label>
+              <label class="mb-2">{{ $tField(formAttribute.name) }}</label>
               <span v-if="formAttribute.required">
                   <vs-input v-validate="'required'" v-model="form.attribute[formAttribute.name]"
-                      :placeholder="$t(formAttribute.name)" :name="formAttribute.name" class="mt-1 w-full" />
+                      :placeholder="$tField(formAttribute.name)" :name="formAttribute.name" class="mt-1 w-full" />
                   <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
-                      $t("required_" + formAttribute.name)
+                      $tRequired(formAttribute.name)
                   }}</span>
               </span>
-              <vs-input v-else v-validate="''" :placeholder="$t(formAttribute.name)"
+              <vs-input v-else v-validate="''" :placeholder="$tField(formAttribute.name)"
                   v-model="form.attribute[formAttribute.name]" :name="formAttribute.name" class="mt-1 w-full" />
           </div>
 
           <!-- Form Input Number -->
           <!-- <div v-if="formAttribute.type == 'hidden' && formAttribute.required" :class="styleClass" dclass="mt-4"> -->
-              <!-- <label>{{ $t(formAttribute.name) }} -- {{ data[formAttribute.name] }}</label> -->
+              <!-- <label>{{ $tField(formAttribute.name) }} -- {{ data[formAttribute.name] }}</label> -->
               <vs-input v-if="formAttribute.type == 'hidden' && formAttribute.required" type="hidden"
                   v-model="form.attribute[formAttribute.name]" :value="data[formAttribute.name]"
                   :name="formAttribute.name" class="mt-2 w-full" />
@@ -44,28 +44,28 @@
 
           <!-- Form Input Text -->
           <div v-if="formAttribute.type == 'password'" :class="styleClass" class="d-field" dclass="mt-4">
-              <label class="mb-2">{{ $t(formAttribute.name) }}</label>
+              <label class="mb-2">{{ $tField(formAttribute.name) }}</label>
               <span v-if="formAttribute.required">
                   <vs-input type="password" v-validate="'required'"
-                      v-model="form.attribute[formAttribute.name]" :placeholder="$t(formAttribute.name)"
+                      v-model="form.attribute[formAttribute.name]" :placeholder="$tField(formAttribute.name)"
                       :name="formAttribute.name" class="mt-1 w-full" />
                   <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
-                      $t("required_" + formAttribute.name)
+                      $tRequired(formAttribute.name)
                   }}</span>
               </span>
-              <vs-input type="password" v-else v-validate="''" :placeholder="$t(formAttribute.name)"
+              <vs-input type="password" v-else v-validate="''" :placeholder="$tField(formAttribute.name)"
                   v-model="form.attribute[formAttribute.name]" :name="formAttribute.name" class="mt-1 w-full" />
           </div>
 
           <!-- Form Input Number -->
           <div v-if="formAttribute.type == 'number'" :class="styleClass" class="d-field" dclass="mt-4">
-              <label class="mb-2">{{ $t(formAttribute.name) }}</label>
+              <label class="mb-2">{{ $tField(formAttribute.name) }}</label>
               <span v-if="formAttribute.required">
                   <vs-input type="number" v-validate="'required'" :name="formAttribute.name"
                       v-model="form.attribute[formAttribute.name]" icon-inc="expand_less" icon-dec="expand_more"
                       class="mt-1 w-full" />
                   <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">
-                      {{ $t("required_" + formAttribute.name) }}
+                      {{ $tRequired(formAttribute.name) }}
                   </span>
               </span>
               <vs-input type="number" v-validate="''" v-else :name="formAttribute.name"
@@ -74,10 +74,10 @@
           </div>
 
           <div v-if="formAttribute.type == 'select'" :class="styleClass" class="d-field" dclass="mt-4">
-              <label class="mb-2">{{ $t(formAttribute.name) }} <span
+              <label class="mb-2">{{ $tField(formAttribute.name) }} <span
                       v-if="formAttribute.required">*</span></label>
               <button v-if="formAttribute.name != 'year' && formAttribute.name != 'gender'" type="button"
-                  class="d-quick-add" :title="$t('form_quick_add', { field: $t(formAttribute.name) })"
+                  class="d-quick-add" :title="$t('form_quick_add', { field: $tField(formAttribute.name) })"
                   @click.stop="initNewForm(formAttribute.name)">
                   <feather-icon icon="PlusIcon" svgClasses="h-3 w-3" />
                   <span>{{ $t('form_add') }}</span>
@@ -90,7 +90,7 @@
                           :name="formAttribute.name" :options="data[formAttribute.name]"
                           :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                       <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
-                          $t("required_" + formAttribute.name)
+                          $tRequired(formAttribute.name)
                       }}</span>
                   </template>
                   <template v-if="formAttribute.hasFormData">
@@ -105,7 +105,7 @@
                           v-model="form.attribute[formAttribute.name]" :options="data[formAttribute.name]"
                           :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-1 w-full" />
                       <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
-                          $t("required_" + formAttribute.name)
+                          $tRequired(formAttribute.name)
                       }}</span>
                   </template>
               </span>
@@ -126,7 +126,7 @@
           </div>
 
           <div v-if="formAttribute.type == 'select_autocomplete'" :class="styleClass" class="d-field" dclass="mt-4">
-              <label class="mb-2">{{ $t(formAttribute.name) }} - {{ form.attribute[formAttribute.name] }}</label>
+              <label class="mb-2">{{ $tField(formAttribute.name) }} - {{ form.attribute[formAttribute.name] }}</label>
               <span v-if="formAttribute.required">
                   <vs-select :name="formAttribute.name" @change="onChangeElement($event, formAttribute.name)"
                       v-model="form.attribute[formAttribute.name]" :dir="$vs.rtl ? 'rtl' : 'ltr'"
@@ -134,8 +134,7 @@
                       <vs-select-item :key="index" :value="item.value" :text="item.label"
                           v-for="(item, index) in data[formAttribute.name]" />
                   </vs-select>
-                  <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{ $t("required_" +
-                      formAttribute.name)
+                  <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{ $tRequired(formAttribute.name)
                       }}</span>
               </span>
               <template v-if="formAttribute.hasFormData">
@@ -156,29 +155,28 @@
 
           <!-- Form Check Box -->
           <div v-if="formAttribute.type == 'checkbox'" :class="styleClass" class="d-field" dclass="mt-4">
-              <label class="mb-2">{{ $t(formAttribute.name) }}</label>
+              <label class="mb-2">{{ $tField(formAttribute.name) }}</label>
               <span v-if="formAttribute.required">
                   <vs-checkbox v-model="form.attribute[formAttribute.name]">
-                      {{ $t(formAttribute.name) }}
+                      {{ $tField(formAttribute.name) }}
                   </vs-checkbox>
               </span>
               <span v-else>
-                  <!-- <vs-checkbox v-model="form.attribute[formAttribute.name]"> {{$t(formAttribute.name)}}</vs-checkbox> -->
+                  <!-- <vs-checkbox v-model="form.attribute[formAttribute.name]"> {{$tField(formAttribute.name)}}</vs-checkbox> -->
                   <!-- <vs-checkbox v-model="form.attribute[rowf.value]" v-for="(rowf, index) in formAttribute.attributes"> {{ $t(rowf.name)}}</vs-checkbox> -->
                   <vs-checkbox v-model="form.attribute[formAttribute.name]">
-                      {{ $t(formAttribute.name) }}
+                      {{ $tField(formAttribute.name) }}
                   </vs-checkbox>
               </span>
           </div>
 
           <!-- Form Textarea -->
           <div v-if="formAttribute.type == 'textarea'" :class="styleClass" class="d-field d-field--textarea" dclass="mt-4">
-              <label class="mb-2">{{ $t(formAttribute.name) }}</label>
+              <label class="mb-2">{{ $tField(formAttribute.name) }}</label>
               <span v-if="formAttribute.required">
                   <vs-textarea v-validate="'required'" class="mt-1 w-full"
                       v-model="form.attribute[formAttribute.name]" />
-                  <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{ $t("required_" +
-                      formAttribute.name)
+                  <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{ $tRequired(formAttribute.name)
                       }}</span>
               </span>
               <span v-else>
@@ -188,12 +186,11 @@
 
           <!-- Form Date -->
           <div v-if="formAttribute.type == 'date'" :class="styleClass" class="d-field" dclass="mt-4">
-              <label class="mb-2">{{ $t(formAttribute.name) }}</label>
+              <label class="mb-2">{{ $tField(formAttribute.name) }}</label>
               <span v-if="formAttribute.required">
                   <flat-pickr v-validate="'required'" :name="formAttribute.name"
                       v-model="form.attribute[formAttribute.name]" class="mt-1 w-full" />
-                  <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{ $t("required_" +
-                      formAttribute.name)
+                  <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{ $tRequired(formAttribute.name)
                       }}</span>
               </span>
               <span v-else>
@@ -204,39 +201,38 @@
           <!-- Form Group -->
           <div v-if="formAttribute.type == 'text_group'" class="mt-4 vx-col lg:w-1/1 w-full" d>
               <div>
-                  <label class="mb-2">{{ $t(formAttribute.name) }}</label>
+                  <label class="mb-2">{{ $tField(formAttribute.name) }}</label>
                   <div :key="j" v-for="(childformAttribute, j) in formAttribute.child_form"
                       class="vx-col lg:w-1/1 w-full">
 
                       <!-- Form Dynamic -->
                       <!-- Form Input Text -->
                       <div v-if="childformAttribute.type == 'text'" class="mt-4 d-field">
-                          <label class="mb-2">{{ $t(childformAttribute.name) }}</label>
+                          <label class="mb-2">{{ $tField(childformAttribute.name) }}</label>
                           <span v-if="childformAttribute.required">
                               <vs-input v-validate="'required'"
                                   v-model="form.attribute[childformAttribute.name]"
-                                  :placeholder="$t(childformAttribute.name)" :name="childformAttribute.name"
+                                  :placeholder="$tField(childformAttribute.name)" :name="childformAttribute.name"
                                   class="mt-1 w-full" />
                               <span class="text-danger text-sm"
                                   v-show="errors.has(childformAttribute.name)">{{
-                                      $t("required_" +
-                                          childformAttribute.name)
+                                      $tRequired(childformAttribute.name)
                                   }}</span>
                           </span>
-                          <vs-input v-else :placeholder="$t(childformAttribute.name)"
+                          <vs-input v-else :placeholder="$tField(childformAttribute.name)"
                               v-model="form.attribute[childformAttribute.name]" :name="childformAttribute.name"
                               class="mt-1 w-full" />
                       </div>
 
                       <!-- Form Input Number -->
                       <div v-if="childformAttribute.type == 'number'" class="mt-4 d-field">
-                          <label class="mb-2">{{ $t(childformAttribute.name) }}</label>
+                          <label class="mb-2">{{ $tField(childformAttribute.name) }}</label>
                           <span v-if="childformAttribute.required">
                               <vs-input-number :name="childformAttribute.name"
                                   v-model="form.attribute[childformAttribute.name]" icon-inc="expand_less"
                                   icon-dec="expand_more" class="mt-1 w-full" />
                               <span class="text-danger text-sm" v-show="errors.has(childformAttribute.name)">{{
-                                  $t("required_" + childformAttribute.name)
+                                  $tRequired(childformAttribute.name)
                               }}</span>
                           </span>
                           <vs-input-number v-else :name="childformAttribute.name"
@@ -245,7 +241,7 @@
                       </div>
 
                       <div v-if="childformAttribute.type == 'select'" class="mt-4 d-field">
-                          <label class="mb-2">{{ $t(childformAttribute.name) }}</label>
+                          <label class="mb-2">{{ $tField(childformAttribute.name) }}</label>
                           <span v-if="childformAttribute.required">
                               <vs-select :name="childformAttribute.name"
                                   v-model="form.attribute[childformAttribute.name]" :dir="$vs.rtl ? 'rtl' : 'ltr'"
@@ -254,7 +250,7 @@
                                       v-for="(item, index) in data[childformAttribute.name]" />
                               </vs-select>
                               <span class="text-danger text-sm" v-show="errors.has(childformAttribute.name)">{{
-                                  $t("required_" + childformAttribute.name)
+                                  $tRequired(childformAttribute.name)
                               }}</span>
                           </span>
                           <span v-else>
@@ -268,13 +264,13 @@
 
                       <!-- Form Check Box -->
                       <div v-if="childformAttribute.type == 'checkbox'" class="mt-4 d-field">
-                          <label class="mb-2">{{ $t(childformAttribute.name) }}</label>
+                          <label class="mb-2">{{ $tField(childformAttribute.name) }}</label>
                           <span v-if="childformAttribute.required">
                               <vs-checkbox :key="index" v-model="form.attribute[childformAttribute.name]">
-                                  <!-- {{$t(childformAttribute.name) }}--></vs-checkbox>
+                                  <!-- {{$tField(childformAttribute.name) }}--></vs-checkbox>
                           </span>
                           <span v-else>
-                              <!-- <vs-checkbox :key="index" v-model="form.attribute[childformAttribute.name]"> {{$t(childformAttribute.name)}}</vs-checkbox> -->
+                              <!-- <vs-checkbox :key="index" v-model="form.attribute[childformAttribute.name]"> {{$tField(childformAttribute.name)}}</vs-checkbox> -->
                               <!-- <vs-checkbox :key="index" v-model="form.attribute[rowf.value]" v-for="(rowf, index) in childformAttribute.attributes"> {{ $t(rowf.name)}}</vs-checkbox> -->
                               <vs-checkbox :key="index" v-model="form.attribute[childformAttribute.name]"
                                   v-for="(rowf, index) in childformAttribute.attributes"> {{ $t(rowf.name)
@@ -284,12 +280,12 @@
 
                       <!-- Form Textarea -->
                       <div v-if="childformAttribute.type == 'textarea'" class="mt-4 d-field">
-                          <label class="mb-2">{{ $t(childformAttribute.name) }}</label>
+                          <label class="mb-2">{{ $tField(childformAttribute.name) }}</label>
                           <span v-if="childformAttribute.required">
                               <vs-textarea v-validate="'required'" class="mt-1 w-full"
                                   v-model="form.attribute[childformAttribute.name]" />
                               <span class="text-danger text-sm" v-show="errors.has(childformAttribute.name)">{{
-                                  $t("required_" + childformAttribute.name)
+                                  $tRequired(childformAttribute.name)
                               }}</span>
                           </span>
                           <span v-else>
@@ -300,12 +296,12 @@
 
                       <!-- Form Date -->
                       <div v-if="childformAttribute.type == 'date'" class="mt-4 d-field">
-                          <label class="mb-2">{{ $t(childformAttribute.name) }}</label>
+                          <label class="mb-2">{{ $tField(childformAttribute.name) }}</label>
                           <span v-if="childformAttribute.required">
                               <flat-pickr v-validate="'required'" :name="childformAttribute.name"
                                   v-model="form.attribute[childformAttribute.name]" class="mt-1 w-full" />
                               <span class="text-danger text-sm" v-show="errors.has(childformAttribute.name)">{{
-                                  $t("required_" + childformAttribute.name)
+                                  $tRequired(childformAttribute.name)
                               }}</span>
                           </span>
                           <span v-else>
@@ -321,7 +317,7 @@
           <!-- Form Grid -->
           <div v-if="formAttribute.type == 'grid'" class="mt-4 vx-col lg:w-1/1 w-full">
               <!-- <vs-alert icon="warning" active="true" color="primary" class="mt-5"> -->
-              <div style="background-color:#253358; color: #ffffff; padding: 5px;"><span>{{ $t(formAttribute.name)
+              <div style="background-color:#253358; color: #ffffff; padding: 5px;"><span>{{ $tField(formAttribute.name)
                       }}</span></div>
               <!-- </vs-alert> -->
           </div>
@@ -329,21 +325,21 @@
           <!-- Form Grid -->
           <!-- Form Input Text -->
           <div v-if="formAttribute.type == 'file'" :class="styleClass" class="d-field" dclass="mt-4">
-              <label class="mb-2">{{ $t(formAttribute.name) }}</label>
+              <label class="mb-2">{{ $tField(formAttribute.name) }}</label>
               <d-file-picker class="mt-1" :name="formAttribute.name" :value="form.attribute[formAttribute.name]"
                   @browse="initOpenFileManager(formAttribute.name)"
                   @view="initViewFile"
                   @clear="$set(form.attribute, formAttribute.name, '')" />
-              <vs-input type="hidden" :placeholder="$t(formAttribute.name)"
+              <vs-input type="hidden" :placeholder="$tField(formAttribute.name)"
                   v-model="form.attribute[formAttribute.name]" :value="data[formAttribute.name]" class="mt-2 w-full" />
               <!-- <span v-if="formAttribute.required">
                   <vs-input v-validate="'required'" v-model="form.attribute[formAttribute.name]"
-                      :placeholder="$t(formAttribute.name)" :name="formAttribute.name" class="mt-1 w-full" />
+                      :placeholder="$tField(formAttribute.name)" :name="formAttribute.name" class="mt-1 w-full" />
                   <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
-                      $t("required_" + formAttribute.name)
+                      $tRequired(formAttribute.name)
                   }}</span>
               </span>
-              <vs-input v-else v-validate="''" :placeholder="$t(formAttribute.name)"
+              <vs-input v-else v-validate="''" :placeholder="$tField(formAttribute.name)"
                   v-model="form.attribute[formAttribute.name]" :name="formAttribute.name" class="mt-1 w-full" /> -->
           </div>
 

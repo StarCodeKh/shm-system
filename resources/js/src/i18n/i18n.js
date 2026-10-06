@@ -35,6 +35,19 @@ export function translatePhrase(text) {
   return (entry && entry[i18n.locale]) || text
 }
 
+// Form field label: its translation, or a readable fallback ("account_group_id" -> "Account Group")
+export function fieldLabel(name) {
+  if (!name) return ''
+  if (i18n.te(name)) return i18n.t(name)
+  return String(name).replace(/_id$/, '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+}
+
+// "Required" message for a field: its own required_<field> text, or the standard one
+export function requiredMessage(name) {
+  const key = 'required_' + name
+  return i18n.te(key) ? i18n.t(key) : i18n.t('validation_required', { field: fieldLabel(name) })
+}
+
 // Every toast gets the look of its type, whatever the calling screen passed:
 // one color, icon, title and display time per type, always in the top-right corner.
 const NOTIFY_TYPES = {
@@ -91,6 +104,8 @@ function wrap(fn, translate) {
 // beforeCreate, so they are re-wrapped right after.
 export function installPhraseTranslation(VueCtor) {
   VueCtor.prototype.$tt = translatePhrase
+  VueCtor.prototype.$tField = fieldLabel
+  VueCtor.prototype.$tRequired = requiredMessage
   VueCtor.mixin({
     beforeCreate() {
       const vs = this.$vs

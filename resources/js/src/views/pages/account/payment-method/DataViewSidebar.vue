@@ -10,12 +10,12 @@
     <VuePerfectScrollbar class="scroll-area--data-list-add-new" :settings="settings" :key="$vs.rtl">
       <div class="p-6">
         <!-- NAME -->
-        <vs-input label="Name" v-model="dataName" class="mt-5 w-full" name="name" v-validate="'required'" />
+        <vs-input :label="$tt('Name')" v-model="dataName" class="mt-5 w-full" name="name" v-validate="'required'" />
         <span class="text-danger text-sm" v-show="errors.has('name')">{{ errors.first('name') }}</span>
       </div>
       <div class="p-6">
         <!-- Description -->
-        <vs-input label="Description" v-model="description" class="mt-5 w-full" name="descriptoin" />
+        <vs-input :label="$tt('Description')" v-model="description" class="mt-5 w-full" name="descriptoin" />
       </div>
     </VuePerfectScrollbar>
 

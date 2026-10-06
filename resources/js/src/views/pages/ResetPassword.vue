@@ -14,9 +14,9 @@
                                     <h4 class="mb-4">Reset Password</h4>
                                     <p>Please enter your new password.</p>
                                 </div>
-                                <vs-input type="email" label-placeholder="Email" v-model="value1" class="w-full mb-6" />
-                                <vs-input type="password" label-placeholder="Password" v-model="value2" class="w-full mb-6" />
-                                <vs-input type="password" label-placeholder="Confirm Password" v-model="value3" class="w-full mb-8" />
+                                <vs-input type="email" :label-placeholder="$tt('Email')" v-model="value1" class="w-full mb-6" />
+                                <vs-input type="password" :label-placeholder="$tt('Password')" v-model="value2" class="w-full mb-6" />
+                                <vs-input type="password" :label-placeholder="$tt('Confirm Password')" v-model="value3" class="w-full mb-8" />
 
                                 <div class="flex flex-wrap justify-between flex-col-reverse sm:flex-row">
                                     <vs-button color="dark" type="border" to="/pages/login" class="w-full sm:w-auto mb-8 sm:mb-auto mt-3 sm:mt-auto">{{ $t('btn_back_to_login') }}</vs-button>
