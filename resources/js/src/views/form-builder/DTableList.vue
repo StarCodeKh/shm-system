@@ -1735,8 +1735,7 @@
 
         <div class="dt-footer">
             <span class="dt-footer__info">{{ $t('dt_showing', pageRange) }}</span>
-            <vs-pagination :total="calPaginNumber(dataTables.total / dataTables.limit)"
-                v-model="current_page"></vs-pagination>
+            <d-pagination :total="calPaginNumber(dataTables.total / dataTables.limit)" v-model="current_page" />
             <!-- <p class="mb-3">Current Page: {{ current_page }}</p>
             <vs-button @click="current_page++">Increment</vs-button>
             <vs-button class="ml-4 mb-4" @click="current_page--">Decrement</vs-button> -->

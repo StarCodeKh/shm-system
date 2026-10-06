@@ -188,8 +188,7 @@
             </div>
 
             <div v-if="calPaginNumber(dataObj.total / dataObj.limit) > 1" class="d-fm__pager">
-                <vs-pagination :total="calPaginNumber(dataObj.total / dataObj.limit)"
-                    v-model="current_page"></vs-pagination>
+                <d-pagination :total="calPaginNumber(dataObj.total / dataObj.limit)" v-model="current_page" />
             </div>
              <!-- <d-table-list @clicked="initTableData" :api="api" ref="refInitPage" :allowDel="true" :title="title" :dataInfo="dataInfo"
         :dataAttributes="dataAttributes" :dataHeaders="dataHeaders" :dataTables="data" :formAttributes="formAttributes"

@@ -101,7 +101,7 @@
             <div class="report-viewer__pager">
                 <v-select v-model="limit" :options="[25, 50, 100]" :clearable="false" :searchable="false"
                     class="report-viewer__limit is-compact" @input="load(1)" />
-                <vs-pagination v-if="pages > 1" :total="pages" :value="page" :max="7" @input="load" />
+                <d-pagination v-if="pages > 1" :total="pages" :value="page" @input="load" />
             </div>
         </div>
     </vx-card>

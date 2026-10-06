@@ -351,30 +351,56 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
     }
 }
 
-// ---------------------------------------------------------------- Loading spinner ($vs.loading): one ring in the primary color
+// ---------------------------------------------------------------- Pager (d-pagination): fits its space
+// The pager takes the room left beside the "showing 1–20 of …" text, and d-pagination shows
+// as many page buttons as fit (9, 7 or 5). Buttons may wrap as a last resort, never overflow.
+.d-pagination {
+    flex: 1 1 260px;
+    min-width: 0;
+    display: flex;
+    justify-content: flex-end;
+
+    > .vs-row,
+    .con-vs-pagination {
+        width: auto !important;
+        max-width: 100%;
+        margin-inline-start: 0 !important;
+    }
+
+    .vs-pagination--nav { flex-wrap: nowrap; max-width: 100%; }
+    .vs-pagination--ul { flex-wrap: wrap; justify-content: center; }
+}
+
+// Footers: the info text keeps its size, the pager gets the rest
+.dt-footer:has(.d-pagination) .dt-footer__info { flex: 0 1 auto; }
+
+@media (max-width: 640px) {
+    .d-pagination { flex-basis: 100%; justify-content: center; }
+}
+
+// ---------------------------------------------------------------- Loading spinner ($vs.loading): white ring on the sidebar blue (same as the startup screen)
 // Only one page spinner is shown at a time (plugins/loading.js).
 @keyframes shm-spin { to { transform: rotate(360deg); } }
 
 .con-vs-loading {
-    background: rgba(248, 248, 251, .55) !important;
+    background: linear-gradient(150deg, rgba(89, 114, 172, .82) 0%, rgba(50, 70, 147, .88) 100%) !important;
     backdrop-filter: blur(2px);
 
     .vs-loading {
         width: 46px !important;
         height: 46px !important;
-        border: 4px solid rgba(var(--vs-primary), .18) !important;
-        border-top-color: rgb(var(--vs-primary)) !important;
+        border: 3px solid rgba(255, 255, 255, .22) !important;
+        border-top-color: #fff !important;
         border-radius: 50%;
         animation: shm-spin .75s linear infinite;
         > * { display: none !important; } // the default three-ring effect
     }
 
-    .title-loading { font-size: .9rem; font-weight: 500; color: #5e5873; }
+    .title-loading { font-size: .9rem; font-weight: 500; color: #fff; }
 }
 
 .theme-dark .con-vs-loading {
-    background: rgba(16, 22, 58, .55) !important;
-    .title-loading { color: #c2c6dc; }
+    background: linear-gradient(150deg, rgba(50, 70, 147, .85) 0%, rgba(16, 22, 58, .9) 100%) !important;
 }
 
 // ---------------------------------------------------------------- Program management overview (objective > program cards)

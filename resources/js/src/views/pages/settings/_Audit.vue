@@ -145,7 +145,7 @@
         <!-- Footer: same as every list page -->
         <div v-if="total" class="dt-footer">
             <span class="dt-footer__info">{{ $t('dt_showing', { from: number(showing.from), to: number(showing.to), total: number(total) }) }}</span>
-            <vs-pagination v-if="pages > 1" :total="pages" v-model="page" :max="7" />
+            <d-pagination v-if="pages > 1" :total="pages" v-model="page" />
         </div>
     </div>
 </template>

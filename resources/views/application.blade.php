@@ -118,7 +118,7 @@
       <div class="loading-dots"><span></span><span></span><span></span></div>
     </div>
     <noscript>
-      <strong>We're sorry but Vuexy  - Vuejs, HTML & Laravel Admin Dashboard Template doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+      <strong>SHM-System needs JavaScript. Please enable it to continue. · សូមបើក JavaScript ដើម្បីប្រើប្រព័ន្ធ SHM។</strong>
     </noscript>
     <div id="app">
     </div>
