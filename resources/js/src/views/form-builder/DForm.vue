@@ -205,7 +205,7 @@
                             class="vx-col lg:w-1/1 w-full">
                             <!-- Form Dynamic -->
                             <!-- Form Input Text -->
-                            <div v-if="childformAttribute.type == 'text'" class="mt-4">
+                            <div v-if="childformAttribute.type == 'text'" class="mt-4 d-field">
                                 <label class="mb-2">{{ fieldLabel(childformAttribute.name) }}</label>
                                 <span v-if="childformAttribute.required">
                                     <vs-input v-validate="'required'"
@@ -223,7 +223,7 @@
                             </div>
 
                             <!-- Form Input Number -->
-                            <div v-if="childformAttribute.type == 'number'" class="mt-4">
+                            <div v-if="childformAttribute.type == 'number'" class="mt-4 d-field">
                                 <label class="mb-2">{{ fieldLabel(childformAttribute.name) }}</label>
                                 <span v-if="childformAttribute.required">
                                     <vs-input-number :name="childformAttribute.name"
@@ -238,7 +238,7 @@
                                     icon-dec="expand_more" class="mt-1 w-full" />
                             </div>
 
-                            <div v-if="childformAttribute.type == 'select'" class="mt-4">
+                            <div v-if="childformAttribute.type == 'select'" class="mt-4 d-field">
                                 <label class="mb-2">{{ fieldLabel(childformAttribute.name) }}</label>
                                 <span v-if="childformAttribute.required">
                                     <vs-select :name="childformAttribute.name"
@@ -261,7 +261,7 @@
                             </div>
 
                             <!-- Form Check Box -->
-                            <div v-if="childformAttribute.type == 'checkbox'" class="mt-4">
+                            <div v-if="childformAttribute.type == 'checkbox'" class="mt-4 d-field">
                                 <label class="mb-2">{{ fieldLabel(childformAttribute.name) }}</label>
                                 <span v-if="childformAttribute.required">
                                     <vs-checkbox :key="index" v-model="form.attribute[childformAttribute.name]">
@@ -277,7 +277,7 @@
                             </div>
 
                             <!-- Form Textarea -->
-                            <div v-if="childformAttribute.type == 'textarea'" class="mt-4">
+                            <div v-if="childformAttribute.type == 'textarea'" class="mt-4 d-field">
                                 <label class="mb-2">{{ fieldLabel(childformAttribute.name) }}</label>
                                 <span v-if="childformAttribute.required">
                                     <vs-textarea v-validate="'required'" class="mt-1 w-full"
@@ -293,7 +293,7 @@
                             </div>
 
                             <!-- Form Date -->
-                            <div v-if="childformAttribute.type == 'date'" class="mt-4">
+                            <div v-if="childformAttribute.type == 'date'" class="mt-4 d-field">
                                 <label class="mb-2">{{ fieldLabel(childformAttribute.name) }}</label>
                                 <span v-if="childformAttribute.required">
                                     <flat-pickr v-validate="'required'" :name="childformAttribute.name"

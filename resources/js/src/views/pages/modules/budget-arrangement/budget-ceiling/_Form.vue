@@ -1,12 +1,12 @@
 <template>
-    <div>
+    <div class="d-form">
         <!-- Here is ceiling entity -->
         <!-- Form Input Text -->
         <vs-popup class="d-modal d-modal--xl" classContent="popup-example" title="ទម្រង់បង្កើត Form" :active.sync="showModalForm">
             <div class="vx-row">
                 <template v-for="(formAttribute, i) in formAttributes">
                     <!-- Form Input Text -->
-                    <div v-if="formAttribute.type == 'text'" :class="styleClass" dclass="mt-4">
+                    <div v-if="formAttribute.type == 'text'" :class="styleClass" dclass="mt-4" class="d-field">
                         <label class="mb-2">{{ $t(formAttribute.name) }}</label>
                         <span v-if="formAttribute.required">
                             <vs-input v-validate="'required'" size="small" v-model="form.attribute[formAttribute.name]"
@@ -20,7 +20,7 @@
                     </div>
 
                     <!-- Form Input Number -->
-                    <div v-if="formAttribute.type == 'number'" :class="styleClass" dclass="mt-4">
+                    <div v-if="formAttribute.type == 'number'" :class="styleClass" dclass="mt-4" class="d-field">
                         <label class="mb-2">{{ $t(formAttribute.name) }}</label>
                         <span v-if="formAttribute.required">
                             <vs-input type="number" v-validate="'required'" :name="formAttribute.name"
@@ -35,7 +35,7 @@
                             class="w-full" />
                     </div>
 
-                    <div v-if="formAttribute.type == 'select'" :class="styleClass" dclass="mt-4">
+                    <div v-if="formAttribute.type == 'select'" :class="styleClass" dclass="mt-4" class="d-field">
                         <label class="mb-2">{{ $t(formAttribute.name) }} <span
                                 v-if="formAttribute.required">*</span></label>
                         <span v-if="formAttribute.required">
@@ -89,7 +89,7 @@
                         </span>
                     </div>
 
-                    <div v-if="formAttribute.type == 'select_autocomplete'" :class="styleClass" dclass="mt-4">
+                    <div v-if="formAttribute.type == 'select_autocomplete'" :class="styleClass" dclass="mt-4" class="d-field">
                         <label class="mb-2">{{ $t(formAttribute.name) }} - {{ form.attribute[formAttribute.name] }}</label>
                         <span v-if="formAttribute.required">
                             <vs-select :name="formAttribute.name" @change="onChangeElement($event, formAttribute.name)"
@@ -112,7 +112,7 @@
                     </div>
 
                     <!-- Form Check Box -->
-                    <div v-if="formAttribute.type == 'checkbox'" :class="styleClass" dclass="mt-4">
+                    <div v-if="formAttribute.type == 'checkbox'" :class="styleClass" dclass="mt-4" class="d-field">
                         <label class="mb-2">{{ $t(formAttribute.name) }}</label>
                         <span v-if="formAttribute.required">
                             <vs-checkbox :key="index" v-model="form.attribute[formAttribute.name]">
@@ -143,7 +143,7 @@
                     </div>
 
                     <!-- Form Date -->
-                    <div v-if="formAttribute.type == 'date'" :class="styleClass" dclass="mt-4">
+                    <div v-if="formAttribute.type == 'date'" :class="styleClass" dclass="mt-4" class="d-field">
                         <label class="mb-2">{{ $t(formAttribute.name) }}</label>
                         <span v-if="formAttribute.required">
                             <flat-pickr v-validate="'required'" :name="formAttribute.name"
@@ -166,7 +166,7 @@
 
                                 <!-- Form Dynamic -->
                                 <!-- Form Input Text -->
-                                <div v-if="childformAttribute.type == 'text'" class="mt-4">
+                                <div v-if="childformAttribute.type == 'text'" class="mt-4 d-field">
                                     <label class="mb-2">{{ $t(childformAttribute.name) }}</label>
                                     <span v-if="childformAttribute.required">
                                         <vs-input v-validate="'required'" size="small"
@@ -184,7 +184,7 @@
                                 </div>
 
                                 <!-- Form Input Number -->
-                                <div v-if="childformAttribute.type == 'number'" class="mt-4">
+                                <div v-if="childformAttribute.type == 'number'" class="mt-4 d-field">
                                     <label class="mb-2">{{ $t(childformAttribute.name) }}</label>
                                     <span v-if="childformAttribute.required">
                                         <vs-input-number :name="childformAttribute.name"
@@ -199,7 +199,7 @@
                                         icon-dec="expand_more" class="w-full" />
                                 </div>
 
-                                <div v-if="childformAttribute.type == 'select'" class="mt-4">
+                                <div v-if="childformAttribute.type == 'select'" class="mt-4 d-field">
                                     <label class="mb-2">{{ $t(childformAttribute.name) }}</label>
                                     <span v-if="childformAttribute.required">
                                         <vs-select :name="childformAttribute.name"
@@ -222,7 +222,7 @@
                                 </div>
 
                                 <!-- Form Check Box -->
-                                <div v-if="childformAttribute.type == 'checkbox'" class="mt-4">
+                                <div v-if="childformAttribute.type == 'checkbox'" class="mt-4 d-field">
                                     <label class="mb-2">{{ $t(childformAttribute.name) }}</label>
                                     <span v-if="childformAttribute.required">
                                         <vs-checkbox :key="index" v-model="form.attribute[childformAttribute.name]"> {{
@@ -238,7 +238,7 @@
                                 </div>
 
                                 <!-- Form Textarea -->
-                                <div v-if="childformAttribute.type == 'textarea'" class="mt-4">
+                                <div v-if="childformAttribute.type == 'textarea'" class="mt-4 d-field">
                                     <label class="mb-2">{{ $t(childformAttribute.name) }}</label>
                                     <span v-if="childformAttribute.required">
                                         <vs-textarea v-validate="'required'" class="w-full"
@@ -253,7 +253,7 @@
                                 </div>
 
                                 <!-- Form Date -->
-                                <div v-if="childformAttribute.type == 'date'" class="mt-4">
+                                <div v-if="childformAttribute.type == 'date'" class="mt-4 d-field">
                                     <label class="mb-2">{{ $t(childformAttribute.name) }}</label>
                                     <span v-if="childformAttribute.required">
                                         <flat-pickr v-validate="'required'" :name="childformAttribute.name"

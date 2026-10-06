@@ -6645,7 +6645,7 @@ select:focus {
   row-gap: var(--field-gap);
 }
 
-[dir] .d-form .vx-row > .d-field {
+[dir] .d-form .vx-row > .d-field, [dir] .d-form .vx-row > .vx-col:has(> .d-field) {
   margin-top: 0 !important;
 }
 
@@ -8073,18 +8073,48 @@ input.vs-input--input.large {
   display: flex;
 }
 
+.dt-filter-panel__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--field-gap, 20px) 16px;
+  align-items: end;
+}
+
+[dir] .dt-filter-panel__grid {
+  margin-top: 14px;
+}
+
+.dt-filter-panel__grid > .d-field {
+  width: auto !important;
+  max-width: none !important;
+}
+
+[dir] .dt-filter-panel__grid > .d-field {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 .dt-filter-panel__actions {
+  grid-column-end: -1;
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 
-[dir] .dt-filter-panel__actions {
-  margin-top: 16px;
+.dt-filter-panel__actions .dt-btn {
+  flex: 0 1 auto;
 }
 
-[dir] .dt-filter-panel .vx-row {
-  margin-top: 4px;
+@media (max-width: 640px) {
+  .dt-filter-panel__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dt-filter-panel__actions .dt-btn {
+    flex: 1;
+  }
 }
 
 @keyframes dt-panel-in {
@@ -8426,6 +8456,72 @@ input.vs-input--input.large {
   .vx-navbar-wrapper {
     transition: none;
   }
+}
+
+/* --- CHECKBOX FIELDS: a checkbox in a form row sits in an input-sized box, aligned with the other controls --- */
+
+.d-field .con-vs-checkbox,
+.form-group .con-vs-checkbox {
+  box-sizing: border-box;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  height: var(--input-height);
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+[dir] .d-field .con-vs-checkbox, [dir] .form-group .con-vs-checkbox {
+  margin: 0 !important;
+  padding: 0 14px;
+  border: 1px solid var(--input-border);
+  border-radius: var(--input-radius);
+  background: #fff;
+  cursor: pointer;
+}
+
+[dir] .d-field .con-vs-checkbox:hover, [dir] .form-group .con-vs-checkbox:hover {
+  border-color: var(--input-border-hover);
+}
+
+[dir] .d-field .con-vs-checkbox:has(.vs-checkbox--input:checked), [dir] .form-group .con-vs-checkbox:has(.vs-checkbox--input:checked) {
+  border-color: rgba(var(--vs-primary), 0.45);
+  background: rgba(var(--vs-primary), 0.05);
+}
+
+[dir] .d-field .con-vs-checkbox:focus-within, [dir] .form-group .con-vs-checkbox:focus-within {
+  box-shadow: 0 0 0 3px rgba(var(--vs-primary), 0.15);
+}
+
+.d-field .con-vs-checkbox .vs-checkbox,
+.form-group .con-vs-checkbox .vs-checkbox {
+  flex-shrink: 0;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+[dir] .d-field .con-vs-checkbox .vs-checkbox, [dir] .form-group .con-vs-checkbox .vs-checkbox {
+  margin: 0 !important;
+  border-radius: 6px !important;
+}
+
+.d-field .con-vs-checkbox .con-slot-label,
+.form-group .con-vs-checkbox .con-slot-label {
+  min-width: 0;
+  font-size: 14px;
+  color: #3f4157;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+[dir] .theme-dark .d-field .con-vs-checkbox, [dir] .theme-dark .form-group .con-vs-checkbox {
+  background: #10163a;
+  border-color: #414561;
+}
+
+.theme-dark .d-field .con-vs-checkbox .con-slot-label,
+.theme-dark .form-group .con-vs-checkbox .con-slot-label {
+  color: #c2c6dc;
 }
 
 [dir] .con-vs-alert {

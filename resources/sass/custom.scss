@@ -1895,7 +1895,8 @@ select:disabled {
     .vx-row {
         row-gap: var(--field-gap);
     }
-    .vx-row > .d-field {
+    .vx-row > .d-field,
+    .vx-row > .vx-col:has(> .d-field) {   // forms that wrap each field in an extra column (DFormElement)
         margin-top: 0 !important;
     }
 
@@ -3017,15 +3018,44 @@ input.vs-input--input.large {
     }
   }
 
-  &__actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-top: 16px;
+  // Fields and buttons share one grid: as many ~240px columns as fit, buttons in the last cell
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--field-gap, 20px) 16px;
+    align-items: end;
+    margin-top: 14px;
+
+    // Field wrappers carry column classes (vx-col, w-1/3, mt-4): the grid owns sizing and spacing here
+    > .d-field {
+      width: auto !important;
+      max-width: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
   }
 
-  .vx-row {
-    margin-top: 4px;
+  &__actions {
+    grid-column-end: -1;   // last column of the current row (next row when the row is full)
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+
+    .dt-btn {
+      flex: 0 1 auto;
+    }
+  }
+
+  @media (max-width: 640px) {
+    &__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    &__actions .dt-btn {
+      flex: 1;
+    }
   }
 }
 
@@ -3284,5 +3314,66 @@ input.vs-input--input.large {
     #content-area,
     .vx-navbar-wrapper {
         transition: none;
+    }
+}
+
+
+/* --- CHECKBOX FIELDS: a checkbox in a form row sits in an input-sized box, aligned with the other controls --- */
+.d-field .con-vs-checkbox,
+.form-group .con-vs-checkbox {
+    box-sizing: border-box;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 100%;
+    height: var(--input-height);
+    margin: 0 !important;
+    padding: 0 14px;
+    border: 1px solid var(--input-border);
+    border-radius: var(--input-radius);
+    background: #fff;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+
+    &:hover {
+        border-color: var(--input-border-hover);
+    }
+
+    // Checked: the box picks up the theme colour
+    &:has(.vs-checkbox--input:checked) {
+        border-color: rgba(var(--vs-primary), .45);
+        background: rgba(var(--vs-primary), .05);
+    }
+
+    &:focus-within {
+        box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
+    }
+
+    .vs-checkbox {
+        flex-shrink: 0;
+        width: 20px !important;
+        height: 20px !important;
+        margin: 0 !important;
+        border-radius: 6px !important;
+    }
+
+    .con-slot-label {
+        min-width: 0;
+        font-size: 14px;
+        color: #3f4157;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.theme-dark {
+    .d-field .con-vs-checkbox,
+    .form-group .con-vs-checkbox {
+        background: #10163a;
+        border-color: #414561;
+
+        .con-slot-label {
+            color: #c2c6dc;
+        }
     }
 }

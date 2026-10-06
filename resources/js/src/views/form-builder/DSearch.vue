@@ -4,7 +4,8 @@
             <span class="dt-filter-panel__icon"><feather-icon icon="FilterIcon" svgClasses="h-4 w-4" /></span>
             <h4>{{ $t('text_search') }}</h4>
         </div>
-            <div class="vx-row">
+            <!-- Responsive grid: fields fill the columns, the buttons take the last cell of the row -->
+            <div class="dt-filter-panel__grid">
                 <template v-for="(formAttribute, i) in formAttributes">
                     <!-- Form Input Text -->
                     <div v-if="formAttribute.type == 'text' && formAttribute.required" :class="styleClass" class="d-field" dclass="mt-4">
@@ -94,7 +95,6 @@
                         </span>
                     </div>
                 </template>
-            </div>
             <div class="dt-filter-panel__actions">
                 <button type="button" class="dt-btn" @click="resetSearch">
                     <feather-icon icon="RotateCcwIcon" svgClasses="h-4 w-4" />
@@ -104,6 +104,7 @@
                     <feather-icon icon="SearchIcon" svgClasses="h-4 w-4" />
                     <span>{{ $t("btn_search") }}</span>
                 </button>
+            </div>
             </div>
     </div>
 </template>
