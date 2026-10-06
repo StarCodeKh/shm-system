@@ -22,18 +22,27 @@
 			}
 		}
 
-		public static function permission($table){
-			$user = User::find(Auth::user()->id);
-			$permissions = false;
-			if($user->getPermissionsViaRoles()){
-				$allPermissions = $user->getPermissionsViaRoles();
-				foreach ($allPermissions as $permission) {
-					foreach ($permission as $key => $value) {
-						$permissions[$permission->name] = true;//CommonService::enablePermission($permission->name)?true:false;
-					}
-				}
+		/**
+		 * The signed-in user's permissions as [name => true] (empty array when none).
+		 * Cached for the request: controllers call this several times per action.
+		 */
+		public static function permission($table = null){
+			static $cache = [];
+			$user = Auth::user();
+			if (!$user) return [];
+			if (!array_key_exists($user->id, $cache)) {
+				$cache[$user->id] = User::find($user->id)
+					->getPermissionsViaRoles()
+					->mapWithKeys(fn ($permission) => [$permission->name => true])
+					->all();
 			}
-			return $permissions;
+			return $cache[$user->id];
+		}
+
+		/** Whether the signed-in user has a permission (by name, or by a feature key in config/access.php) */
+		public static function can($permission){
+			$name = config('access.'.$permission, $permission);
+			return !empty(self::permission()[$name]);
 		}
 
 		public static function enablePermission($permission){

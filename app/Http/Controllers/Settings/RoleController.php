@@ -242,6 +242,9 @@ class RoleController extends Controller
 
     // Set Permission 
     public function setPermission(Request $request){
+        if (!CommonService::can('role_permissions')) {
+            return response()->json(['success' => false, 'message' => trans('common.msg_no_permission_access')], 403);
+        }
         $input = $request->all();
         $check = RoleUser::setPermission($input);
         $status = $check ? 200 : 404;

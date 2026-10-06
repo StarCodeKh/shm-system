@@ -79,7 +79,7 @@
                         <template v-if="changedCount">{{ $t('perm_changed', { n: changedCount }) }}</template>
                     </span>
                     <button type="button" class="dt-btn" @click="showModalForm = false">{{ $t('perm_cancel') }}</button>
-                    <button type="button" class="dt-btn dt-btn--primary" :disabled="saving || loading" @click="save_changes">
+                    <button v-if="canSave" type="button" class="dt-btn dt-btn--primary" :disabled="saving || loading" @click="save_changes">
                         <feather-icon :icon="saving ? 'LoaderIcon' : 'SaveIcon'" svgClasses="h-4 w-4" />
                         <span>{{ $t('perm_save') }}</span>
                     </button>
@@ -90,6 +90,7 @@
 </template>
 
 <script>
+import { can } from "@/acl/access.js"
 import axios from "@/axios.js"
 import apiConfig from "@/apiConfig.js"
 
@@ -111,6 +112,9 @@ export default {
         }
     },
     computed: {
+        canSave() {
+            return can('role_permissions')
+        },
         roleName() {
             return this.role && this.role.name
         },

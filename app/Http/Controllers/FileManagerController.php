@@ -618,6 +618,9 @@ class FileManagerController extends Controller
     }
 
     public function fileImageUploadService(Request $request){
+        if (!CommonService::can('file_manager_upload')) {
+            return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
+        }
         $input = $request->all();
         $attachments_files = $request->file('file');
         $file = $input['file'];

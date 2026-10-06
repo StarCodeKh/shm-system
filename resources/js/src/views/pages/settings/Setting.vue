@@ -54,6 +54,7 @@
 </template>
 
 <script>
+import { can } from "@/acl/access.js";
 import axios from "@/axios.js";
 import SettingGeneral from "./SettingGeneral.vue";
 import SettingChangePassword from "./SettingChangePassword.vue";
@@ -190,8 +191,10 @@ export default {
         { key: 'audit', flag: this.tab_autdit, icon: 'ClockIcon', color: '92, 99, 120', title: 'setting_tab_audit', desc: 'setting_tab_audit_desc', component: 'setting-audit' },
       ]
     },
+    // Sections the user's role may open (permission per tab; tabs without one are always shown)
     visibleTabs() {
-      return this.tabs.filter(tab => tab.flag)
+      const permissionOf = { roles: 'list_roles', account: 'list_users', entity: 'list_unit', notification: 'list_notifications', audit: 'audit' }
+      return this.tabs.filter(tab => tab.flag && (!permissionOf[tab.key] || can(permissionOf[tab.key])))
     },
     // Active section comes from ?tab=… so it survives reloads and can be linked to
     activeKey() {

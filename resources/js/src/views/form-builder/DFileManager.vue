@@ -4,7 +4,7 @@
             :active.sync="showModalForm">
 
             <!-- Upload: click or drop a file, it uploads right away -->
-            <label class="d-fm__drop" :class="{ 'is-over': dragOver, 'is-busy': uploading }"
+            <label v-if="canUpload" class="d-fm__drop" :class="{ 'is-over': dragOver, 'is-busy': uploading }"
                 @dragover.prevent="dragOver = true" @dragleave.prevent="dragOver = false" @drop.prevent="onDrop">
                 <input type="file" name="file" class="d-fm__input" :disabled="uploading" @change="onPick">
                 <span class="d-fm__drop-icon">
@@ -200,6 +200,7 @@
 </template>
 
 <script>
+import { can } from "@/acl/access.js";
 import { gridClass } from "@/formGrid.js";
 import axios from "@/axios.js";
 import { ref } from 'vue';
@@ -304,6 +305,9 @@ export default {
         DSearch,
     },
     computed: {
+        canUpload() {
+            return can('file_manager_upload')
+        },
         rows() {
             return (this.dataObj.data || []).filter(row => row && Object.keys(row).length)
         },

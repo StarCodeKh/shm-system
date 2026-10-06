@@ -29,6 +29,9 @@ class AuditController extends Controller
      */
     public function index(Request $request)
     {
+        if (!CommonService::can('audit')) {
+            return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
+        }
         $input = $request->all();
         $filter = CommonService::getFilter($input);
         $data = array(

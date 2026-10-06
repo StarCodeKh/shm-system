@@ -47,6 +47,7 @@ class ReportController extends Controller
     {
         return [
             'officers' => [
+                'permission' => 'list_officer', // also needs config('access.reports')
                 'icon' => 'UsersIcon',
                 'color' => '#7367F0',
                 'field_api' => '/api/v1/officer/payable/get_field',
@@ -61,6 +62,7 @@ class ReportController extends Controller
                 ],
             ],
             'income' => [
+                'permission' => 'list_income', // also needs config('access.reports')
                 'icon' => 'TrendingUpIcon',
                 'color' => '#28C76F',
                 'field_api' => '/api/v1/income/get_field',
@@ -69,6 +71,7 @@ class ReportController extends Controller
                 'total' => fn ($filter) => Income::getTotal($filter),
             ],
             'expense' => [
+                'permission' => 'list_expense', // also needs config('access.reports')
                 'icon' => 'TrendingDownIcon',
                 'color' => '#EA5455',
                 'field_api' => '/api/v1/expense/get_field',
@@ -77,6 +80,7 @@ class ReportController extends Controller
                 'total' => fn ($filter) => Expense::getTotal($filter),
             ],
             'officer_incentive' => [
+                'permission' => 'list_officer_incentive', // also needs config('access.reports')
                 'icon' => 'GiftIcon',
                 'color' => '#FF9F43',
                 'field_api' => '/api/v1/officer/incentive/get_field',
@@ -85,6 +89,7 @@ class ReportController extends Controller
                 'total' => fn ($filter) => OfficerIncentive::countOfficerReports($filter),
             ],
             'officers_payment' => [
+                'permission' => 'list_officer_payment', // also needs config('access.reports')
                 'icon' => 'CheckCircleIcon',
                 'color' => '#00CFE8',
                 'field_api' => '/api/v1/officer/payment/get_field',
@@ -93,6 +98,7 @@ class ReportController extends Controller
                 'total' => fn ($filter) => OfficerPayment::countOfficerPaymentReports($filter),
             ],
             'officers_payable' => [
+                'permission' => 'list_officer_payable', // also needs config('access.reports')
                 'icon' => 'ClockIcon',
                 'color' => '#F35588',
                 'field_api' => '/api/v1/officer/payable/get_field',
@@ -101,6 +107,7 @@ class ReportController extends Controller
                 'total' => fn ($filter) => OfficerPayable::countOfficerPayables($filter),
             ],
             'officers_request' => [
+                'permission' => 'list_officer_request', // also needs config('access.reports')
                 'icon' => 'FileTextIcon',
                 'color' => '#4A5F9D',
                 'field_api' => '/api/v1/officer/request/get_field',
@@ -117,7 +124,10 @@ class ReportController extends Controller
     public function types(Request $request)
     {
         $this->useRequestLocale($request);
-        $reports = collect($this->reports())->map(fn ($report, $key) => [
+        if (!CommonService::can('reports')) {
+            return response()->json([]);
+        }
+        $reports = collect($this->reports())->filter(fn ($report) => $this->allowed($report))->map(fn ($report, $key) => [
             'key' => $key,
             'title' => $this->text($key, 'title'),
             'description' => $this->text($key, 'description'),
@@ -135,12 +145,11 @@ class ReportController extends Controller
      */
     public function preview(Request $request, string $type)
     {
-        if (empty(CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT])) {
-            return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
-        }
-
         $this->useRequestLocale($request);
         $report = $this->reports()[$type] ?? abort(404);
+        if (!$this->allowed($report)) {
+            return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
+        }
         $sizes = config('report.page_sizes');
         $page = max(1, (int) $request->input('page', 1));
         $limit = (int) $request->input('limit', config('report.default_page_size'));
@@ -175,12 +184,11 @@ class ReportController extends Controller
      */
     public function generate(Request $request, string $type)
     {
-        if (empty(CommonService::permission("")[$this->PERMISSION_ACTION_SALE_REPORT])) {
-            return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
-        }
-
         $this->useRequestLocale($request);
         $report = $this->reports()[$type] ?? abort(404);
+        if (!$this->allowed($report)) {
+            return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
+        }
         $maxRows = (int) config('report.max_rows');
         $filter = [
             'sort' => 'id',
@@ -250,7 +258,13 @@ class ReportController extends Controller
         App::setLocale(in_array($locale, ['kh', 'en'], true) ? $locale : 'kh');
     }
 
-    /** report.types.{key}.{part}, falling back to a readable key */
+    /** Reports need the report feature permission plus the report's own module permission */
+    protected function allowed(array $report): bool
+    {
+        return CommonService::can('reports') && (empty($report['permission']) || CommonService::can($report['permission']));
+    }
+
+        /** report.types.{key}.{part}, falling back to a readable key */
     protected function text(string $key, string $part): string
     {
         $id = "report.types.$key.$part";
