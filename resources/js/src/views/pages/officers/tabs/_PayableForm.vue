@@ -173,8 +173,6 @@ export default {
         },
         searchTimeout: null,
         // Data Sidebar
-        addNewDataSidebar: false,
-        sidebarData: {},
         payables: [],
         currencies: [],
         paymentMethods: [],
@@ -254,34 +252,6 @@ export default {
             .catch((error) => {
                 console.error(error);
             });
-    },
-    addNewData() {
-      this.sidebarData = {}
-      this.toggleDataSidebar(true)
-    },
-    deleteData(id) {
-      this.$store.dispatch("dataList/removeItem", id).catch(err => { console.error(err) })
-    },
-    editData(data) {
-      // this.sidebarData = JSON.parse(JSON.stringify(this.blankData))
-      this.sidebarData = data
-      this.toggleDataSidebar(true)
-    },
-    getOrderStatusColor(status) {
-      if(status == 'on_hold') return "warning"
-      if(status == 'delivered') return "success"
-      if(status == 'canceled') return "danger"
-      return "primary"
-    },
-    getPopularityColor(num) {
-      if(num > 90) return "success"
-      if(num >70) return "primary"
-      if(num >= 50) return "warning"
-      if(num < 50) return "danger"
-      return "primary"
-    },
-    toggleDataSidebar(val=false) {
-      this.addNewDataSidebar = val
     },
     onSearchOfficer(search) {
         // console.log("User searching:", search);

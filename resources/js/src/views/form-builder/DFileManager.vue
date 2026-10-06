@@ -204,7 +204,6 @@ import { can } from "@/acl/access.js";
 import { gridClass } from "@/formGrid.js";
 import axios from "@/axios.js";
 import { ref } from 'vue';
-import Vue from "vue";
 import apiConfig from "@/apiConfig.js";
 import DSearch from '@/views/form-builder/DSearch.vue';
 
@@ -347,36 +346,6 @@ export default {
         },
         shortDate(value) {
             return value ? String(value).slice(0, 10) : ''
-        },
-        loadErrorImage(event) {
-            event.target.src = this.notFoundFile;
-        },
-        // Customize on Data Display
-        customField(row, column) {
-            switch (column) {
-                case "status":
-                    return row[column] ? row[column]["title_en"] : null;
-                    break;
-                case "officer_id":
-                    return row["officer"] ? row["officer"]["first_name"]+ ' ' +row["officer"]["last_name"]+ '-' +row["officer"]["identity_member_no"] : null;
-                    break;
-                case "payment_method_id":
-                    return row["payment_method"] ? row["payment_method"]["name_en"] : null;
-                    break;
-                case "currency_id":
-                    return row["currency"] ? row["currency"]["name_en"] : null;
-                    break;
-                case "entity_id":
-                    return row["entity"] ? row["entity"]["name_en"] : null;
-                    break;
-                case "department_id":
-                    return row["department"] ? row["department"]["name_en"] : null;
-                    break;
-                default:
-                    return row[column];
-                    break;
-            }
-            return columnHeader;
         },
         initPassData(data) {
             this.dataInfo = data;

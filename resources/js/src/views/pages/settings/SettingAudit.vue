@@ -13,14 +13,10 @@ export default {
   data() {
     return {
       // popupActive: false,
-      selected: [],
       // products: [],
-      itemsPerPage: 4,
       isMounted: false,
 
       // Data Sidebar
-      addNewDataSidebar: false,
-      sidebarData: {},
 
     }
   },
@@ -29,9 +25,6 @@ export default {
   },
   methods: {
 
-    toggleDataSidebar(val = false) {
-      this.addNewDataSidebar = val
-    },
 
   },
   created() {

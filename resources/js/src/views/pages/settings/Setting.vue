@@ -73,17 +73,6 @@ import apiConfig from "../../../apiConfig";
 export default {
   data() {
     return {
-      api: apiConfig._apiRoleMenu,
-      data: {
-        data: [
-          {}
-        ],
-        limit: 10,
-        total: 3,
-      },
-      dataFields: [],
-      dataInfo: {},
-      isVisible: true,
       tab_account_admin: true,
       tab_roles: true,
       tab_general: true,
@@ -113,65 +102,6 @@ export default {
     select(key) {
       if (key === this.activeKey) return
       this.$router.replace({ query: { ...this.$route.query, tab: key } }).catch(() => {})
-    },
-    getDataTable(_search_criteria) {
-      let _params = {};
-      if (_search_criteria.search_field) {
-        this.dataFields = [];
-        this.formAttributes.forEach(_formAttribute => {
-          if (_search_criteria.search_field[_formAttribute["name"]]) {
-            let _d = {
-              [_formAttribute["name"]]: _search_criteria.search_field[_formAttribute["name"]]
-            }
-            this.dataFields.push(_d);
-          }
-        });
-        _params = {
-          sort: _search_criteria.sort,
-          order: _search_criteria.order,
-          page_number: _search_criteria.page_number,
-          search_field: this.dataFields,
-        };
-      } else {
-        _params = {
-          sort: _search_criteria.sort,
-          order: _search_criteria.order,
-          page_number: 1,
-        };
-      }
-
-      return new Promise(() => {
-        axios.post(this.api, _params)
-          .then((response) => {
-            this.data = response.data;
-            this.tab_account_admin = true;
-            this.tab_roles = true;
-            this.tab_general = true;
-            this.tab_budget_info = true;
-            this.tab_entity = true;
-            this.tab_back_up = true;
-            this.tab_notification = true;
-            this.tab_autdit = true;
-            this.$vs.loading.close();
-          }).catch(() => {
-            this.$vs.notify({
-              title: 'Message',
-              text: "Error, while trying to do action or no permission allow!",
-              iconPack: 'feather',
-              icon: 'icon-check-circle',
-              color: 'danger'
-            })
-            this.$vs.loading.close();
-          })
-      });
-    },
-    getData() {
-      let _search_criteria = {
-        sort: "id",
-        order: "",
-        page_number: ""
-      }
-      this.getDataTable(_search_criteria);
     },
   },
   computed: {
