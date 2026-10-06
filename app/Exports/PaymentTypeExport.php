@@ -23,7 +23,7 @@ class PaymentTypeExport implements FromCollection, WithHeadings,Auditable
 
     public function headings(): array
     {
-      $data["tables"] = DB::select('show columns from '.env("DB_PREFIX").(new PaymentType)->getTable());
+      $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new PaymentType)->getTable());
       $str = "";
       for($i=0; $i < count($data["tables"]); $i++){
         $str .= $data["tables"][$i]->Field.",";

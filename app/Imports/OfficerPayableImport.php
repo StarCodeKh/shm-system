@@ -20,7 +20,7 @@ class OfficerPayableImport implements ToModel,WithHeadingRow,Auditable
     public function model(array $row): \Illuminate\Database\Eloquent\Model|array|null
     {
         $queryCheck = OfficerPayable::where("id", (int)$row["id"])->first();
-        $data["tables"] = DB::select('show columns from '.env("DB_PREFIX").(new OfficerPayable)->getTable());
+        $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new OfficerPayable)->getTable());
         $str = "";
         $arr = array();
         for($i=0; $i < count($data["tables"]); $i++){

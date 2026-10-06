@@ -29,7 +29,7 @@ class ExpenditureGroupController extends Controller
      */
     public function dataFields()
     {
-        $data["tables"] = DB::select('show columns from ' . env("DB_PREFIX") . ($this->db_table)->getTable());
+        $data["tables"] = DB::select('show columns from ' . DB::getTablePrefix() . ($this->db_table)->getTable());
         $str = "";
         for ($i = 0; $i < count($data["tables"]); $i++) {
             $str .= $data["tables"][$i]->Field . ",";

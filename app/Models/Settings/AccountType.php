@@ -25,7 +25,7 @@ class AccountType extends Model implements Auditable, FromCollection, WithHeadin
   // public static function
   public static function dataFields()
   {
-    $data["tables"] = DB::select('show columns from ' . env("DB_PREFIX") . (new AccountType)->getTable());
+    $data["tables"] = DB::select('show columns from ' . DB::getTablePrefix() . (new AccountType)->getTable());
     $str = "";
     for ($i = 0; $i < count($data["tables"]); $i++) {
       if ($data["tables"][$i]->Null == "NO" && $data["tables"][$i]->Field != 'id') {
@@ -52,7 +52,7 @@ class AccountType extends Model implements Auditable, FromCollection, WithHeadin
 
   public static function formAttributes(){
     $formAttributes = array();
-    $data["tables"] = DB::select('show columns from ' . env("DB_PREFIX") . (new AccountType)->getTable());
+    $data["tables"] = DB::select('show columns from ' . DB::getTablePrefix() . (new AccountType)->getTable());
     for ($i = 0; $i < count($data["tables"]); $i++) {
       if ($data["tables"][$i]->Field != "id" && $data["tables"][$i]->Field != "created_by" && $data["tables"][$i]->Field != "modified_by" && $data["tables"][$i]->Field != "created_at" && $data["tables"][$i]->Field != "updated_at") {
         $formAttributes[] = array(

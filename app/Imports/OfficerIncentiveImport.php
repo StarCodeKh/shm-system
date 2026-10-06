@@ -20,7 +20,7 @@ class OfficerIncentiveImport implements ToModel,WithHeadingRow,Auditable
     public function model(array $row): \Illuminate\Database\Eloquent\Model|array|null
     {
         $queryCheck = OfficerIncentive::where("id", (int)$row["id"])->first();
-        $data["tables"] = DB::select('show columns from '.env("DB_PREFIX").(new OfficerIncentive)->getTable());
+        $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new OfficerIncentive)->getTable());
         $str = "";
         $arr = array();
         for($i=0; $i < count($data["tables"]); $i++){

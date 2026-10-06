@@ -23,7 +23,7 @@ class coa extends Model implements Auditable
     
   public static function dataFields(){
     // Loop Data Field From Table to put in array for mapping data field to search data table
-    $data["tables"] = DB::select('show columns from '.env("DB_PREFIX").(new coa)->getTable());
+    $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new coa)->getTable());
     $str = "";
     // dd($data["tables"]);
     for($i=0; $i < count($data["tables"]); $i++){
@@ -39,7 +39,7 @@ class coa extends Model implements Auditable
 
   public static function formAttributes(){
     $formAttributes = array();
-    $data["tables"] = DB::select('show columns from '.env("DB_PREFIX").(new coa)->getTable());
+    $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new coa)->getTable());
     for($i=0; $i < count($data["tables"]); $i++){
       if($data["tables"][$i]->Field != "id" && $data["tables"][$i]->Field != "created_by" && $data["tables"][$i]->Field != "modified_by" && $data["tables"][$i]->Field != "created_at" && $data["tables"][$i]->Field != "updated_at"){
         $formAttributes[] = array(

@@ -53,7 +53,7 @@ class OfficerExport implements FromCollection, WithHeadings,Auditable
 
     public function headings(): array
     {
-      // $data["tables"] = DB::select('show columns from '.env("DB_PREFIX").(new Officer)->getTable());
+      // $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new Officer)->getTable());
       $data["tables"] = DB::select('show columns from tbl_officer');
       $str = "";
       for($i=0; $i < count($data["tables"]); $i++){

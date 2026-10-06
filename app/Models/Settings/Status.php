@@ -48,7 +48,7 @@ class Status extends Model implements Auditable
   // public static function
   public static function dataFields(){
     // Loop Data Field From Table to put in array for mapping data field to search data table
-    $data["tables"] = DB::select('show columns from '.env("DB_PREFIX").(new Status)->getTable());
+    $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new Status)->getTable());
     $str = "";
     for($i=0; $i < count($data["tables"]); $i++){
       if($data["tables"][$i]->Null == "NO" && $data["tables"][$i]->Field != 'id'){
@@ -64,7 +64,7 @@ class Status extends Model implements Auditable
 
   public static function formAttributes(){
     $formAttributes = array();
-    $data["tables"] = DB::select('show columns from '.env("DB_PREFIX").(new Status)->getTable());
+    $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new Status)->getTable());
     for($i=0; $i < count($data["tables"]); $i++){
       if($data["tables"][$i]->Field != "id" && $data["tables"][$i]->Field != "created_by" && $data["tables"][$i]->Field != "modified_by" && $data["tables"][$i]->Field != "created_at" && $data["tables"][$i]->Field != "updated_at"){
         $formAttributes[] = array(

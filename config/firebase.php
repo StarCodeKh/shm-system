@@ -1,5 +1,8 @@
 <?php
 
+// Relative key paths are resolved from the project root, so they work for web, artisan and queue workers
+$keyPath = fn ($path) => ($path && $path[0] !== '/') ? base_path($path) : $path;
+
 return [
 
     /*
@@ -13,7 +16,7 @@ return [
     |
     */
 
-    'credentials' => env('FIREBASE_CREDENTIALS'),
+    'credentials' => $keyPath(env('FIREBASE_CREDENTIALS')),
 
     /*
     |--------------------------------------------------------------------------
@@ -36,6 +39,6 @@ return [
     |
     */
 
-    'project_id' => env('shm-app-ccb29'),
+    'project_id' => env('FIREBASE_PROJECT_ID'),
 
 ];

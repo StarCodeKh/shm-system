@@ -28,7 +28,7 @@ class Notification extends Model implements Auditable
 
   public static function dataFields(){
     // Loop Data Field From Table to put in array for mapping data field to search data table
-    $data["tables"] = DB::select('show columns from '.env("DB_PREFIX").(new Notification)->getTable());
+    $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new Notification)->getTable());
     $str = "";
     for($i=0; $i < count($data["tables"]); $i++){
       if($data["tables"][$i]->Field != 'id'){
@@ -43,7 +43,7 @@ class Notification extends Model implements Auditable
 
   public static function formAttributes(){
     $formAttributes = array();
-    $data["tables"] = DB::select('show columns from '.env("DB_PREFIX").(new Notification)->getTable());
+    $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new Notification)->getTable());
     for($i=0; $i < count($data["tables"]); $i++){
       if($data["tables"][$i]->Field != "id" && $data["tables"][$i]->Field != "created_by" && $data["tables"][$i]->Field != "modified_by" && $data["tables"][$i]->Field != "created_at" && $data["tables"][$i]->Field != "updated_at"){
         $formAttributes[] = array(

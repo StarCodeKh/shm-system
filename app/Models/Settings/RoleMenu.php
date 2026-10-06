@@ -19,7 +19,7 @@ class RoleMenu extends Model implements Auditable
   public $timestamps = true;
 
   public static function dataFields() {
-    $data["tables"] = DB::select('show columns from '.env("DB_PREFIX").(new RoleMenu)->getTable());
+    $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new RoleMenu)->getTable());
     $str = "";
     for($i=0; $i < count($data["tables"]); $i++){
       if($data["tables"][$i]->Null == "NO" && $data["tables"][$i]->Field != 'id'){
@@ -34,7 +34,7 @@ class RoleMenu extends Model implements Auditable
 
   public static function formAttributes(){
     $formAttributes = array();
-    $data["tables"] = DB::select('show columns from '.env("DB_PREFIX").(new RoleMenu)->getTable());
+    $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new RoleMenu)->getTable());
     for($i=0; $i < count($data["tables"]); $i++){
       if($data["tables"][$i]->Field != "id" && $data["tables"][$i]->Field != "created_by" && $data["tables"][$i]->Field != "modified_by" && $data["tables"][$i]->Field != "created_at" && $data["tables"][$i]->Field != "updated_at"){
         $formAttributes[] = array(

@@ -96,14 +96,14 @@
 		public static function generateAccessToken() {
 			try {
 				// Check if the service account key file exists
-				if (!file_exists(env('SERVICE_ACCOUNT_KEY_PATH'))) {
-					echo "Error: Service account key file not found at " . env('SERVICE_ACCOUNT_KEY_PATH') . "\n";
+				if (!file_exists(config('services.fcm.credentials'))) {
+					echo "Error: Service account key file not found at " . config('services.fcm.credentials') . "\n";
 					echo "Please download your service account JSON file from Firebase Console and place it in the correct location.\n";
 					return null;
 				}
 
 				// Read the service account key file
-				$serviceAccountJson = file_get_contents(env('SERVICE_ACCOUNT_KEY_PATH'));
+				$serviceAccountJson = file_get_contents(config('services.fcm.credentials'));
 				$serviceAccountData = json_decode($serviceAccountJson, true);
 
 				if (!$serviceAccountData) {
@@ -115,7 +115,7 @@
 
 				// Create credentials
 				$credentials = new ServiceAccountCredentials(
-					env('FCM_SCOPE'),
+					config('services.fcm.scope'),
 					$serviceAccountData
 				);
 

@@ -21,7 +21,7 @@ class OfficerImport implements ToModel,WithHeadingRow,Auditable
     public function model(array $row): \Illuminate\Database\Eloquent\Model|array|null
     {
         $queryCheck = Officer::where("id", (int)$row["id"])->first();
-        $data["tables"] = DB::select('show columns from '.env("DB_PREFIX").(new Officer)->getTable());
+        $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new Officer)->getTable());
         $str = "";
         $arr = array();
         for($i=0; $i < count($data["tables"]); $i++){

@@ -30,7 +30,7 @@ class SubProgramController extends Controller
      */
     public function dataFields(){
         // Loop Data Field From Table to put in array for mapping data field to search data table
-        $data["tables"] = DB::select('show columns from '.env("DB_PREFIX").($this->db_table)->getTable());
+        $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().($this->db_table)->getTable());
         $str = "";
         for($i=0; $i < count($data["tables"]); $i++){
             $str .= $data["tables"][$i]->Field.",";

@@ -1,5 +1,8 @@
 <?php
 
+// Relative key paths are resolved from the project root, so they work for web, artisan and queue workers
+$keyPath = fn ($path) => ($path && $path[0] !== '/') ? base_path($path) : $path;
+
 return [
 
     /*
@@ -22,6 +25,13 @@ return [
 
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
+    ],
+
+    // Firebase Cloud Messaging (push notifications), see App\Services\PushNotificationService
+    'fcm' => [
+        'credentials' => $keyPath(env('SERVICE_ACCOUNT_KEY_PATH')),
+        'scope' => env('FCM_SCOPE', 'https://www.googleapis.com/auth/firebase.messaging'),
+        'sender_id' => env('FCM_SENDER_ID'),
     ],
 
     'ses' => [
