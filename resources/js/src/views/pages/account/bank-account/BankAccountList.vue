@@ -84,13 +84,13 @@
       </div>
 
       <template slot="thead">
-        <vs-th>ល.រ</vs-th>
-        <vs-th sort-key="name">ឈ្មោះគណនី</vs-th>
-        <vs-th sort-key="account_number">លេខគណនី</vs-th>
-        <vs-th sort-key="account_group">ក្រុមគណនី</vs-th>
-        <vs-th sort-key="account_type">ប្រភេទគណនី</vs-th>
-        <vs-th sort-key="issue_date">ថ្ងៃដាក់ដំណើរការ</vs-th>
-        <vs-th>សកម្មភាព</vs-th>
+        <vs-th>{{ $tt('ល.រ') }}</vs-th>
+        <vs-th sort-key="name">{{ $tt('ឈ្មោះគណនី') }}</vs-th>
+        <vs-th sort-key="account_number">{{ $tt('លេខគណនី') }}</vs-th>
+        <vs-th sort-key="account_group">{{ $tt('ក្រុមគណនី') }}</vs-th>
+        <vs-th sort-key="account_type">{{ $tt('ប្រភេទគណនី') }}</vs-th>
+        <vs-th sort-key="issue_date">{{ $tt('ថ្ងៃដាក់ដំណើរការ') }}</vs-th>
+        <vs-th>{{ $t('Action') }}</vs-th>
       </template>
 
         <template slot-scope="{data}">

@@ -44,22 +44,22 @@ export default {
                     colspan: 0,
                 },
                 header2: {
-                    label: "ច្បាប់ហិរញ្ញវត្ថុឆ្នាំ២០២២",
+                    label: "ច្បាប់ហិរញ្ញវត្ថុឆ្នាំ{P-1}",
                     rowspan: 0,
                     colspan: 2,
                 },
                 header3: {
-                    label: "គ្រោងឆ្នាំ២០២៣",
+                    label: "គ្រោងឆ្នាំ{P}",
                     rowspan: 0,
                     colspan: 2,
                 },
                 header4: {
-                    label: "គ្រោងឆ្នាំ២០២៤",
+                    label: "គ្រោងឆ្នាំ{P+1}",
                     rowspan: 0,
                     colspan: 2,
                 },
                 header5: {
-                    label: "គ្រោងឆ្នាំ២០២៥",
+                    label: "គ្រោងឆ្នាំ{P+2}",
                     rowspan: 0,
                     colspan: 2,
                 },

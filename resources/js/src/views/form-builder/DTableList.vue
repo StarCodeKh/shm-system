@@ -280,7 +280,7 @@
                     <!-- 28C76F -->
                     <vs-th>{{ $t("no") }}</vs-th>
                     <vs-th :key="i" :class="{ 'dt-num': isAmountColumn(header) }"
-                        v-for="(header, i) in dataHeaders">{{ $t(header) }}</vs-th>
+                        v-for="(header, i) in dataHeaders">{{ $tField(header) }}</vs-th>
                     <vs-th class="dt-actions-head">{{ $t("Action")
                     }}</vs-th>
                 </template>
@@ -355,10 +355,10 @@
 
                 <template slot="thead">
                     <!-- 28C76F -->
-                    <vs-th style="background-color: #7367f0; color: #ffffff; font-weight: bold;">{{ $t("no") }}</vs-th>
-                    <vs-th style="background-color: #7367f0; color: #ffffff; font-weight: bold;" :key="i"
-                        v-for="(header, i) in dataHeaders">{{ $t(header) }}</vs-th>
-                    <vs-th style="background-color: #7367f0; color: #ffffff; font-weight: bold;">{{ $t("Action")
+                    <vs-th class="dt-th-strong">{{ $t("no") }}</vs-th>
+                    <vs-th class="dt-th-strong" :key="i"
+                        v-for="(header, i) in dataHeaders">{{ $tField(header) }}</vs-th>
+                    <vs-th class="dt-th-strong">{{ $t("Action")
                     }}</vs-th>
                 </template>
 
@@ -436,25 +436,24 @@
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
                             :colspan="colspan(header)" :rowspan="rowspan(header)">
                             <span v-if="header.label">
-                                <center>{{ $t(header.label) }} </center>
+                                <center>{{ $t($planText(header.label)) }} </center>
                             </span>
                             <span v-else>
-                                <center>{{ $t(header.label) }}</center>
+                                <center>{{ $t($planText(header.label)) }}</center>
                             </span>
                         </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
+                       >
                         <vs-td :key="j" v-for="(header, j) in dataTables.dataHeaders" :colspan="colspan(header)"
-                            :rowspan="rowspan(header)">{{ header.label }} </vs-td>
+                            :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataSubHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataSubHeaders"
+                       >
                         <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ header.label
-                            }}</small></vs-td>
+                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
                     </vs-tr>
 
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
@@ -503,7 +502,7 @@
                             </vs-tr>
 
                             <template v-for="row3 in row.dataDetails">
-                                <vs-tr style="background-color: #fffde5">
+                                <vs-tr class="dt-row-highlight">
                                     <td>{{ row3.name }}</td>
                                     <td :key="index4" v-for="(row, index4) in row3.values">{{ row }}</td>
                                     <td>
@@ -544,16 +543,16 @@
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
                             :colspan="colspan(header)" :rowspan="rowspan(header)">
                             <span v-if="header.label">
-                                <center>{{ $t(header.label) }}</center>
+                                <center>{{ $t($planText(header.label)) }}</center>
                             </span>
                             <span v-else>
-                                <center>{{ $t(header) }}</center>
+                                <center>{{ $tField(header) }}</center>
                             </span>
                         </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
+                       >
                         <vs-td :key="j" v-for="(sheader, j) in dataTables.dataHeaders">{{ sheader }}</vs-td>
                     </vs-tr>
 
@@ -573,7 +572,7 @@
 
                         <template v-if="ptr.children" v-for="(row, index) in ptr.children">
 
-                            <vs-tr style="background: #b2ffd9">
+                            <vs-tr class="dt-row-group">
                                 <!-- <td></td> -->
                                 <td>{{ row.name }}</td>
                                 <td>{{ row.entity }}</td>
@@ -586,7 +585,7 @@
 
                             <template v-if="row.children" v-for="row in row.children">
 
-                                <vs-tr style="background-color: #f3edf5">
+                                <vs-tr class="dt-row-level">
                                     <!-- <td></td> -->
                                     <td>{{ row.name }}</td>
                                     <td>{{ row.entity }}</td>
@@ -598,7 +597,7 @@
                                 </vs-tr>
 
                                 <template v-if="row.children" v-for="row in row.children">
-                                    <vs-tr style="background-color: #fffde5">
+                                    <vs-tr class="dt-row-highlight">
                                         <!-- <td></td> -->
                                         <td>
                                             {{ row.name }}
@@ -616,7 +615,7 @@
                                     </vs-tr>
 
                                     <template v-for="row in row.children">
-                                        <vs-tr style="background-color: ">
+                                        <vs-tr>
                                             <!-- <td></td> -->
                                             <td>{{ row.name }}</td>
                                             <td>{{ row.entity }}</td>
@@ -648,25 +647,24 @@
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
                             :colspan="colspan(header)" :rowspan="rowspan(header)">
                             <span v-if="header.label">
-                                <center>{{ $t(header.label) }} </center>
+                                <center>{{ $t($planText(header.label)) }} </center>
                             </span>
                             <span v-else>
-                                <center>{{ $t(header.label) }}</center>
+                                <center>{{ $t($planText(header.label)) }}</center>
                             </span>
                         </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataHeader.dataHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataHeader.dataHeaders"
+                       >
                         <vs-td :key="j" v-for="(header, j) in dataTables.dataHeader.dataHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ header.label }} </vs-td>
+                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataHeader.dataSubHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataHeader.dataSubHeaders"
+                       >
                         <vs-td :key="k" v-for="(header, k) in dataTables.dataHeader.dataSubHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ header.label
-                            }}</small></vs-td>
+                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
                     </vs-tr>
 
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
@@ -745,7 +743,7 @@
 
                                 <!-- Level 3 -->
                                 <template v-if="row.children" v-for="row in row.children">
-                                    <vs-tr style="background-color: #fffde5">
+                                    <vs-tr class="dt-row-highlight">
                                         <td>{{ row.name }}</td>
                                         <td>{{ }}</td>
                                         <td>{{ }}</td>
@@ -763,7 +761,7 @@
 
                                     <!-- Level 4 -->
                                     <template v-for="row in row.children">
-                                        <vs-tr style="background-color: #fffde5">
+                                        <vs-tr class="dt-row-highlight">
                                             <td>{{ row.name }}</td>
                                             <td>{{ }}</td>
                                             <td>{{ }}</td>
@@ -797,45 +795,44 @@
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
                             :colspan="colspan(header)" :rowspan="rowspan(header)">
                             <span v-if="header.label">
-                                <center><span v-html="$t(header.label)"></span></center>
+                                <center><span v-html="$t($planText(header.label))"></span></center>
                             </span>
                             <span v-else>
-                                <center><span v-html="$t(header.label)"></span></center>
+                                <center><span v-html="$t($planText(header.label))"></span></center>
                             </span>
                         </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
+                       >
                         <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ header.label }} </vs-td>
+                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataSubHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataSubHeaders"
+                       >
                         <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ header.label
-                            }}</small></vs-td>
+                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
                     </vs-tr>
 
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
 
-                        <vs-tr :key="cindex" v-for="(cusField, cindex) in dataTables.group_fields"
-                            style="background-color: rgb(240 240 240);">
+                        <vs-tr class="dt-row-muted" :key="cindex" v-for="(cusField, cindex) in dataTables.group_fields"
+                           >
                             <td :key="scindex" v-for="(scfield, scindex) in ptr[cusField]">
                                 <center>{{ scfield }}</center>
                             </td>
                         </vs-tr>
 
                         <template v-for="parent in ptr.children">
-                            <vs-tr style="background-color: rgb(178, 255, 217);">
+                            <vs-tr class="dt-row-group">
                                 <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                     {{ parent[dataField] }}
                                 </vs-td>
                             </vs-tr>
 
                             <template v-for="child in parent.children">
-                                <vs-tr style="background-color: rgb(255, 253, 229);">
+                                <vs-tr class="dt-row-highlight">
                                     <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                         {{ child[dataField] }}
                                     </vs-td>
@@ -860,47 +857,46 @@
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
                             :colspan="colspan(header)" :rowspan="rowspan(header)">
                             <span v-if="header.label">
-                                <center><span v-html="$t(header.label)"></span></center>
+                                <center><span v-html="$t($planText(header.label))"></span></center>
                             </span>
                             <span v-else>
-                                <center><span v-html="$t(header.label)"></span></center>
+                                <center><span v-html="$t($planText(header.label))"></span></center>
                             </span>
                         </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
+                       >
                         <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ header.label }} </vs-td>
+                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataSubHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataSubHeaders"
+                       >
                         <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ header.label
-                            }}</small></vs-td>
+                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
                     </vs-tr>
 
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
 
-                        <!-- <vs-tr :key="cindex" v-for="(  cusField, cindex  ) in   dataTables.group_fields  "
-                            style="background-color: rgb(240 240 240);">
+                        <!-- <vs-tr class="dt-row-muted" :key="cindex" v-for="(  cusField, cindex  ) in   dataTables.group_fields  "
+                           >
                             <td :key="scindex" v-for="(  scfield, scindex  ) in   ptr[cusField]  ">
                                 <center>{{ scfield }}</center>
                             </td>
                         </vs-tr> -->
-                        <vs-tr :key="pindextr" style="background-color: rgb(240 240 240);">
+                        <vs-tr class="dt-row-muted" :key="pindextr">
                             <td colspan="6">{{ ptr.entity.name }}</td>
                         </vs-tr>
                         <template v-for="parent in ptr.children">
-                            <vs-tr style="background-color: rgb(178, 255, 217);">
+                            <vs-tr class="dt-row-group">
                                 <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                     {{ parent[dataField] }}
                                 </vs-td>
                             </vs-tr>
 
                             <template v-for="child in parent.children">
-                                <vs-tr style="background-color: rgb(255, 253, 229);">
+                                <vs-tr class="dt-row-highlight">
                                     <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                         {{ child[dataField] }}
                                     </vs-td>
@@ -926,38 +922,37 @@
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
                             :colspan="colspan(header)" :rowspan="rowspan(header)">
                             <span v-if="header.label">
-                                <center><span v-html="$t(header.label)"></span></center>
+                                <center><span v-html="$t($planText(header.label))"></span></center>
                             </span>
                             <span v-else>
-                                <center><span v-html="$t(header.label)"></span></center>
+                                <center><span v-html="$t($planText(header.label))"></span></center>
                             </span>
                         </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
+                       >
                         <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ header.label }} </vs-td>
+                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataSubHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataSubHeaders"
+                       >
                         <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ header.label
-                            }}</small></vs-td>
+                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
                     </vs-tr>
 
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
 
-                        <vs-tr :key="cindex" v-for="(cusField, cindex) in dataTables.group_fields"
-                            style="color: #f00;">
+                        <vs-tr class="text-danger" :key="cindex" v-for="(cusField, cindex) in dataTables.group_fields"
+                           >
                             <td :key="scindex" v-for="(scfield, scindex) in ptr[cusField]">
                                 <center>{{ scfield }}</center>
                             </td>
                         </vs-tr>
 
                         <!-- <template v-for="ctr in ptr"> -->
-                        <vs-tr style="background: #b2ffd9">
+                        <vs-tr class="dt-row-group">
                             <vs-td colspan="3"></vs-td>
                             <vs-td>{{ ptr.entity }}</vs-td>
                             <vs-td>{{ ptr.finance_law }}</vs-td>
@@ -1015,7 +1010,7 @@
                                     <center>{{ parent[dataField] }} </center>
                                 </vs-td>
                             </vs-tr> -->
-                            <vs-tr style="background: #b2ffd9; display: none;">
+                            <vs-tr class="dt-row-group" style="display: none;">
                                 <vs-td colspan="4">{{ ctr.department }}</vs-td>
                                 <vs-td>{{ ctr.finance_law }}</vs-td>
                                 <vs-td>{{ ctr.total_amount }}</vs-td>
@@ -1153,40 +1148,39 @@
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
                             :colspan="colspan(header)" :rowspan="rowspan(header)">
                             <span v-if="header.label">
-                                <center><span v-html="$t(header.label)"></span></center>
+                                <center><span v-html="$t($planText(header.label))"></span></center>
                             </span>
                             <span v-else>
-                                <center><span v-html="$t(header.label)"></span></center>
+                                <center><span v-html="$t($planText(header.label))"></span></center>
                             </span>
                         </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
+                       >
                         <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
                             :colspan="colspan(header)" :rowspan="rowspan(header)">
-                            <center>{{ header.label }}</center>
+                            <center>{{ $planText(header.label) }}</center>
                         </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataSubHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataSubHeaders"
+                       >
                         <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ header.label
-                            }}</small></vs-td>
+                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
                     </vs-tr>
 
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
 
-                        <vs-tr :key="cindex" v-for="(cusField, cindex) in dataTables.group_fields"
-                            style="color: #f00;">
+                        <vs-tr class="text-danger" :key="cindex" v-for="(cusField, cindex) in dataTables.group_fields"
+                           >
                             <td :key="scindex" v-for="(scfield, scindex) in ptr[cusField]">
                                 <center>{{ scfield }}</center>
                             </td>
                         </vs-tr>
 
                         <!-- <template v-for="ctr in ptr"> -->
-                        <vs-tr style="background: #7367f0">
+                        <vs-tr class="dt-th-strong">
                             <vs-td colspan="4">{{ ptr.entity }}</vs-td>
                             <vs-td>{{ ptr.finance_law }}</vs-td>
                             <vs-td>{{ ptr.total_amount }}</vs-td>
@@ -1243,7 +1237,7 @@
                                     <center>{{ parent[dataField] }} </center>
                                 </vs-td>
                             </vs-tr> -->
-                            <vs-tr style="background: #b2ffd9">
+                            <vs-tr class="dt-row-group">
                                 <vs-td colspan="4">{{ ctr.department }}</vs-td>
                                 <vs-td>{{ ctr.finance_law }}</vs-td>
                                 <vs-td>{{ ctr.total_amount }}</vs-td>
@@ -1378,25 +1372,25 @@
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
                             :colspan="colspan(header)" :rowspan="rowspan(header)">
                             <span v-if="header.label">
-                                <center>{{ $t(header.label) }} </center>
+                                <center>{{ $t($planText(header.label)) }} </center>
                             </span>
                             <span v-else>
-                                <center>{{ $t(header.label) }}</center>
+                                <center>{{ $t($planText(header.label)) }}</center>
                             </span>
                         </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
+                       >
                         <vs-td :key="j" v-for="(header, j) in dataTables.dataHeaders" :colspan="colspan(header)"
-                            :rowspan="rowspan(header)">{{ $t(header.label) }} </vs-td>
+                            :rowspan="rowspan(header)">{{ $t($planText(header.label)) }} </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataSubHeaders"
-                        style="background-color: rgb(158 158 158); color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-muted" v-if="dataTables.dataSubHeaders"
+                       >
                         <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
                             :colspan="colspan(header)" :rowspan="rowspan(header)">
-                            <center><small>{{ $t(header.label) }}</small></center>
+                            <center><small>{{ $t($planText(header.label)) }}</small></center>
                         </vs-td>
                     </vs-tr>
 
@@ -1437,7 +1431,7 @@
                                 </vs-tr>
 
                                 <template v-for="row3 in row.dataDetails">
-                                    <vs-tr style="background-color: #fffde5">
+                                    <vs-tr class="dt-row-highlight">
                                         <td>
                                             {{ row3.name }}
                                             <template v-if="dataAttributes.actionButton">
@@ -1486,38 +1480,37 @@
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
                             :colspan="colspan(header)" :rowspan="rowspan(header)">
                             <span v-if="header.label">
-                                <center><span v-html="$t(header.label)"></span></center>
+                                <center><span v-html="$t($planText(header.label))"></span></center>
                             </span>
                             <span v-else>
-                                <center><span v-html="$t(header.label)"></span></center>
+                                <center><span v-html="$t($planText(header.label))"></span></center>
                             </span>
                         </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
+                       >
                         <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ header.label }} </vs-td>
+                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataSubHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataSubHeaders"
+                       >
                         <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ header.label
-                            }}</small></vs-td>
+                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
                     </vs-tr>
 
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
 
-                        <vs-tr :key="cindex" v-for="(cusField, cindex) in dataTables.group_fields"
-                            style="background-color: rgb(240 240 240);">
+                        <vs-tr class="dt-row-muted" :key="cindex" v-for="(cusField, cindex) in dataTables.group_fields"
+                           >
                             <td :key="scindex" v-for="(scfield, scindex) in ptr[cusField]">
                                 <center>{{ scfield }}</center>
                             </td>
                         </vs-tr>
 
                         <template v-for="parent in ptr.children">
-                            <vs-tr style="background-color: rgb(197 232 255);">
+                            <vs-tr class="dt-row-level">
                                 <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                     {{ parent[dataField] }}
                                     <template v-if="dataField == 'desc'">
@@ -1532,7 +1525,7 @@
                             </vs-tr>
 
                             <template v-for="child in parent.children">
-                                <vs-tr style="background-color: rgb(251 249 188);">
+                                <vs-tr class="dt-row-highlight">
                                     <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                         <span v-if="child[dataField] == 'desc'">> {{ child[dataField] }}</span>
                                         <span v-else>{{ child[dataField] }}</span>
@@ -1541,7 +1534,7 @@
                                 </vs-tr>
 
                                 <template v-for="(schild, sindex) in child.children">
-                                    <vs-tr style="background-color: rgb(216 216 216);">
+                                    <vs-tr class="dt-row-muted">
                                         <vs-td :key="sindex"
                                             v-for="(dataField, sindex) in dataTables.dataFillables">
                                             <span v-if="v == 'desc'">> {{ schild[dataField] }}</span>
@@ -1553,7 +1546,7 @@
                                     </vs-tr>
 
                                     <template v-for="(schild2, sindex) in schild.children">
-                                        <vs-tr style="background-color: rgb(240 240 240);">
+                                        <vs-tr class="dt-row-muted">
                                             <vs-td :key="sindex"
                                                 v-for="(dataField, sindex) in dataTables.dataFillables">
                                                 {{ schild2[dataField] }}
@@ -1613,29 +1606,28 @@
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
                             :colspan="colspan(header)" :rowspan="rowspan(header)">
                             <span v-if="header.label">
-                                <center><span v-html="$t(header.label)"></span></center>
+                                <center><span v-html="$t($planText(header.label))"></span></center>
                             </span>
                             <span v-else>
-                                <center><span v-html="$t(header.label)"></span></center>
+                                <center><span v-html="$t($planText(header.label))"></span></center>
                             </span>
                         </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
+                       >
                         <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ header.label }} </vs-td>
+                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
                     </vs-tr>
 
-                    <vs-tr v-if="dataTables.dataSubHeaders"
-                        style="background-color: #7367f0; color: #ffffff; font-weight: bold;">
+                    <vs-tr class="dt-th-strong" v-if="dataTables.dataSubHeaders"
+                       >
                         <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ header.label
-                            }}</small></vs-td>
+                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
                     </vs-tr>
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
-                        <vs-tr :key="cindex" v-for="(cusField, cindex) in dataTables.group_fields"
-                            style="background-color: rgb(240 240 240);">
+                        <vs-tr class="dt-row-muted" :key="cindex" v-for="(cusField, cindex) in dataTables.group_fields"
+                           >
                             <td :key="scindex" v-for="(scfield, scindex) in ptr[cusField]">
                                 <center>{{ scfield }}</center>
                             </td>
@@ -1647,7 +1639,7 @@
                             {{ pindextr }} --- {{ ptr["name"] }}
                         </vs-td>
                     </vs-tr> -->
-                        <vs-tr style="background-color: rgb(163 232 253);">
+                        <vs-tr class="dt-row-level">
                             <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                 {{ ptr[dataField] }}
                                 <template v-if="dataField == 'name'">
@@ -1661,7 +1653,7 @@
                         </vs-tr>
 
                         <template v-for="(child, sindex) in ptr.children">
-                            <vs-tr style="background-color: rgb(250, 237, 167);">
+                            <vs-tr class="dt-row-highlight">
                                 <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                     <template v-if="dataField == 'name'">
                                         {{ child[dataField] }}
@@ -1679,7 +1671,7 @@
                                 </vs-td>
                             </vs-tr>
                             <template v-for="(schild2, sindex) in child.children">
-                                <vs-tr style="background-color: rgb(240 240 240);">
+                                <vs-tr class="dt-row-muted">
                                     <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                         {{ schild2[dataField] }}
                                         <template v-if="dataField == 'name'">

@@ -81,14 +81,14 @@
       </div>
 
       <template slot="thead">
-        <vs-th>ល.រ</vs-th>
-        <vs-th sort-key="title">ចំណងជើង</vs-th>
-        <vs-th sort-key="taxable_salary">ភាគបៀវត្សជាប់ពន្ធប្រចាំខែ</vs-th>
-        <vs-th sort-key="rate">អត្រា(%)</vs-th>
-        <vs-th sort-key="account">លម្អៀងលើសប្រាក់ពន្ធតាមថ្នាក់</vs-th>
-        <vs-th sort-key="order_level">តាមលំដាប់</vs-th>
-        <vs-th sort-key="category">សម្គាល់</vs-th>
-        <vs-th>សកម្មភាព</vs-th>
+        <vs-th>{{ $tt('ល.រ') }}</vs-th>
+        <vs-th sort-key="title">{{ $tt('ចំណងជើង') }}</vs-th>
+        <vs-th sort-key="taxable_salary">{{ $tt('ភាគបៀវត្សជាប់ពន្ធប្រចាំខែ') }}</vs-th>
+        <vs-th sort-key="rate">{{ $tt('អត្រា(%)') }}</vs-th>
+        <vs-th sort-key="account">{{ $tt('លម្អៀងលើសប្រាក់ពន្ធតាមថ្នាក់') }}</vs-th>
+        <vs-th sort-key="order_level">{{ $tt('តាមលំដាប់') }}</vs-th>
+        <vs-th sort-key="category">{{ $tt('សម្គាល់') }}</vs-th>
+        <vs-th>{{ $t('Action') }}</vs-th>
       </template>
 
         <template slot-scope="{data}">

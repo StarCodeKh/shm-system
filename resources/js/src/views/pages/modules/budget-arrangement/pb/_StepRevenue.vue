@@ -83,7 +83,7 @@ export default {
                     colspan: 4,
                 },
                 header8: {
-                    label: "គម្រោង​ឆ្នាំ​២០២៣",
+                    label: "គម្រោង​ឆ្នាំ​{P}",
                     flag: "y_n_1",
                     rowspan: 0,
                     colspan: 4,

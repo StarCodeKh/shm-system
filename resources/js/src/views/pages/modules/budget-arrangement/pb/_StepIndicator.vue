@@ -69,27 +69,27 @@ export default {
         dataHeader: {
           dataHeaders: {
             header1: {
-              label: "ឆ្នាំមុន-២០២១(អនុវត្តរួច)",
+              label: "ឆ្នាំមុន-{P-2}(អនុវត្តរួច)",
               rowspan: 2,
               colspan: 0,
             },
             header2: {
-              label: "ឆ្នាំបច្ចុប្បន្ន-២០២២(កំពុងអនុវត្ត)",
+              label: "ឆ្នាំបច្ចុប្បន្ន-{P-1}(កំពុងអនុវត្ត)",
               rowspan: 2,
               colspan: 0,
             },
             header3: {
-              label: "ឆ្នាំគ្រោងថវិកា-២០២៣",
+              label: "ឆ្នាំគ្រោងថវិកា-{P}",
               rowspan: 0,
               colspan: 2,
             },
             header4: {
-              label: "ឆ្នាំគ្រោងថវិកា​២០២៤",
+              label: "ឆ្នាំគ្រោងថវិកា​{P+1}",
               rowspan: 2,
               colspan: 0,
             },
             header5: {
-              label: "ឆ្នាំគ្រោងថវិកា២០២៥",
+              label: "ឆ្នាំគ្រោងថវិកា{P+2}",
               rowspan: 2,
               colspan: 0,
             },
@@ -101,7 +101,7 @@ export default {
               colspan: 0,
             },
             header2: {
-              label: "មូលហេតុផ្លាស់ប្ដូរ (ធៀបឆ្នាំ២០២២)",
+              label: "មូលហេតុផ្លាស់ប្ដូរ (ធៀបឆ្នាំ{P-1})",
               rowspan: 0,
               colspan: 0,
             },

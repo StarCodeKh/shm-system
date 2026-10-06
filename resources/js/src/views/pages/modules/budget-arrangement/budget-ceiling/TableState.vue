@@ -1,5 +1,5 @@
 <template>
-    <vx-card title="ពិដានថវិកាឆ្នាំ២០២២">
+    <vx-card :title="$planText('ពិដានថវិកាឆ្នាំ{P-1}')">
       <div class="flex flex-wrap-reverse items-center data-list-btn-container">
         <!-- ACTION - DROPDOWN -->
         <vs-dropdown vs-trigger-click class="dd-actions cursor-pointer mr-4 mb-4">
@@ -57,7 +57,7 @@
           <template>
               <vs-tr style="background-color: #28C76F; color: #ffffff; font-weight: bold;">
                 <vs-td style="width: auto" rowspan="2"><center>បរិយាយមុខសញ្ញា</center></vs-td>
-                <vs-td style="" rowspan="2"><center>ច្បាប់ឆ្នាំ២០២២</center></vs-td>
+                <vs-td style="" rowspan="2"><center>{{ $planText('ច្បាប់ឆ្នាំ{P-1}') }}</center></vs-td>
                 <vs-td style="" rowspan="2"><center>ចំណាយមិនប្រចាំ</center></vs-td>
                 <vs-td style="" rowspan="2"><center>ចំណាយប្រចាំ</center></vs-td>
                 <vs-td style="width: 300px" colspan="3"><center>ពិដានចំណាយចរន្ត</center></vs-td>
@@ -66,12 +66,12 @@
               </vs-tr>
 
               <vs-tr style="background-color: #28C76F; color: #ffffff; font-weight: bold;">
-                <vs-td>២០២៣</vs-td>
-                <vs-td>២០២៤</vs-td>
-                <vs-td>២០២៥</vs-td>
-                <vs-td>២០២៣</vs-td>
-                <vs-td>២០២៤</vs-td>
-                <vs-td>២០២៥</vs-td>
+                <vs-td>{{ $planText('{P}') }}</vs-td>
+                <vs-td>{{ $planText('{P+1}') }}</vs-td>
+                <vs-td>{{ $planText('{P+2}') }}</vs-td>
+                <vs-td>{{ $planText('{P}') }}</vs-td>
+                <vs-td>{{ $planText('{P+1}') }}</vs-td>
+                <vs-td>{{ $planText('{P+2}') }}</vs-td>
               </vs-tr>
 
               <vs-tr>
@@ -93,7 +93,7 @@
 
               <!-- ################## -->
               <vs-tr :state="'success'">
-                <vs-td colspan="11" >ផ្នែកទី១៖ ពិដានចំណាយចរន្ត ឆ្នាំ២០២៣-២០២៥ សរុបរួមក្រសួង (យោងលេខ ០៣ សរណន ចុះថ្ងៃទី៨ ខែមិថុនា ឆ្នាំ២០២២)</vs-td>
+                <vs-td colspan="11" >{{ $planText('ផ្នែកទី១៖ ពិដានចំណាយចរន្ត ឆ្នាំ{P}-{P+2} សរុបរួមក្រសួង (យោងលេខ ០៣ សរណន ចុះថ្ងៃទី៨ ខែមិថុនា ឆ្នាំ២០២២)') }}</vs-td>
               </vs-tr>
               
               <vs-tr :state="'primary'">
@@ -195,7 +195,7 @@
                 </vs-tr>
 
                 <vs-tr :state="'success'">
-                <vs-td colspan="11" >ផ្នែកទី២៖ ពិដានចំណាយចរន្ត ឆ្នាំ២០២៣-២០២៥ តាមអង្គភាពថវិកា</vs-td>
+                <vs-td colspan="11" >{{ $planText('ផ្នែកទី២៖ ពិដានចំណាយចរន្ត ឆ្នាំ{P}-{P+2} តាមអង្គភាពថវិកា') }}</vs-td>
               </vs-tr>
               
               <vs-tr :state="'primary'">

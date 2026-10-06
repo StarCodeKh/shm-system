@@ -83,13 +83,13 @@
       </div>
 
       <template slot="thead">
-        <vs-th sort-key="no">ល.រ</vs-th>
-        <vs-th sort-key="name">ចំនងជើងសំណើរ</vs-th>
-        <vs-th sort-key="role">សំណើរពី</vs-th>
-        <vs-th sort-key="bank">ថ្ងៃបង្កើតសំណើរ</vs-th>
+        <vs-th sort-key="no">{{ $tt('ល.រ') }}</vs-th>
+        <vs-th sort-key="name">{{ $tt('ចំនងជើងសំណើរ') }}</vs-th>
+        <vs-th sort-key="role">{{ $tt('សំណើរពី') }}</vs-th>
+        <vs-th sort-key="bank">{{ $tt('ថ្ងៃបង្កើតសំណើរ') }}</vs-th>
         <!-- <vs-th sort-key="bank_acc">ចំនួនមន្ត្រីដោះដូរ</vs-th> -->
-        <vs-th sort-key="status">ស្ថានភាព</vs-th>
-        <vs-th>សកម្មភាព</vs-th>
+        <vs-th sort-key="status">{{ $tt('ស្ថានភាព') }}</vs-th>
+        <vs-th>{{ $t('Action') }}</vs-th>
       </template>
 
         <template slot-scope="{data}">

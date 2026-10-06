@@ -35,11 +35,11 @@
         <vs-table :data="[]" style="overflow: scroll">
 
           <template slot="thead">
-            <vs-th>កូដកម្មវិធី</vs-th>
-            <vs-th :rowspan="3">សេចក្ដីពណ៌នា</vs-th>
-            <vs-th>កូដសូចនាករ</vs-th>
-            <vs-th>គម្រោងថវិកា<br/>ឆ្នាំ២០២៣<br/>(លានរៀល)</vs-th>
-            <vs-th>គោលដៅសូចនាករសមិទ្ធកម្ម</vs-th>
+            <vs-th>{{ $tt('កូដកម្មវិធី') }}</vs-th>
+            <vs-th :rowspan="3">{{ $tt('សេចក្ដីពណ៌នា') }}</vs-th>
+            <vs-th>{{ $tt('កូដសូចនាករ') }}</vs-th>
+            <vs-th>គម្រោងថវិកា<br/>{{ $planText('ឆ្នាំ{P}') }}<br/>(លានរៀល)</vs-th>
+            <vs-th>{{ $tt('គោលដៅសូចនាករសមិទ្ធកម្ម') }}</vs-th>
             <vs-th></vs-th>
             <vs-th></vs-th>
             <vs-th></vs-th>
@@ -54,11 +54,11 @@
               <!-- <vs-td></vs-td> -->
               <vs-td></vs-td>
               <vs-td></vs-td>
-              <vs-td>ឆ្នាំមុន-២០២១(អនុវត្តរួច)</vs-td>
-              <vs-td>ឆ្នាំបច្ចុប្បន្ន-២០២២(កំពុងអនុវត្ត)</vs-td>
-              <vs-td>ឆ្នាំគ្រោងថវិកា-២០២៣</vs-td>
-              <vs-td>ឆ្នាំគ្រោងថវិកា​២០២៤</vs-td>
-              <vs-td>ឆ្នាំគ្រោងថវិកា​២០២៥</vs-td>
+              <vs-td>{{ $planText('ឆ្នាំមុន-{P-2}(អនុវត្តរួច)') }}</vs-td>
+              <vs-td>{{ $planText('ឆ្នាំបច្ចុប្បន្ន-{P-1}(កំពុងអនុវត្ត)') }}</vs-td>
+              <vs-td>{{ $planText('ឆ្នាំគ្រោងថវិកា-{P}') }}</vs-td>
+              <vs-td>{{ $planText('ឆ្នាំគ្រោងថវិកា​{P+1}') }}</vs-td>
+              <vs-td>{{ $planText('ឆ្នាំគ្រោងថវិកា​{P+2}') }}</vs-td>
               <vs-td></vs-td>
             </vs-tr>
 
@@ -70,7 +70,7 @@
               <vs-td></vs-td>
               <vs-td></vs-td>
               <vs-td>គោលដៅ</vs-td>
-              <vs-td>មូលហេតុផ្លាស់ប្ដូរ (ធៀបឆ្នាំ២០២២)</vs-td>
+              <vs-td>{{ $planText('មូលហេតុផ្លាស់ប្ដូរ (ធៀបឆ្នាំ{P-1})') }}</vs-td>
               <vs-td></vs-td>
               <vs-td></vs-td>
             </vs-tr>

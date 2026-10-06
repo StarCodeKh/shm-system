@@ -35,9 +35,8 @@
                 <!-- Form Input Number -->
                 <!-- <div v-if="formAttribute.type == 'hidden' && formAttribute.required" :class="styleClass" class="d-field" dclass="mt-4"> -->
                 <!-- <label>{{ fieldLabel(formAttribute.name) }} -- {{ data[formAttribute.name] }}</label> -->
-                <vs-input v-if="formAttribute.type == 'hidden'" type="hidden"
-                    v-model="form.attribute[formAttribute.name]" :value="data[formAttribute.name]"
-                    :name="formAttribute.name" class="mt-2 w-full" />
+                <input v-if="formAttribute.type == 'hidden'" type="hidden"
+                    v-model="form.attribute[formAttribute.name]" :name="formAttribute.name" />
                 <!-- </div> -->
 
                 <!-- Form Input Text -->
@@ -328,9 +327,6 @@
                         @browse="initOpenFileManager(formAttribute.name)"
                         @view="initViewFile"
                         @clear="$set(form.attribute, formAttribute.name, '')" />
-                    <vs-input type="hidden" :placeholder="fieldLabel(formAttribute.name)"
-                        v-model="form.attribute[formAttribute.name]" :value="data[formAttribute.name]"
-                        class="mt-2 w-full" />
                     <!-- <span v-if="formAttribute.required">
                         <vs-input v-validate="'required'" v-model="form.attribute[formAttribute.name]"
                             :placeholder="fieldLabel(formAttribute.name)" :name="formAttribute.name" class="mt-1 w-full" />

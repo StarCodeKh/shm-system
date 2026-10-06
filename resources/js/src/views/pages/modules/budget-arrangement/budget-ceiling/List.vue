@@ -51,7 +51,7 @@ export default {
                     colspan: 0,
                 },
                 header2: {
-                    label: "ច្បាប់ឆ្នាំ២០២២",
+                    label: "ច្បាប់ឆ្នាំ{P-1}",
                     rowspan: 2,
                     colspan: 0,
                 },
@@ -89,32 +89,32 @@ export default {
             data: {
                 dataHeaders: {
                     header1: {
-                        label: "២០២៣",
+                        label: "{P}",
                         rowspan: 0,
                         colspan: 0,
                     },
                     header2: {
-                        label: "២០២៤",
+                        label: "{P+1}",
                         rowspan: 0,
                         colspan: 0,
                     },
                     header3: {
-                        label: "២០២៥",
+                        label: "{P+2}",
                         rowspan: 0,
                         colspan: 0,
                     },
                     header4: {
-                        label: "២០២៣",
+                        label: "{P}",
                         rowspan: 0,
                         colspan: 0,
                     },
                     header5: {
-                        label: "២០២៤",
+                        label: "{P+1}",
                         rowspan: 0,
                         colspan: 0,
                     },
                     header6: {
-                        label: "២០២៥",
+                        label: "{P+2}",
                         rowspan: 0,
                         colspan: 0,
                     },

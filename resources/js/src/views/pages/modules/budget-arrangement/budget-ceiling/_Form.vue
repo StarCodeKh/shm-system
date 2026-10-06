@@ -309,17 +309,17 @@
                                 <!-- row -->
                                 <div class="vx-row">
                                     <div class="vx-col lg:w-1/3 w-full mt-4">
-                                        <label class="mb-2">{{ 'ឆ្នាំ ២០២៣' }}</label>
+                                        <label class="mb-2">{{ $planText('ឆ្នាំ {P}') }}</label>
                                         <vs-input type="number" size="small" class="w-full" />
                                     </div>
 
                                     <div class="vx-col lg:w-1/3 w-full mt-4">
-                                        <label class="mb-2">{{ 'ឆ្នាំ ២០២៤' }}</label>
+                                        <label class="mb-2">{{ $planText('ឆ្នាំ {P+1}') }}</label>
                                         <vs-input type="number" size="small" class="w-full" />
                                     </div>
 
                                     <div class="vx-col lg:w-1/3 w-full mt-4">
-                                        <label class="mb-2">{{ 'ឆ្នាំ ២០២៥' }}</label>
+                                        <label class="mb-2">{{ $planText('ឆ្នាំ {P+2}') }}</label>
                                         <vs-input type="number" size="small" class="w-full" />
                                     </div>
                                 </div>
@@ -336,17 +336,17 @@
                                 <!-- row -->
                                 <div class="vx-row">
                                     <div class="vx-col lg:w-1/3 w-full mt-4">
-                                        <label class="mb-2">{{ 'អាត្រាឆ្នាំ ២០២៣' }}</label>
+                                        <label class="mb-2">{{ $planText('អាត្រាឆ្នាំ {P}') }}</label>
                                         <vs-input type="number" size="small" class="w-full" />
                                     </div>
 
                                     <div class="vx-col lg:w-1/3 w-full mt-4">
-                                        <label class="mb-2">{{ 'អាត្រាឆ្នាំ ២០២៤' }}</label>
+                                        <label class="mb-2">{{ $planText('អាត្រាឆ្នាំ {P+1}') }}</label>
                                         <vs-input type="number" size="small" class="w-full" />
                                     </div>
 
                                     <div class="vx-col lg:w-1/3 w-full mt-4">
-                                        <label class="mb-2">{{ 'អាត្រាឆ្នាំ ២០២៥' }}</label>
+                                        <label class="mb-2">{{ $planText('អាត្រាឆ្នាំ {P+2}') }}</label>
                                         <vs-input type="number" size="small" class="w-full" />
                                     </div>
                                 </div>
@@ -384,17 +384,17 @@
                                 <!-- row -->
                                 <div class="vx-row">
                                     <div class="vx-col lg:w-1/3 w-full mt-4">
-                                        <label class="mb-2">{{ 'ឆ្នាំ ២០២៣' }}</label>
+                                        <label class="mb-2">{{ $planText('ឆ្នាំ {P}') }}</label>
                                         <vs-input type="number" size="small" class="w-full" />
                                     </div>
 
                                     <div class="vx-col lg:w-1/3 w-full mt-4">
-                                        <label class="mb-2">{{ 'ឆ្នាំ ២០២៤' }}</label>
+                                        <label class="mb-2">{{ $planText('ឆ្នាំ {P+1}') }}</label>
                                         <vs-input type="number" size="small" class="w-full" />
                                     </div>
 
                                     <div class="vx-col lg:w-1/3 w-full mt-4">
-                                        <label class="mb-2">{{ 'ឆ្នាំ ២០២៥' }}</label>
+                                        <label class="mb-2">{{ $planText('ឆ្នាំ {P+2}') }}</label>
                                         <vs-input type="number" size="small" class="w-full" />
                                     </div>
                                 </div>
@@ -411,17 +411,17 @@
                                 <!-- row -->
                                 <div class="vx-row">
                                     <div class="vx-col lg:w-1/3 w-full mt-4">
-                                        <label class="mb-2">{{ 'អាត្រាឆ្នាំ ២០២៣' }}</label>
+                                        <label class="mb-2">{{ $planText('អាត្រាឆ្នាំ {P}') }}</label>
                                         <vs-input type="number" size="small" class="w-full" />
                                     </div>
 
                                     <div class="vx-col lg:w-1/3 w-full mt-4">
-                                        <label class="mb-2">{{ 'អាត្រាឆ្នាំ ២០២៤' }}</label>
+                                        <label class="mb-2">{{ $planText('អាត្រាឆ្នាំ {P+1}') }}</label>
                                         <vs-input type="number" size="small" class="w-full" />
                                     </div>
 
                                     <div class="vx-col lg:w-1/3 w-full mt-4">
-                                        <label class="mb-2">{{ 'អាត្រាឆ្នាំ ២០២៥' }}</label>
+                                        <label class="mb-2">{{ $planText('អាត្រាឆ្នាំ {P+2}') }}</label>
                                         <vs-input type="number" size="small" class="w-full" />
                                     </div>
                                 </div>

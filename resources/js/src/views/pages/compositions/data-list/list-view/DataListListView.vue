@@ -84,13 +84,13 @@
       </div>
 
       <template slot="thead">
-        <vs-th sort-key="name">គោត្តនាម និង នាម</vs-th>
-        <vs-th sort-key="role">តួនាទី</vs-th>
-        <vs-th sort-key="bank">ធនាគារ</vs-th>
-        <vs-th sort-key="bank_acc">លេខគណនីចាស់</vs-th>
-        <vs-th sort-key="bank_acc">លេខគណនីថ្មី</vs-th>
-        <vs-th sort-key="status">ស្ថានភាព</vs-th>
-        <vs-th>សកម្មភាព</vs-th>
+        <vs-th sort-key="name">{{ $tt('គោត្តនាម និង នាម') }}</vs-th>
+        <vs-th sort-key="role">{{ $tt('តួនាទី') }}</vs-th>
+        <vs-th sort-key="bank">{{ $tt('ធនាគារ') }}</vs-th>
+        <vs-th sort-key="bank_acc">{{ $tt('លេខគណនីចាស់') }}</vs-th>
+        <vs-th sort-key="bank_acc">{{ $tt('លេខគណនីថ្មី') }}</vs-th>
+        <vs-th sort-key="status">{{ $tt('ស្ថានភាព') }}</vs-th>
+        <vs-th>{{ $t('Action') }}</vs-th>
       </template>
 
         <template slot-scope="{data}">

@@ -41,6 +41,23 @@ class ConfigurationController extends Controller
         return response()->json($data);
     }
 
+    /**
+     * The current planning year (config_planning_year), e.g. { id: 4, year: 2023, name_kh, name_en }.
+     */
+    public function planning()
+    {
+        $planning = Planning::find(config_planning_year);
+        return response()->json([
+            'success' => (bool) $planning,
+            'data' => $planning ? [
+                'id' => $planning->id,
+                'year' => (int) $planning->year,
+                'name_kh' => $planning->name_kh,
+                'name_en' => $planning->name_en,
+            ] : null,
+        ]);
+    }
+
     public function update(Request $request, $id)
     {
         $input = $request->all();

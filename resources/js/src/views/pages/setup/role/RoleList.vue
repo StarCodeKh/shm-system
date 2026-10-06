@@ -84,9 +84,9 @@
       </div>
 
       <template slot="thead">
-        <vs-th>ល.រ</vs-th>
-        <vs-th sort-key="name">ឈ្មោះ</vs-th>
-        <vs-th>សកម្មភាព</vs-th>
+        <vs-th>{{ $tt('ល.រ') }}</vs-th>
+        <vs-th sort-key="name">{{ $tt('ឈ្មោះ') }}</vs-th>
+        <vs-th>{{ $t('Action') }}</vs-th>
       </template>
 
         <template slot-scope="{data}">

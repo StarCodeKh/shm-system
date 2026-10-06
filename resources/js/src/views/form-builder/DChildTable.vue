@@ -2,7 +2,7 @@
     <vx-card :title="''">
         <div class="p-3 mb-4" style="overflow: scroll;">
             <vs-table style="min-width: 500px;min-width: 200%;">
-                <template slot="thead" style="background: #28c76f;">
+                <template class="dt-thead-accent" slot="thead">
                     <vs-th>{{ $t("ល.រ") }}</vs-th>
                     <vs-th>{{ $t("ឈ្មោះចំណាត់ថ្នាក់ចំណូល") }}</vs-th>
                     <vs-th>{{ $t("ច្បាប់ហិរញ្ញវត្ថុ") }}</vs-th>
@@ -16,10 +16,10 @@
                     <vs-th>{{ $t("Action") }}</vs-th>
                 </template>
                 <tbody>
-                    <vs-tr style="background-color: rgb(85 255 161)">
+                    <vs-tr class="dt-row-group-strong">
                         <td colspan="11"><b>70-ចំណូលសារពើពន្ធក្នុងស្រុក</b></td>
                     </vs-tr>
-                    <vs-tr style="background-color: #b2ffd9;">
+                    <vs-tr class="dt-row-group">
                         <td colspan="11"><b>7001-ពន្ធផ្ទាល់ (ពន្ធលើផលទុន ប្រាក់ចំណូល)</b></td>
                     </vs-tr>
                     <vs-tr>
@@ -35,7 +35,7 @@
                             <vs-input type="number" v-validate="'required'" size="small" class="w-full" />
                         </td>
                         <td style="width: 1500px">
-                            <div style="background-color: rgb(178 255 217);">
+                            <div class="dt-row-group">
                                 <center>ត្រីមាសទី១</center>
                             </div>
                             <div class="pb-3 pt-3"><vx-card>
@@ -76,7 +76,7 @@
                             </div>
                         </td>
                         <td style="width: 1500px">
-                            <div style="background-color: rgb(178 255 217);">
+                            <div class="dt-row-group">
                                 <center>ត្រីមាសទី២</center>
                             </div>
                             <div class="pb-3 pt-3"><vx-card>
@@ -117,7 +117,7 @@
                             </div>
                         </td>
                         <td style="width: 1500px">
-                            <div style="background-color: rgb(178 255 217);">
+                            <div class="dt-row-group">
                                 <center>ត្រីមាសទី៣</center>
                             </div>
                             <div class="pb-3 pt-3"><vx-card>
@@ -158,7 +158,7 @@
                             </div>
                         </td>
                         <td style="width: 1500px">
-                            <div style="background-color: rgb(178 255 217);">
+                            <div class="dt-row-group">
                                 <center>ត្រីមាសទី៤</center>
                             </div>
                             <div class="pb-3 pt-3"><vx-card>
@@ -216,7 +216,7 @@
                             <vs-input type="number" v-validate="'required'" size="small" class="w-full" />
                         </td>
                         <td style="width: 1500px">
-                            <div style="background-color: rgb(178 255 217);">
+                            <div class="dt-row-group">
                                 <center>ត្រីមាសទី១</center>
                             </div>
                             <div class="pb-3 pt-3"><vx-card>
@@ -257,7 +257,7 @@
                             </div>
                         </td>
                         <td style="width: 1500px">
-                            <div style="background-color: rgb(178 255 217);">
+                            <div class="dt-row-group">
                                 <center>ត្រីមាសទី២</center>
                             </div>
                             <div class="pb-3 pt-3"><vx-card>
@@ -298,7 +298,7 @@
                             </div>
                         </td>
                         <td style="width: 1500px">
-                            <div style="background-color: rgb(178 255 217);">
+                            <div class="dt-row-group">
                                 <center>ត្រីមាសទី៣</center>
                             </div>
                             <div class="pb-3 pt-3"><vx-card>
@@ -339,7 +339,7 @@
                             </div>
                         </td>
                         <td style="width: 1500px">
-                            <div style="background-color: rgb(178 255 217);">
+                            <div class="dt-row-group">
                                 <center>ត្រីមាសទី៤</center>
                             </div>
                             <div class="pb-3 pt-3"><vx-card>
@@ -397,7 +397,7 @@
                             <vs-input type="number" v-validate="'required'" size="small" class="w-full" />
                         </td>
                         <td style="width: 1500px">
-                            <div style="background-color: rgb(178 255 217);">
+                            <div class="dt-row-group">
                                 <center>ត្រីមាសទី១</center>
                             </div>
                             <div class="pb-3 pt-3"><vx-card>
@@ -438,7 +438,7 @@
                             </div>
                         </td>
                         <td style="width: 1500px">
-                            <div style="background-color: rgb(178 255 217);">
+                            <div class="dt-row-group">
                                 <center>ត្រីមាសទី២</center>
                             </div>
                             <div class="pb-3 pt-3"><vx-card>
@@ -479,7 +479,7 @@
                             </div>
                         </td>
                         <td style="width: 1500px">
-                            <div style="background-color: rgb(178 255 217);">
+                            <div class="dt-row-group">
                                 <center>ត្រីមាសទី៣</center>
                             </div>
                             <div class="pb-3 pt-3"><vx-card>
@@ -520,7 +520,7 @@
                             </div>
                         </td>
                         <td style="width: 1500px">
-                            <div style="background-color: rgb(178 255 217);">
+                            <div class="dt-row-group">
                                 <center>ត្រីមាសទី៤</center>
                             </div>
                             <div class="pb-3 pt-3"><vx-card>

@@ -393,6 +393,8 @@ Route::prefix('v1')->middleware(['auth:api', 'global_site', 'cors'])->group(func
 
     Route::apiResource('taxable_salary', TaxableSalaryController::class);
     Route::apiResource('bank_account', BankAccountController::class);
+    // Current planning year (config_planning_year), used by the budget screens for their year headers
+    Route::get('configuration/planning', [ConfigurationController::class, 'planning']);
     Route::apiResource('configuration', ConfigurationController::class)->only(['index', 'show', 'update']);
 
     // Notification

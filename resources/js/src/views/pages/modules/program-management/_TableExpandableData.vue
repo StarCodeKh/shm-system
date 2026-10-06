@@ -13,13 +13,13 @@
       <vs-table :data="data">
 
           <template slot="thead">
-            <vs-th>កូដ</vs-th>
-            <vs-th>ចំណាត់ថ្នាក់/កូដ/អនុកម្មវិធី/ចង្កោមកម្មវិធី</vs-th>
-            <vs-th>រៀបចំដោយ</vs-th>
-            <vs-th>ចំនួនសកម្មភាព</vs-th>
-            <vs-th>អង្គភាព</vs-th>
-            <vs-th>ស្ថានភាព</vs-th>
-            <vs-th>សកម្មភាព</vs-th>
+            <vs-th>{{ $tt('កូដ') }}</vs-th>
+            <vs-th>{{ $tt('ចំណាត់ថ្នាក់/កូដ/អនុកម្មវិធី/ចង្កោមកម្មវិធី') }}</vs-th>
+            <vs-th>{{ $tt('រៀបចំដោយ') }}</vs-th>
+            <vs-th>{{ $tt('ចំនួនសកម្មភាព') }}</vs-th>
+            <vs-th>{{ $tt('អង្គភាព') }}</vs-th>
+            <vs-th>{{ $tt('ស្ថានភាព') }}</vs-th>
+            <vs-th>{{ $t('Action') }}</vs-th>
           </template>
 
           <template slot-scope="{data}">

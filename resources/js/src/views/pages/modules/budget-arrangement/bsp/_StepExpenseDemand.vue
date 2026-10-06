@@ -9,14 +9,14 @@
         <!-- <vs-table :data="[]">
 
             <template slot="thead">
-            <vs-th rowspan="3" class="rotate">ជំពូក</vs-th>
-            <vs-th class="rotate">គណនីយ</vs-th>
-            <vs-th class="rotate">អនុគណនី</vs-th>
-            <vs-th class="th-width-300">ចំណាត់ថ្នាក់ចំណាយ</vs-th>
-            <vs-th class="th-width-300">ចំណូលឆ្នាំ២០២១(អនុវត្ត)</vs-th>
+            <vs-th rowspan="3" class="rotate">{{ $tt('ជំពូក') }}</vs-th>
+            <vs-th class="rotate">{{ $tt('គណនីយ') }}</vs-th>
+            <vs-th class="rotate">{{ $tt('អនុគណនី') }}</vs-th>
+            <vs-th class="th-width-300">{{ $tt('ចំណាត់ថ្នាក់ចំណាយ') }}</vs-th>
+            <vs-th class="th-width-300">{{ $tt('ចំណូលឆ្នាំ២០២១(អនុវត្ត)') }}</vs-th>
             <vs-th class="th-width-300 text-center" colspan="3"><center>ច្បាប់ហិរញ្ញវត្ថុឆ្នាំ២០២២</center></vs-th>
-            <vs-th class="th-width-300" colspan="4">ប៉ាន់ស្មានអនុវត្តឆ្នាំ២០២២</vs-th>
-            <vs-th class="th-width-300" colspan="4">គម្រោងឆ្នាំ២០២៣</vs-th>
+            <vs-th class="th-width-300" colspan="4">{{ $tt('ប៉ាន់ស្មានអនុវត្តឆ្នាំ២០២២') }}</vs-th>
+            <vs-th class="th-width-300" colspan="4">{{ $tt('គម្រោងឆ្នាំ២០២៣') }}</vs-th>
             </template>
 
             <template>
@@ -325,22 +325,22 @@ export default {
                     colspan: 0,
                 },
                 header2: {
-                    label: "ច្បាប់ហិរញ្ញវត្ថុឆ្នាំ២០២២",
+                    label: "ច្បាប់ហិរញ្ញវត្ថុឆ្នាំ{P-1}",
                     rowspan: 0,
                     colspan: 2,
                 },
                 header3: {
-                    label: "គ្រោងឆ្នាំ២០២៣",
+                    label: "គ្រោងឆ្នាំ{P}",
                     rowspan: 0,
                     colspan: 2,
                 },
                 header4: {
-                    label: "គ្រោងឆ្នាំ២០២៤",
+                    label: "គ្រោងឆ្នាំ{P+1}",
                     rowspan: 0,
                     colspan: 2,
                 },
                 header5: {
-                    label: "គ្រោងឆ្នាំ២០២៥",
+                    label: "គ្រោងឆ្នាំ{P+2}",
                     rowspan: 0,
                     colspan: 2,
                 },

@@ -41,7 +41,7 @@ export default {
                     colspan: 0,
                 },
                 header4: {
-                    label: "ច្បាប់ហិរញ្ញវត្ថុឆ្នាំ២០២២",
+                    label: "ច្បាប់ហិរញ្ញវត្ថុឆ្នាំ{P-1}",
                     rowspan: 2,
                     colspan: 0,
                 },
@@ -51,7 +51,7 @@ export default {
                     colspan: 0,
                 },
                 header6: {
-                    label: "ប៉ាន់ស្មានអនុវត្ត ប្រចាំឆ្នាំ២០២២",
+                    label: "ប៉ាន់ស្មានអនុវត្ត ប្រចាំឆ្នាំ{P-1}",
                     rowspan: 0,
                     colspan: 4,
                 },
@@ -109,13 +109,13 @@ export default {
                         colspan: 0,
                     },
                     header8: {
-                        label: "ក្របខណ្ឌបញ្ចូលថ្មី ឆ្នាំ២០២៣",
+                        label: "ក្របខណ្ឌបញ្ចូលថ្មី ឆ្នាំ{P}",
                         rowspan: 0,
                         colspan: 0,
                     },
                     header9: {
                         width: 150,
-                        label: "ក្របខណ្ឌ ដកចេញឆ្នាំ២០២៣",
+                        label: "ក្របខណ្ឌ ដកចេញឆ្នាំ{P}",
                         rowspan: 0,
                         colspan: 0,
                     },
@@ -130,7 +130,7 @@ export default {
                         colspan: 0,
                     },
                     header12: {
-                        label: "តម្លៃឯកតា សទ.ឆ្នាំ២០២២",
+                        label: "តម្លៃឯកតា សទ.ឆ្នាំ{P-1}",
                         rowspan: 0,
                         colspan: 0,
                     },
@@ -150,12 +150,12 @@ export default {
                         colspan: 0,
                     },
                     header16: {
-                        label: "គម្រោងបៀវត្សឆ្នាំ២០២៣",
+                        label: "គម្រោងបៀវត្សឆ្នាំ{P}",
                         rowspan: 0,
                         colspan: 0,
                     },
                     header17: {
-                        label: "%.ច្ប ២០២២",
+                        label: "%.ច្ប {P-1}",
                         rowspan: 0,
                         colspan: 0,
                     },

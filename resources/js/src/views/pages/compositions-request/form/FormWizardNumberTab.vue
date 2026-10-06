@@ -196,10 +196,10 @@
                                         </vs-dropdown>
                                     </div>
                                     <template slot="thead">
-                                        <vs-th sort-key="name">ដោះដូពីម​ន្ត្រីឈ្មោះ</vs-th>
-                                        <vs-th sort-key="role">លេខគណនី</vs-th>
-                                        <vs-th sort-key="bank">ទៅមន្ត្រីឈ្មោះ</vs-th>
-                                        <vs-th sort-key="bank_acc">លេខគណនី</vs-th>
+                                        <vs-th sort-key="name">{{ $tt('ដោះដូពីម​ន្ត្រីឈ្មោះ') }}</vs-th>
+                                        <vs-th sort-key="role">{{ $tt('លេខគណនី') }}</vs-th>
+                                        <vs-th sort-key="bank">{{ $tt('ទៅមន្ត្រីឈ្មោះ') }}</vs-th>
+                                        <vs-th sort-key="bank_acc">{{ $tt('លេខគណនី') }}</vs-th>
                                     </template>
                                     <template slot-scope="">
                                         <tbody>

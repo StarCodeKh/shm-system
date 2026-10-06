@@ -67,6 +67,9 @@ require('vue-tour/dist/vue-tour.css')
 // VeeValidate, with messages in the user's language
 import './plugins/validation'
 
+// Year labels that follow the planning year ($planText)
+import './plugins/planningYear'
+
 
 // Google Maps
 // import * as VueGoogleMaps from 'vue2-google-maps'

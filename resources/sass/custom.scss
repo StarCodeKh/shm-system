@@ -351,6 +351,39 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
     }
 }
 
+// ---------------------------------------------------------------- Table row and header tones (DTableList, DChildTable)
+// Soft tints of the theme colors, readable in light and dark mode. Use these classes, not inline colors.
+//   dt-th-strong / dt-thead-accent  emphasised header       dt-th-muted   secondary header
+//   dt-row-group / -group-strong    group / subtotal rows   dt-row-level  hierarchy level rows
+//   dt-row-highlight                totals to notice        dt-row-muted  quiet rows
+.dt-th-strong, .dt-thead-accent {
+    background: rgba(var(--vs-primary), .1) !important;
+    color: rgb(var(--vs-primary)) !important;
+    font-weight: 600;
+    th, td { background: transparent !important; color: inherit !important; }
+}
+
+.dt-th-muted {
+    background: rgba(92, 99, 120, .12) !important;
+    color: #5e5873 !important;
+    font-weight: 600;
+}
+
+tr.dt-row-group, .dt-row-group { background: rgba(var(--vs-success), .08) !important; }
+tr.dt-row-group-strong, .dt-row-group-strong { background: rgba(var(--vs-success), .16) !important; font-weight: 600; }
+tr.dt-row-level, .dt-row-level { background: rgba(var(--vs-primary), .06) !important; }
+tr.dt-row-highlight, .dt-row-highlight { background: rgba(var(--vs-warning), .12) !important; }
+tr.dt-row-muted, .dt-row-muted { background: rgba(92, 99, 120, .08) !important; }
+
+tr:is(.dt-row-group, .dt-row-group-strong, .dt-row-level, .dt-row-highlight, .dt-row-muted, .dt-th-strong) td {
+    background: transparent !important;
+}
+
+.theme-dark {
+    .dt-th-muted { background: rgba(255, 255, 255, .08) !important; color: #c2c6dc !important; }
+    tr.dt-row-muted, .dt-row-muted { background: rgba(255, 255, 255, .05) !important; }
+}
+
 // ---------------------------------------------------------------- Field errors: same look on every form
 // <span class="text-danger text-sm" v-show="errors.has('x')">…</span> under a field
 $field-error-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='8' x2='12' y2='12'/%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'/%3E%3C/svg%3E");

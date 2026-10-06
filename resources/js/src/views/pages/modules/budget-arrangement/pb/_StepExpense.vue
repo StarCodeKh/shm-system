@@ -62,22 +62,22 @@ export default {
                     colspan: 0,
                 },
                 header5: {
-                    label: "ចំណាយឆ្នាំ២០២១(អនុវត្ត) ",
+                    label: "ចំណាយឆ្នាំ{P-2}(អនុវត្ត) ",
                     rowspan: 3,
                     colspan: 0,
                 },
                 header6: {
-                    label: "ច្បាប់ហិរញ្ញវត្ថុឆ្នាំ២០២២",
+                    label: "ច្បាប់ហិរញ្ញវត្ថុឆ្នាំ{P-1}",
                     rowspan: 0,
                     colspan: 3,
                 },
                 header7: {
-                    label: "ប៉ាន់ស្មាន​អនុវត្ត​ឆ្នាំ​២០២២",
+                    label: "ប៉ាន់ស្មាន​អនុវត្ត​ឆ្នាំ​{P-1}",
                     rowspan: 0,
                     colspan: 4,
                 },
                 header8: {
-                    label: "គម្រោងថវិកា​ឆ្នាំ​២០២៣",
+                    label: "គម្រោងថវិកា​ឆ្នាំ​{P}",
                     rowspan: 0,
                     colspan: 4,
                 }
