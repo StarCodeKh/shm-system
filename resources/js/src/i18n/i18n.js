@@ -16,10 +16,14 @@ const i18n = new VueI18n({
   messages: i18nData,
 })
 
+document.documentElement.setAttribute('lang', i18n.locale === 'kh' ? 'km' : i18n.locale)
+
 export default i18n
 
 export function setLocale(i18nInstance, locale) {
   i18nInstance.locale = locale
+  // Screen readers, spell check and fonts follow the current language
+  document.documentElement.setAttribute('lang', locale === 'kh' ? 'km' : locale)
   try { localStorage.setItem(LOCALE_STORAGE_KEY, locale) } catch (e) { /* storage unavailable */ }
 }
 

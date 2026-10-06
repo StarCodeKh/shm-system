@@ -463,9 +463,25 @@ export default {
   }
 }
 // ---------------------------------------------------------------- Menu items (blue sidebar)
+// Dark mode keeps the same blue sidebar as the standard (semi-dark) look
+.theme-dark .v-nav-menu {
+  .vs-sidebar {
+    border-radius: 30px;
+  }
+
+  .scroll-area-v-nav-menu {
+    .feather-icon,
+    span:not(.vs-chip--text),
+    a:not(.router-link-active) .feather-icon svg {
+      color: #fff;
+    }
+  }
+}
+
 $nav-active-text: #34468a;
 
-.theme-semi-dark .v-nav-menu {
+.theme-semi-dark .v-nav-menu,
+.theme-dark .v-nav-menu {
   .scroll-area-v-nav-menu {
     > .vs-sidebar--item,
     > .vs-sidebar-group {
@@ -633,7 +649,8 @@ $nav-active-text: #34468a;
 }
 // ---------------------------------------------------------------- Motion
 // Row transforms are locked (no Vuexy sideways jump), so motion lives on the svg, pseudo-elements and list items.
-.theme-semi-dark .v-nav-menu {
+.theme-semi-dark .v-nav-menu,
+.theme-dark .v-nav-menu {
   // Light sweep across a link on hover
   .vs-sidebar--item a {
     overflow: hidden;

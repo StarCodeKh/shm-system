@@ -1516,7 +1516,9 @@ router.afterEach(() => {
   // Remove initial loading
   const appLoading = document.getElementById('loading-bg')
     if (appLoading) {
-        appLoading.style.display = "none";
+        // Fade out, then take it out of the page
+        appLoading.classList.add("is-hidden");
+        setTimeout(() => appLoading.remove(), 400);
     }
 })
 

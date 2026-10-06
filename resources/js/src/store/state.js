@@ -3,6 +3,24 @@ import themeConfig from "@/../themeConfig.js"
 import colors from "@/../themeConfig.js"
 
 // Sidebar collapsed/expanded as the user last chose it (saved by the menu's collapse button)
+// Light / dark: the user's saved choice, else the device setting, else the project default
+export const THEME_KEY = "theme"
+export function savedTheme() {
+  try {
+    const saved = localStorage.getItem(THEME_KEY)
+    if (saved === "light" || saved === "dark") return saved
+  } catch (e) { /* storage unavailable */ }
+  return null
+}
+// "Light" keeps the project's standard look (semi-dark: dark sidebar, light content)
+export const LIGHT_THEME = themeConfig.theme && themeConfig.theme !== "dark" ? themeConfig.theme : "light"
+export function themeFor(mode) {
+  return mode === "dark" ? "dark" : LIGHT_THEME
+}
+export function deviceTheme() {
+  return typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+}
+
 export const SIDEBAR_COLLAPSED_KEY = "sidebarCollapsed"
 const savedSidebarCollapsed = (() => {
   try {
@@ -63,7 +81,7 @@ const state = {
     verticalNavMenuItemsMin : false,
     scrollY                 : 0,
     starredPages            : navbarSearchAndPinList["pages"].data.filter((page) => page.is_bookmarked),
-    theme                   : themeConfig.theme || "light",
+    theme                   : themeFor(savedTheme() || deviceTheme()),
     themePrimaryColor       : colors.primary,
 
     // Can be used to get current window with

@@ -52,7 +52,7 @@ export default {
     }
   },
   mounted() {
-    this.toggleClassInBody(themeConfig.theme)
+    this.toggleClassInBody(this.$store.state.theme)
     this.$store.commit('UPDATE_WINDOW_WIDTH', window.innerWidth)
 
     let vh = window.innerHeight * 0.01;

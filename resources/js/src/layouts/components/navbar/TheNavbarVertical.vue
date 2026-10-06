@@ -25,6 +25,7 @@
 
         <div class="nav-actions">
           <i18n />
+          <theme-toggle />
           <notification-drop-down />
           <setting />
           <span class="nav-actions__divider"></span>
@@ -40,6 +41,7 @@
 <script>
 import I18n from "./components/I18n.vue"
 import NotificationDropDown from "./components/NotificationDropDown.vue"
+import ThemeToggle from "./components/ThemeToggle.vue"
 import ProfileDropDown from "./components/ProfileDropDown.vue"
 import Setting from "./components/Setting.vue";
 
@@ -56,6 +58,7 @@ export default {
   components: {
     I18n,
     NotificationDropDown,
+    ThemeToggle,
     ProfileDropDown,
     Setting
   },
