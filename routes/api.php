@@ -227,6 +227,7 @@ Route::prefix('v1')->middleware(['auth:api', 'global_site', 'cors'])->group(func
     // Module: Program management
     Route::prefix('module/program_management')->group(function () {
         Route::post('objective/search', [ObjectiveController::class, 'index']);
+        Route::get('objective/overview', [ObjectiveController::class, 'overview']); // objectives > programs > sub-program count
         Route::apiResource('objective', ObjectiveController::class);
 
         Route::post('program/search', [ProgramController::class, 'index']);

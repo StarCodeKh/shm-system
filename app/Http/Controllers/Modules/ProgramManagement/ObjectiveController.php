@@ -41,6 +41,42 @@ class ObjectiveController extends Controller
         return $dataFields;
     }
 
+    /**
+     * Program management overview: each policy objective with its active programs
+     * and how many sub-programs each program has.
+     */
+    public function overview()
+    {
+        $subCounts = DB::table('mef_subprogram')
+            ->select('program_id', DB::raw('count(*) as total'))
+            ->where(function ($q) { $q->whereNotIn('status', [4])->orWhereNull('status'); })
+            ->groupBy('program_id')
+            ->pluck('total', 'program_id');
+
+        $programs = Program::where('is_active', 1)->whereNotDeleted()->orderByLevel()
+            ->get(['id', 'code', 'objective_id', 'name_kh', 'name_en'])
+            ->groupBy('objective_id');
+
+        $objectives = Objective::whereNotDeleted()->orderByLevel()->get(['id', 'code', 'name_kh', 'name_en'])
+            ->map(function ($objective) use ($programs, $subCounts) {
+                return [
+                    'id' => $objective->id,
+                    'code' => $objective->code,
+                    'name_kh' => $objective->name_kh,
+                    'name_en' => $objective->name_en,
+                    'programs' => ($programs[$objective->id] ?? collect())->map(fn ($p) => [
+                        'id' => $p->id,
+                        'code' => $p->code,
+                        'name_kh' => $p->name_kh,
+                        'name_en' => $p->name_en,
+                        'subprogram_count' => (int) ($subCounts[$p->id] ?? 0),
+                    ])->values(),
+                ];
+            });
+
+        return response()->json(['success' => true, 'data' => $objectives]);
+    }
+
     public function index(Request $request)
     {
         $input = $request->all();

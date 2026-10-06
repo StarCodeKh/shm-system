@@ -1,6 +1,7 @@
 export default {
     _apiConfiguration: "/api/v1/configuration",
     _apiPlanningYear: "/api/v1/configuration/planning",
+    _apiProgramOverview: "/api/v1/module/program_management/objective/overview",
     // Program Management
     _apiObjective: "/api/v1/module/program_management/objective",
     _apiProgram: "/api/v1/module/program_management/program",

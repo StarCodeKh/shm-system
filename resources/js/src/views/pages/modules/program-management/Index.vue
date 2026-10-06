@@ -48,55 +48,32 @@
       </div>
     </div>
 
-    <vs-navbar text-color="rgba(255,255,255,.6)" active-text-color="rgba(255,255,255,1)" color="#F4F4F4"
-      v-model="activeItem" style="box-shadow: 1px 5px 15px;" class="p-2 mb-6">
-
-      <div slot="title">
-        <vs-navbar-title>
-          <span>គោលបំណងនយោបាយទី១ៈ ការគ្រប់គ្រងសេដ្ឋកិច្ច និងហិរញ្ញវត្ថុ</span>
-        </vs-navbar-title>
-      </div>
-
-      <vs-navbar-item index="0">
-        <div class="vx-row mr-1">
-          <div
-            class="btn-add-new p-3 mr-2 rounded-sm cursor-pointer text-right flex items-center justify-center text-lg font-medium text-base text-primary border border-solid border-primary">
-            <feather-icon icon="EditIcon" svgClasses="h-4 w-4" />
-          </div>
-          <div
-            class="btn-add-new p-3 mr-1 rounded-sm cursor-pointer text-right flex items-center justify-center text-lg font-medium text-base text-primary border border-solid border-primary"
-            @click=openForm(2)>
-            <feather-icon icon="PlusIcon" svgClasses="h-4 w-4" />
-          </div>
+    <!-- Policy objectives, each with its programs (loaded from the database) -->
+    <section v-for="objective in visibleObjectives" :key="objective.id" class="pm-objective">
+      <header class="pm-objective__head">
+        <div class="pm-objective__title">
+          <span class="pm-objective__code">{{ objective.code }}</span>
+          <h4>{{ localName(objective) }}</h4>
         </div>
-      </vs-navbar-item>
-    </vs-navbar>
+        <vs-button size="small" color="primary" type="border" icon-pack="feather" icon="icon-plus" @click="openForm(2)">
+          {{ $t('AddNew') }}
+        </vs-button>
+      </header>
 
-    <div class="vx-row">
-
-      <!-- Background Color -->
-      <div class="vx-col w-full sm:w-1/4 md:w-1/4 lg:w-1/4 xl:w-1/4 mb-base">
-        <vx-card title="ចំណាត់ថ្នាក់ៈ 101" title-color="#fff" card-background="#BFCAEF" content-color="#fff"
-          @click="isVisible = !isVisible">
-          <!-- <div>កែប្រែ</div> -->
-          <center>
-            <h5 class="pb-4" style="line-height: 30px;"><b>កម្មវិធីទី១ៈ <br />ការគ្រប់គ្រងវិស្ស័យសេដ្ឋកិច្ច</b></h5>
-          </center>
-          <p class="mb-3​ text-right">សរុបអនុកម្មវិធីៈ 5</p>
-        </vx-card>
+      <div class="pm-programs">
+        <button v-for="program in objective.programs" :key="program.id" type="button" class="pm-program"
+          :class="{ 'is-active': isVisible }" @click="isVisible = !isVisible">
+          <span class="pm-program__code">{{ program.code }}</span>
+          <span class="pm-program__name">{{ localName(program) }}</span>
+          <span class="pm-program__count">
+            <feather-icon icon="LayersIcon" svgClasses="h-4 w-4" />
+            {{ $tt('អនុកម្មវិធី') }}: <b>{{ program.subprogram_count }}</b>
+          </span>
+        </button>
       </div>
-      <!-- Background Color -->
-      <div class="vx-col w-full sm:w-1/4 md:w-1/4 lg:w-1/4 xl:w-1/4 mb-base">
-        <vx-card title="ចំណាត់ថ្នាក់ៈ 102" title-color="#fff" card-background="#8BEABC" content-color="#fff"
-          @click="isVisible = !isVisible">
-          <center>
-            <h5 class="pb-4" style="line-height: 30px;"><b>កម្មវិធីទី២ៈ <br />ការគ្រប់គ្រងវិស្ស័យហិរញ្ញវត្ថុ</b></h5>
-          </center>
-          <p class="mb-3​ text-right">សរុបអនុកម្មវិធីៈ ៦</p>
-        </vx-card>
-      </div>
+    </section>
 
-    </div>
+    <div v-if="loaded && !visibleObjectives.length" class="pm-empty">{{ $t('dt_empty') }}</div>
 
     <table-expandable-data v-show="isVisible"></table-expandable-data>
 
@@ -183,6 +160,8 @@ export default {
       value1: "",
       value2: "",
       isVisible: false,
+      objectives: [],
+      loaded: false,
       colorx: '#5A8DEE',
       mailTo: "",
       selected: [],
@@ -578,6 +557,16 @@ export default {
     }
   },
   methods: {
+    loadOverview() {
+      return axios.get(apiConfig._apiProgramOverview)
+        .then(response => { this.objectives = (response.data && response.data.data) || [] })
+        .catch(() => this.$vs.notify({ title: 'Message', text: 'msg.load_failed', color: 'danger' }))
+        .finally(() => { this.loaded = true })
+    },
+    // Name in the current language, falling back to the other one
+    localName(item) {
+      return (this.$i18n.locale === 'en' ? item.name_en || item.name_kh : item.name_kh || item.name_en) || ''
+    },
     openForm(param) {
       // If param 1=Objective, 2=Program, 3=SubProgram, 4=ClusterActivity, 5=Activity
       switch (param) {
@@ -671,8 +660,15 @@ export default {
     TableExpandableData,
     DModalForm
   },
+  computed: {
+    // Objectives without a name and without programs are left out
+    visibleObjectives() {
+      return this.objectives.filter(o => (o.name_kh || o.name_en) || (o.programs && o.programs.length))
+    },
+  },
   mounted() {
     this.$emit("setAppClasses", "invoice-page")
+    this.loadOverview()
   }
 }
 </script>

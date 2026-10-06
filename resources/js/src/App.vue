@@ -1,6 +1,6 @@
 <template>
 	<div id="app" :class="vueAppClasses">
-		<router-view @setAppClasses="setAppClasses" @changeRouteTitle="(title) => titleOverride = title" />
+		<router-view @setAppClasses="setAppClasses" @changeRouteTitle="(title) => titleOverride = title" @changeDocumentTitle="(title) => titleOverride = title" />
 	</div>
 </template>
 

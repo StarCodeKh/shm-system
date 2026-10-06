@@ -842,20 +842,8 @@ const router = new Router({
                         rule: 'editor'
                     },
                 },
-                {
-                    path: '/account/payment-method/form',
-                    name: 'account-paymentMethod-form',
-                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'វិធីបង់ប្រាក់', url: '/account/payment-method' },
-                            { title: 'ទម្រង់', active: true },
-                        ],
-                        pageTitle: 'ទម្រង់វិធីបង់ប្រាក់',
-                        rule: 'editor'
-                    },
-                },
+                // Records are added and edited in the side panel of the list
+                { path: '/account/payment-method/form', redirect: '/account/payment-method' },
 
                 {
                     path: '/account/category',
@@ -871,20 +859,8 @@ const router = new Router({
                         rule: 'editor'
                     },
                 },
-                {
-                    path: '/account/category/form',
-                    name: 'account-category-form',
-                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ប្រភេទផលិតផល/សេវាកម្ម', url: '/account/category' },
-                            { title: 'ទម្រង់', active: true },
-                        ],
-                        pageTitle: 'ទម្រង់ប្រភេទផលិតផល/សេវាកម្ម',
-                        rule: 'editor'
-                    },
-                },
+                // Records are added and edited in the side panel of the list
+                { path: '/account/category/form', redirect: '/account/category' },
 
                 {
                     path: '/account/account',
@@ -900,20 +876,8 @@ const router = new Router({
                         rule: 'editor'
                     },
                 },
-                {
-                    path: '/account/account/form',
-                    name: 'account-account-form',
-                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គណនី', url: '/account/account' },
-                            { title: 'ទម្រង់', active: true },
-                        ],
-                        pageTitle: 'ទម្រង់គណនី',
-                        rule: 'editor'
-                    },
-                },
+                // Records are added and edited in the side panel of the list
+                { path: '/account/account/form', redirect: '/account/account' },
 
                 {
                     path: '/account/account-group',
@@ -929,20 +893,8 @@ const router = new Router({
                         rule: 'editor'
                     },
                 },
-                {
-                    path: '/account/account-group/form',
-                    name: 'account-account-group-form',
-                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ក្រុមគណនី', url: '/account/account-group' },
-                            { title: 'ទម្រង់', active: true },
-                        ],
-                        pageTitle: 'ទម្រង់ក្រុមគណនី',
-                        rule: 'editor'
-                    },
-                },
+                // Records are added and edited in the side panel of the list
+                { path: '/account/account-group/form', redirect: '/account/account-group' },
 
                 {
                     path: '/account/account-type',
@@ -958,20 +910,8 @@ const router = new Router({
                         rule: 'editor'
                     },
                 },
-                {
-                    path: '/account/account-type/form',
-                    name: 'account-account-type-form',
-                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ប្រភេទគណនី', url: '/account/account-type' },
-                            { title: 'ទម្រង់', active: true },
-                        ],
-                        pageTitle: 'ទម្រង់ប្រភេទគណនី',
-                        rule: 'editor'
-                    },
-                },
+                // Records are added and edited in the side panel of the list
+                { path: '/account/account-type/form', redirect: '/account/account-type' },
 
                 {
                     path: '/account/bank-account',
@@ -987,20 +927,8 @@ const router = new Router({
                         rule: 'editor'
                     },
                 },
-                {
-                    path: '/account/bank-account/form',
-                    name: 'account-bank-account-form',
-                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គណនីធនាគារ', url: '/account/bank-account' },
-                            { title: 'ទម្រង់', active: true },
-                        ],
-                        pageTitle: 'ទម្រង់គណនីធនាគារ',
-                        rule: 'editor'
-                    },
-                },
+                // Records are added and edited in the side panel of the list
+                { path: '/account/bank-account/form', redirect: '/account/bank-account' },
                 {
                     path: '/account/expense',
                     name: 'account-expense-list',
@@ -1219,20 +1147,8 @@ const router = new Router({
                         rule: 'editor'
                     },
                 },
-                {
-                    path: '/setup/department/form',
-                    name: 'department-form',
-                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ផ្នែក', url: '/setup/department' },
-                            { title: 'ទម្រង់', active: true },
-                        ],
-                        pageTitle: 'ទម្រង់ផ្នែក',
-                        rule: 'editor'
-                    },
-                },
+                // Records are added and edited in the side panel of the list
+                { path: '/setup/department/form', redirect: '/setup/department' },
                 
                 {
                     path: '/setup/circular',
@@ -1248,20 +1164,8 @@ const router = new Router({
                         rule: 'editor'
                     },
                 },
-                {
-                    path: '/setup/circular/form',
-                    name: 'circular-form',
-                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'សារាចរ', url: '/setup/circular' },
-                            { title: 'ទម្រង់', active: true },
-                        ],
-                        pageTitle: 'ទម្រង់សារាចរ',
-                        rule: 'editor'
-                    },
-                },
+                // Records are added and edited in the side panel of the list
+                { path: '/setup/circular/form', redirect: '/setup/circular' },
                 
                 {
                     path: '/setup/entity',
@@ -1277,20 +1181,8 @@ const router = new Router({
                         rule: 'editor'
                     },
                 },
-                {
-                    path: '/setup/entity/form',
-                    name: 'entity-form',
-                    component: () => import('@/views/pages/setup/entity/EntityForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'អង្គភាព', url: '/setup/entity' },
-                            { title: 'ទម្រង់', active: true },
-                        ],
-                        pageTitle: 'ទម្រង់អង្គភាព',
-                        rule: 'editor'
-                    },
-                },
+                // Records are added and edited in the side panel of the list
+                { path: '/setup/entity/form', redirect: '/setup/entity' },
                 
                 {
                     path: '/setup/role',
@@ -1306,20 +1198,8 @@ const router = new Router({
                         rule: 'editor'
                     },
                 },
-                {
-                    path: '/setup/role/form',
-                    name: 'role-form',
-                    component: () => import('@/views/form-builder/DPlaceholderForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'សិទ្ធិប្រើប្រាស់', url: '/setup/role' },
-                            { title: 'ទម្រង់', active: true },
-                        ],
-                        pageTitle: 'ទម្រង់សិទ្ធិប្រើប្រាស់',
-                        rule: 'editor'
-                    },
-                },
+                // Records are added and edited in the side panel of the list
+                { path: '/setup/role/form', redirect: '/setup/role' },
                 {
                     path: '/setup/sector',
                     name: 'sector-list',
@@ -1334,20 +1214,8 @@ const router = new Router({
                         rule: 'editor'
                     },
                 },
-                {
-                    path: '/setup/sector/form',
-                    name: 'sector-form',
-                    component: () => import('@/views/pages/setup/sector/SectorForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'វិស័យ', url: '/setup/sector' },
-                            { title: 'ទម្រង់', active: true },
-                        ],
-                        pageTitle: 'ទម្រង់វិស័យ',
-                        rule: 'editor'
-                    },
-                },
+                // Records are added and edited in the side panel of the list
+                { path: '/setup/sector/form', redirect: '/setup/sector' },
                 // Report viewer: /report/{type} (types come from GET /api/v1/report/types)
                 {
                     path: '/report/:report_type',
@@ -1377,6 +1245,7 @@ const router = new Router({
                             { title: 'ការកំណត់', active: true },
                         ],
                         pageTitle: 'ការកំណត់',
+                        hideHeader: true, // the page has its own header
                         rule: 'editor'
                     },
                 },

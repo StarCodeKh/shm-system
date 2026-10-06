@@ -167,7 +167,12 @@ const MONTHS = {
     kh: ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"],
     en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
 }
-const PALETTE = ["#7367F0", "#28C76F", "#FF9F43", "#EA5455", "#00CFE8", "#F35588", "#4A5F9D"]
+// Chart colors come from the theme (see tone), so they match the app and follow dark mode
+const FALLBACK = { primary: "#28C76F", success: "#28C76F", danger: "#EA5455", warning: "#FF9F43" }
+const cssColor = (name, fallback) => {
+    const value = typeof document !== "undefined" ? getComputedStyle(document.documentElement).getPropertyValue(name).trim() : ""
+    return value ? `rgb(${value})` : fallback
+}
 const toNumber = (value) => Number(String(value || 0).replace(/,/g, "")) || 0
 
 export default {
@@ -186,6 +191,27 @@ export default {
         }
     },
     computed: {
+        tone() {
+            const dark = this.$store.state.theme === "dark"
+            return {
+                primary: cssColor("--vs-primary", FALLBACK.primary),
+                success: cssColor("--vs-success", FALLBACK.success),
+                danger: cssColor("--vs-danger", FALLBACK.danger),
+                warning: cssColor("--vs-warning", FALLBACK.warning),
+                navy: cssColor("--brand-navy", "#1F2067"),
+                gold: cssColor("--brand-gold", "#C4961C"),
+                info: "#00CFE8",
+                muted: dark ? "#676d7d" : "#b8c2cc",
+                grid: dark ? "#414561" : "#eef0f4",
+                text: dark ? "#c2c6dc" : "#6e6b7b",
+                mode: dark ? "dark" : "light",
+            }
+        },
+        // Categorical charts (e.g. allowance by type)
+        palette() {
+            const t = this.tone
+            return [t.primary, t.navy, t.warning, t.danger, t.info, t.gold, "#F35588"]
+        },
         range() {
             const value = Array.isArray(this.dateRange) ? this.dateRange : String(this.dateRange || "").split(" to ")
             // While picking, flatpickr reports only the start date; wait for the end date.
@@ -209,23 +235,23 @@ export default {
             const members = s.totalMember || {}
             return [
                 {
-                    key: "members", label: this.$t("dash_total_members"), icon: "UsersIcon", color: "#7367F0",
+                    key: "members", label: this.$t("dash_total_members"), icon: "UsersIcon", color: this.tone.navy,
                     value: this.number(members.totalMembers),
                     sub: `${this.$t("dash_male")} ${this.number(members.totalMales)} · ${this.$t("dash_female")} ${this.number(members.totalFemales)}`,
                     trend: s.officerStatisticSeries || [],
                 },
                 {
-                    key: "income", label: this.$t("dash_total_income"), icon: "TrendingUpIcon", color: "#28C76F",
+                    key: "income", label: this.$t("dash_total_income"), icon: "TrendingUpIcon", color: this.tone.success,
                     value: this.money(pick(s.totalIncome, "total_in_khr", "total_in_usd")),
                     sub: this.$t("dash_total_income_sub"), trend: this.trend.income,
                 },
                 {
-                    key: "expense", label: this.$t("dash_total_expense"), icon: "TrendingDownIcon", color: "#EA5455",
+                    key: "expense", label: this.$t("dash_total_expense"), icon: "TrendingDownIcon", color: this.tone.danger,
                     value: this.money(pick(s.totalExpense, "total_in_khr", "total_in_usd")),
                     sub: this.$t("dash_total_expense_sub"), trend: this.trend.expense,
                 },
                 {
-                    key: "balance", label: this.$t("dash_cash_balance"), icon: "DollarSignIcon", color: "#FF9F43",
+                    key: "balance", label: this.$t("dash_cash_balance"), icon: "DollarSignIcon", color: this.tone.warning,
                     value: this.money(pick(s.totalRemainingBalance, "remaining_balance_khr", "remaining_balance_usd")),
                     sub: this.$t("dash_cash_balance_sub"), trend: this.trend.balance,
                 },
@@ -244,15 +270,15 @@ export default {
         },
         monthlyOptions() {
             return {
-                chart: { toolbar: { show: false }, fontFamily: "inherit" },
-                colors: ["#28C76F", "#EA5455"],
+                chart: { foreColor: this.tone.text, toolbar: { show: false }, fontFamily: "inherit" },
+                colors: [this.tone.success, this.tone.danger],
                 plotOptions: { bar: { columnWidth: "45%", borderRadius: 4 } },
                 dataLabels: { enabled: false },
                 legend: { position: "top", horizontalAlign: "right" },
-                grid: { borderColor: "#eef0f4", strokeDashArray: 4 },
+                grid: { borderColor: this.tone.grid, strokeDashArray: 4 },
                 xaxis: { categories: this.monthLabels, axisBorder: { show: false }, axisTicks: { show: false } },
                 yaxis: { labels: { formatter: this.compact } },
-                tooltip: { y: { formatter: this.money } },
+                tooltip: { theme: this.tone.mode, y: { formatter: this.money } },
             }
         },
         quarters() {
@@ -277,19 +303,19 @@ export default {
         },
         paymentOptions() {
             return {
-                chart: { fontFamily: "inherit", sparkline: { enabled: true } },
-                colors: ["#28C76F"],
+                chart: { foreColor: this.tone.text, fontFamily: "inherit", sparkline: { enabled: true } },
+                colors: [this.tone.success],
                 plotOptions: {
                     radialBar: {
                         hollow: { size: "68%" },
-                        track: { background: "#eef0f4" },
+                        track: { background: this.tone.grid },
                         dataLabels: {
-                            name: { show: true, offsetY: 22, color: "#8a90a0", fontSize: "13px" },
+                            name: { show: true, offsetY: 22, color: this.tone.text, fontSize: "13px" },
                             value: { offsetY: -12, fontSize: "34px", fontWeight: 600, formatter: v => `${v}%` },
                         },
                     },
                 },
-                fill: { type: "gradient", gradient: { shade: "light", type: "horizontal", gradientToColors: ["#7367F0"], stops: [0, 100] } },
+                fill: { type: "gradient", gradient: { shade: "light", type: "horizontal", gradientToColors: [this.tone.primary], stops: [0, 100] } },
                 stroke: { lineCap: "round" },
                 labels: [this.$t("dash_paid")],
             }
@@ -305,9 +331,9 @@ export default {
         },
         memberStatusOptions() {
             return {
-                chart: { fontFamily: "inherit" },
+                chart: { foreColor: this.tone.text, fontFamily: "inherit" },
                 labels: this.memberStatus.map(s => s.label),
-                colors: ["#28C76F", "#FF9F43", "#00CFE8", "#82868B"],
+                colors: [this.tone.success, this.tone.warning, this.tone.info, this.tone.muted],
                 legend: { position: "bottom" },
                 dataLabels: { enabled: false },
                 stroke: { width: 2 },
@@ -319,19 +345,19 @@ export default {
                         },
                     },
                 },
-                tooltip: { y: { formatter: v => this.$t("dash_people", { n: this.number(v) }) } },
+                tooltip: { theme: this.tone.mode, y: { formatter: v => this.$t("dash_people", { n: this.number(v) }) } },
             }
         },
         growthOptions() {
             return {
-                chart: { toolbar: { show: false }, fontFamily: "inherit" },
-                colors: ["#7367F0"],
+                chart: { foreColor: this.tone.text, toolbar: { show: false }, fontFamily: "inherit" },
+                colors: [this.tone.primary],
                 plotOptions: { bar: { columnWidth: "45%", borderRadius: 4, dataLabels: { position: "top" } } },
-                dataLabels: { enabled: true, offsetY: -20, style: { colors: ["#6e7485"], fontWeight: 500 } },
-                grid: { borderColor: "#eef0f4", strokeDashArray: 4 },
+                dataLabels: { enabled: true, offsetY: -20, style: { colors: [this.tone.text], fontWeight: 500 } },
+                grid: { borderColor: this.tone.grid, strokeDashArray: 4 },
                 xaxis: { categories: (this.summary && this.summary.officerStatisticYears) || [], axisBorder: { show: false }, axisTicks: { show: false } },
                 yaxis: { show: false },
-                tooltip: { y: { formatter: v => this.$t("dash_people", { n: this.number(v) }) } },
+                tooltip: { theme: this.tone.mode, y: { formatter: v => this.$t("dash_people", { n: this.number(v) }) } },
             }
         },
         incentives() {
@@ -342,13 +368,13 @@ export default {
         },
         incentiveOptions() {
             return {
-                chart: { fontFamily: "inherit" },
+                chart: { foreColor: this.tone.text, fontFamily: "inherit" },
                 labels: this.incentives.map(i => i.name),
-                colors: PALETTE,
+                colors: this.palette,
                 legend: { show: false },
                 dataLabels: { enabled: false },
                 plotOptions: { pie: { donut: { size: "65%" } } },
-                tooltip: { y: { formatter: this.money } },
+                tooltip: { theme: this.tone.mode, y: { formatter: this.money } },
             }
         },
         entityIncome() {
@@ -361,14 +387,14 @@ export default {
         },
         entityOptions() {
             return {
-                chart: { toolbar: { show: false }, fontFamily: "inherit" },
-                colors: ["#4A5F9D"],
+                chart: { foreColor: this.tone.text, toolbar: { show: false }, fontFamily: "inherit" },
+                colors: [this.tone.navy],
                 plotOptions: { bar: { horizontal: true, barHeight: "55%", borderRadius: 4 } },
                 dataLabels: { enabled: true, formatter: this.compact, style: { fontWeight: 500 } },
-                grid: { borderColor: "#eef0f4", strokeDashArray: 4 },
+                grid: { borderColor: this.tone.grid, strokeDashArray: 4 },
                 xaxis: { categories: this.entityIncome.map(e => e.name), labels: { formatter: this.compact } },
                 // The API reports income by entity in riel only.
-                tooltip: { y: { formatter: v => `៛ ${Math.round(toNumber(v)).toLocaleString("en-US")}` } },
+                tooltip: { theme: this.tone.mode, y: { formatter: v => `៛ ${Math.round(toNumber(v)).toLocaleString("en-US")}` } },
             }
         },
     },
@@ -433,11 +459,11 @@ export default {
         },
         sparkOptions(color) {
             return {
-                chart: { sparkline: { enabled: true }, fontFamily: "inherit" },
+                chart: { foreColor: this.tone.text, sparkline: { enabled: true }, fontFamily: "inherit" },
                 colors: [color],
                 stroke: { curve: "smooth", width: 2.5 },
                 fill: { type: "gradient", gradient: { opacityFrom: 0.45, opacityTo: 0.05 } },
-                tooltip: { enabled: false },
+                tooltip: { theme: this.tone.mode, enabled: false },
             }
         },
     },
@@ -615,5 +641,23 @@ export default {
 
 @keyframes dashboard-spin {
     to { transform: rotate(360deg); }
+}
+
+/* Dark mode: same layout, dark surfaces and light text */
+.theme-dark {
+    .currency-switch { background: #1e2340; }
+    .currency-switch button { color: #c2c6dc; }
+    .currency-switch button.active { background: #262c49; color: #fff; }
+    .toolbar-btn { background: #262c49; color: #c2c6dc; border-color: #414561; }
+    .kpi-card { background: #262c49; }
+    .kpi-card__label,
+    .kpi-card__sub { color: #c2c6dc; }
+    .kpi-card__value { color: #fff; }
+    .quarter-strip__item { background: #1e2340; }
+    .payment-split,
+    .legend-list li { border-color: #414561; }
+    .empty-state { color: #676d7d; }
+    .skeleton,
+    .skeleton-block { background: linear-gradient(90deg, #262c49 25%, #2f365a 37%, #262c49 63%); background-size: 400% 100%; }
 }
 </style>

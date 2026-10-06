@@ -60,7 +60,7 @@
 
             <transition :name="routerTransition">
 
-              <div v-if="$route.meta.breadcrumb || $route.meta.pageTitle" class="router-header flex flex-wrap items-center mb-6">
+              <div v-if="($route.meta.breadcrumb || $route.meta.pageTitle) && !$route.meta.hideHeader" class="router-header flex flex-wrap items-center mb-6">
                 <div
                   class="content-area__heading"
                   :class="{'pr-4 border-0 md:border-r border-solid border-grey-light' : $route.meta.breadcrumb}">
@@ -107,7 +107,7 @@
               </back-to-top>
 
               <transition :name="routerTransition" mode="out-in">
-                <router-view @changeRouteTitle="changeRouteTitle" @setAppClasses="(classesStr) => $emit('setAppClasses', classesStr)" />
+                <router-view @changeRouteTitle="changeRouteTitle" @changeDocumentTitle="(title) => $emit('changeDocumentTitle', title)" @setAppClasses="(classesStr) => $emit('setAppClasses', classesStr)" />
               </transition>
             </div>
           </div>

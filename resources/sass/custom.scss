@@ -351,6 +351,101 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
     }
 }
 
+// ---------------------------------------------------------------- Program management overview (objective > program cards)
+.pm-objective {
+    margin-bottom: 28px;
+
+    &__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+        h4 { margin: 0; font-size: 1rem; font-weight: 600; line-height: 1.5; }
+    }
+    &__code {
+        flex: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 30px;
+        height: 30px;
+        padding: 0 8px;
+        border-radius: 8px;
+        font-weight: 700;
+        color: rgb(var(--vs-primary));
+        background: rgba(var(--vs-primary), .12);
+    }
+}
+
+.pm-programs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.pm-program {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid var(--input-border);
+    border-left: 4px solid rgb(var(--vs-primary));
+    border-radius: 12px;
+    box-shadow: 0 4px 18px -10px rgba(17, 20, 45, .25);
+    transition: transform .15s ease, box-shadow .15s ease;
+
+    &:hover { transform: translateY(-2px); box-shadow: 0 10px 26px -12px rgba(17, 20, 45, .35); }
+    &:focus-visible { outline: 2px solid rgba(var(--vs-primary), .5); outline-offset: 2px; }
+
+    &__code {
+        align-self: flex-start;
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-size: .78rem;
+        font-weight: 700;
+        color: rgb(var(--vs-primary));
+        background: rgba(var(--vs-primary), .1);
+    }
+    &__name { font-weight: 600; line-height: 1.6; }
+    &__count {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: auto;
+        font-size: .85rem;
+        color: #6e6b7b;
+        b { color: inherit; font-weight: 700; }
+    }
+}
+
+.pm-empty {
+    padding: 32px;
+    text-align: center;
+    color: #6e6b7b;
+}
+
+.theme-dark {
+    .pm-program {
+        background: #262c49;
+        border-color: #414561;
+        border-left-color: rgb(var(--vs-primary));
+        &__count { color: #c2c6dc; }
+    }
+    .pm-empty { color: #c2c6dc; }
+}
+
 // ---------------------------------------------------------------- Table row and header tones (DTableList, DChildTable)
 // Soft tints of the theme colors, readable in light and dark mode. Use these classes, not inline colors.
 //   dt-th-strong / dt-thead-accent  emphasised header       dt-th-muted   secondary header
