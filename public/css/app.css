@@ -4485,6 +4485,63 @@ textarea {
   border-color: #414561 !important;
 }
 
+@keyframes shm-spin-ltr {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shm-spin-rtl {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+.con-vs-loading {
+  backdrop-filter: blur(2px);
+}
+
+[dir] .con-vs-loading {
+  background: rgba(248, 248, 251, 0.55) !important;
+}
+
+.con-vs-loading .vs-loading {
+  width: 46px !important;
+  height: 46px !important;
+}
+
+[dir] .con-vs-loading .vs-loading {
+  border: 4px solid rgba(var(--vs-primary), 0.18) !important;
+  border-top-color: rgb(var(--vs-primary)) !important;
+  border-radius: 50%;
+}
+
+[dir=ltr] .con-vs-loading .vs-loading {
+  animation:  shm-spin-ltr 0.75s linear infinite;
+}
+
+[dir=rtl] .con-vs-loading .vs-loading {
+  animation:  shm-spin-rtl 0.75s linear infinite;
+}
+
+.con-vs-loading .vs-loading > * {
+  display: none !important;
+}
+
+.con-vs-loading .title-loading {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #5e5873;
+}
+
+[dir] .theme-dark .con-vs-loading {
+  background: rgba(16, 22, 58, 0.55) !important;
+}
+
+.theme-dark .con-vs-loading .title-loading {
+  color: #c2c6dc;
+}
+
 [dir] .pm-objective {
   margin-bottom: 28px;
 }

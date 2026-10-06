@@ -44,6 +44,10 @@ import store from './store/store'
 import i18n, { installPhraseTranslation } from './i18n/i18n'
 installPhraseTranslation(Vue)
 
+// One full-page loading spinner at a time
+import { installSingleLoading } from './plugins/loading'
+installSingleLoading(Vue)
+
 // Date picker defaults (flatpickr) shared by every date field
 import './plugins/datePicker'
 
