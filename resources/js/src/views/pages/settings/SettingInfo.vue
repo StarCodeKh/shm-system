@@ -23,10 +23,10 @@
     </div>
 
     <!-- Mobile Number -->
-    <vs-input class="w-full mt-8" type="number" label-placeholder="Mobile" v-model="mobile" />
+    <vs-input class="w-full mt-8" type="number" label="Mobile" v-model="mobile" />
 
     <!-- Website  -->
-    <vs-input class="w-full mt-8" label-placeholder="Website" v-model="website" />
+    <vs-input class="w-full mt-8" label="Website" v-model="website" />
 
     <!-- Gender -->
     <div class="mt-8 mb-base">

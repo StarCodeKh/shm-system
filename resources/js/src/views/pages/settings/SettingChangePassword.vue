@@ -17,10 +17,10 @@
         <span class="text-danger">{{ errors.first('confirm_password') }}</span>
       </div>
     </div>
-    <!-- <vs-input class="w-full mb-base" label-placeholder="អ្នកប្រើប្រាស់" v-model="username" />
+    <!-- <vs-input class="w-full mb-base" label="អ្នកប្រើប្រាស់" v-model="username" />
     <span class="text-danger">{{ errors.first('first_name') }}</span>
-    <vs-input class="w-full mb-base" label-placeholder="លេខសម្ងាត់" v-model="password" />
-    <vs-input class="w-full mb-base" label-placeholder="បញ្ជាក់លេខសម្ងាត់" v-model="confirm_password" /> -->
+    <vs-input class="w-full mb-base" label="លេខសម្ងាត់" v-model="password" />
+    <vs-input class="w-full mb-base" label="បញ្ជាក់លេខសម្ងាត់" v-model="confirm_password" /> -->
 
     <!-- Save & Reset Button -->
     <div class="flex flex-wrap items-center justify-end">

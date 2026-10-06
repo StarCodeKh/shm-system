@@ -26,7 +26,7 @@ export default {
                 allowDel: false,
                 actionButton: [
                     {
-                        icon: "ViewIcon",
+                        icon: "EyeIcon",
                         path: "#",
                         method: "View",
                         allow: true

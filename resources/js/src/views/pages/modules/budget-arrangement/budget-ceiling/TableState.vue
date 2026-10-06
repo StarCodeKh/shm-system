@@ -1,5 +1,5 @@
 <template>
-    <vx-card title="ពិដានថវិកាឆ្នាំ២០២២" code-toggler>
+    <vx-card title="ពិដានថវិកាឆ្នាំ២០២២">
       <div class="flex flex-wrap-reverse items-center data-list-btn-container">
         <!-- ACTION - DROPDOWN -->
         <vs-dropdown vs-trigger-click class="dd-actions cursor-pointer mr-4 mb-4">

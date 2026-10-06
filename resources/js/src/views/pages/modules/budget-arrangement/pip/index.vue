@@ -27,7 +27,7 @@ export default {
         enableDownload: true,
         actionButton: [
           {
-            icon: "ViewIcon",
+            icon: "EyeIcon",
             path: "/module/budget-arrangement/budget-ceiling/list",
             method: "Edit"
           },

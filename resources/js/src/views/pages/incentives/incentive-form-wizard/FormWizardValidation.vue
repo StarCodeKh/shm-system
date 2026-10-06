@@ -1,5 +1,5 @@
 <template>
-  <vx-card title="Form wizard with validation" code-toggler>
+  <vx-card title="Form wizard with validation">
 
     <p>Implement Form validation with form wizard using popular <strong> <router-link to="/forms/form-validation">VeeValidate</router-link></strong></p>
 

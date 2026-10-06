@@ -1,13 +1,13 @@
 <template>
-    <vx-card :title="$t('setting_credential_access')" code-toggler>
+    <vx-card :title="$t('setting_credential_access')">
         <vs-tabs position="left">
-             <vs-tab :label="$t('setting_notification')">
+             <vs-tab icon-pack="feather" icon="icon-bell" :label="$t('setting_notification')">
                 <TabNotification/>
             </vs-tab>
-            <vs-tab :label="$t('setting_user_detail')">
+            <vs-tab icon-pack="feather" icon="icon-user" :label="$t('setting_user_detail')">
                 <TabUserDetail/>
             </vs-tab>
-            <vs-tab :label="$t('setting_user_device')">
+            <vs-tab icon-pack="feather" icon="icon-smartphone" :label="$t('setting_user_device')">
                 <TabSecurityLogin/>
             </vs-tab>
         </vs-tabs>

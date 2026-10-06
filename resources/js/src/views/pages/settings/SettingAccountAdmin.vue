@@ -1,72 +1,72 @@
 <template>
-    <vx-card :title="$t('setting_account_administration')" code-toggler>
+    <vx-card :title="$t('setting_account_administration')">
         <div class="mt-5">
             <vs-tabs position="left">
-                <vs-tab v-if="tab1" :label="$t('setting_payment_type')">
+                <vs-tab v-if="tab1" icon-pack="feather" icon="icon-tag" :label="$t('setting_payment_type')">
                     <payment-type></payment-type>
                 </vs-tab>
 
-                <vs-tab v-if="tab2" :label="$t('setting_payment_term')">
+                <vs-tab v-if="tab2" icon-pack="feather" icon="icon-calendar" :label="$t('setting_payment_term')">
                     <payment-term></payment-term>
                 </vs-tab>
 
-                <vs-tab v-if="tab3" :label="$t('setting_payment_method')">
+                <vs-tab v-if="tab3" icon-pack="feather" icon="icon-credit-card" :label="$t('setting_payment_method')">
                     <payment-method></payment-method>
                 </vs-tab>
 
-                <vs-tab v-if="tab4" :label="$t('setting_account_type')">
+                <vs-tab v-if="tab4" icon-pack="feather" icon="icon-layers" :label="$t('setting_account_type')">
                     <account-type></account-type>
                 </vs-tab>
 
-                <vs-tab v-if="tab5" :label="$t('setting_letter_type')">
+                <vs-tab v-if="tab5" icon-pack="feather" icon="icon-file-text" :label="$t('setting_letter_type')">
                     <letter-type></letter-type>
                 </vs-tab>
 
-                <vs-tab v-if="tab6" :label="$t('setting_bank')">
+                <vs-tab v-if="tab6" icon-pack="feather" icon="icon-briefcase" :label="$t('setting_bank')">
                     <bank></bank>
                 </vs-tab>
 
-                <vs-tab v-if="tab7" :label="$t('setting_currency')">
+                <vs-tab v-if="tab7" icon-pack="feather" icon="icon-dollar-sign" :label="$t('setting_currency')">
                     <currency></currency>
                 </vs-tab>
 
-                <vs-tab :label="$t('setting_currency_exchange')">
+                <vs-tab icon-pack="feather" icon="icon-repeat" :label="$t('setting_currency_exchange')">
                     <currency-exchange></currency-exchange>
                 </vs-tab>
 
-                <vs-tab v-if="tab8" :label="$t('setting_unit')">
+                <vs-tab v-if="tab8" icon-pack="feather" icon="icon-box" :label="$t('setting_unit')">
                     <unit></unit>
                 </vs-tab>
 
-                <vs-tab v-if="tab9" :label="$t('setting_planning')">
+                <vs-tab v-if="tab9" icon-pack="feather" icon="icon-clipboard" :label="$t('setting_planning')">
                     <planning></planning>
                 </vs-tab>
 
-                <vs-tab v-if="tab10" :label="$t('setting_account_type_group')">
+                <vs-tab v-if="tab10" icon-pack="feather" icon="icon-grid" :label="$t('setting_account_type_group')">
                     <account-type-group></account-type-group>
                 </vs-tab>
 
-                <vs-tab v-if="tab11" :label="$t('setting_group_chapter')">
+                <vs-tab v-if="tab11" icon-pack="feather" icon="icon-folder" :label="$t('setting_group_chapter')">
                     <account-group></account-group>
                 </vs-tab>
 
-                <vs-tab v-if="tab12" :label="$t('setting_account_sub_account')">
+                <vs-tab v-if="tab12" icon-pack="feather" icon="icon-list" :label="$t('setting_account_sub_account')">
                     <account></account>
                 </vs-tab>
 
-                <vs-tab v-if="tab13" :label="$t('setting_category')">
+                <vs-tab v-if="tab13" icon-pack="feather" icon="icon-bookmark" :label="$t('setting_category')">
                     <item-category></item-category>
                 </vs-tab>
 
-                <vs-tab v-if="tab14" :label="$t('setting_product_service')">
+                <vs-tab v-if="tab14" icon-pack="feather" icon="icon-shopping-bag" :label="$t('setting_product_service')">
                     <item></item>
                 </vs-tab>
 
-                <vs-tab v-if="tab15" :label="$t('setting_budget_template')">
+                <vs-tab v-if="tab15" icon-pack="feather" icon="icon-file" :label="$t('setting_budget_template')">
                     <budget-template></budget-template>
                 </vs-tab>
 
-                <!-- <vs-tab :label="$t('setting_cost_list')">
+                <!-- <vs-tab icon-pack="feather" icon="icon-list" :label="$t('setting_cost_list')">
                     <price-list-type></price-list-type>
                 </vs-tab> -->
             </vs-tabs>

@@ -2,10 +2,10 @@
   <vx-card>
     <div class="mt-5">
       <vs-tabs alignment="center">
-        <vs-tab v-if="tab1" :label="$t('setting_user')">
+        <vs-tab v-if="tab1" icon-pack="feather" icon="icon-user" :label="$t('setting_user')">
           <user></user>
         </vs-tab>
-        <vs-tab v-if="tab2" :label="$t('setting_role')">
+        <vs-tab v-if="tab2" icon-pack="feather" icon="icon-shield" :label="$t('setting_role')">
           <role></role>
         </vs-tab>
       </vs-tabs>

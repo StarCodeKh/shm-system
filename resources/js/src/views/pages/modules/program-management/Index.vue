@@ -76,7 +76,7 @@
 
       <!-- Background Color -->
       <div class="vx-col w-full sm:w-1/4 md:w-1/4 lg:w-1/4 xl:w-1/4 mb-base">
-        <vx-card title="ចំណាត់ថ្នាក់ៈ 101" title-color="#fff" card-background="#BFCAEF" content-color="#fff" code-toggler
+        <vx-card title="ចំណាត់ថ្នាក់ៈ 101" title-color="#fff" card-background="#BFCAEF" content-color="#fff"
           @click="isVisible = !isVisible">
           <!-- <div>កែប្រែ</div> -->
           <center>
@@ -87,7 +87,7 @@
       </div>
       <!-- Background Color -->
       <div class="vx-col w-full sm:w-1/4 md:w-1/4 lg:w-1/4 xl:w-1/4 mb-base">
-        <vx-card title="ចំណាត់ថ្នាក់ៈ 102" title-color="#fff" card-background="#8BEABC" content-color="#fff" code-toggler
+        <vx-card title="ចំណាត់ថ្នាក់ៈ 102" title-color="#fff" card-background="#8BEABC" content-color="#fff"
           @click="isVisible = !isVisible">
           <center>
             <h5 class="pb-4" style="line-height: 30px;"><b>កម្មវិធីទី២ៈ <br />ការគ្រប់គ្រងវិស្ស័យហិរញ្ញវត្ថុ</b></h5>
@@ -128,7 +128,7 @@
     <div class="vx-row">
       <!-- Background Color -->
       <div class="vx-col w-full sm:w-1/4 md:w-1/4 lg:w-1/4 xl:w-1/4 mb-base">
-        <vx-card title="ចំណាត់ថ្នាក់ៈ 103" title-color="#fff" card-background="#FEC8FF" content-color="#fff" code-toggler
+        <vx-card title="ចំណាត់ថ្នាក់ៈ 103" title-color="#fff" card-background="#FEC8FF" content-color="#fff"
           @click="isVisible = !isVisible">
           <center>
             <h5 class="pb-4" style="line-height: 30px;"><b>កម្មវិធីទី៣ <br />ការគ្រប់គ្រងចំណូលសាធារណៈ
@@ -139,7 +139,7 @@
       </div>
       <!-- Background Color -->
       <div class="vx-col w-full sm:w-1/4 md:w-1/4 lg:w-1/4 xl:w-1/4 mb-base">
-        <vx-card title="ចំណាត់ថ្នាក់ៈ 104" title-color="#fff" card-background="#AFC817" content-color="#fff" code-toggler
+        <vx-card title="ចំណាត់ថ្នាក់ៈ 104" title-color="#fff" card-background="#AFC817" content-color="#fff"
           @click="isVisible = !isVisible">
           <center>
             <h5 class="pb-4" style="line-height: 30px;"><b>កម្មវិធីទី៤ <br />ការគ្រប់គ្រងចំណាយសាធារណៈ
@@ -151,7 +151,7 @@
 
       <!-- Background Color -->
       <div class="vx-col w-full sm:w-1/4 md:w-1/4 lg:w-1/4 xl:w-1/4 mb-base">
-        <vx-card title="ចំណាត់ថ្នាក់ៈ 105" title-color="#fff" card-background="#7A97FB" content-color="#fff" code-toggler
+        <vx-card title="ចំណាត់ថ្នាក់ៈ 105" title-color="#fff" card-background="#7A97FB" content-color="#fff"
           @click="isVisible = !isVisible">
           <center>
             <h5 class="pb-4" style="line-height: 30px;"><b>កម្មវិធីទី៥ៈ <br />កិច្ចការរដ្ឋបាល

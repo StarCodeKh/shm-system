@@ -24,9 +24,89 @@
 
 
 
+/* --- STANDARD BUTTON SIZE: one control high (--input-height) with the input radius, like .dt-btn ---
+   (!important because the Tailwind utilities on these elements are !important) */
 .btn-add-new.border {
-    border-radius: 20px !important;
-    padding: 10px 30px !important;
+    box-sizing: border-box;
+    gap: 6px;
+    height: var(--input-height);
+    padding: 0 16px !important;
+    font-size: .9rem !important;
+    font-weight: 500 !important;
+    line-height: 1;
+    border-radius: var(--input-radius) !important;
+    white-space: nowrap;
+    transition: background .15s, border-color .15s, color .15s, box-shadow .15s, filter .15s;
+
+    span {
+        margin-left: 0 !important;
+        font-size: inherit !important;
+    }
+
+    &:hover {
+        background: rgba(var(--vs-primary), .06);
+    }
+}
+
+// Legacy list pages: "Add new" is the filled primary button, same as .dt-btn--primary
+.data-list-container .btn-add-new.border {
+    color: #fff !important;
+    border-color: rgb(var(--vs-primary)) !important;
+    background: rgb(var(--vs-primary));
+    box-shadow: 0 6px 14px -6px rgba(var(--vs-primary), .7);
+
+    span,
+    .feather-icon {
+        color: #fff !important;
+    }
+
+    &:hover {
+        background: rgb(var(--vs-primary));
+        filter: brightness(.95);
+    }
+}
+
+// Legacy list header: Actions / page-size dropdowns and search, one control high
+.data-list-container {
+    .dd-actions > div,
+    .items-per-page-handler > div {
+        box-sizing: border-box;
+        height: var(--input-height);
+        padding: 0 16px !important;
+        font-size: .9rem !important;
+        font-weight: 500 !important;
+        color: #5e6078;
+        border: 1px solid var(--input-border) !important;
+        border-radius: var(--input-radius) !important;
+        background: #fff;
+        box-shadow: none !important;
+        transition: border-color .15s, color .15s;
+
+        &:hover {
+            color: rgb(var(--vs-primary));
+            border-color: rgba(var(--vs-primary), .5) !important;
+        }
+    }
+
+    .vs-con-table .vs-table--header .vs-table--search .vs-table--search-input {
+        box-sizing: border-box;
+        height: var(--input-height);
+        border: 1px solid var(--input-border);
+        border-radius: var(--input-radius);
+    }
+}
+
+.theme-dark .data-list-container {
+    .dd-actions > div,
+    .items-per-page-handler > div {
+        color: #c2c6dc;
+        border-color: #414561 !important;
+        background: #262c49;
+    }
+
+    .vs-con-table .vs-table--header .vs-table--search .vs-table--search-input {
+        border-color: #414561;
+    }
 }
 
 .vx-card{
@@ -89,7 +169,7 @@ textarea {
     border-radius: 20px;
 }
 .vs-con-table .vs-con-tbody .vs-table--tbody-table .vs-table--thead th {
-    padding: 5px !important;
+    padding: 12px 14px !important; // same as the cells, so headers line up with their column
 }
 // ---------------------------------------------------------------- Page header (title + breadcrumb)
 .router-header {
@@ -361,6 +441,179 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
     .vs-tabs--li .vs-tabs--btn { color: #c2c6dc; }
 }
 
+// ---------------------------------------------------------------- Side tabs (position left / right): same track, pill slides vertically
+.con-vs-tabs.vs-tabs-position-left,
+.con-vs-tabs.vs-tabs-position-right {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+
+    > .con-ul-tabs {
+        position: relative;
+        flex: 0 0 240px;
+        max-width: 240px;
+        float: none;
+        height: auto;
+        padding: 0;
+        border-radius: 14px;
+        background: #f1f2f6;
+
+        // The padding lives on the list: Vuesax sets the pill's top from each tab's offsetTop, measured
+        // inside this (positioned) list, while the pill itself sits in .con-ul-tabs. Padding on
+        // .con-ul-tabs would put the pill 6px above its tab.
+        .vs-tabs--ul {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 6px;
+            border: none !important;
+            box-shadow: none;
+        }
+
+        .vs-tabs--li {
+            position: relative;
+            z-index: 1;
+            padding: 0 !important;
+            white-space: nowrap;
+            min-width: 0;
+
+            .vs-tabs--btn {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                width: 100%;
+                min-height: 42px;
+                padding: 9px 14px !important;
+                font-family: inherit;
+                font-size: .875rem;
+                font-weight: 500;
+                line-height: 1.4;
+                text-align: left;
+                color: #6e7091 !important;
+                border-radius: 10px;
+                transition: color .2s ease, background .2s ease;
+
+                .vs-tabs--btn-icon {
+                    font-size: 1rem;
+                    color: inherit !important;
+                }
+
+                // One line per tab keeps every tab the same height for the sliding pill
+                > span {
+                    min-width: 0;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+
+            &:hover:not(.activeChild) .vs-tabs--btn {
+                color: #2c2e45 !important;
+                background: rgba(255, 255, 255, .55);
+            }
+
+            &.activeChild .vs-tabs--btn {
+                color: rgb(var(--vs-primary)) !important;
+                font-weight: 600;
+            }
+        }
+
+        // Vuesax's indicator line becomes the white pill behind the active tab
+        .line-vs-tabs {
+            left: 6px !important;
+            right: 6px;
+            width: auto !important;
+            border-radius: 10px;
+            background: #fff !important;
+            box-shadow: 0 2px 8px rgba(23, 23, 74, .12) !important;
+            transform: none !important;
+            transition: top .3s cubic-bezier(.4, 0, .2, 1), height .3s cubic-bezier(.4, 0, .2, 1) !important;
+        }
+    }
+
+    > .con-slot-tabs {
+        flex: 1 1 auto;
+        min-width: 0; // lets wide tables scroll inside instead of squeezing the menu
+
+        > .vs-tabs--content {
+            padding: 0;
+            animation: tab-content-in .3s ease both;
+        }
+    }
+
+    // Phones: the side menu becomes a swipeable chip row above the content
+    @media (max-width: 767px) {
+        flex-direction: column;
+        gap: 14px;
+
+        align-items: stretch;
+
+        > .con-ul-tabs {
+            flex: none;
+            width: 100%;
+            max-width: none;
+            -webkit-mask-image: linear-gradient(to right, #000 85%, transparent);
+            mask-image: linear-gradient(to right, #000 85%, transparent);
+            overflow-x: auto;
+            border-radius: 12px;
+            scrollbar-width: none;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            .vs-tabs--ul {
+                flex-direction: row;
+                gap: 4px;
+                padding: 4px;
+            }
+
+            .vs-tabs--li {
+                flex-shrink: 0;
+                white-space: nowrap;
+
+                .vs-tabs--btn {
+                    min-height: 36px;
+                    padding: 7px 14px !important;
+                }
+
+                &.activeChild .vs-tabs--btn {
+                    background: #fff;
+                    box-shadow: 0 2px 8px rgba(23, 23, 74, .12);
+                }
+            }
+
+            // Its offsets are measured for the vertical layout
+            .line-vs-tabs {
+                display: none;
+            }
+        }
+
+        > .con-slot-tabs {
+            width: 100%;
+        }
+    }
+}
+
+.vs-tabs-position-right > .con-ul-tabs {
+    order: 2;
+}
+
+.theme-dark .con-vs-tabs.vs-tabs-position-left,
+.theme-dark .con-vs-tabs.vs-tabs-position-right {
+    > .con-ul-tabs {
+        background: #10163a;
+
+        .line-vs-tabs { background: #262c49 !important; }
+        .vs-tabs--li .vs-tabs--btn { color: #c2c6dc !important; }
+        .vs-tabs--li:hover:not(.activeChild) .vs-tabs--btn { color: #fff !important; background: rgba(255, 255, 255, .05); }
+        .vs-tabs--li.activeChild .vs-tabs--btn { color: rgb(var(--vs-primary)) !important; }
+
+        @media (max-width: 767px) {
+            .vs-tabs--li.activeChild .vs-tabs--btn { background: #262c49; }
+        }
+    }
+}
+
 
 // ================================================================ Selects (vue-select, vs-select, native)
 // One look for every dropdown: rounded field, primary ring when open, floating panel, roomy options.
@@ -613,11 +866,7 @@ $select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
         transform: rotate(180deg);
     }
 
-    .vs-select--label {
-        margin-bottom: 4px;
-        font-size: .85rem;
-        color: #6e7091;
-    }
+    // Label: see "FORMS OUTSIDE .d-form"
 }
 
 .vs-select--options {
@@ -2116,14 +2365,25 @@ input.vs-input--input.large {
   to { background-position: -200% 0; }
 }
 
-// Empty state (also restyles Vuesax's built-in "No data Available")
+// Empty state (also restyles Vuesax's built-in "No data Available").
+// Vuesax renders it after the table box, so it continues that box: full width, same border, rounded bottom.
 .dt-list .vs-table--not-data {
-  display: table-cell !important;
+  display: block !important;
+  width: 100%;
   padding: 48px 16px !important;
   text-align: center;
-  font-size: .9rem;
+  font-size: .95rem;
   font-weight: 600;
-  color: #8a8ca5;
+  color: #4b4d68;
+  background: #fff;
+  border: 1px solid #eceef4;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+}
+
+.dt-list .vs-con-table .vs-con-tbody:has(+ .vs-table--not-data) {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .dt-empty {
@@ -2170,6 +2430,12 @@ input.vs-input--input.large {
   .dt-skeleton td span {
     animation: none;
   }
+}
+
+.theme-dark .dt-list .vs-table--not-data {
+  color: #c2c6dc;
+  background: #262c49;
+  border-color: #414561;
 }
 
 .theme-dark {
@@ -2433,23 +2699,52 @@ input.vs-input--input.large {
         }
     }
 
-    @media (max-width: 640px) {
-        .vs-pagination--li,
-        .vs-pagination--buttons {
-            min-width: 30px;
-            height: 30px;
-            padding: 0 5px;
-            font-size: .78rem;
-        }
+}
+
+// vs-table's built-in pager (Vuesax sizes its items 30px) uses the same controls
+.vs-con-table .vs-table--pagination {
+    padding: 0;
+
+    .con-vs-pagination .vs-pagination--li,
+    .con-vs-pagination .vs-pagination--buttons {
+        min-width: var(--control-sm-height);
+        width: auto;
+        height: var(--control-sm-height);
+        font-size: .82rem;
     }
 }
 
-.theme-dark .con-vs-pagination {
-    .vs-pagination--li:not(.is-current),
+.theme-dark .con-vs-pagination .vs-pagination--nav {
+    .vs-pagination--ul .vs-pagination--li:not(.is-current),
     .vs-pagination--buttons {
         color: #c2c6dc;
         border-color: #414561;
+        background: #10163a !important;
+
+        &:hover:not(:disabled):not(.disabled) {
+            color: #fff !important;
+            border-color: rgba(var(--vs-primary), .6);
+            background: rgba(var(--vs-primary), .15) !important;
+        }
+    }
+
+    .vs-pagination--ul .vs-pagination--li.is-current {
+        color: #fff !important;
+    }
+}
+
+// Compact selects next to the pager
+.theme-dark .v-select.is-compact,
+.theme-dark .dt-footer .v-select {
+    .vs__dropdown-toggle {
+        border-color: #414561;
         background: #10163a;
+    }
+
+    .vs__selected,
+    .vs__open-indicator {
+        color: #c2c6dc;
+        fill: #c2c6dc;
     }
 }
 
@@ -2592,6 +2887,245 @@ input.vs-input--input.large {
 
         .con-slot-label {
             color: #c2c6dc;
+        }
+    }
+}
+
+
+/* --- FORMS OUTSIDE .d-form: Vuesax labels, buttons and side panels follow the same standard as DForm --- */
+// Field labels (vs-input label="…", vs-select label="…", Vuexy's <span class="vs-input--label">)
+.vs-input--label,
+.con-select .vs-select--label,
+label.vs-select--label {
+    display: block;
+    margin-bottom: 6px !important;
+    padding-left: 0 !important;
+    font-size: .875rem !important;
+    font-weight: 600;
+    color: #4b4d68;
+}
+
+// Buttons: one control high, input radius, semibold (same as .d-form__btn); small/large/icon-only/radius keep Vuesax sizes
+.vs-button:not(.vs-button-small):not(.vs-button-large):not(.includeIconOnly):not(.vs-radius) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: var(--input-height);
+    padding: 0 18px !important;
+    font-family: inherit;
+    font-size: .92rem;
+    font-weight: 600;
+    line-height: 1;
+    border-radius: var(--input-radius) !important;
+
+    &.block,
+    &.w-full {
+        display: flex !important;
+    }
+
+    .vs-button-backgroundx {
+        border-radius: inherit;
+    }
+
+    .vs-button--icon {
+        margin: 0 !important;
+    }
+}
+
+.vs-button-filled.vs-button-primary {
+    box-shadow: 0 6px 14px -6px rgba(var(--vs-primary), .7) !important;
+
+    &:hover {
+        box-shadow: 0 8px 18px -8px rgba(var(--vs-primary), .8) !important;
+        filter: brightness(.95);
+    }
+}
+
+// Slide-out add/edit panels (DataViewSidebar): title row, body, button row
+.add-new-data-sidebar {
+    .vs-sidebar {
+        max-width: 420px;
+        width: 100%;
+    }
+
+    .vs-sidebar--items > div:first-child h4 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        text-transform: none;
+        color: #2c2e45;
+    }
+
+    .vs-sidebar--items > div:first-child .feather-icon {
+        padding: 6px;
+        border-radius: 8px;
+        transition: background .15s;
+
+        &:hover {
+            background: rgba(var(--vs-danger), .1);
+            color: rgb(var(--vs-danger));
+        }
+    }
+
+    .vs-sidebar--footer {
+        border-top: 1px solid #eceef4;
+
+        > div {
+            gap: 10px;
+            justify-content: flex-end;
+
+            .vs-button {
+                flex: 1;
+                margin: 0 !important;
+            }
+        }
+    }
+}
+
+.theme-dark {
+    .vs-input--label,
+    .con-select .vs-select--label,
+    label.vs-select--label {
+        color: #c2c6dc;
+    }
+
+    .add-new-data-sidebar {
+        .vs-sidebar--items > div:first-child h4 { color: #fff; }
+        .vs-sidebar--footer { border-color: #414561; }
+    }
+}
+
+/* --- LIST INSIDE TABS: a DTableList card inside a tab sits flat in the tab panel (no card in a card) --- */
+.vs-tabs--content .vx-card.dt-list {
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+
+    > .vx-card__collapsible-content > .vx-card__body {
+        padding: 0 !important;
+    }
+}
+
+/* --- AUTO-FIT COLUMNS: each column is as wide as its content; long text grows to --cell-max then wraps.
+       Columns never squeeze below their content: the table scrolls sideways instead. --- */
+.dt-list .vs-con-table {
+    --cell-max: 22rem;
+
+    table.vs-table {
+        width: 100%;
+        table-layout: auto;
+    }
+
+    tbody tr td > span {
+        display: block;
+        width: max-content;
+        max-width: var(--cell-max);
+        white-space: normal;
+        overflow-wrap: anywhere; // very long words / URLs break instead of overflowing the cap
+    }
+
+    // Numbers, dates and row actions never wrap
+    tbody tr td.dt-num > span,
+    tbody tr td.dt-date > span,
+    tbody tr td.dt-actions-cell > span,
+    tbody tr td:first-child > span {
+        white-space: nowrap;
+        max-width: none;
+    }
+
+    // A block span ignores text-align, so align it with margins (logical, works in RTL)
+    tbody tr td.dt-num > span {
+        margin-inline-start: auto;
+    }
+
+    tbody tr td:first-child > span {
+        margin-inline: auto;
+    }
+
+    @media (max-width: 640px) {
+        --cell-max: 14rem;
+    }
+}
+
+/* --- TAB ICONS: icon in a soft rounded square, label centred beside it (top and side tabs) --- */
+.con-vs-tabs .con-ul-tabs .vs-tabs--li .vs-tabs--btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    .vs-tabs--btn-icon {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        margin: 0 !important;
+        font-size: 15px !important;
+        border-radius: 8px;
+        background: rgba(110, 112, 145, .1);
+        transition: background .2s ease, transform .25s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    > span {
+        line-height: 28px; // matches the icon box so Khmer and Latin labels sit on its centre line
+    }
+}
+
+.con-vs-tabs .con-ul-tabs .vs-tabs--li:hover .vs-tabs--btn .vs-tabs--btn-icon {
+    transform: scale(1.08);
+}
+
+.con-vs-tabs .con-ul-tabs .vs-tabs--li.activeChild .vs-tabs--btn .vs-tabs--btn-icon {
+    color: rgb(var(--vs-primary)) !important;
+    background: rgba(var(--vs-primary), .14);
+}
+
+.con-vs-tabs.vs-tabs-position-left > .con-ul-tabs .vs-tabs--li .vs-tabs--btn,
+.con-vs-tabs.vs-tabs-position-right > .con-ul-tabs .vs-tabs--li .vs-tabs--btn {
+    display: flex;
+    padding: 7px 10px !important;
+}
+
+.theme-dark .con-vs-tabs .con-ul-tabs .vs-tabs--li .vs-tabs--btn .vs-tabs--btn-icon {
+    background: rgba(255, 255, 255, .06);
+}
+
+/* --- LIST TABLE DETAILS --- */
+// Row number column centred under its header
+.dt-list .vs-con-table {
+    thead th:first-child .vs-table-text {
+        justify-content: center !important;
+    }
+
+    tbody tr td:first-child {
+        text-align: center;
+    }
+}
+
+// Footer: info left, pager right on one row; stacked on phones
+.dt-list .dt-footer {
+    flex-wrap: nowrap;
+
+    .dt-footer__info {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    // <vs-pagination> renders a .vs-row wrapper with an inline width: 100%; size it to the pager instead
+    > .vs-row,
+    .con-vs-pagination {
+        flex: 0 0 auto;
+        width: auto !important;
+        margin-inline-start: auto;
+    }
+
+    @media (max-width: 640px) {
+        flex-wrap: wrap;
+
+        .dt-footer__info {
+            flex-basis: 100%;
         }
     }
 }

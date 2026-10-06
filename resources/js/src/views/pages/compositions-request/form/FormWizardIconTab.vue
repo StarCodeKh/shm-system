@@ -1,6 +1,6 @@
 
 <template>
-    <vx-card title="Form wizard with icon tabs" code-toggler>
+    <vx-card title="Form wizard with icon tabs">
 
         <p>Add feather icon class to <code>icon</code> prop in <code>tab-content</code> component to get desired icon in tab.</p>
 

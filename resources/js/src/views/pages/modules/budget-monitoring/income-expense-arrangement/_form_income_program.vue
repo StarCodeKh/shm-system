@@ -1,5 +1,5 @@
 <template>
-    <vx-card :title="''" code-toggler>
+    <vx-card :title="''">
         <div class="p-3 mb-4" style="overflow: scroll;">
             <vs-table style="min-width: 500px;min-width: 200%;">
                 <template slot="thead" style="background: #28c76f;">

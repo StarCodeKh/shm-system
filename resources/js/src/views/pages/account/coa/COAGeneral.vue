@@ -1,12 +1,12 @@
 <template>
   <vx-card no-shadow>
     <!-- Info -->
-    <!-- <vs-input class="w-full mb-base" label-placeholder="Username" v-model="username"></vs-input> -->
-    <!-- <vs-input class="w-full" name="username" label-placeholder="Name" v-model="username" v-validate="'required'" />
+    <!-- <vs-input class="w-full mb-base" label="Username" v-model="username"></vs-input> -->
+    <!-- <vs-input class="w-full" name="username" label="Name" v-model="username" v-validate="'required'" />
     <span class="text-danger">{{ errors.first('username') }}</span>
-    <vs-input class="w-full" name="name" label-placeholder="Name" v-model="name" v-validate="'required'"></vs-input>
+    <vs-input class="w-full" name="name" label="Name" v-model="name" v-validate="'required'"></vs-input>
     <span class="text-danger">{{ errors.first('name') }}</span>
-    <vs-input class="w-full" name="email" label-placeholder="Email" v-model="email" v-validate="'required'"></vs-input>
+    <vs-input class="w-full" name="email" label="Email" v-model="email" v-validate="'required'"></vs-input>
     <span class="text-danger">{{ errors.first('email') }}</span> -->
 
     <!-- <vs-alert icon-pack="feather" icon="icon-info" class="h-full my-4" color="warning">

@@ -42,7 +42,7 @@ export default {
                         allow: true
                     },
                     {
-                        icon: "ViewIcon",
+                        icon: "EyeIcon",
                         path: "#",
                         method: "View",
                         allow: true

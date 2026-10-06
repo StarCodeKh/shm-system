@@ -5,7 +5,7 @@
 		<div class="flex flex-wrap-reverse items-center data-list-btn-container">
 			<!-- ADD NEW -->
 			<div @click="goBack" class="btn-add-new p-3 mb-4 mr-4 rounded-lg cursor-pointer flex items-center justify-center text-lg font-medium text-base text-primary border border-solid border-primary">
-				<feather-icon icon="BackIcon" svgClasses="h-4 w-4" />
+				<feather-icon icon="ArrowLeftIcon" svgClasses="h-4 w-4" />
 				<span class="ml-2 text-base text-default">BACK TO LIST</span>
 			</div>
 		</div><!-- ############ END ACTION BUTTON ############  -->
@@ -13,29 +13,29 @@
 		<div class="vx-row">
 			<!-- MULTIPLE COLUMNS-->
 			<div class="vx-col w-full mb-base">
-				<vx-card title="Form" code-toggler>
+				<vx-card title="Form">
 					<div class="vx-row">
 						<div class="vx-col sm:w-1/2 w-full mb-2">
-							<vs-input class="w-full" label-placeholder="First Name" v-model="input25" />
+							<vs-input class="w-full" label="First Name" v-model="input25" />
 						</div>
 						<div class="vx-col sm:w-1/2 w-full mb-2">
-							<vs-input class="w-full" label-placeholder="Last Name" v-model="input26" />
+							<vs-input class="w-full" label="Last Name" v-model="input26" />
 						</div>
 					</div>
 					<div class="vx-row">
 						<div class="vx-col sm:w-1/2 w-full mb-2">
-							<vs-input class="w-full" label-placeholder="City" v-model="input27" />
+							<vs-input class="w-full" label="City" v-model="input27" />
 						</div>
 						<div class="vx-col sm:w-1/2 w-full mb-2">
-							<vs-input class="w-full" label-placeholder="Country" v-model="input28" />
+							<vs-input class="w-full" label="Country" v-model="input28" />
 						</div>
 					</div>
 					<div class="vx-row">
 						<div class="vx-col sm:w-1/2 w-full mb-2">
-							<vs-input class="w-full" label-placeholder="Company" v-model="input29" />
+							<vs-input class="w-full" label="Company" v-model="input29" />
 						</div>
 						<div class="vx-col sm:w-1/2 w-full mb-6">
-							<vs-input type="email" class="w-full" label-placeholder="Email" v-model="input30" />
+							<vs-input type="email" class="w-full" label="Email" v-model="input30" />
 						</div>
 					</div>
 					<div class="vx-row">
@@ -53,26 +53,26 @@
 	&lt;template&gt;
 	&lt;div class=&quot;vx-row&quot;&gt;
 		&lt;div class=&quot;vx-col sm:w-1/2 w-full mb-2&quot;&gt;
-		&lt;vs-input class=&quot;w-full&quot; label-placeholder=&quot;First Name&quot; v-model=&quot;input25&quot; /&gt;
+		&lt;vs-input class=&quot;w-full&quot; label=&quot;First Name&quot; v-model=&quot;input25&quot; /&gt;
 		&lt;/div&gt;
 		&lt;div class=&quot;vx-col sm:w-1/2 w-full mb-2&quot;&gt;
-		&lt;vs-input class=&quot;w-full&quot; label-placeholder=&quot;Last Name&quot; v-model=&quot;input26&quot; /&gt;
-		&lt;/div&gt;
-	&lt;/div&gt;
-	&lt;div class=&quot;vx-row&quot;&gt;
-		&lt;div class=&quot;vx-col sm:w-1/2 w-full mb-2&quot;&gt;
-		&lt;vs-input class=&quot;w-full&quot; label-placeholder=&quot;City&quot; v-model=&quot;input27&quot; /&gt;
-		&lt;/div&gt;
-		&lt;div class=&quot;vx-col sm:w-1/2 w-full mb-2&quot;&gt;
-		&lt;vs-input class=&quot;w-full&quot; label-placeholder=&quot;Country&quot; v-model=&quot;input28&quot; /&gt;
+		&lt;vs-input class=&quot;w-full&quot; label=&quot;Last Name&quot; v-model=&quot;input26&quot; /&gt;
 		&lt;/div&gt;
 	&lt;/div&gt;
 	&lt;div class=&quot;vx-row&quot;&gt;
 		&lt;div class=&quot;vx-col sm:w-1/2 w-full mb-2&quot;&gt;
-		&lt;vs-input class=&quot;w-full&quot; label-placeholder=&quot;Company&quot; v-model=&quot;input29&quot; /&gt;
+		&lt;vs-input class=&quot;w-full&quot; label=&quot;City&quot; v-model=&quot;input27&quot; /&gt;
+		&lt;/div&gt;
+		&lt;div class=&quot;vx-col sm:w-1/2 w-full mb-2&quot;&gt;
+		&lt;vs-input class=&quot;w-full&quot; label=&quot;Country&quot; v-model=&quot;input28&quot; /&gt;
+		&lt;/div&gt;
+	&lt;/div&gt;
+	&lt;div class=&quot;vx-row&quot;&gt;
+		&lt;div class=&quot;vx-col sm:w-1/2 w-full mb-2&quot;&gt;
+		&lt;vs-input class=&quot;w-full&quot; label=&quot;Company&quot; v-model=&quot;input29&quot; /&gt;
 		&lt;/div&gt;
 		&lt;div class=&quot;vx-col sm:w-1/2 w-full mb-6&quot;&gt;
-		&lt;vs-input type=&quot;email&quot; class=&quot;w-full&quot; label-placeholder=&quot;Email&quot; v-model=&quot;input30&quot; /&gt;
+		&lt;vs-input type=&quot;email&quot; class=&quot;w-full&quot; label=&quot;Email&quot; v-model=&quot;input30&quot; /&gt;
 		&lt;/div&gt;
 	&lt;/div&gt;
 	&lt;div class=&quot;vx-row&quot;&gt;

@@ -20,7 +20,7 @@
                   icon-right
                   :statistic="dataTables.summary.male"
                   :statisticTitle="$t('stat_male_total')"
-                  color="success" />
+                  color="primary" />
             </div>
             
             <div class="vx-col w-full md:w-1/3 lg:w-1/3 xl:w-1/3">
@@ -31,7 +31,7 @@
                   icon-right
                   :statistic="dataTables.summary.female"
                   :statisticTitle="$t('stat_female_total')"
-                  color="success" />
+                  color="primary" />
             </div>
         </div>
         <!-- Customize Request Dashboard -->
@@ -45,7 +45,7 @@
                   icon-right
                   :statistic="dataTables.summary.approved"
                   :statisticTitle="$t('stat_approved')"
-                  color="success" />
+                  color="primary" />
             </div>
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
@@ -66,7 +66,7 @@
                   icon-right
                    :statistic="dataTables.summary.in_progress"
                   :statisticTitle="$t('stat_processing')"
-                  color="success" />
+                  color="primary" />
             </div>
 
             <!-- <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
@@ -87,7 +87,7 @@
                   icon-right
                   :statistic="dataTables.summary.rejected"
                   :statisticTitle="$t('stat_rejected')"
-                  color="success" />
+                  color="primary" />
             </div>
         </div>
         <!-- Customize Incentive Dashboard -->
@@ -96,7 +96,7 @@
                 <statistics-card-line
                   hideChart
                   class="mb-base"
-                  icon="CashIcon"
+                  icon="CreditCardIcon"
                   icon-right
                   :statistic="dataTables.total"
                   :statisticTitle="$t('stat_grand_total')" />
@@ -106,11 +106,11 @@
                 <statistics-card-line
                   hideChart
                   class="mb-base"
-                  icon="DollarIcon"
+                  icon="DollarSignIcon"
                   icon-right
                   :statistic="dataTables.total_amount"
                   :statisticTitle="$t('stat_incentive_paid_riel')"
-                  color="success" />
+                  color="primary" />
             </div>
         </div>
         <!-- Customize Account Payable Dashboard -->
@@ -120,18 +120,18 @@
                 <small><statistics-card-line
                   hideChart
                   class="mb-base"
-                  icon="NumberSignIcon"
+                  icon="HashIcon"
                   icon-right
                   :statistic="dataTables.total"
                   :statisticTitle="$t('stat_grand_total')"
-                  color="success" /></small>
+                  color="dark" /></small>
             </div>
 
             <div class="vx-col w-full md:w-1/3 lg:w-1/3 xl:w-1/3">
                 <small><statistics-card-line
                   hideChart
                   class="mb-base"
-                  icon="CpuIcon"
+                  icon="CheckCircleIcon"
                   icon-right
                   :statistic="dataTables.summary.total_paid_khr"
                   :statisticTitle="$t('stat_paid_riel')" /></small>
@@ -141,10 +141,11 @@
                 <small><statistics-card-line
                   hideChart
                   class="mb-base"
-                  icon="DollarSignIcon"
+                  icon="AlertCircleIcon"
                   icon-right
                   :statistic="dataTables.summary.total_unpaid_khr"
-                  :statisticTitle="$t('stat_unpaid_riel')" /></small>
+                  :statisticTitle="$t('stat_unpaid_riel')"
+                  color="warning" /></small>
             </div>
 
         </div>
@@ -168,7 +169,7 @@
                   icon-right
                   :statistic="dataTables.summary.paid"
                   :statisticTitle="$t('stat_paid')"
-                  color="success" />
+                  color="primary" />
             </div>
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
@@ -179,7 +180,7 @@
                   icon-right
                   :statistic="dataTables.summary.void"
                   :statisticTitle="$t('stat_void')"
-                  color="success" />
+                  color="primary" />
             </div>
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
@@ -273,7 +274,7 @@
 
         <div class="print-only">
             <!-- & dataTables.data.length -->
-            <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 1" :max-items="dataTables.limit"
+            <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 1" :max-items="dataTables.limit"
                 :data="dataTables.data">
                 <template slot="thead">
                     <!-- 28C76F -->
@@ -349,7 +350,7 @@
                 </template>
             </vs-table>
 
-            <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 2" :max-items="dataTables.limit"
+            <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 2" :max-items="dataTables.limit"
                 :data="dataTables.data">
 
                 <template slot="thead">
@@ -428,7 +429,7 @@
                 </template>
             </vs-table>
 
-            <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 3" :max-items="dataTables.limit"
+            <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 3" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
                 <template slot-scope="{data}">
                     <vs-tr>
@@ -536,7 +537,7 @@
                 </template>
             </vs-table>
 
-            <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 4" :max-items="dataTables.limit"
+            <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 4" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
                 <template slot-scope="{data}">
                     <vs-tr>
@@ -638,7 +639,7 @@
                 </template>
             </vs-table>
 
-            <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 5" :max-items="dataTables.limit"
+            <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 5" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
 
                 <template slot-scope="{data}">
@@ -788,7 +789,7 @@
                 </template>
             </vs-table>
 
-            <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 6" :max-items="dataTables.limit"
+            <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 6" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
                 <template slot-scope="{data}">
 
@@ -851,7 +852,7 @@
                 </template>
             </vs-table>
 
-            <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 7" :max-items="dataTables.limit"
+            <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 7" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
                 <template slot-scope="{data}">
 
@@ -917,7 +918,7 @@
             </vs-table>
 
             <!-- Income Form -->
-            <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 8" :max-items="dataTables.limit"
+            <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 8" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
                 <template slot-scope="{data}">
 
@@ -1144,7 +1145,7 @@
             </vs-table>
 
             <!-- Expense Form  -->
-            <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 9" :max-items="dataTables.limit"
+            <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 9" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
                 <template slot-scope="{data}">
 
@@ -1370,7 +1371,7 @@
                 </template>
             </vs-table>
 
-            <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 10" :max-items="dataTables.limit"
+            <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 10" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
                 <template slot-scope="{data}">
                     <vs-tr>
@@ -1477,7 +1478,7 @@
                 </template>
             </vs-table>
 
-            <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 11" :max-items="dataTables.limit"
+            <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 11" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
                 <template slot-scope="{data}">
 
@@ -1605,7 +1606,7 @@
             <!-- Table 12 -->
             <!-- <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 12" :max-items="dataTables.limit" :data="dataTables"
             style="overflow: scroll"> -->
-            <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 12" :max-items="dataTables.limit"
+            <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 12" :max-items="dataTables.limit"
                 :data="dataTables.data">
                 <template slot-scope="{data}">
                     <vs-tr>

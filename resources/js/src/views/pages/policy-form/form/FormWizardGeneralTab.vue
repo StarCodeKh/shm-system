@@ -1,6 +1,6 @@
 <template>
-    <!-- <vx-card title="Form wizard with validation" title="ទម្រង់បង្កើតសំណើរ" code-toggler> -->
-    <vx-card title="ទម្រង់បង្កើតសំណើរ" code-toggler>
+    <!-- <vx-card title="Form wizard with validation" title="ទម្រង់បង្កើតសំណើរ"> -->
+    <vx-card title="ទម្រង់បង្កើតសំណើរ">
 
         <p>សូមបំពេញពត៌មានខាងក្រោម៖</p>
 

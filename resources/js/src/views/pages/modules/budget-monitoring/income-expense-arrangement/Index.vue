@@ -40,7 +40,7 @@
 
       <!-- Background Color -->
       <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 mb-base">
-        <vx-card title="" title-color="#fff" card-background="#3fccca" content-color="#fff" code-toggler
+        <vx-card title="" title-color="#fff" card-background="#3fccca" content-color="#fff"
           @click="initProPlan(1)" color="primary">
           <center>
             <h5 class="pb-4" style="line-height: 30px;"><b>រៀបចំកម្មវិធីចំណូល</b></h5>
@@ -50,7 +50,7 @@
 
       <!-- Background Color -->
       <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 mb-base">
-        <vx-card title="" title-color="#fff" card-background="#cfb007" content-color="#fff" code-toggler
+        <vx-card title="" title-color="#fff" card-background="#cfb007" content-color="#fff"
           @click="initProPlan(2)">
           <center>
             <h5 class="pb-4" style="line-height: 30px;"><b>រៀបចំកម្មវិធីចំណាយ</b></h5>

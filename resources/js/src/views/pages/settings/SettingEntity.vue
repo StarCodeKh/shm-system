@@ -3,19 +3,19 @@
         <!-- <h6 class="mb-3"> {{ $t("setting_department") }} </h6> -->
         <vs-tabs position="top" alignment="center" class="mt-8">
 
-            <vs-tab v-if="tab_secretary" :label="$t('setting_secretary')">
+            <vs-tab v-if="tab_secretary" icon-pack="feather" icon="icon-users" :label="$t('setting_secretary')">
                 <department></department>
             </vs-tab>
 
-            <vs-tab v-if="tab_entity" :label="$t('setting_entity')">
+            <vs-tab v-if="tab_entity" icon-pack="feather" icon="icon-home" :label="$t('setting_entity')">
                 <entity></entity>
             </vs-tab>
 
-            <vs-tab v-if="tab_tittle" :label="$t('setting_title')">
+            <vs-tab v-if="tab_tittle" icon-pack="feather" icon="icon-award" :label="$t('setting_title')">
                 <titles></titles>
             </vs-tab>
 
-            <vs-tab v-if="tab_position" :label="$t('setting_position')">
+            <vs-tab v-if="tab_position" icon-pack="feather" icon="icon-briefcase" :label="$t('setting_position')">
                 <position></position>
             </vs-tab>
 

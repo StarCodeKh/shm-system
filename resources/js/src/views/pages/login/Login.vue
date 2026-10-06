@@ -20,11 +20,9 @@
 
       <!-- Form panel -->
       <main class="login-form">
+        <!-- Same sliding language switch as the top bar -->
         <div class="login-lang">
-          <button v-for="lang in languages" :key="lang.code" type="button" class="login-lang__item"
-            :class="{ 'is-active': $i18n.locale === lang.code }" @click="setLocale($i18n, lang.code)">
-            {{ lang.label }}
-          </button>
+          <i18n />
         </div>
 
         <div class="login-form__inner">
@@ -44,30 +42,25 @@
 
 <script>
 import LoginJwt from "./LoginJWT.vue"
-import { setLocale } from "@/i18n/i18n"
+import I18n from "@/layouts/components/navbar/components/I18n.vue"
 
 export default {
   components: {
-    LoginJwt
-  },
-  methods: {
-    setLocale
+    LoginJwt,
+    I18n
   },
   data() {
     return {
-      year: new Date().getFullYear(),
-      languages: [
-        { code: 'kh', label: 'ខ្មែរ' },
-        { code: 'en', label: 'EN' }
-      ]
+      year: new Date().getFullYear()
     }
   }
 }
 </script>
 
 <style lang="scss">
-$login-navy: #26266b;
-$login-navy-dark: #17174a;
+// Same blue as the sidebar and the loading screen
+$login-blue: #5972ac;
+$login-blue-dark: #324693;
 
 .login-page {
   min-height: 100vh;
@@ -78,7 +71,7 @@ $login-navy-dark: #17174a;
   padding: 24px 16px;
   background:
     radial-gradient(circle at 0% 0%, rgba(var(--vs-primary), .14), transparent 40%),
-    radial-gradient(circle at 100% 100%, rgba(38, 38, 107, .14), transparent 45%),
+    radial-gradient(circle at 100% 100%, rgba(50, 70, 147, .14), transparent 45%),
     #f3f4f8;
 }
 
@@ -91,6 +84,15 @@ $login-navy-dark: #17174a;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 30px 60px -20px rgba(23, 23, 74, .25), 0 0 0 1px rgba(23, 23, 74, .04);
+  animation: login-shell-in .5s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+@keyframes login-shell-in {
+  from { opacity: 0; transform: translateY(16px) scale(.98); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-shell { animation: none; }
 }
 
 /* ---------- Brand panel ---------- */
@@ -103,7 +105,7 @@ $login-navy-dark: #17174a;
   padding: 48px 40px;
   color: #fff;
   overflow: hidden;
-  background: linear-gradient(150deg, $login-navy 0%, $login-navy-dark 100%);
+  background: linear-gradient(150deg, $login-blue 0%, $login-blue-dark 100%);
 
   &__ring {
     position: absolute;
@@ -185,32 +187,9 @@ $login-navy-dark: #17174a;
   position: absolute;
   top: 20px;
   right: 20px;
-  display: flex;
-  padding: 3px;
-  border-radius: 999px;
-  background: #eef0f4;
 
-  &__item {
-    padding: .35rem .8rem;
-    font-size: .8rem;
-    font-family: inherit;
-    color: #626262;
-    border: none;
-    border-radius: 999px;
-    background: transparent;
-    cursor: pointer;
-    transition: all .2s ease;
-
-    &:hover:not(.is-active) {
-      color: #2c2e45;
-    }
-
-    &.is-active {
-      color: rgba(var(--vs-primary), 1);
-      font-weight: 600;
-      background: #fff;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
-    }
+  .nav-lang-switch {
+    margin-right: 0;
   }
 }
 
@@ -276,16 +255,11 @@ $login-navy-dark: #17174a;
   .login-shell {
     background: #262c49;
   }
+  .login-brand {
+    background: linear-gradient(150deg, #324693 0%, #10163a 100%);
+  }
   .login-form__title {
     color: #fff;
-  }
-  .login-lang {
-    background: #10163a;
-
-    &__item.is-active {
-      color: #fff;
-      background: #262c49;
-    }
   }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <vx-card title="" code-toggler>
+    <vx-card title="">
       <!-- <component :is="selectedComponent3"></component> -->
       <!-- <step-indicator></step-indicator> -->
       <div class="mt-5">
@@ -50,7 +50,7 @@
               
               <div class="vx-col w-full sm:w-1/4 md:w-1/4 lg:w-1/4 xl:w-1/4 mb-base">
                 <vx-card :title="$t('bsp_text_printing')" title-color="#fff" card-background="primary"
-                  content-color="#fff" code-toggler>
+                  content-color="#fff">
                   <center>
                     <h5 class="pb-4" style="line-height: 30px;">{{ $t("bsp_text_subprogram") }}
                     </h5>
@@ -64,7 +64,7 @@
 
               <div class="vx-col w-full sm:w-1/4 md:w-1/4 lg:w-1/4 xl:w-1/4 mb-base">
                 <vx-card :title="$t('bsp_text_printing')" title-color="#fff" card-background="danger" content-color="#fff"
-                  code-toggler>
+>
                   <center>
                     <h5 class="pb-4" style="line-height: 30px;">{{ $t("bsp_text_define_indicator") }}</h5>
                   </center>
@@ -77,7 +77,7 @@
 
               <div class="vx-col w-full sm:w-1/4 md:w-1/4 lg:w-1/4 xl:w-1/4 mb-base">
                 <vx-card :title="$t('bsp_text_printing')" title-color="#fff" card-background="warning"
-                  content-color="#fff" code-toggler>
+                  content-color="#fff">
                   <center>
                     <h5 class="pb-4" style="line-height: 30px;">{{ $t("bsp_text_income_plan") }}</h5>
                   </center>
@@ -90,7 +90,7 @@
 
               <div class="vx-col w-full sm:w-1/4 md:w-1/4 lg:w-1/4 xl:w-1/4 mb-base">
                 <vx-card :title="$t('bsp_text_printing')" title-color="#fff" card-background="primary"
-                  content-color="#fff" code-toggler>
+                  content-color="#fff">
                   <center>
                     <h5 class="pb-4" style="line-height: 30px;">{{ $t('bsp_text_expense_demand') }}</h5>
                   </center>

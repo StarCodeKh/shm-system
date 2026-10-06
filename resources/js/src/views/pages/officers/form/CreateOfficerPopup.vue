@@ -1,5 +1,5 @@
 <template>
-    <vx-card title="Inner Popup" code-toggler>
+    <vx-card title="Inner Popup">
 
         <!-- <p>You can add one popup inside another</p> -->
 

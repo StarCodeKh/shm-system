@@ -196,11 +196,12 @@ export default {
   .login-field {
     margin-bottom: 16px;
 
+    // Same label, control and button as every other form (tokens in custom.scss :root)
     label {
       display: block;
-      font-size: .85rem;
-      font-weight: 500;
-      color: #5e6078;
+      font-size: .875rem;
+      font-weight: 600;
+      color: #4b4d68;
       margin-bottom: 6px;
     }
 
@@ -229,14 +230,14 @@ export default {
     input {
       display: block;
       width: 100%;
-      height: 42px;
+      height: var(--input-height, 42px);
       padding: 0 40px 0 38px;
       font-size: .95rem;
       font-family: inherit;
       color: #2c2e45;
       background: #fff;
-      border: 1px solid #d8d9e3;
-      border-radius: 8px;
+      border: 1px solid var(--input-border, #d8d9e3) !important;
+      border-radius: var(--input-radius, 10px) !important;
       outline: none;
       transition: border-color .15s, box-shadow .15s;
 
@@ -245,11 +246,11 @@ export default {
       }
 
       &:hover {
-        border-color: #c3c5d4;
+        border-color: var(--input-border-hover, #c3c5d4) !important;
       }
 
       &:focus {
-        border-color: rgb(var(--vs-primary));
+        border-color: rgb(var(--vs-primary)) !important;
         box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
       }
     }
@@ -294,7 +295,7 @@ export default {
 
     &.has-error {
       input {
-        border-color: rgb(var(--vs-danger));
+        border-color: rgb(var(--vs-danger)) !important;
         &:focus {
           box-shadow: 0 0 0 3px rgba(var(--vs-danger), .15);
         }
@@ -307,24 +308,29 @@ export default {
 
   .login-submit {
     width: 100%;
-    height: 42px;
+    height: var(--input-height, 42px);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     font-size: .95rem;
-    font-weight: 500;
+    font-weight: 600;
     font-family: inherit;
     color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--input-radius, 10px);
     cursor: pointer;
     background: rgb(var(--vs-primary));
-    transition: filter .15s, box-shadow .15s, opacity .15s;
+    box-shadow: 0 6px 14px -6px rgba(var(--vs-primary), .7);
+    transition: filter .15s, box-shadow .15s, opacity .15s, transform .15s;
 
     &:hover:not(:disabled) {
       filter: brightness(.95);
-      box-shadow: 0 4px 12px -4px rgba(var(--vs-primary), .6);
+      box-shadow: 0 8px 18px -8px rgba(var(--vs-primary), .8);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(.98);
     }
 
     &:disabled {
@@ -350,7 +356,7 @@ export default {
   .login-field input {
     color: #fff;
     background: #10163a;
-    border-color: #414561;
+    border-color: #414561 !important;
   }
   .login-field__toggle:hover {
     background: #343a5c;
@@ -368,7 +374,7 @@ export default {
   gap: 10px;
   padding: 12px 12px 12px 14px;
   margin-bottom: 20px;
-  border-radius: 8px;
+  border-radius: var(--input-radius, 10px);
   border: 1px solid rgba(var(--alert-color), .25);
   border-left: 3px solid rgb(var(--alert-color));
   background: rgba(var(--alert-color), .07);

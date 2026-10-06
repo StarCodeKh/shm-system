@@ -35,11 +35,31 @@ export default {
   methods: {
     toggle() {
       const theme = this.isDark ? 'light' : 'dark'
-      // Smooth colour change for this switch only (not on every page load)
-      document.documentElement.classList.add('theme-switching')
-      this.$store.dispatch('updateTheme', themeFor(theme))
       try { localStorage.setItem(THEME_KEY, theme) } catch (e) { /* storage unavailable */ }
-      setTimeout(() => document.documentElement.classList.remove('theme-switching'), 400)
+      document.documentElement.setAttribute('data-theme', theme)
+      const apply = () => {
+        this.$store.dispatch('updateTheme', themeFor(theme))
+        return this.$nextTick() // App.vue swaps the body class on this tick
+      }
+
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      if (!document.startViewTransition || reduceMotion) {
+        apply()
+        return
+      }
+
+      // One GPU snapshot instead of animating every element: the new theme grows as a circle from the button
+      const rect = this.$el.getBoundingClientRect()
+      const x = rect.left + rect.width / 2
+      const y = rect.top + rect.height / 2
+      const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y))
+      const transition = document.startViewTransition(apply)
+      transition.ready.then(() => {
+        document.documentElement.animate(
+          { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+          { duration: 450, easing: 'cubic-bezier(.22, 1, .36, 1)', pseudoElement: '::view-transition-new(root)' }
+        )
+      }).catch(() => { /* skipped, theme is already applied */ })
     },
   },
 }
@@ -80,16 +100,15 @@ export default {
   }
 }
 
-// Brief cross-fade of colours while the theme switches
-.theme-switching,
-.theme-switching * {
-  transition: background-color .3s ease, border-color .3s ease, color .3s ease !important;
+// Theme switch: the browser's snapshot cross-fade is replaced by the circle reveal above
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nav-theme__icon,
-  .theme-switching,
-  .theme-switching * {
+  .nav-theme__icon {
     transition: none !important;
   }
 }
