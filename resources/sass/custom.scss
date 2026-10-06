@@ -661,68 +661,115 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
     p { color: #c2c6dc !important; }
 }
 
-// ---------------------------------------------------------------- Tabs (vs-tabs): segmented track with sliding pill
+// ---------------------------------------------------------------- Tabs (vs-tabs): compact segmented track; scrolls sideways when tabs don't fit
 .con-vs-tabs.vs-tabs-position-top {
     > .con-ul-tabs {
         position: relative;
         display: inline-flex;
         max-width: 100%;
-        margin-bottom: 18px;
-        padding: 4px;
+        margin-bottom: 16px;
+        padding: 3px;
         overflow-x: auto;
-        border-radius: 12px;
+        overflow-y: hidden;
+        overscroll-behavior-x: contain;
+        scroll-behavior: smooth;
+        scroll-snap-type: x proximity;
+        scroll-padding: 0 3px;
+        border-radius: 10px;
         background: #f1f2f6;
-        scrollbar-width: none;
+        // Thin scrollbar under the track, only noticeable on hover
+        scrollbar-width: thin;
+        scrollbar-color: transparent transparent;
 
-        &::-webkit-scrollbar {
-            display: none;
+        &:hover {
+            scrollbar-color: rgba(110, 112, 145, .35) transparent;
         }
 
-        .ul-tabs {
+        &::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-radius: 4px;
+            background: transparent;
+        }
+
+        &:hover::-webkit-scrollbar-thumb {
+            background: rgba(110, 112, 145, .35);
+        }
+
+        // As wide as its tabs (Vuesax makes it 100% wide and centres it, so with many tabs
+        // the first ones overflowed to the left where the track can't scroll to them)
+        .vs-tabs--ul {
             display: flex;
             flex-wrap: nowrap;
+            justify-content: flex-start !important;
+            gap: 2px;
+            width: max-content;
+            min-width: 100%;
             border: none;
+            box-shadow: none;
         }
 
         .vs-tabs--li {
             position: relative;
             z-index: 1;
             flex-shrink: 0;
+            scroll-snap-align: start;
 
-            .vs-tabs--btn {
-                padding: 8px 16px;
+            .vs-tabs--btn,
+            &.activeChild .vs-tabs--btn {
+                padding: 5px 12px 5px 6px;
                 font-family: inherit;
-                font-size: .875rem;
+                font-size: .8125rem;
                 font-weight: 500;
                 white-space: nowrap;
                 color: #6e7091;
-                transition: color .2s ease;
-
-                .vs-tabs--btn-icon {
-                    font-size: 1rem;
-                    color: inherit !important;
-                }
+                border-radius: 8px;
+                transition: color .2s ease, background .2s ease, box-shadow .2s ease;
             }
 
-            &:hover .vs-tabs--btn {
+            &:hover:not(.activeChild) .vs-tabs--btn {
                 color: #2c2e45;
+                background: rgba(255, 255, 255, .55);
+            }
+
+            &:active .vs-tabs--btn {
+                transform: scale(.96);
             }
 
             &.activeChild .vs-tabs--btn {
                 color: rgb(var(--vs-primary));
                 font-weight: 600;
+                background: transparent;
+            }
+
+            .vs-tabs--btn {
+                transition: color .25s ease, background .2s ease, transform .15s ease;
             }
         }
 
-        // Vuesax moves this under the active tab; it becomes the white pill
+        // White pill that slides to the active tab. tabsScroll.js measures the tab and sets
+        // --tab-pill-x / --tab-pill-w (Vuesax's own measurement is off inside this track).
         .line-vs-tabs {
-            top: 4px !important;
-            height: calc(100% - 8px) !important;
-            border-radius: 9px;
+            display: block !important;
+            top: 3px !important;
+            left: 0 !important;
+            z-index: 0;
+            width: var(--tab-pill-w, 0) !important;
+            height: calc(100% - 6px) !important;
+            border-radius: 8px;
             background: #fff !important;
-            box-shadow: 0 2px 8px rgba(23, 23, 74, .12) !important;
-            transform: none !important;
-            transition: left .3s cubic-bezier(.4, 0, .2, 1), width .3s cubic-bezier(.4, 0, .2, 1) !important;
+            box-shadow: 0 1px 2px rgba(23, 23, 74, .06), 0 2px 8px rgba(23, 23, 74, .1) !important;
+            transform: translateX(var(--tab-pill-x, 0)) !important;
+            transition: transform .4s cubic-bezier(.65, 0, .25, 1.15), width .4s cubic-bezier(.65, 0, .25, 1.15) !important;
+            pointer-events: none;
+        }
+
+        // Until the first measurement, show the pill in place without sliding in from the left
+        &:not(.has-tab-pill) .line-vs-tabs {
+            opacity: 0;
+            transition: none !important;
         }
     }
 
@@ -742,13 +789,19 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
     .con-vs-tabs > .con-slot-tabs > .vs-tabs--content {
         animation: none;
     }
+
+    .con-vs-tabs.vs-tabs-position-top > .con-ul-tabs .line-vs-tabs {
+        transition: none !important;
+    }
 }
 
 .theme-dark .con-vs-tabs.vs-tabs-position-top > .con-ul-tabs {
     background: #10163a;
 
-    .line-vs-tabs { background: #262c49 !important; }
+    .line-vs-tabs { background: #262c49 !important; box-shadow: 0 2px 8px rgba(0, 0, 0, .3) !important; }
     .vs-tabs--li .vs-tabs--btn { color: #c2c6dc; }
+    .vs-tabs--li:hover:not(.activeChild) .vs-tabs--btn { color: #fff; background: rgba(255, 255, 255, .05); }
+    .vs-tabs--li.activeChild .vs-tabs--btn { color: rgb(var(--vs-primary)); }
 }
 
 // ---------------------------------------------------------------- Side tabs (position left / right): same track, pill slides vertically
@@ -3362,24 +3415,25 @@ label.vs-select--label {
 .con-vs-tabs .con-ul-tabs .vs-tabs--li .vs-tabs--btn {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 
     .vs-tabs--btn-icon {
         flex-shrink: 0;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 28px;
-        height: 28px;
+        width: 24px;
+        height: 24px;
         margin: 0 !important;
-        font-size: 15px !important;
-        border-radius: 8px;
+        font-size: 13px !important;
+        border-radius: 6px;
         background: rgba(110, 112, 145, .1);
         transition: background .2s ease, transform .25s cubic-bezier(.34, 1.56, .64, 1);
     }
 
     > span {
-        line-height: 28px; // matches the icon box so Khmer and Latin labels sit on its centre line
+        padding: 0 !important; // spacing comes from gap, not Vuesax's padding-left
+        line-height: 24px; // matches the icon box so Khmer and Latin labels sit on its centre line
     }
 }
 

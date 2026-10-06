@@ -54,6 +54,9 @@ import './plugins/datePicker'
 // Textareas grow with their content
 import './plugins/autosize'
 
+// Clicked tab scrolls into view in scrollable tab bars
+import './plugins/tabsScroll'
+
 // Vuesax Admin Filters
 import './filters/filters'
 
