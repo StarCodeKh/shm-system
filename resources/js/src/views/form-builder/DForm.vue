@@ -523,11 +523,11 @@ export default {
             if (!field) return
             const row = savedRecord(answer)
             forgetLookup(field)
-            let choices = await lookupChoices(field, this.$i18n.locale)
-            if (!choices) {
-                choices = Array.isArray(this.data[field]) ? this.data[field].slice() : []
-                if (row && !optionForRecord(choices, row)) choices.push(optionFromRecord(field, row))
-            }
+            const current = Array.isArray(this.data[field]) ? this.data[field] : []
+            let choices = (await lookupChoices(field, this.$i18n.locale)) || current.slice()
+            // What was just created is always offered here, even when the shared list leaves it out
+            // (e.g. departments are limited to the user's own): the one who added it gets to use it
+            if (row && !optionForRecord(choices, row)) choices = [...choices, optionFromRecord(field, row, choices.length ? choices : current)]
             this.$set(this.data, field, choices)
             const option = optionForRecord(choices, row)
             if (option) this.$set(this.form.attribute, field, option)

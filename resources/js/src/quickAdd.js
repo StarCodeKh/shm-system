@@ -84,9 +84,11 @@ export function optionForRecord(options, row) {
     return null;
 }
 
-/** A choice made from the row itself, for lists with no shared lookup to reload */
-export function optionFromRecord(field, row) {
-    const label = row.name_kh || row.name_en || row.name || row.title_kh || row.title || row.code || String(row.id);
+/** A choice made from the row itself, labelled like the list it joins ("01-Name" when the others show their code) */
+export function optionFromRecord(field, row, options = []) {
+    const name = row.name_kh || row.name_en || row.name || row.title_kh || row.title || row.code || String(row.id);
+    const codeFirst = row.code && options.some(o => o && /^[^\s:-]+[-:]\S/.test(String(o.label)));
+    const label = codeFirst && name !== row.code ? `${row.code}-${name}` : name;
     const value = /_id$/.test(field) ? row.id : (row.code || row.name_en || row.name_kh || row.id);
     return { label, value };
 }
