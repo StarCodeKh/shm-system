@@ -2,7 +2,7 @@
     <vx-card :title="''">
         <div class="p-3 mb-4" style="overflow: scroll;">
             <vs-table style="min-width: 500px;min-width: 200%;">
-                <template slot="thead" style="background: #28c76f;">
+                <template #thead style="background: #28c76f;">
                     <vs-th>{{ $t("ល.រ") }}</vs-th>
                     <vs-th>{{ $t("ឈ្មោះចំណាត់ថ្នាក់ចំណូល") }}</vs-th>
                     <vs-th>{{ $t("ច្បាប់ហិរញ្ញវត្ថុ") }}</vs-th>
@@ -217,7 +217,6 @@
 <script>
 
 import axios from "@/axios.js";
-import { stringify } from 'querystring';
 import { ref } from 'vue';
 export default {
     data() {

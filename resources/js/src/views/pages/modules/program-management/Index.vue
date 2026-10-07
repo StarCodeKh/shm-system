@@ -5,11 +5,11 @@
     <d-modal-form @clicked="initTableData" ref="refModalForm" :data="data" :api="api" :formAttributes="formAttributes"
       :rowDisplay="rowDisplay" :dataAttributes="dataAttributes" :title="$t(title)"></d-modal-form>
 
-    <!-- <vs-popup classContent="popup-example" title="Lorem ipsum dolor sit amet" :active.sync="popupActive2">
+    <!-- <vs-popup classContent="popup-example" title="Lorem ipsum dolor sit amet" v-model:active="popupActive2">
       <vs-input class="inputx mb-3" placeholder="Placeholder" />
       <vs-input disabled class="inputx mb-3" placeholder="Disabled" />
       <vs-button @click="popupActive3=true" color="primary" type="filled">Open Inner Popup</vs-button>
-      <vs-popup title="Inner popup" :active.sync="popupActive3">
+      <vs-popup title="Inner popup" v-model:active="popupActive3">
         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
       </vs-popup>
     </vs-popup> -->
@@ -17,7 +17,7 @@
     <div class="flex flex-wrap items-center justify-between">
       <vx-input-group class="mb-base mr-3">
         <!-- <vs-input v-model="mailTo" /> -->
-        <template slot="append">
+        <template #append>
           <div class="append-text btn-addon">
             <vs-button type="border" @click="mailTo = ''" class="whitespace-no-wrap">{{ $t("Search") }}</vs-button>
           </div>
@@ -80,11 +80,11 @@
     <vs-navbar text-color="rgba(255,255,255,.6)" active-text-color="rgba(255,255,255,1)" :type="type" color="#F4F4F4"
       v-model="activeItem" style="box-shadow: 1px 5px 15px;" class="p-2 mb-6">
 
-      <div slot="title">
+      <template #title><div>
         <vs-navbar-title>
           <span>គោលបំណងនយោបាយទី២ៈ ការគ្រប់គ្រងប្រព័ន្ធហិរញ្ញវត្ថុ</span>
         </vs-navbar-title>
-      </div>
+      </div></template>
 
       <vs-navbar-item index="0">
         <div class="vx-row mr-1">

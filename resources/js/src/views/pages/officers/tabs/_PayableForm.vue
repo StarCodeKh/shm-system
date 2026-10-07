@@ -3,9 +3,7 @@
         <!-- <d-form @clickForm="initTableData" ref="refModalForm" :data="data" :dataInfo="dataInfo"
                     :parentDataInfo="parentDataInfo" :formAttributes="formAttributes" :api="api"
                     :rowDisplay="rowDisplay"/> -->
-        <template title="modal" class="modal">
             <d-file-manager ref="refModelFileManager" @clicked="initPassProps"></d-file-manager>
-        </template>
         <div class="vx-col lg:w-2/3 w-full mt-5">
             <d-form-tabs ref="tabs" v-model="tab" :sections="tabSections" :errors="errors" icon="CreditCardIcon"
                 :title="$t('payable_form_title')" :subtitle="$t('payable_form_subtitle')">

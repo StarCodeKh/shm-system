@@ -1,6 +1,6 @@
 <template>
     <vs-popup style="z-index: 52000;" class="d-modal d-modal--xl" classContent="popup-example" :title="$t('បញ្ជីទិន្នន័យ')"
-        :active.sync="showModalForm">
+        v-model:active="showModalForm">
         <!-- <form-ceiling ref="refOpenPrivatePopupForm" :api="dataAttributes.api" :dataAttributes="dataAttributes"
             :dataInfo="dataInfo"></form-ceiling> -->
         <d-table-list v-if="showTblList" @clicked="initTableData" :api="api" ref="refInitPage" :allowDel="true" :title="title"

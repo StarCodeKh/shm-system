@@ -1,14 +1,14 @@
 <template>
     <div class="demo-alignment">
         <vs-popup v-if="dataAttributes.popupFullscreen" class="d-modal" :class="sizeClass" classContent="popup-example" :title="popupTitle"
-            :active.sync="showModalForm">
+            v-model:active="showModalForm">
             <!-- Modal Indicator Sub Program-->
             <!-- <modal-indicator-sub-program v-if="dataAttributes.hasIndicatorSubPro" :dataInfo="dataInfo"
                 ref="refInitRequest"></modal-indicator-sub-program> -->
 
             <span v-if="!dataAttributes.hideFormData">
                 <d-form @clickForm="initTableData" @cancel="showModalForm = false" ref="refModalForm" :data="data" :dataInfo="dataInfo"
-                    :parentDataInfo="parentDataInfo" :formAttributes="formAttributes" :api="api"
+                    :parentDataInfo="parentDataInfo" :formAttributes="formAttributes" :api="api" :submitLabel="submitLabel" :submitIcon="submitIcon"
                     :rowDisplay="layout.grid"/>
             </span>
 
@@ -16,9 +16,9 @@
                 :dataAttributes="dataAttributes"></d-indicator> -->
         </vs-popup>
         
-        <vs-popup v-else class="d-modal" :class="sizeClass" classContent="popup-example" :title="popupTitle" :active.sync="showModalForm">
+        <vs-popup v-else class="d-modal" :class="sizeClass" classContent="popup-example" :title="popupTitle" v-model:active="showModalForm">
             <d-form @clickForm="initTableData" @cancel="showModalForm = false" ref="refModalForm" :data="data" :dataInfo="dataInfo"
-                :parentDataInfo="parentDataInfo" :formAttributes="formAttributes" :api="api"
+                :parentDataInfo="parentDataInfo" :formAttributes="formAttributes" :api="api" :submitLabel="submitLabel" :submitIcon="submitIcon"
                 :rowDisplay="layout.grid"/>
             <!-- <d-indicator v-if="dataAttributes.hasIndicator" :dataInfo="dataInfo"
                 :dataAttributes="dataAttributes"></d-indicator> -->
@@ -32,7 +32,6 @@
 
 <script>
 import { ref } from 'vue';
-import Vue from "vue";
 import apiConfig from "@/apiConfig.js"
 import DForm from '@/views/form-builder/DForm.vue'
 // import DIndicator from '@/views/form-builder/DIndicator.vue';
@@ -44,6 +43,10 @@ export default {
         DForm,
     },
     props: {
+        // A popup that does one thing (e.g. send a notification) keeps this title instead of "Create …" / "Edit …"
+        fixedTitle: { type: String, default: '' },
+        submitLabel: { type: String, default: '' },
+        submitIcon: { type: String, default: '' },
         data: {
             required: true,
         },
@@ -77,13 +80,17 @@ export default {
         }
     },
     computed: {
-        // Popup layout follows the form, so it fits without scrolling where it can:
-        // up to 4 fields one column, up to 10 two columns, more three, child tables extra wide
+        // Popup layout follows the form, so it fits without scrolling where it can and rows fill evenly.
+        // Every field takes one grid cell (inputs, selects, dates, notes and attachments alike).
+        //   up to 4 fields -> 1 column; 5-8 -> 2; 9 or more -> 3,
+        //   except 10 -> 2 columns (5 full rows instead of 3 + 3 + 3 + one field alone)
+        // Forms with child tables get the extra-wide popup and keep their own grid.
         layout() {
             const fields = (this.formAttributes || []).filter(f => f && f.type !== 'hidden')
             if (fields.some(f => f.type === 'grid' || f.type === 'text_group')) return { size: 'd-modal--xl', grid: this.rowDisplay }
-            if (fields.length <= 4) return { size: 'd-modal--sm', grid: '1grid' }
-            if (fields.length <= 10) return { size: 'd-modal--md', grid: '2col' }
+            const cells = fields.length
+            if (cells <= 4) return { size: 'd-modal--sm', grid: '1grid' }
+            if (cells <= 8 || cells === 10) return { size: 'd-modal--md', grid: '2col' }
             return { size: 'd-modal--lg', grid: '3grid' }
         },
         sizeClass() {
@@ -91,6 +98,7 @@ export default {
         },
         // "Create …" for new records, "Edit …" when a record is loaded
         popupTitle() {
+            if (this.fixedTitle) return this.fixedTitle
             const name = this.$te(this.title) ? this.$t(this.title) : this.title
             return this.dataInfo && this.dataInfo.id
                 ? this.$t('form_edit_title', { name })

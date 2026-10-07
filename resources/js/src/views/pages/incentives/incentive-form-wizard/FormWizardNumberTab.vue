@@ -124,10 +124,10 @@
                                 <h6 v-else>រៀបចំដោយ: {{prepared_by}}</h6>
                             </div>
                             <div class="mt-5">
-                                <h6>ថ្ងៃបង្កើតបើកផ្តល់: {{issue_date | date}}</h6>
+                                <h6>ថ្ងៃបង្កើតបើកផ្តល់: {{ $filters.date(issue_date) }}</h6>
                             </div>
                             <div class="mt-5">
-                                <h6>ថ្ងៃបើកផ្តល់ប្រាក់ឧបត្ថម្ភ: {{issue_from_date | date}} - {{issue_to_date | date}}</h6>
+                                <h6>ថ្ងៃបើកផ្តល់ប្រាក់ឧបត្ថម្ភ: {{ $filters.date(issue_from_date) }} - {{ $filters.date(issue_to_date) }}</h6>
                             </div>
                             <div class="mt-5">
                                 <h6>សំគាល់: </h6>
@@ -255,10 +255,9 @@
 </template>
 
 <script>
-import {FormWizard, TabContent} from 'vue-form-wizard'
+import {FormWizard, TabContent} from '@/components/form-wizard'
 import 'vue-form-wizard/dist/vue-form-wizard.min.css'
 import moduleDataList from "@/store/data-list/moduleDataList.js"
-import { Validator } from 'vee-validate';
 import vSelect from 'vue-select'
 import axios from "@/axios.js"
 const dict = {
@@ -302,7 +301,6 @@ const dict = {
     }
 };
 // Field messages for Khmer; merged without changing the app's validation language
-Validator.localize({ kh: dict });
 export default {
     components: {
         FormWizard,
@@ -789,7 +787,7 @@ export default {
         this.wasSidebarOpen = this.$store.state.reduceButton;
         this.$store.commit('TOGGLE_REDUCE_BUTTON', true)
     },
-    beforeDestroy() {
+    beforeUnmount() {
         if (!this.wasSidebarOpen) this.$store.commit('TOGGLE_REDUCE_BUTTON', false)
     },
 }

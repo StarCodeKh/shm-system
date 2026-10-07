@@ -27,7 +27,7 @@ export default {
     if (this.media.addEventListener) this.media.addEventListener('change', this.onDeviceChange)
     else if (this.media.addListener) this.media.addListener(this.onDeviceChange)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (!this.media) return
     if (this.media.removeEventListener) this.media.removeEventListener('change', this.onDeviceChange)
     else if (this.media.removeListener) this.media.removeListener(this.onDeviceChange)

@@ -63,15 +63,15 @@
       </div>
     </VuePerfectScrollbar>
 
-    <div class="flex flex-wrap items-center p-6" slot="footer">
+    <template #footer><div class="flex flex-wrap items-center p-6">
       <vs-button class="mr-6" @click="submitData" :disabled="!isFormValid">Submit</vs-button>
       <vs-button type="border" color="danger" @click="isSidebarActiveLocal = false">Cancel</vs-button>
-    </div>
+    </div></template>
   </vs-sidebar>
 </template>
 
 <script>
-import VuePerfectScrollbar from 'vue-perfect-scrollbar'
+import VuePerfectScrollbar from '@/components/PerfectScrollbar.vue'
 
 export default {
   props: {

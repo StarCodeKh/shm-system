@@ -169,7 +169,6 @@ export default {
     &:focus-visible {
         outline: none;
         border-color: rgb(var(--accent));
-        box-shadow: 0 0 0 3px rgba(var(--accent), .2);
     }
 
     &__icon {

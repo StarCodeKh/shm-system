@@ -41,28 +41,29 @@
                 <statistics-card-line
                   hideChart
                   class="mb-base"
-                  icon="ServerIcon"
+                  icon="CheckCircleIcon"
                   icon-right
                   :statistic="summary.approved"
                   :statisticTitle="$t('stat_approved')"
-                  color="primary" />
+                  color="success" />
             </div>
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
                 <statistics-card-line
                   hideChart
                   class="mb-base"
-                  icon="CpuIcon"
+                  icon="EyeIcon"
                   icon-right
                   :statistic="summary.in_review"
-                  :statisticTitle="$t('stat_reviewing')" />
+                  :statisticTitle="$t('stat_reviewing')"
+                  color="warning" />
             </div>
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
                 <statistics-card-line
                   hideChart
                   class="mb-base"
-                  icon="ServerIcon"
+                  icon="LoaderIcon"
                   icon-right
                    :statistic="summary.in_progress"
                   :statisticTitle="$t('stat_processing')"
@@ -83,11 +84,11 @@
                 <statistics-card-line
                   hideChart
                   class="mb-base"
-                  icon="ServerIcon"
+                  icon="XCircleIcon"
                   icon-right
                   :statistic="summary.rejected"
                   :statisticTitle="$t('stat_rejected')"
-                  color="primary" />
+                  color="danger" />
             </div>
         </div>
         <!-- Customize Incentive Dashboard -->
@@ -96,10 +97,11 @@
                 <statistics-card-line
                   hideChart
                   class="mb-base"
-                  icon="CreditCardIcon"
+                  icon="FileTextIcon"
                   icon-right
                   :statistic="dataTables.total"
-                  :statisticTitle="$t('stat_grand_total')" />
+                  :statisticTitle="$t('stat_total_records')"
+                  color="navy" />
             </div>
 
             <div class="vx-col w-full md:w-1/3 lg:w-1/3 xl:w-1/3">
@@ -110,7 +112,7 @@
                   icon-right
                   :statistic="dataTables.total_amount"
                   :statisticTitle="$t('stat_incentive_paid_riel')"
-                  color="primary" />
+                  color="success" />
             </div>
         </div>
         <!-- Customize Account Payable Dashboard -->
@@ -120,11 +122,11 @@
                 <small><statistics-card-line
                   hideChart
                   class="mb-base"
-                  icon="HashIcon"
+                  icon="FileTextIcon"
                   icon-right
                   :statistic="dataTables.total"
-                  :statisticTitle="$t('stat_grand_total')"
-                  color="dark" /></small>
+                  :statisticTitle="$t('stat_total_records')"
+                  color="navy" /></small>
             </div>
 
             <div class="vx-col w-full md:w-1/3 lg:w-1/3 xl:w-1/3">
@@ -134,7 +136,8 @@
                   icon="CheckCircleIcon"
                   icon-right
                   :statistic="summary.total_paid_khr"
-                  :statisticTitle="$t('stat_paid_riel')" /></small>
+                  :statisticTitle="$t('stat_paid_riel')"
+                  color="success" /></small>
             </div>
 
             <div class="vx-col w-full md:w-1/3 lg:w-1/3 xl:w-1/3">
@@ -155,61 +158,59 @@
                 <statistics-card-line
                   hideChart
                   class="mb-base"
-                  icon="CpuIcon"
+                  icon="FileTextIcon"
                   icon-right
                   :statistic="dataTables.total"
-                  :statisticTitle="$t('stat_grand_total')" />
+                  :statisticTitle="$t('stat_total_records')"
+                  color="navy" />
             </div>
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
                 <statistics-card-line
                   hideChart
                   class="mb-base"
-                  icon="ServerIcon"
+                  icon="CheckCircleIcon"
                   icon-right
                   :statistic="summary.paid"
                   :statisticTitle="$t('stat_paid')"
-                  color="primary" />
+                  color="success" />
             </div>
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
                 <statistics-card-line
                   hideChart
                   class="mb-base"
-                  icon="ServerIcon"
+                  icon="SlashIcon"
                   icon-right
                   :statistic="summary.void"
                   :statisticTitle="$t('stat_void')"
-                  color="primary" />
+                  color="dark" />
             </div>
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
                 <statistics-card-line
                   hideChart
                   class="mb-base"
-                  icon="CpuIcon"
+                  icon="ShieldIcon"
                   icon-right
                   :statistic="summary.exceptional"
-                  :statisticTitle="$t('stat_exempt')" />
+                  :statisticTitle="$t('stat_exempt')"
+                  color="warning" />
             </div>
 
         </div>
         <!-- #End Customize Dashboard Information -->
         
         <DModalForm @clicked="initTableData" ref="refModalForm" :data="dataTables" :api="api"
-            :formAttributes="formAttributes" :parentDataInfo="dataInfo" :rowDisplay="rowDisplay"
+            :formAttributes="formAttributes" :parentDataInfo="activeRow || dataInfo" :rowDisplay="rowDisplay"
             :dataAttributes="dataAttributes" :title="$t(title)" />
 
-        <template title="modal" class="modal">
             <d-file-manager ref="refModelFileManager"></d-file-manager>
-        </template>
 
-        <template title="modal" class="modal">
             <d-file-uploader ref="refModelFileUploader" @clicked="initTableData"></d-file-uploader>
-        </template>
 
         <vs-prompt title="Export To Excel" class="export-options" @cancle="clearFields" @accept="exportToExcel"
-            accept-text="Export" @close="clearFields" :active.sync="activePrompt">
+            accept-text="Export" @close="clearFields" v-model:active="activePrompt">
             <vs-input v-model="fileName" :placeholder="$tt('Enter File Name..')" class="w-full" />
             <v-select v-model="selectedFormat" :options="formats" class="my-4" />
             <div class="flex">
@@ -276,7 +277,7 @@
             <!-- & dataTables.data.length -->
             <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 1" :max-items="dataTables.limit"
                 :data="dataTables.data">
-                <template slot="thead">
+                <template #thead>
                     <!-- 28C76F -->
                     <vs-th>{{ $t("no") }}</vs-th>
                     <vs-th :key="i" :class="{ 'dt-num': isAmountColumn(header) }"
@@ -284,7 +285,7 @@
                     <vs-th class="dt-actions-head">{{ $t("Action")
                     }}</vs-th>
                 </template>
-                <template slot-scope="{data}">
+                <template #default="{data}">
                     <tbody :key="indextr" v-for="(tr, indextr) in data">
                         <vs-tr :state="dataAttributes.backgroundColor">
                             <vs-td>{{ calPageIncreaseNumber(dataTables.limit, indextr) }}</vs-td>
@@ -296,7 +297,7 @@
                                         rel="noopener" :title="fileCell(tr, header).url" @click.stop>
                                         <img v-if="fileCell(tr, header).isImage && !brokenFiles[fileKey(tr, header)]"
                                             :src="fileCell(tr, header).url" alt="" loading="lazy"
-                                            @error="$set(brokenFiles, fileKey(tr, header), true)">
+                                            @error="brokenFiles[fileKey(tr, header)] = true">
                                         <span v-else class="dt-file__badge" :style="{ '--tone': fileCell(tr, header).tone }">
                                             {{ fileCell(tr, header).ext || 'file' }}
                                         </span>
@@ -313,7 +314,7 @@
                                     <span class="dt-path__text" :title="tr[header]">{{ tr[header] }}</span>
                                 </template>
                                 <template v-else>
-                                    <template>{{ customField(tr, header) }}</template>
+                                    {{ customField(tr, header) }}
                                     <!-- <template v-if="header == 'status'">
                                         <template v-if="tr[header]!=null && tr[header]['title'] != undefined">{{ tr[header]["title"] }} </template>
                                         <template v-else>{{ tr[header] }} </template>
@@ -325,8 +326,8 @@
                             </vs-td>
                             <vs-td class="dt-actions-cell">
                                 <div class="dt-actions">
-                                    <template v-for="(rowBtnAction, bi) in (dataAttributes.actionButton || [])">
-                                        <button :key="'act-' + bi"
+                                    <template v-for="(rowBtnAction, bi) in (dataAttributes.actionButton || [])" :key="'act-' + bi">
+                                        <button
                                             v-if="rowBtnAction.allow && can(rowBtnAction.permission)"
                                             type="button" class="dt-action" :title="rowBtnAction.title ? $t(rowBtnAction.title) : ''"
                                             @click.stop="initAction(rowBtnAction, tr, rowBtnAction.method)">
@@ -353,7 +354,7 @@
             <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 2" :max-items="dataTables.limit"
                 :data="dataTables.data">
 
-                <template slot="thead">
+                <template #thead>
                     <!-- 28C76F -->
                     <vs-th class="dt-th-strong">{{ $t("no") }}</vs-th>
                     <vs-th class="dt-th-strong" :key="i"
@@ -362,7 +363,7 @@
                     }}</vs-th>
                 </template>
 
-                <template slot-scope="{data}">
+                <template #default="{data}">
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
                         <vs-tr :state="dataAttributes.backgroundColor">
                             <!-- <td :colspan="Object.keys(ptr.children[0]).length">{{ ptr.name_kh }}</td> -->
@@ -431,7 +432,7 @@
 
             <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 3" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
-                <template slot-scope="{data}">
+                <template #default="{data}">
                     <vs-tr>
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
                             :colspan="colspan(header)" :rowspan="rowspan(header)">
@@ -470,7 +471,7 @@
                             <td></td>
                         </vs-tr>
 
-                        <template v-for="row in ptr.data.children">
+                        <template v-for="row in ptr.data.children" :key="index">
                             <vs-tr :state="'warning'">
                                 <td>{{ row.name }}
                                     <template v-if="dataAttributes.hasPrivateButton">
@@ -495,13 +496,13 @@
                                     </template>
                                 </td>
                             </vs-tr>
-                            <vs-tr :key="index" v-for="(row2, index) in row.data">
+                            <vs-tr v-for="(row2, index) in row.data">
                                 <td>{{ row2.name }}</td>
                                 <td :key="index3" v-for="(row, index3) in row2.values">{{ row }}</td>
                                 <td></td>
                             </vs-tr>
 
-                            <template v-for="row3 in row.dataDetails">
+                            <template v-for="row3 in row.dataDetails" :key="index">
                                 <vs-tr class="dt-row-highlight">
                                     <td>{{ row3.name }}</td>
                                     <td :key="index4" v-for="(row, index4) in row3.values">{{ row }}</td>
@@ -524,7 +525,7 @@
                                     </td>
                                 </vs-tr>
 
-                                <vs-tr :key="index" v-for="(row2, index) in row3.data">
+                                <vs-tr v-for="(row2, index) in row3.data">
                                     <td>{{ row2.name }}</td>
                                     <td :key="index3" v-for="(row, index3) in row2.values">{{ row }}</td>
                                     <td></td>
@@ -538,7 +539,7 @@
 
             <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 4" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
-                <template slot-scope="{data}">
+                <template #default="{data}">
                     <vs-tr>
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
                             :colspan="colspan(header)" :rowspan="rowspan(header)">
@@ -570,7 +571,7 @@
                             <td v-else :colspan="ptr.colspan">{{ ptr.name }}</td>
                         </vs-tr>
 
-                        <template v-if="ptr.children" v-for="(row, index) in ptr.children">
+                        <template v-for="(row, index) in ptr.children"><template v-if="ptr.children">
 
                             <vs-tr class="dt-row-group">
                                 <!-- <td></td> -->
@@ -583,7 +584,7 @@
                                 </td>
                             </vs-tr>
 
-                            <template v-if="row.children" v-for="row in row.children">
+                            <template v-for="row in row.children"><template v-if="row.children">
 
                                 <vs-tr class="dt-row-level">
                                     <!-- <td></td> -->
@@ -596,7 +597,7 @@
                                     </td>
                                 </vs-tr>
 
-                                <template v-if="row.children" v-for="row in row.children">
+                                <template v-for="row in row.children"><template v-if="row.children">
                                     <vs-tr class="dt-row-highlight">
                                         <!-- <td></td> -->
                                         <td>
@@ -624,15 +625,15 @@
                                         </vs-tr>
                                     </template>
 
-                                </template>
+                                </template></template>
 
                                 <!-- <vs-tr :key="index" v-for="(row2, index) in row3.data">
                                 <td>{{ row2.name }}</td>
                                 <td :key="index3" v-for="(row, index3) in row2.values">{{ row }}</td>
                                 <td></td>
                             </vs-tr> -->
-                            </template>
-                        </template>
+                            </template></template>
+                        </template></template>
 
                     </tbody>
                 </template>
@@ -641,7 +642,7 @@
             <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 5" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
 
-                <template slot-scope="{data}">
+                <template #default="{data}">
 
                     <vs-tr>
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
@@ -677,7 +678,7 @@
                             <td v-else :colspan="dataTables.dataHeader.colspan">{{ ptr.name }}</td>
                         </vs-tr>
                         <!-- Level 1 -->
-                        <template v-if="ptr.children" v-for="(row, index) in ptr.children">
+                        <template v-for="(row, index) in ptr.children"><template v-if="ptr.children">
 
                             <vs-tr :state="'warning'">
                                 <td>{{ row.name }}</td>
@@ -707,7 +708,7 @@
                             </template>
 
                             <!-- Level 2 -->
-                            <template v-if="row.children" v-for="row in row.children">
+                            <template v-for="row in row.children"><template v-if="row.children">
 
                                 <vs-tr :state="'danger'">
                                     <td>{{ row.name }}</td>
@@ -742,7 +743,7 @@
                                 </template>
 
                                 <!-- Level 3 -->
-                                <template v-if="row.children" v-for="row in row.children">
+                                <template v-for="row in row.children"><template v-if="row.children">
                                     <vs-tr class="dt-row-highlight">
                                         <td>{{ row.name }}</td>
                                         <td>{{ }}</td>
@@ -779,9 +780,9 @@
                                         </vs-tr>
                                     </template>
 
-                                </template>
-                            </template>
-                        </template>
+                                </template></template>
+                            </template></template>
+                        </template></template>
 
                     </tbody>
                 </template>
@@ -789,7 +790,7 @@
 
             <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 6" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
-                <template slot-scope="{data}">
+                <template #default="{data}">
 
                     <vs-tr>
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
@@ -831,14 +832,14 @@
                                 </vs-td>
                             </vs-tr>
 
-                            <template v-for="child in parent.children">
+                            <template v-for="child in parent.children" :key="sindex">
                                 <vs-tr class="dt-row-highlight">
                                     <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                         {{ child[dataField] }}
                                     </vs-td>
                                 </vs-tr>
 
-                                <vs-tr :key="sindex" v-for="(schild, sindex) in child.children">
+                                <vs-tr v-for="(schild, sindex) in child.children">
                                     <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                         {{ schild[dataField] }}
                                     </vs-td>
@@ -851,7 +852,7 @@
 
             <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 7" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
-                <template slot-scope="{data}">
+                <template #default="{data}">
 
                     <vs-tr>
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
@@ -895,14 +896,14 @@
                                 </vs-td>
                             </vs-tr>
 
-                            <template v-for="child in parent.children">
+                            <template v-for="child in parent.children" :key="sindex">
                                 <vs-tr class="dt-row-highlight">
                                     <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                         {{ child[dataField] }}
                                     </vs-td>
                                 </vs-tr>
 
-                                <vs-tr :key="sindex" v-for="(schild, sindex) in child.children">
+                                <vs-tr v-for="(schild, sindex) in child.children">
                                     <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                         {{ schild[dataField] }}
                                     </vs-td>
@@ -916,7 +917,7 @@
             <!-- Income Form -->
             <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 8" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
-                <template slot-scope="{data}">
+                <template #default="{data}">
 
                     <vs-tr>
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
@@ -1120,14 +1121,14 @@
                                     <vs-td>{{ cctr.remark }}</vs-td>
                                 </vs-tr>
                             </template>
-                            <!-- <template v-for="child in parent.children">
+                            <!-- <template v-for="child in parent.children" :key="sindex">
                                 <vs-tr>
                                     <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                         <center>{{ child[dataField] }} </center>
                                     </vs-td>
                                 </vs-tr>
 
-                                <vs-tr :key="sindex" v-for="(schild, sindex) in child.children">
+                                <vs-tr v-for="(schild, sindex) in child.children">
                                     <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                         <center>{{ schild[dataField] }} </center>
                                     </vs-td>
@@ -1142,7 +1143,7 @@
             <!-- Expense Form  -->
             <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 9" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
-                <template slot-scope="{data}">
+                <template #default="{data}">
 
                     <vs-tr>
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
@@ -1346,14 +1347,14 @@
                                     <vs-td>{{ cctr.remark }}</vs-td>
                                 </vs-tr>
                             </template>
-                            <!-- <template v-for="child in parent.children">
+                            <!-- <template v-for="child in parent.children" :key="sindex">
                                 <vs-tr>
                                     <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                         <center>{{ child[dataField] }} </center>
                                     </vs-td>
                                 </vs-tr>
 
-                                <vs-tr :key="sindex" v-for="(schild, sindex) in child.children">
+                                <vs-tr v-for="(schild, sindex) in child.children">
                                     <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                         <center>{{ schild[dataField] }} </center>
                                     </vs-td>
@@ -1367,7 +1368,7 @@
 
             <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 10" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
-                <template slot-scope="{data}">
+                <template #default="{data}">
                     <vs-tr>
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
                             :colspan="colspan(header)" :rowspan="rowspan(header)">
@@ -1410,7 +1411,7 @@
                                 <td></td>
                             </vs-tr>
 
-                            <template v-for="row in row.children">
+                            <template v-for="row in row.children" :key="index">
                                 <vs-tr :state="'warning'">
                                     <td>{{ row.name }} <feather-icon style="cursor: pointer;"
                                             @click.stop="initAction(rowBtnAction, row, 'Edit')" icon="PlusIcon"
@@ -1424,13 +1425,13 @@
                                         </center>
                                     </td>
                                 </vs-tr>
-                                <vs-tr :key="index" v-for="(row2, index) in row.data">
+                                <vs-tr v-for="(row2, index) in row.data">
                                     <td>{{ row2.name }}</td>
                                     <td :key="index3" v-for="(row, index3) in row2.values">{{ row }}</td>
                                     <td></td>
                                 </vs-tr>
 
-                                <template v-for="row3 in row.dataDetails">
+                                <template v-for="row3 in row.dataDetails" :key="index">
                                     <vs-tr class="dt-row-highlight">
                                         <td>
                                             {{ row3.name }}
@@ -1459,7 +1460,7 @@
                                         </td>
                                     </vs-tr>
 
-                                    <vs-tr :key="index" v-for="(row4, index) in row3.data">
+                                    <vs-tr v-for="(row4, index) in row3.data">
                                         <td>{{ row4.name }}</td>
                                         <td :key="index3" v-for="(row, index3) in row4.values">{{ row }}</td>
                                         <td></td>
@@ -1474,7 +1475,7 @@
 
             <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 11" :max-items="dataTables.limit"
                 :data="dataTables.data" style="overflow-x: auto">
-                <template slot-scope="{data}">
+                <template #default="{data}">
 
                     <vs-tr>
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
@@ -1601,7 +1602,7 @@
             style="overflow: scroll"> -->
             <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 12" :max-items="dataTables.limit"
                 :data="dataTables.data">
-                <template slot-scope="{data}">
+                <template #default="{data}">
                     <vs-tr>
                         <vs-td :style="style(header)" :key="i" v-for="(header, i) in dataHeaders"
                             :colspan="colspan(header)" :rowspan="rowspan(header)">
@@ -1745,18 +1746,15 @@
 
 <script>
 import vSelect from 'vue-select'
-import Vue from "vue";
 import axios from "@/axios.js";
 import DSearch from '@/views/form-builder/DSearch.vue';
 import DModalForm from '@/views/form-builder/DModalForm.vue';
 // import DForm from '@/views/form-builder/DForm.vue'
 import DHeadingWizard from '@/views/form-builder/DHeadingWizard.vue';
 import DFileManager from '@/views/form-builder/DFileManager.vue';
-import { stringify } from 'querystring';
 import { ref } from 'vue';
 import DFileUploader from '@/views/form-builder/DFileUploader.vue';
 // import DModalForm from "./DModalForm.vue";
-Vue.use("DModalForm", DModalForm);
 import StatisticsCardLine from '@/components/statistics-cards/StatisticsCardLine.vue'
 export default {
     props: {
@@ -1785,6 +1783,7 @@ export default {
     },
     data() {
         return {
+            activeRow: null, // row whose action button was clicked last
             titleStr: "",
             currentx: 0,
             current_page: 1,
@@ -2145,7 +2144,8 @@ export default {
             this.$refs.refModalForm.initForm(data);
         },
         initAction(rowBtnAction, data, method) {
-            this.dataInfo = data;
+            // Remember the row for the popups it opens (dataInfo is a prop: read-only in Vue 3)
+            this.activeRow = data;
 
             if (method == "View") {
                 this.$refs.refModalForm.initForm(data);

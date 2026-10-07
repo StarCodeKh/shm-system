@@ -1,6 +1,6 @@
 <template>
   <div class="d-pagination" ref="box">
-    <vs-pagination :total="total" :value="value" :max="max" @input="$emit('input', $event)" />
+    <vs-pagination :total="total" :value="current" :max="max" @input="change" />
   </div>
 </template>
 
@@ -12,12 +12,18 @@ export default {
   name: 'd-pagination',
   props: {
     total: { type: Number, default: 1 },
+    // v-model (Vue 3), or :value + @input
+    modelValue: { type: Number, default: undefined },
     value: { type: Number, default: 1 },
   },
+  emits: ['update:modelValue', 'input'],
   data: () => ({
     width: 0,
   }),
   computed: {
+    current() {
+      return this.modelValue !== undefined ? this.modelValue : this.value
+    },
     max() {
       if (!this.width) return 7
       const digits = String(this.total || 1).length
@@ -36,11 +42,15 @@ export default {
       window.addEventListener('resize', this.measure)
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.observer) this.observer.disconnect()
     window.removeEventListener('resize', this.measure)
   },
   methods: {
+    change(page) {
+      this.$emit('update:modelValue', page)
+      this.$emit('input', page)
+    },
     measure() {
       if (this.$refs.box) this.width = this.$refs.box.clientWidth
     },

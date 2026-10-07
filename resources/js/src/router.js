@@ -1,16 +1,9 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import auth from "@/auth/authService";
-import firebase from 'firebase/app'
-import 'firebase/auth'
+import { createRouter, createWebHistory } from 'vue-router'
 
-Vue.use(Router)
-
-const router = new Router({
-    mode: 'history',
-    base: process.env.BASE_URL,
+const router = createRouter({
+    history: createWebHistory(),
     scrollBehavior () {
-        return { x: 0, y: 0 }
+        return { left: 0, top: 0 }
     },
     routes: [
         {
@@ -19,6 +12,7 @@ const router = new Router({
             // =============================================================================
             path: '',
             component: () => import('./layouts/main/Main.vue'),
+            meta: { authRequired: true },
             children: [
                 // Components
 
@@ -443,7 +437,7 @@ const router = new Router({
                 },
                 {
                     path: 'module/budget-monitoring/expense-implementing-result',
-                    name: 'IncomeExpenseResult',
+                    name: 'ExpenseImplementingResult',
                     component: () => import('@/views/pages/modules/budget-monitoring/income-implementing-result/_expenditure_implementing_result.vue'),
                     meta: {
                         pageTitle: 'ចុះលទ្ធផលអនុវត្តចំណាយ',
@@ -599,7 +593,7 @@ const router = new Router({
                 //             rule: 'editor'
                 //         }
                 //  },
-                    ,{           
+                    {           
                         path: 'report/credit-movement',
                         name: 'ReportCreditMovement',
                         component: () => import('@/views/pages/modules/budget-monitoring/credit-movement/Index.vue'), //import('@/views/pages/reports/credit-movement/Index.vue'),
@@ -1306,7 +1300,7 @@ const router = new Router({
         
         // Redirect to 404 page, if no match found
         {
-            path: '*',
+            path: '/:pathMatch(.*)*',
             redirect: '/pages/error-404'
         }
     ],
@@ -1323,38 +1317,12 @@ router.afterEach(() => {
 })
 
 router.beforeEach((to, from, next) => {
-    firebase.auth().onAuthStateChanged(() => {
-
-        // get firebase current user
-        const firebaseCurrentUser = firebase.auth().currentUser
-
-        // if (
-        //     to.path === "/pages/login" ||
-        //     to.path === "/pages/forgot-password" ||
-        //     to.path === "/pages/error-404" ||
-        //     to.path === "/pages/error-500" ||
-        //     to.path === "/pages/register" ||
-        //     to.path === "/callback" ||
-        //     to.path === "/pages/comingsoon" ||
-        //     (auth.isAuthenticated() || firebaseCurrentUser)
-        // ) {
-        //     return next();
-        // }
-
-        // If auth required, check login. If login fails redirect to login page
-        if(to.meta.authRequired) {
-          if (!(auth.isAuthenticated() || firebaseCurrentUser)) {
-            router.push({ path: '/pages/login', query: { to: to.path } })
-          }
-        }
-
-        return next()
-        // Specify the current path as the customState parameter, meaning it
-        // will be returned to the application after auth
-        // auth.login({ target: to.path });
-
-    });
-
-});
+    // Pages marked authRequired need a signed-in user (the API checks every request as well)
+    const signedIn = localStorage.getItem('accessToken') && localStorage.getItem('userInfo') // as auth.isUserLoggedIn
+    if (to.meta.authRequired && !signedIn) {
+        return next({ path: '/pages/login', query: { to: to.path } })
+    }
+    return next()
+})
 
 export default router

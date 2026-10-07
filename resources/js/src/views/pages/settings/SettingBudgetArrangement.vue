@@ -4,17 +4,17 @@
 
             <vs-tab v-if="tab1" icon-pack="feather" icon="icon-database" :label="$t('setting_finance_resource')">
                 <!-- គម្រោងវិនិយោគសាធារណៈ Finance Resource-->
-                <PIP-finance-resource></PIP-finance-resource>
+                <finance-resource></finance-resource>
             </vs-tab>
 
             <vs-tab v-if="tab2" icon-pack="feather" icon="icon-activity" :label="$t('setting_project_status')">
                 <!-- គម្រោងវិនិយោគសាធារណៈ Project Status-->
-                <PIP-project-status></PIP-project-status>
+                <project-status></project-status>
             </vs-tab>
 
             <vs-tab v-if="tab3" icon-pack="feather" icon="icon-package" :label="$t('setting_project_type')">
                 <!-- គម្រោងវិនិយោគសាធារណៈ Project Type-->
-                <PIP-project-type></PIP-project-type>
+                <project-type></project-type>
             </vs-tab>
 
             <vs-tab v-if="tab4" icon-pack="feather" icon="icon-folder" :label="$t('setting_expenditure_group')">
@@ -43,14 +43,25 @@
 
 
 <script>
-import ExpenditureGroup from '@/views/pages/settings/include_budget_arrangement/_ExpenditureGroup.vue';
-import ExpenditureType from '@/views/pages/settings/include_budget_arrangement/_ExpenditureType.vue';
-import CreditMovementType from '@/views/pages/settings/include_budget_arrangement/_CreditMovementType.vue';
-import CeilingGroup from '@/views/pages/settings/ceiling/_CeilingGroup.vue';
-import CeilingType from '@/views/pages/settings/ceiling/_CeilingType.vue';
+import FinanceResource from '@/views/pages/settings/include_budget_arrangement/_FinanceResource.vue';
+import ProjectStatus from '@/views/pages/settings/include_budget_arrangement/_ProjectStatus.vue';
+import ProjectType from '@/views/pages/settings/include_budget_arrangement/_ProjectType.vue';
+import ExpenditureGroup from '@/views/pages/settings/include_budget_arrangement/_ExpenditureGroup.vue';
+
+import ExpenditureType from '@/views/pages/settings/include_budget_arrangement/_ExpenditureType.vue';
+
+import CreditMovementType from '@/views/pages/settings/include_budget_arrangement/_CreditMovementType.vue';
+
+import CeilingGroup from '@/views/pages/settings/ceiling/_CeilingGroup.vue';
+
+import CeilingType from '@/views/pages/settings/ceiling/_CeilingType.vue';
+
 
 export default {
     components: {
+        FinanceResource,
+        ProjectStatus,
+        ProjectType,
         ExpenditureGroup,
         ExpenditureType,
         CeilingGroup,

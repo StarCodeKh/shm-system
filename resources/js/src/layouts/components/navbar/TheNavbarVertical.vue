@@ -79,7 +79,7 @@ export default {
       return { 'text-white': (this.navbarColor != '#10163a' && this.$store.state.theme === 'dark') || (this.navbarColor != '#fff' && this.$store.state.theme !== 'dark') }
     },
     userName() {
-      return this.$store.state.AppActiveUser.username
+      return this.$store.getters.activeUserName(this.$i18n.locale)
     },
     greeting() {
       const hour = this.now.getHours()
@@ -104,7 +104,7 @@ export default {
     // Keep greeting and date current if the tab stays open
     this.clock = setInterval(() => { this.now = new Date() }, 60 * 1000)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearInterval(this.clock)
   },
   methods: {

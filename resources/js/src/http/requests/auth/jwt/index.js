@@ -1,4 +1,5 @@
 import axios from "../../../axios/index.js"
+import { setAuthHeader } from "@/axios.js"
 import router from "../../../../router.js"
 
 // A signed-in request answered 401 means the session expired or the token was revoked:
@@ -14,9 +15,10 @@ export default {
       if (response && response.status === 401 && !isLogin && !redirecting) {
         redirecting = true
         localStorage.removeItem('accessToken')
+        setAuthHeader(null)
         localStorage.removeItem('userInfo')
         localStorage.removeItem('role_menus')
-        const current = router.currentRoute
+        const current = router.currentRoute.value
         if (current.path !== '/pages/login') {
           router.push({ path: '/pages/login', query: { to: current.fullPath } })
             .catch(() => {})

@@ -29,7 +29,9 @@
  * @import "components/buttons";
  * @import "components/forms";
  */
- @tailwind components;
+/* Tailwind 3: base only adds the CSS variables utilities rely on (preflight is off in tailwind.config.js) */
+@tailwind base;
+@tailwind components;
 
 /**
  * This injects all of Tailwind's utility classes, generated based on your

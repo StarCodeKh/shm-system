@@ -1,13 +1,13 @@
 <template>
     <vx-card class="overflow-hidden">
-        <div slot="no-body">
+        <template #no-body><div>
             <div class="p-6" :class="{
               'flex justify-between flex-row-reverse items-center': iconRight,
               'text-center': !iconRight && hideChart,
               'pb-0': !hideChart
             }">
                 <div class="header-card">
-                    <div class="A"><feather-icon :icon="icon" class="p-3 inline-flex rounded-full" :class="[`text-${color}`, {'mb-4': !iconRight}]" :style="{background: `rgba(var(--vs-${color}),.15)`}"></feather-icon></div>
+                    <div class="A"><feather-icon :icon="icon" class="stat-card-line__icon p-3 inline-flex rounded-full" :class="['stat-card-line__icon--' + color, {'mb-4': !iconRight}]" :style="{ '--tone': toneVar }"></feather-icon></div>
                     <div class="B" v-if="showCurrency">
                         <CurrencyDropDown
                             :value="currency"
@@ -17,7 +17,7 @@
                 </div>
                 
                 <div class="truncate stat-card-line__body">
-                    <h2 class="mb-1 font-bold">{{ statistic }}</h2>
+                    <h2 class="mb-1 font-bold">{{ displayStatistic }}</h2>
                     <span>{{ statisticTitle }}</span>
                 </div>
             
@@ -30,12 +30,12 @@
             <!-- <div id="chart">
                 <apexchart type="line" height="350" :options="chartOptions" :series="series"></apexchart>
             </div> -->
-        </div>
+        </div></template>
     </vx-card>
 </template>
 
 <script>
-import VueApexCharts from 'vue-apexcharts'
+import VueApexCharts from 'vue3-apexcharts'
 import ApexCharts from 'apexcharts'
 import chartConfigs from "./chartConfigs.js"
 import _color from '@assets/utils/color.js'
@@ -48,8 +48,7 @@ export default{
             required: true
         },
         statistic: {
-            // type: [Number, String],
-            type: [String],
+            type: [Number, String],
             required: true,
         },
         statisticTitle: {
@@ -103,6 +102,21 @@ export default{
         }
     },
     computed: {
+        // "r, g, b" of the card's colour: a theme colour (primary, success, …) or the brand navy
+        toneVar() {
+            return this.color === 'navy' ? 'var(--brand-navy)' : `var(--vs-${this.color})`
+        },
+        // Counts arrive as plain numbers: group thousands and use Khmer digits in Khmer, like the
+        // amounts the server already formats. Formatted text (e.g. "៦១៥,០០០") is shown as it is.
+        displayStatistic() {
+            const value = this.statistic
+            if (value === null || value === undefined || value === '') return '0'
+            if (typeof value === 'number' || /^-?\d+(\.\d+)?$/.test(String(value))) {
+                const text = Number(value).toLocaleString('en-US')
+                return this.$i18n.locale === 'en' ? text : text.replace(/\d/g, d => '០១២៣៤៥៦៧៨៩'[d])
+            }
+            return value
+        },
         themePrimaryColor() {
             return this.$store.state.themePrimaryColor;
         }
@@ -158,6 +172,17 @@ export default{
 </script>
 
 <style lang="scss">
+// Icon in a soft circle of its own colour (same recipe for every tone)
+.stat-card-line__icon {
+    color: rgb(var(--tone));
+    background: rgba(var(--tone), .12);
+}
+// Navy is too dark on the dark theme: a lighter shade of it
+.theme-dark .stat-card-line__icon--navy {
+    color: #a9b0ff;
+    background: rgba(169, 176, 255, .14);
+}
+
     // Scoped to this card: a bare .truncate rule also pushed down every sidebar label
     .stat-card-line__body {
         padding-top: 5%;

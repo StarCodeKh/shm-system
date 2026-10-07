@@ -13,7 +13,8 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
+        // Missing, expired or revoked API token: the client gets a 401 and signs in again
+        \League\OAuth2\Server\Exception\OAuthServerException::class,
     ];
 
     /**

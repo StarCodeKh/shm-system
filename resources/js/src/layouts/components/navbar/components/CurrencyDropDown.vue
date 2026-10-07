@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import flagKh from '@assets/images/flags/kh.jpg'
+import flagEn from '@assets/images/flags/en.png'
 export default {
   name: 'CurrencyDropDown',
 
@@ -41,9 +43,7 @@ export default {
       return this.value
     },
     currencyImg() {
-      return this.currency === 'KHR'
-        ? require('@assets/images/flags/kh.jpg')
-        : require('@assets/images/flags/en.png')
+      return this.currency === 'KHR' ? flagKh : flagEn
     }
   },
 

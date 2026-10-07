@@ -1,7 +1,7 @@
 import axios from "@/axios.js";
 import i18n from "@/i18n/i18n";
 
-const defaultError = () => i18n.t("report_error");
+const defaultError = () => i18n.global.t("report_error");
 
 
 // The report list rarely changes: fetch it once per session and share it between the list and the viewer.

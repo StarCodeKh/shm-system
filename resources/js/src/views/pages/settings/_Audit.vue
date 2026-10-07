@@ -67,8 +67,8 @@
                 </tbody>
 
                 <tbody v-else-if="rows.length" :class="{ 'is-loading': loading }">
-                    <template v-for="row in rows">
-                        <tr :key="row.id" class="is-clickable d-audit__row" :class="{ 'is-open': openId === row.id }"
+                    <template v-for="row in rows" :key="row.id">
+                        <tr class="is-clickable d-audit__row" :class="{ 'is-open': openId === row.id }"
                             @click="toggle(row.id)">
                             <td class="d-audit__col-event">
                                 <span class="dt-badge dt-badge--tone" :style="{ '--tone': eventInfo(row.event).color }">
@@ -105,7 +105,7 @@
                         </tr>
 
                         <!-- Detail: field-by-field before → after -->
-                        <tr v-if="openId === row.id" :key="row.id + '-detail'" class="d-audit__detail-row">
+                        <tr v-if="openId === row.id" class="d-audit__detail-row">
                             <td colspan="6">
                                 <div class="d-audit__detail">
                                     <div v-if="diff(row).length" class="d-audit__diff">

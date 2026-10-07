@@ -1,8 +1,6 @@
 <template>
     <div class="officer-form">
-        <template title="modal" class="modal">
             <d-file-manager ref="refModelFileManager" @clicked="initPassProps"></d-file-manager>
-        </template>
         <d-form-tabs ref="tabs" v-model="tab" :sections="tabSections" :errors="errors" icon="UserPlusIcon"
             :title="$t('officer_form_title')" :subtitle="$t('officer_form_subtitle')">
             <form id="memberForm" class="officer-form__form" @submit.prevent="submitForm">

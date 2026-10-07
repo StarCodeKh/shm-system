@@ -3,12 +3,12 @@
 
     <button type="button" class="nav-user">
       <span class="nav-user__avatar">
-        <img v-if="activeUserInfo.photo" :src="activeUserInfo.photo" alt="user-img" />
+        <img v-if="avatar && !avatarFailed" :src="avatar" alt="" @error="avatarFailed = true" />
         <span v-else>{{ initials }}</span>
         <i class="nav-user__status"></i>
       </span>
       <span class="nav-user__meta hidden md:flex">
-        <span class="nav-user__name">{{ activeUserInfo.username }}</span>
+        <span class="nav-user__name">{{ displayName }}</span>
         <span v-if="activeUserInfo.email" class="nav-user__email">{{ activeUserInfo.email }}</span>
       </span>
       <feather-icon icon="ChevronDownIcon" svgClasses="h-4 w-4" class="nav-user__chevron hidden md:flex" />
@@ -17,11 +17,11 @@
     <vs-dropdown-menu class="nav-user-menu vx-navbar-dropdown">
       <div class="nav-user-menu__header">
         <span class="nav-user__avatar nav-user__avatar--lg">
-          <img v-if="activeUserInfo.photo" :src="activeUserInfo.photo" alt="user-img" />
+          <img v-if="avatar && !avatarFailed" :src="avatar" alt="" @error="avatarFailed = true" />
           <span v-else>{{ initials }}</span>
         </span>
         <div class="min-w-0">
-          <p class="nav-user-menu__name">{{ activeUserInfo.username }}</p>
+          <p class="nav-user-menu__name">{{ displayName }}</p>
           <p v-if="activeUserInfo.email" class="nav-user-menu__email">{{ activeUserInfo.email }}</p>
         </div>
       </div>
@@ -49,46 +49,37 @@
 </template>
 
 <script>
-import firebase from 'firebase/app'
-import 'firebase/auth'
+import { setAuthHeader } from '@/axios.js'
 
 export default {
   computed: {
     activeUserInfo() {
       return this.$store.state.AppActiveUser
     },
+    displayName() {
+      return this.$store.getters.activeUserName(this.$i18n.locale)
+    },
+    avatar() {
+      return this.$store.getters.activeUserAvatar
+    },
     initials() {
-      const name = (this.activeUserInfo.username || '').trim()
-      const parts = name.split(/\s+/).filter(Boolean)
-      if (parts.length > 1) return (parts[0][0] + parts[1][0]).toUpperCase()
-      return name.slice(0, 2).toUpperCase()
-    }
+      return this.$store.getters.activeUserInitials
+    },
+  },
+  data: () => ({ avatarFailed: false }),
+  watch: {
+    // A new photo gets another chance to load
+    avatar() { this.avatarFailed = false },
   },
   methods: {
     logout() {
-
-      // if user is logged in via auth0
-      if (this.$auth.profile) this.$auth.logOut();
-
-      // if user is logged in via firebase
-      const firebaseCurrentUser = firebase.auth().currentUser
-
-      if (firebaseCurrentUser) {
-        firebase.auth().signOut().then(() => {
-          this.$router.push('/pages/login').catch(() => { })
-        })
-      }
-      // If JWT login
-      if (localStorage.getItem("accessToken")) {
-        localStorage.removeItem("accessToken")
-        this.$router.push('/pages/login').catch(() => { })
-      }
-
-      // Change role on logout. Same value as initialRole of acj.js
-      this.$acl.change('admin')
+      localStorage.removeItem("accessToken")
       localStorage.removeItem('userInfo')
+      setAuthHeader(null)
 
-      // This is just for demo Purpose. If user clicks on logout -> redirect
+      // Change role on logout. Same value as initialRole of acl.js
+      this.$acl.change('admin')
+
       this.$router.push('/pages/login').catch(() => { })
     },
   }

@@ -90,7 +90,7 @@ export default {
     onThumb(event) {
       if (!this.value) return
       event.stopPropagation()
-      if (this.$listeners.view) this.$emit('view', this.value)
+      if (this.$attrs.onView) this.$emit('view', this.value)
       else window.open(this.value, '_blank', 'noopener')
     },
   },
@@ -137,7 +137,6 @@ export default {
     &:focus-visible {
       outline: none;
       border-color: rgb(var(--picker-accent));
-      box-shadow: 0 0 0 3px rgba(var(--picker-accent), .2);
     }
   }
 

@@ -1,7 +1,7 @@
 <template>
     <div class="demo-alignment">
         <vs-popup class="d-fm d-modal d-modal--lg" classContent="d-fm__content" :title="$t('fm_title')"
-            :active.sync="showModalForm">
+            v-model:active="showModalForm">
 
             <!-- Upload: click or drop a file, it uploads right away -->
             <label v-if="canUpload" class="d-fm__drop" :class="{ 'is-over': dragOver, 'is-busy': uploading }"
@@ -150,7 +150,7 @@
                                     <a class="d-fm__thumb" :href="fileUrl(tr)" target="_blank" rel="noopener"
                                         :title="$t('upload_view')" @click.stop>
                                         <img v-if="isImage(tr) && !brokenImages[tr.id]" :src="fileUrl(tr)" alt=""
-                                            loading="lazy" @error="$set(brokenImages, tr.id, true)">
+                                            loading="lazy" @error="brokenImages[tr.id] = true">
                                         <span v-else class="d-fm__badge" :style="{ '--type': typeColor(tr) }">
                                             {{ fileType(tr) || 'file' }}
                                         </span>
@@ -627,7 +627,6 @@ export default {
     }
 
     &.is-over {
-        box-shadow: 0 0 0 4px rgba(var(--vs-primary), .12);
     }
 
     &.is-busy {

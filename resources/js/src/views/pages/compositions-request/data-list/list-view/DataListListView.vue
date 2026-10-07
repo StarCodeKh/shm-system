@@ -6,7 +6,7 @@
 
     <vs-table ref="table" multiple v-model="selected" pagination :max-items="itemsPerPage" search :data="dataObjects">
 
-      <div slot="header" class="flex flex-wrap-reverse items-center flex-grow justify-between">
+      <template #header><div class="flex flex-wrap-reverse items-center flex-grow justify-between">
 
         <div class="flex flex-wrap-reverse items-center data-list-btn-container">
 
@@ -80,9 +80,9 @@
             </vs-dropdown-item>
           </vs-dropdown-menu>
         </vs-dropdown>
-      </div>
+      </div></template>
 
-      <template slot="thead">
+      <template #thead>
         <vs-th sort-key="no">{{ $tt('ល.រ') }}</vs-th>
         <vs-th sort-key="name">{{ $tt('ចំនងជើងសំណើរ') }}</vs-th>
         <vs-th sort-key="role">{{ $tt('សំណើរពី') }}</vs-th>
@@ -92,7 +92,7 @@
         <vs-th>{{ $t('Action') }}</vs-th>
       </template>
 
-        <template slot-scope="{data}">
+        <template #default="{data}">
           <tbody>
             <vs-tr :data="tr" :key="indextr" v-for="(tr, indextr) in data">
               <vs-td>
@@ -124,7 +124,7 @@
               <vs-td class="whitespace-no-wrap">
                 <feather-icon icon="EditIcon" svgClasses="w-5 h-5 hover:text-primary stroke-current" @click.stop="editData(tr)" />
                 <feather-icon icon="TrashIcon" svgClasses="w-5 h-5 hover:text-danger stroke-current" class="ml-2" @click.stop="popupActive=true" />
-                <vs-popup class="holamundo d-modal--sm"  title="Are you sure?" :active.sync="popupActive">
+                <vs-popup class="holamundo d-modal--sm"  title="Are you sure?" v-model:active="popupActive">
                   <p>
                     <center>
                       <vs-button color="primary" type="filled" @click="deleteData(tr.id); popupActive=false">{{ $t('btn_yes') }}</vs-button>
@@ -237,7 +237,7 @@ export default {
     this.wasSidebarOpen = this.$store.state.reduceButton;
     this.$store.commit('TOGGLE_REDUCE_BUTTON', true)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (!this.wasSidebarOpen) this.$store.commit('TOGGLE_REDUCE_BUTTON', false)
   }
 }

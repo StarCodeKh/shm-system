@@ -10,11 +10,11 @@
   screens update when it arrives.
 ==========================================================================================*/
 
-import Vue from 'vue'
+import { reactive } from 'vue'
 import axios from '@/axios.js'
 import apiConfig from '@/apiConfig.js'
 
-const state = Vue.observable({ year: null })
+const state = reactive({ year: null })
 let request = null
 
 export function loadPlanningYear() {
@@ -44,5 +44,7 @@ export function planText(text) {
   })
 }
 
-Vue.prototype.$planText = planText
-Vue.prototype.$planYear = offset => (state.year === null ? null : state.year + Number(offset || 0))
+export function installPlanningYear(app) {
+  app.config.globalProperties.$planText = planText
+  app.config.globalProperties.$planYear = offset => (state.year === null ? null : state.year + Number(offset || 0))
+}

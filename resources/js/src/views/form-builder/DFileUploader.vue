@@ -1,6 +1,6 @@
 <template>
     <div class="demo-alignment">
-        <vs-popup class="d-modal d-modal--md" classContent="popup-example" :title="title" :active.sync="showModalForm">
+        <vs-popup class="d-modal d-modal--md" classContent="popup-example" :title="title" v-model:active="showModalForm">
             <form name="file">
                 <input type="file" name="file" @change="selectedFile($event)"/>
             </form>
@@ -15,7 +15,6 @@
 <script>
 import axios from "@/axios.js";
 import { ref } from 'vue';
-import Vue from "vue";
 import apiConfig from "@/apiConfig.js";
 
 export default {

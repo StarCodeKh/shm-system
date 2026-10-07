@@ -17,8 +17,8 @@
       <!-- Highlight that slides to the active tab -->
       <span class="d-tabform__indicator" :class="{ 'is-ready': indicator.width }" :style="indicatorStyle" />
       <button v-for="(section, i) in sections" :key="section.key" ref="tab" type="button" role="tab" class="d-tabform__tab"
-        :class="{ 'is-active': section.key === value, 'is-done': i < activeIndex, 'has-error': errorCount[section.key] }"
-        :aria-selected="section.key === value" @click="select(section.key)">
+        :class="{ 'is-active': section.key === current, 'is-done': i < activeIndex, 'has-error': errorCount[section.key] }"
+        :aria-selected="section.key === current" @click="select(section.key)">
         <span class="d-tabform__tab-icon">
           <feather-icon :icon="section.icon || 'CircleIcon'" svgClasses="h-4 w-4" />
         </span>
@@ -62,6 +62,8 @@
 export default {
   name: 'd-form-tabs',
   props: {
+    // v-model (Vue 3), or :value + @input
+    modelValue: { type: String, default: undefined },
     value: { type: String, default: '' },
     sections: { type: Array, required: true },
     errors: { type: Object, default: null }, // vee-validate ErrorBag of the parent form
@@ -74,9 +76,13 @@ export default {
     direction: 'next', // which way the content slides when the tab changes
     indicator: { left: 0, width: 0 },
   }),
+  emits: ['update:modelValue', 'input'],
   computed: {
+    current() {
+      return this.modelValue !== undefined ? this.modelValue : this.value
+    },
     activeIndex() {
-      return Math.max(0, this.sections.findIndex(section => section.key === this.value))
+      return Math.max(0, this.sections.findIndex(section => section.key === this.current))
     },
     indicatorStyle() {
       return { width: `${this.indicator.width}px`, transform: `translateX(${this.indicator.left}px)` }
@@ -94,7 +100,10 @@ export default {
   },
   methods: {
     select(key) {
-      if (key !== this.value) this.$emit('input', key)
+      if (key !== this.current) {
+        this.$emit('update:modelValue', key)
+        this.$emit('input', key)
+      }
     },
     go(step) {
       const next = this.sections[this.activeIndex + step]
@@ -121,35 +130,45 @@ export default {
         nav.scrollTo({ left: Math.max(0, target), behavior: 'smooth' })
       }
     },
+    // Re-measure when the bar or any tab changes width (an error badge appears, the language changes)
+    observeTabs() {
+      if (!this.resizeObserver) return
+      this.resizeObserver.disconnect()
+      this.resizeObserver.observe(this.$refs.nav);
+      (this.$refs.tab || []).forEach(tab => this.resizeObserver.observe(tab))
+    },
     focusFirstError() {
       const first = this.errors && this.errors.items && this.errors.items.find(item => this.sectionOf(item.field))
       if (first) this.select(this.sectionOf(first.field))
     },
   },
   watch: {
-    value(next, prev) {
+    current(next, prev) {
       const index = key => this.sections.findIndex(section => section.key === key)
       this.direction = index(next) < index(prev) ? 'prev' : 'next'
       this.$nextTick(() => this.updateIndicator())
     },
     sections() {
-      this.$nextTick(() => this.updateIndicator(false))
+      this.$nextTick(() => {
+        this.observeTabs()
+        this.updateIndicator(false)
+      })
     },
   },
   mounted() {
     this.ready = true
-    if (!this.value && this.sections.length) this.select(this.sections[0].key)
+    if (!this.current && this.sections.length) this.select(this.sections[0].key)
     this.$nextTick(() => this.updateIndicator(false))
     // Tab widths change with fonts, language and screen size
     this.onResize = () => this.updateIndicator(false)
     window.addEventListener('resize', this.onResize)
     if (typeof ResizeObserver !== 'undefined') {
       this.resizeObserver = new ResizeObserver(this.onResize)
-      this.resizeObserver.observe(this.$refs.nav)
+      this.observeTabs()
     }
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(this.onResize)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('resize', this.onResize)
     if (this.resizeObserver) this.resizeObserver.disconnect()
   },
@@ -548,7 +567,7 @@ export default {
   transition: transform .25s cubic-bezier(.34, 1.56, .64, 1), opacity .2s ease;
 }
 
-.d-tabform-pop-enter,
+.d-tabform-pop-enter-from,
 .d-tabform-pop-leave-to {
   opacity: 0;
   transform: scale(.4);

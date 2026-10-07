@@ -14,10 +14,12 @@
 
 <script>
 import { setLocale } from '@/i18n/i18n'
+import flagKh from '@assets/images/flags/kh.jpg'
+import flagEn from '@assets/images/flags/en.png'
 
 const LANGUAGES = [
-  { code: 'kh', label: 'ខ្មែរ', name: 'ភាសាខ្មែរ', flag: require('@assets/images/flags/kh.jpg') },
-  { code: 'en', label: 'EN', name: 'English', flag: require('@assets/images/flags/en.png') },
+  { code: 'kh', label: 'ខ្មែរ', name: 'ភាសាខ្មែរ', flag: flagKh },
+  { code: 'en', label: 'EN', name: 'English', flag: flagEn },
 ]
 
 export default {

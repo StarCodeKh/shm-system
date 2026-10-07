@@ -59,8 +59,9 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue";
 import { can } from "@/acl/access.js";
-import { refreshLists } from "@/plugins/keepTabs.js";
+import { refreshLists } from "@/ui/utils";
 
 // Each section's code loads the first time it is needed (or when the pointer reaches its menu item)
 const SECTIONS = {
@@ -74,8 +75,13 @@ const SECTIONS = {
   "setting-audit": () => import("./SettingAudit.vue"),
 };
 
+// Vue 3 needs async components wrapped; the plain loaders above are kept for preload()
+const components = Object.fromEntries(
+  Object.entries(SECTIONS).map(([name, load]) => [name, defineAsyncComponent(load)])
+);
+
 export default {
-  components: SECTIONS,
+  components,
   data() {
     return {
       tab_account_admin: true,

@@ -16,7 +16,7 @@
       <div class="nav-shell" @mouseenter="mouseEnter" @mouseleave="mouseLeave">
 
         <!-- Header -->
-        <div class="header-sidebar nav-brand" :class="{ 'nav-brand--compact': reduce && !isMouseEnter }" slot="header">
+        <div class="header-sidebar nav-brand" :class="{ 'nav-brand--compact': reduce && !isMouseEnter }">
 
           <!-- Logo -->
           <router-link to="/" class="nav-brand__link" :title="title">
@@ -50,10 +50,10 @@
 
         <!-- Menu Items -->
         <VuePerfectScrollbar ref="verticalNavMenuPs" class="scroll-area-v-nav-menu pt-2" :settings="settings" @ps-scroll-y="psSectionScroll" :key="$vs.rtl">
-          <template v-for="(item, index) in menuItemsUpdated">
+          <template v-for="(item, index) in menuItemsUpdated" :key="`header-${index}`">
 
             <!-- Group Header -->
-            <span v-if="item.header && !verticalNavMenuItemsMin" class="navigation-header truncate" :key="`header-${index}`">
+            <span v-if="item.header && !verticalNavMenuItemsMin" class="navigation-header truncate">
               {{ $t(item.i18n) || item.header }}
             </span>
             <!-- /Group Header -->
@@ -102,7 +102,7 @@
 
 
 <script>
-import VuePerfectScrollbar from 'vue-perfect-scrollbar'
+import VuePerfectScrollbar from '@/components/PerfectScrollbar.vue'
 import { containsActive } from './menuActive'
 import VNavMenuGroup from './VerticalNavMenuGroup.vue'
 import VNavMenuItem from './VerticalNavMenuItem.vue'
@@ -178,7 +178,7 @@ export default {
     reduceButton() { this.setVerticalNavMenuWidth() },
     windowWidth()  { this.setVerticalNavMenuWidth() }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     clearTimeout(this.hoverTimer)
   },
   methods: {

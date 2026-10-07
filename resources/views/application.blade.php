@@ -10,13 +10,9 @@
     <title>SHM-System</title>
     <!-- Fonts are self-hosted, see resources/sass/vuexy/_fonts.scss -->
     <link rel="preload" href="{{ asset('fonts/KantumruyPro.woff2') }}" as="font" type="font/woff2" crossorigin>
-    <!-- Styles -->
-    <link rel="stylesheet" href="{{ asset(mix('css/main.css')) }}">
-    <link rel="stylesheet" href="{{ asset(mix('css/iconfont.css')) }}">
-    <link rel="stylesheet" href="{{ asset(mix('css/material-icons/material-icons.css')) }}">
-    <link rel="stylesheet" href="{{ asset(mix('css/vuesax.css')) }}">
-    <link rel="stylesheet" href="{{ asset(mix('css/prism-tomorrow.css')) }}">
-    <link rel="stylesheet" href="{{ asset(mix('css/app.css')) }}">
+    <!-- Styles: Material Icons is a static file; the rest is built by Vite (see vite.config.js) -->
+    <link rel="stylesheet" href="{{ asset('css/material-icons/material-icons.css') }}">
+    @vite(['resources/assets/css/vuesax.css', 'node_modules/vue-select/dist/vue-select.css', 'resources/assets/css/main.css', 'resources/sass/app.scss', 'resources/js/app.js'])
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ asset('images/logo/favicon.png') }}">
     <!-- Theme before first paint: saved choice, else device setting (same rule as store/state.js) -->
@@ -122,9 +118,6 @@
     </noscript>
     <div id="app">
     </div>
-
-    <!-- <script src="js/app.js"></script> -->
-    <script src="{{ asset(mix('js/app.js')) }}"></script>
 
   </body>
 </html>

@@ -1,4 +1,4 @@
-import navbarSearchAndPinList from "@/layouts/components/navbar/navbarSearchAndPinList"
+import logo from '@assets/images/logo/logo.png'
 import themeConfig from "@/../themeConfig.js"
 import colors from "@/../themeConfig.js"
 
@@ -40,7 +40,7 @@ const userDefaults = {
   uid         : 0,          // From Auth
   displayName : "Administrator", // From Auth
   about       : "Dessert chocolate cake lemon drops jujubes. Biscuit cupcake ice cream bear claw brownie brownie marshmallow.",
-  photoURL    : require("@assets/images/logo/logo.png"), // From Auth
+  photoURL    : logo, // From Auth
   status      : "online",
   userRole    : "admin"
 }
@@ -74,13 +74,11 @@ const state = {
     AppActiveUser           : getUserInfo(),
     bodyOverlay             : false,
     isVerticalNavMenuActive : true,
-    mainLayoutType          : themeConfig.mainLayoutType || "horizontal",
-    navbarSearchAndPinList  : navbarSearchAndPinList,
+    mainLayoutType          : "vertical", // the only layout (horizontal was removed)
     reduceButton            : savedSidebarCollapsed,
     verticalNavMenuWidth    : "default",
     verticalNavMenuItemsMin : false,
     scrollY                 : 0,
-    starredPages            : navbarSearchAndPinList["pages"].data.filter((page) => page.is_bookmarked),
     theme                   : themeFor(savedTheme() || deviceTheme()),
     themePrimaryColor       : colors.primary,
 

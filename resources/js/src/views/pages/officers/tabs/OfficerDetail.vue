@@ -4,7 +4,7 @@
     <div class="vx-col w-full lg:w-1/4">
       <vx-card :title="$t('officer_detail')" class="mt-base">
           <!-- ACTION SLOT -->
-          <template slot="actions">
+          <template #actions>
             <feather-icon icon="MoreHorizontalIcon"></feather-icon>
           </template>
 
@@ -123,14 +123,14 @@
 import axios from "@/axios.js";
 import apiConfig from "@/apiConfig.js";
 import { ref } from 'vue';
-import TabCredentialUser from "./_TabCredentialUser";
+import TabCredentialUser from "./_TabCredentialUser.vue";
 import TabDetail from "./_TabDetail.vue";
 import TabDocument from "./_TabDocument.vue";
 import TabIncentive from "./_TabIncentive.vue";
 import TabPaymentHistory from "./_TabPaymentHistory.vue";
 import TabPayable from "./_TabPayable.vue";
 import TabRequest from "./_TabRequest.vue";
-import TabRecurring from "./_TabRecurring";
+import TabRecurring from "./_TabRecurring.vue";
 
 export default {
   components: {

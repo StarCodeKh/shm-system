@@ -1,5 +1,5 @@
 <template>
-    <vs-popup class="d-modal d-modal--xl" classContent="popup-example" title="បញ្ជីគ្រោងថវិកាចំណាយ" :active.sync="showModalForm">
+    <vs-popup class="d-modal d-modal--xl" classContent="popup-example" title="បញ្ជីគ្រោងថវិកាចំណាយ" v-model:active="showModalForm">
         <vx-card title="ទិន្នន័យការងារលម្អិត" class="mb-base">
             <vs-divider />
             <!-- Avatar -->

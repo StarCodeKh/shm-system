@@ -12,7 +12,7 @@
 
       <vs-table :data="data">
 
-          <template slot="thead">
+          <template #thead>
             <vs-th>{{ $tt('កូដ') }}</vs-th>
             <vs-th>{{ $tt('ចំណាត់ថ្នាក់/កូដ/អនុកម្មវិធី/ចង្កោមកម្មវិធី') }}</vs-th>
             <vs-th>{{ $tt('រៀបចំដោយ') }}</vs-th>
@@ -22,7 +22,7 @@
             <vs-th>{{ $t('Action') }}</vs-th>
           </template>
 
-          <template slot-scope="{data}">
+          <template #default="{data}">
               <vs-tr :data="tr" :key="indextr" v-for="(tr, indextr) in data">
                   <vs-td :data="tr.code">
                       {{tr.code}}
@@ -50,7 +50,7 @@
                     <feather-icon icon="TrashIcon" svgClasses="w-5 h-5 hover:text-danger stroke-current" class="ml-2" @click.stop="deleteData(tr.id)" />
                   </vs-td>
 
-                  <template class="expand-user" slot="expand">
+                  <template #expand class="expand-user">
                       <div class="con-expand-users w-full">
                           <div class="con-btns-user flex items-center justify-between">
                               <div class="con-userx flex items-center justify-start">

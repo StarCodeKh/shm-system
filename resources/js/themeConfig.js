@@ -1,5 +1,5 @@
 // MAIN COLORS - VUESAX THEME COLORS
-let colors = {
+export const colors = {
 	primary : '#28C76F',
 	success : '#28C76F',
 	danger  : '#EA5455',
@@ -9,11 +9,7 @@ let colors = {
 
 // CONFIGS
 const themeConfig = {
-  disableCustomizer : true,       // options[Boolean] : true, false(default)
-  disableThemeTour  : true,        // options[Boolean] : true, false(default)
   footerType        : "static",    // options[String]  : static(default) / sticky / hidden
-  hideScrollToTop   : true,       // options[Boolean] : true, false(default)
-  mainLayoutType    : "vertical",  // options[String]  : vertical(default) / horizontal
   navbarColor       : "#fff",      // options[String]  : HEX color / rgb / rgba / Valid HTML Color name - (default: #fff)
   navbarType        : "floating",  // options[String]  : floating(default) / static / sticky / hidden
   routerTransition  : "zoom-fade", // options[String]  : zoom-fade / slide-fade / fade-bottom / fade / zoom-out / none(default)
@@ -26,9 +22,5 @@ const themeConfig = {
 
   // NOTE: themeTour will be disabled in screens < 1200. Please refer docs for more info.
 }
-
-import Vue from 'vue'
-import Vuesax from 'vuesax'
-Vue.use(Vuesax, { theme:{ colors }, rtl: themeConfig.rtl })
 
 export default themeConfig

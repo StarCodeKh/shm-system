@@ -2,7 +2,8 @@
     <div>
         <DModalForm @clicked="initTableData" ref="refModalForm" :data="data" :api="apiNotification"
             :formAttributes="formNotifyAttributes" :parentDataInfo="dataInfo" :rowDisplay="rowDisplay"
-            :dataAttributes="dataAttributes" :title="$t(title_notify)" />
+            :dataAttributes="dataAttributes" :title="$t(title_notify)"
+            :fixedTitle="$t('notify_send_title')" :submitLabel="$t('notify_send')" submitIcon="SendIcon" />
         <DModalForm @clicked="initTableData" ref="refModalPaymentForm" :data="data" :api="apiNotification"
             :formAttributes="formNotifyAttributes" :parentDataInfo="dataInfo" :rowDisplay="rowDisplay"
             :dataAttributes="dataAttributes" :title="$t(title_payment)" />

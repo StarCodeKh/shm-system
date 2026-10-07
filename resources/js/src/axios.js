@@ -15,14 +15,15 @@ const axiosApi = axios.create({
 })
 
 export const setAuthHeader = (token) => {
-  axiosApi.defaults.headers.common['Authorization'] = `Bearer ${token}`
+  if (token) axiosApi.defaults.headers.common['Authorization'] = `Bearer ${token}`
+  else delete axiosApi.defaults.headers.common['Authorization']
 }
 
 setAuthHeader(localStorage.getItem('accessToken'))
 
 // Tell the API which language the user is reading (reports, labels): kh | en
 axiosApi.interceptors.request.use(config => {
-  config.headers['X-Locale'] = i18n.locale || 'kh'
+  config.headers['X-Locale'] = i18n.global.locale || 'kh'
   return config
 })
 

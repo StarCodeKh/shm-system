@@ -82,7 +82,6 @@
 
 <script>
 import vSelect from 'vue-select'
-import { Validator } from 'vee-validate';
 import axios from "@/axios.js"
 const dict = {
     custom: {
@@ -113,7 +112,6 @@ const dict = {
     }
 };
 // Field messages for Khmer; merged without changing the app's validation language
-Validator.localize({ kh: dict });
 export default {
   components: {
     'v-select': vSelect

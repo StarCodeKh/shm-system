@@ -11,11 +11,11 @@
     --control-sm-height: var(--btn-height-sm); // compact controls: pagination, page-size selects, table footers
 
     // Buttons: every button type (vs-button, .dt-btn, .d-form__btn, dialogs…) reads these
-    --btn-height: 36px;
-    --btn-height-sm: 30px;   // vs-button size="small"
-    --btn-height-lg: 42px;   // vs-button size="large"
-    --btn-padding-x: 16px;
-    --btn-radius: 8px;
+    --btn-height: 42px;
+    --btn-height-sm: 32px;   // vs-button size="small"
+    --btn-height-lg: 48px;   // vs-button size="large"
+    --btn-padding-x: 18px;
+    --btn-radius: 10px;
     --btn-font-size: .875rem;
     --btn-font-weight: 600;
     --btn-icon-size: 16px;
@@ -153,7 +153,7 @@ select,
 textarea {
     padding: 10px 14px;
     border: 1px solid #d8d9e3;
-    border-radius: 10px;
+    border-radius: var(--input-radius);
     font-size: 14px;
     font-family: inherit;
     color: #2c2e45;
@@ -167,7 +167,6 @@ textarea:focus {
     outline: none;
     border-color: rgb(var(--vs-primary));
     background: #fff;
-    box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
 }
 
 input:hover,
@@ -180,6 +179,18 @@ textarea:hover,
 textarea {
     resize: vertical;
     min-height: 100px;
+}
+
+// One-line fields are exactly one control high (the text sits centred, whatever the font)
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="number"],
+input[type="password"] {
+    height: var(--input-height);
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .flatpickr-input{
@@ -1054,9 +1065,9 @@ $select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
     font-family: inherit;
 
     .vs__dropdown-toggle {
-        min-height: 44px;
+        min-height: var(--input-height);
         padding: 4px 10px 4px 12px;
-        border-radius: 12px;
+        border-radius: var(--input-radius);
         background: #fff;
         transition: border-color .15s ease, box-shadow .15s ease;
     }
@@ -1140,8 +1151,7 @@ $select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
         .vs__dropdown-toggle {
             border-color: rgb(var(--vs-primary)) !important;
             border-bottom-color: rgb(var(--vs-primary)) !important;
-            border-radius: 12px;
-            box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
+            border-radius: var(--input-radius);
         }
 
         .vs__open-indicator {
@@ -1225,18 +1235,17 @@ $select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 // ---------------------------------------------------------------- Vuesax vs-select
 .con-select {
     .input-select {
-        height: 44px;
+        height: var(--input-height);
         padding: 0 38px 0 14px !important;
         font-size: 14px;
         border: 1px solid #d8d9e3 !important;
-        border-radius: 12px !important;
+        border-radius: var(--input-radius) !important;
         background: #fff;
         cursor: pointer;
         transition: border-color .15s ease, box-shadow .15s ease;
 
         &:focus {
             border-color: rgb(var(--vs-primary)) !important;
-            box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
         }
     }
 
@@ -1300,10 +1309,11 @@ $select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 
 // ---------------------------------------------------------------- Native <select>
 select:not([multiple]) {
-    min-height: 44px;
+    height: var(--input-height);
+    min-height: var(--input-height);
     padding: 0 38px 0 14px;
     border: 1px solid #d8d9e3;
-    border-radius: 12px;
+    border-radius: var(--input-radius);
     background: #fff $select-chevron no-repeat right 12px center / 16px 16px;
     cursor: pointer;
     -webkit-appearance: none;
@@ -1358,7 +1368,6 @@ input.flatpickr-input:not([type="hidden"]) {
 }
 input.flatpickr-input.active {
     border-color: rgb(var(--vs-primary)) !important;
-    box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
 }
 
 .flatpickr-calendar.shm-datepicker {
@@ -1639,7 +1648,6 @@ textarea.vs-textarea:focus {
     outline: none;
     background: #fff;
     border-color: rgb(var(--vs-primary));
-    box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
     resize: vertical !important;
 }
 textarea[readonly] {
@@ -1674,10 +1682,8 @@ textarea,
 }
 
 
-/* --- FORM LAYOUT: textarea fields sit last in a form, in the same column grid as other fields --- */
-.vx-row > .d-field--textarea {
-    order: 1;
-}
+/* --- FORM LAYOUT: notes (textarea) look like every other field: one input high in the same
+   column grid, growing only while the text runs over one line (see the compact textarea rule) --- */
 
 /* --- FORM CONTROLS: one height, border and background for every field (tokens in :root) --- */
 input[type="text"],
@@ -1727,7 +1733,6 @@ select:focus {
     outline: none;
     background-color: #fff;
     border-color: rgb(var(--vs-primary)) !important;
-    box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
 }
 input[readonly]:not(.flatpickr-input),
 input:disabled,
@@ -1864,7 +1869,6 @@ input[type="file"] {
     &:focus-visible {
         outline: none;
         border-color: rgb(var(--vs-primary));
-        box-shadow: 0 0 0 3px rgba(var(--vs-primary), .2);
     }
 }
 .theme-dark input[type="file"] {
@@ -1902,8 +1906,8 @@ input[type="file"] {
     }
 }
 
-.con-vs-popup.popup-t-enter .vs-popup,
-.con-vs-dialog.dialog-t-enter .vs-dialog {
+.con-vs-popup.popup-t-enter-from .vs-popup,
+.con-vs-dialog.dialog-t-enter-from .vs-dialog {
     opacity: 0;
     transform: translateY(8px) scale(.98) !important;
 }
@@ -1924,9 +1928,9 @@ input[type="file"] {
     }
 }
 
-.con-vs-popup.popup-t-enter,
+.con-vs-popup.popup-t-enter-from,
 .con-vs-popup.popup-t-leave-to,
-.con-vs-dialog.dialog-t-enter,
+.con-vs-dialog.dialog-t-enter-from,
 .con-vs-dialog.dialog-t-leave-to {
     header h3,
     .vs-dialog-text,
@@ -2134,7 +2138,6 @@ textarea:focus,
 .vs__dropdown-toggle:focus-within,
 .vs--open .vs__dropdown-toggle {
     border-color: rgb(var(--vs-primary)) !important;
-    box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
 }
 // Field-level errors (vee-validate adds .vs-input-danger / aria-invalid)
 .vs-input-danger input.vs-input--input,
@@ -3084,7 +3087,7 @@ input.vs-input--input.large {
 .dt-filter-count-leave-active {
   transition: transform .2s cubic-bezier(.34, 1.56, .64, 1), opacity .15s ease;
 }
-.dt-filter-count-enter,
+.dt-filter-count-enter-from,
 .dt-filter-count-leave-to {
   opacity: 0;
   transform: scale(.5);
@@ -3399,8 +3402,10 @@ input.vs-input--input.large {
         background: rgba(var(--vs-primary), .05);
     }
 
-    &:focus-within {
-        box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
+    // Keyboard focus on the checkbox inside (not shown for mouse clicks)
+    &:has(:focus-visible) {
+        outline: 2px solid rgb(var(--vs-primary));
+        outline-offset: 2px;
     }
 
     .vs-checkbox {
@@ -3547,8 +3552,8 @@ label.vs-select--label {
     }
 
     &:focus-visible {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(var(--vs-primary), .25) !important;
+        outline: 2px solid rgb(var(--vs-primary));
+        outline-offset: 2px;
     }
 
     &:disabled,
@@ -3578,8 +3583,8 @@ label.vs-select--label {
     }
 
     &:focus-visible {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(var(--vs-primary), .25);
+        outline: 2px solid rgb(var(--vs-primary));
+        outline-offset: 2px;
     }
 }
 

@@ -111,14 +111,13 @@
 </template>
 
 <script>
-import { FormWizard, TabContent } from 'vue-form-wizard'
+import { FormWizard, TabContent } from '@/components/form-wizard'
 import 'vue-form-wizard/dist/vue-form-wizard.min.css'
 import StepExpenseDemand from "./_StepExpenseDemand.vue"
 import StepIncomePlan from "./_StepIncomePlan.vue"
 import StepSubprogram from "./_StepSubprogram.vue"
 import StepIndicator from "./_StepIndicator.vue"
 
-import { Validator } from 'vee-validate';
 const dict = {
   custom: {
     first_name: {
@@ -149,7 +148,6 @@ const dict = {
 
 // register custom messages
 // Field messages for Khmer; merged without changing the app's validation language
-Validator.localize({ kh: dict });
 
 export default {
   data() {

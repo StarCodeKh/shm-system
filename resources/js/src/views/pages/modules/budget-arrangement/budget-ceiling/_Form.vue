@@ -2,7 +2,7 @@
     <div class="d-form">
         <!-- Here is ceiling entity -->
         <!-- Form Input Text -->
-        <vs-popup class="d-modal d-modal--xl" classContent="popup-example" title="ទម្រង់បង្កើត Form" :active.sync="showModalForm">
+        <vs-popup class="d-modal d-modal--xl" classContent="popup-example" title="ទម្រង់បង្កើត Form" v-model:active="showModalForm">
             <div class="vx-row">
                 <template v-for="(formAttribute, i) in formAttributes">
                     <!-- Form Input Text -->

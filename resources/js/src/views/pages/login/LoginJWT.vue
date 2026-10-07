@@ -61,14 +61,14 @@ const ALERTS = {
   network: { type: 'danger', title: 'login_err_title_network', text: 'login_err_network' },
   server: { type: 'danger', title: 'login_err_title_server', text: 'login_err_server' },
   throttle: { type: 'warning', title: 'login_err_title_throttle', text: 'login_err_throttle' },
-  loggedIn: { type: 'warning', title: 'login_warn_title_logged_in', text: 'login_warn_logged_in' },
 }
 
 export default {
   data() {
     return {
-      email: 'admin@admin.com',
-      password: 'Ibs@dmin123',
+      // Pre-filled only on a developer machine (npm run dev); production builds leave these out entirely
+      email: import.meta.env.DEV ? 'admin@admin.com' : '',
+      password: import.meta.env.DEV ? 'Ibs@dmin123' : '',
       checkbox_remember_me: true,
       showPassword: false,
       loading: false,
@@ -120,16 +120,8 @@ export default {
       // The store rejects with a plain object when the API returns no user
       return ALERTS.credentials
     },
-    checkLogin() {
-      if (this.$store.state.auth.isUserLoggedIn()) {
-        this.alert = ALERTS.loggedIn
-        return false
-      }
-      return true
-    },
     loginJWT() {
       if (!this.validateForm || this.loading) return
-      if (!this.checkLogin()) return
 
       this.alert = null
       this.loading = true
@@ -251,7 +243,6 @@ export default {
 
       &:focus {
         border-color: rgb(var(--vs-primary)) !important;
-        box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
       }
     }
 
@@ -296,9 +287,6 @@ export default {
     &.has-error {
       input {
         border-color: rgb(var(--vs-danger)) !important;
-        &:focus {
-          box-shadow: 0 0 0 3px rgba(var(--vs-danger), .15);
-        }
       }
       .login-field__icon {
         color: rgb(var(--vs-danger));
@@ -442,7 +430,7 @@ export default {
 .login-alert-leave-active {
   transition: opacity .2s, transform .2s;
 }
-.login-alert-enter,
+.login-alert-enter-from,
 .login-alert-leave-to {
   opacity: 0;
   transform: translateY(-6px);

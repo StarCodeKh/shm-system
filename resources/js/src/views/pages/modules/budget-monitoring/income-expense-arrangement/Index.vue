@@ -1,7 +1,7 @@
 <template>
   <div id="invoice-page">
     <!-- Poup Data Table -->
-    <vs-popup class="d-modal d-modal--xl" :title="$t(title)" :active.sync="popupActive">
+    <vs-popup class="d-modal d-modal--xl" :title="$t(title)" v-model:active="popupActive">
       <popup :proPlan="proPlan"></popup>
     </vs-popup><!--###End Poup Data Table-->
 
@@ -27,11 +27,11 @@
       <vs-navbar text-color="rgba(255,255,255,.6)" active-text-color="rgba(255,255,255,1)" color="#F4F4F4"
         style="box-shadow: 1px 5px 15px;" class="p-2 mb-6">
 
-        <div slot="title">
+        <template #title><div>
           <vs-navbar-title>
             <span>រៀបចំកម្មវិធីចំណូល/ចំណាយ ប្រចាំត្រីមាស</span>
           </vs-navbar-title>
-        </div>
+        </div></template>
 
         <vs-navbar-item index="0">
           <a href="#">សរុបកម្មវិធី</a>

@@ -96,7 +96,6 @@
     }
     
     .rotate-screen{
-        @page rotated { size : landscape }  
     }
     .hidden-space, span.hidden-space{
         visibility: hidden;
@@ -225,3 +224,6 @@ li.text-indent, .text-indent{
     font-size: 7pt;
 }
 // Customer ################
+
+// Named page for landscape printing (an @page rule must sit at the top level)
+@page rotated { size: landscape; }

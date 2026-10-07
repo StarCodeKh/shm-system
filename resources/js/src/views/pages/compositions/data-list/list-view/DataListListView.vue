@@ -6,7 +6,7 @@
 
     <vs-table ref="table" multiple v-model="selected" pagination :max-items="itemsPerPage" search :data="products">
 
-      <div slot="header" class="flex flex-wrap-reverse items-center flex-grow justify-between">
+      <template #header><div class="flex flex-wrap-reverse items-center flex-grow justify-between">
 
         <div class="flex flex-wrap-reverse items-center data-list-btn-container">
 
@@ -81,9 +81,9 @@
             </vs-dropdown-item>
           </vs-dropdown-menu>
         </vs-dropdown>
-      </div>
+      </div></template>
 
-      <template slot="thead">
+      <template #thead>
         <vs-th sort-key="name">{{ $tt('គោត្តនាម និង នាម') }}</vs-th>
         <vs-th sort-key="role">{{ $tt('តួនាទី') }}</vs-th>
         <vs-th sort-key="bank">{{ $tt('ធនាគារ') }}</vs-th>
@@ -93,7 +93,7 @@
         <vs-th>{{ $t('Action') }}</vs-th>
       </template>
 
-        <template slot-scope="{data}">
+        <template #default="{data}">
           <tbody>
             <vs-tr :data="tr" :key="indextr" v-for="(tr, indextr) in data">
 
@@ -106,7 +106,7 @@
               </vs-td>
 
               <vs-td>
-                <p class="product-bank" @click.stop="viewOffierDetail(tr)">{{ tr.bank | title }}</p>
+                <p class="product-bank" @click.stop="viewOffierDetail(tr)">{{ $filters.title(tr.bank) }}</p>
               </vs-td>
 
               <vs-td>
@@ -213,7 +213,7 @@ export default {
     this.wasSidebarOpen = this.$store.state.reduceButton;
     this.$store.commit('TOGGLE_REDUCE_BUTTON', true)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (!this.wasSidebarOpen) this.$store.commit('TOGGLE_REDUCE_BUTTON', false)
   }
 }

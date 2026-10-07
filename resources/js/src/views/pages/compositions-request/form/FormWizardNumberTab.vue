@@ -144,10 +144,10 @@
                                 <h6 v-else>ប្រភេទ: {{ letter_type }}</h6>
                             </div>
                             <div class="mt-5">
-                                <h6>ថ្ងៃដាក់សំណើរ: {{ request_date | date }}</h6>
+                                <h6>ថ្ងៃដាក់សំណើរ: {{ $filters.date(request_date) }}</h6>
                             </div>
                             <div class="mt-5">
-                                <h6>សុពលភាពត្រឹមថ្ងៃ: {{ effective_date | date }}</h6>
+                                <h6>សុពលភាពត្រឹមថ្ងៃ: {{ $filters.date(effective_date) }}</h6>
                             </div>
                             <div class="mt-5">
                                 <h6>ពិពណ៌នា: {{ description }}</h6>
@@ -163,7 +163,7 @@
                             <div id="data-list-list-view" class="data-list-container">
 
                                 <vs-table ref="table" multiple v-model="selected" pagination :max-items="itemsPerPage" search :data="products">
-                                    <div slot="header" class="flex flex-wrap-reverse items-center flex-grow justify-between">
+                                    <template #header><div class="flex flex-wrap-reverse items-center flex-grow justify-between">
 
                                         <div class="flex flex-wrap-reverse items-center data-list-btn-container">
                                             <!-- <div class="btn-add-new p-3 mb-4 mr-4 rounded-lg cursor-pointer flex items-center justify-center text-lg font-medium text-base text-primary border border-solid border-primary" @click="addNewData">
@@ -194,14 +194,14 @@
                                                 </vs-dropdown-item>
                                             </vs-dropdown-menu>
                                         </vs-dropdown>
-                                    </div>
-                                    <template slot="thead">
+                                    </div></template>
+                                    <template #thead>
                                         <vs-th sort-key="name">{{ $tt('ដោះដូពីម​ន្ត្រីឈ្មោះ') }}</vs-th>
                                         <vs-th sort-key="role">{{ $tt('លេខគណនី') }}</vs-th>
                                         <vs-th sort-key="bank">{{ $tt('ទៅមន្ត្រីឈ្មោះ') }}</vs-th>
                                         <vs-th sort-key="bank_acc">{{ $tt('លេខគណនី') }}</vs-th>
                                     </template>
-                                    <template slot-scope="">
+                                    <template #default>
                                         <tbody>
                                             <vs-tr :data="to" :key="indextr" v-for="(to, indextr) in rows">
                                             
@@ -245,13 +245,10 @@
 </template>
 
 <script>
-import {FormWizard, TabContent} from 'vue-form-wizard'
+import {FormWizard, TabContent} from '@/components/form-wizard'
 import CreateOfficerPopup from '../../officers/form/CreateOfficerPopup.vue'
 import 'vue-form-wizard/dist/vue-form-wizard.min.css'
 import moduleDataList from "@/store/data-list/moduleDataList.js"
-import VueSimpleSuggest from 'vue-simple-suggest';
-import 'vue-simple-suggest/dist/styles.css'
-import { Validator } from 'vee-validate';
 import vSelect from 'vue-select'
 import axios from "@/axios.js"
 const dict = {
@@ -277,13 +274,11 @@ const dict = {
     }
 };
 // Field messages for Khmer; merged without changing the app's validation language
-Validator.localize({ kh: dict });
 export default {
     components: {
         CreateOfficerPopup,
         FormWizard,
         TabContent,
-        VueSimpleSuggest,
         'v-select': vSelect
     },
     data() {
@@ -654,7 +649,7 @@ export default {
         this.wasSidebarOpen = this.$store.state.reduceButton;
         this.$store.commit('TOGGLE_REDUCE_BUTTON', true)
     },
-    beforeDestroy() {
+    beforeUnmount() {
         if (!this.wasSidebarOpen) this.$store.commit('TOGGLE_REDUCE_BUTTON', false)
     },
 }

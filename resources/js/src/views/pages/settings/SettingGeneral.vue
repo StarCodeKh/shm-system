@@ -15,9 +15,7 @@
                     :parentDataInfo="parentDataInfo" :formAttributes="formAttributes" :api="api"
                     :rowDisplay="rowDisplay"/> -->
 
-    <template title="modal" class="modal">
       <d-file-manager ref="refModelFileManager" @clicked="initPassProps"></d-file-manager>
-    </template>
     <div class="vx-row">
       <template v-for="(formAttribute, i) in formAttributes">
           <!-- Form Input Text -->
@@ -328,7 +326,7 @@
               <d-file-picker class="mt-1" :name="formAttribute.name" :value="form.attribute[formAttribute.name]"
                   @browse="initOpenFileManager(formAttribute.name)"
                   @view="initViewFile"
-                  @clear="$set(form.attribute, formAttribute.name, '')" />
+                  @clear="form.attribute[formAttribute.name] = ''" />
               <!-- <span v-if="formAttribute.required">
                   <vs-input v-validate="'required'" v-model="form.attribute[formAttribute.name]"
                       :placeholder="$tField(formAttribute.name)" :name="formAttribute.name" class="mt-1 w-full" />
@@ -764,8 +762,8 @@ export default {
             } else if (_formAttribute["type"] == "file") {
               this.iconThumnail = value;
             }
-            // $set: keys must be reactive so v-model and vee-validate see the loaded values
-            this.$set(this.form.attribute, name, value);
+            // Set key by key so v-model and the validation see the loaded values
+            this.form.attribute[name] = value;
           });
           // Loaded values are valid until edited; drop errors from the empty initial state
           this.$nextTick(() => this.$validator.reset());
@@ -804,27 +802,27 @@ this.$vs.notify({
     initPassProps(props){
         switch (props.data.type) {
             case "xlsx":
-                this.$set(this.form.attribute, props.props, props.data.path);
+                this.form.attribute[props.props] = props.data.path;
                 this.iconThumnail = this.iconExcel;
                 break;
             case "xls":
-                this.$set(this.form.attribute, props.props, props.data.path);
+                this.form.attribute[props.props] = props.data.path;
                 this.iconThumnail = this.iconExcel;
                 break;
             case "doc":
-                this.$set(this.form.attribute, props.props, props.data.path);
+                this.form.attribute[props.props] = props.data.path;
                 this.iconThumnail = this.iconDoc;
                 break;
             case "docx":
-                this.$set(this.form.attribute, props.props, props.data.path);
+                this.form.attribute[props.props] = props.data.path;
                 this.iconThumnail = this.iconDoc;
                 break;
             case "pdf":
-                this.$set(this.form.attribute, props.props, props.data.path);
+                this.form.attribute[props.props] = props.data.path;
                 this.iconThumnail = this.iconPDF;
                 break;
             default:
-                this.$set(this.form.attribute, props.props, props.data.path);
+                this.form.attribute[props.props] = props.data.path;
                 this.iconThumnail = props.data.path;
                 break;
         }

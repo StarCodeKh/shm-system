@@ -1,6 +1,6 @@
 <template>
     <vs-popup style="z-index: 52000;" class="d-modal d-modal--xl" classContent="popup-example" :title="$t('តារាងទិន្នន័យពុម្ពថវិកា')"
-        :active.sync="showModalForm">
+        v-model:active="showModalForm">
         <!-- <vx-card title="ទិន្នន័យការងារលម្អិត" class="mb-base">
             <vs-divider />
             <div class="vx-row">

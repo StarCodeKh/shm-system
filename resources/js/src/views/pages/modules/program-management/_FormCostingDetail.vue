@@ -1,5 +1,5 @@
 <template>
-    <vs-popup class="d-modal d-modal--xl" classContent="popup-example" title="បញ្ជីគ្រោងថវិកាចំណាយ" :active.sync="showModalForm">
+    <vs-popup class="d-modal d-modal--xl" classContent="popup-example" title="បញ្ជីគ្រោងថវិកាចំណាយ" v-model:active="showModalForm">
         <!-- <vx-card title="ទិន្នន័យការងារលម្អិត" class="mb-base">
             <vs-divider />
             <div class="vx-row">
@@ -11,7 +11,7 @@
         <vx-card :title="''">
             <div class="p-3 mb-4" style="overflow: scroll;">
                 <vs-table style="min-width: 500px;min-width: 200%;">
-                    <template slot="thead" style="background: #28c76f;">
+                    <template #thead style="background: #28c76f;">
                         <vs-th>{{ $t("ល.រ") }}</vs-th>
                         <vs-th>{{ $t("គណនី") }}</vs-th>
                         <vs-th>{{ $t("អនុគណនី") }}</vs-th>

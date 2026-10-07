@@ -75,6 +75,9 @@
 import VNavMenuItem from './VerticalNavMenuItem.vue'
 import { containsActive } from './menuActive'
 
+// Open menu groups, so opening one can close its siblings (Vue 3 has no $parent.$children)
+const groups = new Set()
+
 export default {
   name  : 'v-nav-menu-group',
   props : {
@@ -176,7 +179,8 @@ export default {
           }, 50)
         }
 
-        this.$parent.$children.map((child) => {
+        groups.forEach((child) => {
+          if (child.$parent !== this.$parent) return
           if (child.isGroupActive) {
             if (child !== this && (!child.open) && child.maxHeight != '0px') {
               setTimeout(() => {
@@ -201,8 +205,12 @@ export default {
     }
   },
   mounted() {
+    groups.add(this)
     this.openItems = this.open
     if (this.open) { this.maxHeight = 'none' }
+  },
+  beforeUnmount() {
+    groups.delete(this)
   },
 }
 

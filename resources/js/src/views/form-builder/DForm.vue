@@ -1,20 +1,18 @@
 <template>
     <div class="d-form">
         <!-- <vs-popup fullscreen classContent="popup-example" :title="title"
-            :active.sync="showFileManager">
+            v-model:active="showFileManager">
             <form name="file">
                 <input type="file" name="file" @change="selectedFile($event)"/>
                 <input type="button" value="Upload" @click="initUploadFile()"/>
             </form>
         </vs-popup> -->
-        <template title="modal" class="modal">
             <d-file-manager ref="refModelFileManager" @clicked="initPassProps"></d-file-manager>
-        </template>
 
         <!-- "+ Add" next to a dropdown: the same standard form, for the table that dropdown lists -->
         <vs-popup ref="quickAddPopup" style="z-index: 5200000;" class="d-modal" classContent="popup-example"
             :title="quickAdd ? $t('form_quick_add', { field: fieldLabel(quickAdd.field) }) : ''"
-            :active.sync="quickAddOpen">
+            v-model:active="quickAddOpen">
             <d-form v-if="quickAdd && quickAdd.fields" :key="quickAdd.key" :data="quickAdd.data" :dataInfo="{}"
                 :parentDataInfo="{}" :formAttributes="quickAdd.fields" :api="quickAdd.api" :rowDisplay="rowDisplay"
                 @saved="onQuickAdded" @cancel="quickAddOpen = false" />
@@ -318,12 +316,12 @@
 
                 <!-- Form Grid -->
                 <!-- Form Input Text -->
-                <div v-if="formAttribute.type == 'file'" class="vx-col lg:w-1/1 w-full mt-4" dclass="mt-4">
+                <div v-if="formAttribute.type == 'file'" :class="styleClass" class="d-field d-field--file">
                     <label class="mb-2">{{ fieldLabel(formAttribute.name) }} <span v-if="formAttribute.required">*</span></label>
                     <d-file-picker class="mt-1" :name="formAttribute.name" :value="form.attribute[formAttribute.name]"
                         @browse="initOpenFileManager(formAttribute.name)"
                         @view="initViewFile"
-                        @clear="$set(form.attribute, formAttribute.name, '')" />
+                        @clear="form.attribute[formAttribute.name] = ''" />
                     <!-- <span v-if="formAttribute.required">
                         <vs-input v-validate="'required'" v-model="form.attribute[formAttribute.name]"
                             :placeholder="fieldLabel(formAttribute.name)" :name="formAttribute.name" class="mt-1 w-full" />
@@ -340,12 +338,12 @@
         <div class="d-form__footer">
             <p class="d-form__hint"><span>*</span> {{ $t('form_required_hint') }}</p>
             <div class="d-form__buttons">
-                <button v-if="$listeners.cancel" type="button" class="d-form__btn" @click="$emit('cancel')">
+                <button v-if="$attrs.onCancel" type="button" class="d-form__btn" @click="$emit('cancel')">
                     {{ $t('dt_cancel') }}
                 </button>
                 <button type="button" class="d-form__btn d-form__btn--primary" :disabled="saving" @click.prevent="submitForm">
-                    <feather-icon :icon="saving ? 'LoaderIcon' : 'CheckIcon'" svgClasses="h-4 w-4" :class="{ 'd-form__spin': saving }" />
-                    <span>{{ dataInfo && dataInfo.id ? $t('form_save_changes') : $t('form_save') }}</span>
+                    <feather-icon :icon="saving ? 'LoaderIcon' : (submitIcon || 'CheckIcon')" svgClasses="h-4 w-4" :class="{ 'd-form__spin': saving }" />
+                    <span>{{ submitLabel || (dataInfo && dataInfo.id ? $t('form_save_changes') : $t('form_save')) }}</span>
                 </button>
             </div>
         </div>
@@ -383,6 +381,9 @@ import DFilePicker from '@/views/form-builder/DFilePicker.vue';
 export default {
     name: 'DForm', // its "+ Add" popup is a DForm too
     props: {
+        // Main button text and icon when the form does something other than save (e.g. "Send")
+        submitLabel: { type: String, default: '' },
+        submitIcon: { type: String, default: '' },
         formAttributes: {
             required: Array
         },
@@ -457,27 +458,27 @@ export default {
         initPassProps(props) {
             switch (props.data.type) {
                 case "xlsx":
-                    this.$set(this.form.attribute, props.props, props.data.path);
+                    this.form.attribute[props.props] = props.data.path;
                     this.iconThumnail = this.iconExcel;
                     break;
                 case "xls":
-                    this.$set(this.form.attribute, props.props, props.data.path);
+                    this.form.attribute[props.props] = props.data.path;
                     this.iconThumnail = this.iconExcel;
                     break;
                 case "doc":
-                    this.$set(this.form.attribute, props.props, props.data.path);
+                    this.form.attribute[props.props] = props.data.path;
                     this.iconThumnail = this.iconDoc;
                     break;
                 case "docx":
-                    this.$set(this.form.attribute, props.props, props.data.path);
+                    this.form.attribute[props.props] = props.data.path;
                     this.iconThumnail = this.iconDoc;
                     break;
                 case "pdf":
-                    this.$set(this.form.attribute, props.props, props.data.path);
+                    this.form.attribute[props.props] = props.data.path;
                     this.iconThumnail = this.iconPDF;
                     break;
                 default:
-                    this.$set(this.form.attribute, props.props, props.data.path);
+                    this.form.attribute[props.props] = props.data.path;
                     this.iconThumnail = props.data.path;
                     break;
             }
@@ -528,9 +529,9 @@ export default {
             // What was just created is always offered here, even when the shared list leaves it out
             // (e.g. departments are limited to the user's own): the one who added it gets to use it
             if (row && !optionForRecord(choices, row)) choices = [...choices, optionFromRecord(field, row, choices.length ? choices : current)]
-            this.$set(this.data, field, choices)
+            this.data[field] = choices
             const option = optionForRecord(choices, row)
-            if (option) this.$set(this.form.attribute, field, option)
+            if (option) this.form.attribute[field] = option
         },
         onInitChange($event, _formAttribute, _formName, _apiRequest) {
             let _data = {
@@ -707,7 +708,7 @@ export default {
                 }else if (_formAttribute["type"] == "hidden") {
                     this.form.attribute[_formAttribute["name"]] = data[_formAttribute["name"]];
                 } else if (_formAttribute["type"] == "file") {
-                    this.$set(this.form.attribute, _formAttribute["name"], data[_formAttribute["name"]] || "");
+                    this.form.attribute[_formAttribute["name"]] = data[_formAttribute["name"]] || "";
                     switch (_formAttribute["name"]) {
                         case "photo":
                             this.iconThumnail = data[_formAttribute["name"]];
@@ -733,7 +734,21 @@ export default {
                     })
                 }
             });
+            this.tidyLoadedValues();
             // this.$emit('clickForm', "e") // Temporary Close Command
+        },
+        // Values from the database shown the way a person would type them:
+        // a link id of 0 means "none" (placeholder instead of "0"), and decimals drop
+        // the database's trailing zeros ("5000.0000" -> 5000)
+        tidyLoadedValues() {
+            this.formAttributes.forEach(({ name, type }) => {
+                const value = this.form.attribute[name]
+                if (type === "select" && /_id$/.test(name) && (value === 0 || value === "0" || value === "")) {
+                    this.form.attribute[name] = null
+                } else if (type === "number" && value !== null && value !== "" && value !== undefined && !isNaN(value)) {
+                    this.form.attribute[name] = Number(value)
+                }
+            })
         },
         onChange(e) {
             this.$validator.validateAll().then(result => {
@@ -817,13 +832,13 @@ export default {
                 // Fields with a starting value (e.g. "active" on) start there on a new form
                 (attributes || []).forEach(field => {
                     if (field && 'default' in field && this.form.attribute[field.name] === undefined) {
-                        this.$set(this.form.attribute, field.name, field.default)
+                        this.form.attribute[field.name] = field.default
                     }
                 });
                 (attributes || []).filter(field => field && field.type === 'select').forEach(({ name }) => {
                     if (!this.data || Array.isArray(this.data[name])) return
                     lookupChoices(name, this.$i18n.locale).then(choices => {
-                        if (choices && this.data && !Array.isArray(this.data[name])) this.$set(this.data, name, choices)
+                        if (choices && this.data && !Array.isArray(this.data[name])) this.data[name] = choices
                     })
                 })
             },

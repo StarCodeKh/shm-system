@@ -114,8 +114,6 @@
 import { gridClass } from "@/formGrid.js";
 
 import axios from "@/axios.js"
-import { AgGridVue } from "ag-grid-vue"
-import '@sass/vuexy/extraComponents/agGridStyleOverride.scss'
 import vSelect from 'vue-select'
 import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
@@ -136,7 +134,6 @@ export default {
     },
 
     components: {
-        AgGridVue,
         vSelect,
         flatPickr
     },
@@ -244,7 +241,7 @@ export default {
 
         },
         resetSearch() {
-            Object.keys(this.form.attribute).forEach(key => this.$set(this.form.attribute, key, null));
+            Object.keys(this.form.attribute).forEach(key => this.form.attribute[key] = null);
             this.initSearch();
         },
         initSearch() {

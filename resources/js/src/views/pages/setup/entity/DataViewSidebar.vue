@@ -74,15 +74,15 @@
       </div>
     </VuePerfectScrollbar>
 
-    <div class="flex flex-wrap items-center p-6" slot="footer">
+    <template #footer><div class="flex flex-wrap items-center p-6">
       <vs-button color="primary" type="filled" class="mr-6" @click="submitData" :disabled="!isFormValid">{{ $t('btn_save') }}</vs-button>
       <vs-button color="dark" type="border" @click="isSidebarActiveLocal = false">{{ $t('btn_cancel') }}</vs-button>
-    </div>
+    </div></template>
   </vs-sidebar>
 </template>
 
 <script>
-import VuePerfectScrollbar from 'vue-perfect-scrollbar'
+import VuePerfectScrollbar from '@/components/PerfectScrollbar.vue'
 import vSelect from 'vue-select'
 import axios from "@/axios.js"
 export default {

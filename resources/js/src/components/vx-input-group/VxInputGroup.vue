@@ -1,8 +1,8 @@
-<template functional>
-  <div class="vx-input-group flex" :class="data.staticClass">
+<template>
+  <div class="vx-input-group flex">
 
     <!-- SLOT: PREPEND -->
-    <div class="vx-input-group-prepend flex" :class="props.prependClasses" v-if="slots().prepend">
+    <div class="vx-input-group-prepend flex" :class="prependClasses" v-if="$slots.prepend">
       <slot name="prepend"></slot>
     </div>
 
@@ -12,7 +12,7 @@
     </div>
 
     <!-- SLOT: APPEND -->
-    <div class="vx-input-group-append flex" :class="props.appendClasses" v-if="slots().append">
+    <div class="vx-input-group-append flex" :class="appendClasses" v-if="$slots.append">
       <slot name="append"></slot>
     </div>
   </div>

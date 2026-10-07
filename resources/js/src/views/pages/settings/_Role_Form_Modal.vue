@@ -1,7 +1,7 @@
 <template>
     <div>
         <vs-popup class="d-modal d-modal--xl perm-modal" classContent="perm-modal__content" :title="$t('perm_title')"
-            :active.sync="showModalForm">
+            v-model:active="showModalForm">
             <div class="dt-list perm">
                 <!-- Toolbar -->
                 <div class="dt-toolbar">
@@ -190,10 +190,10 @@ export default {
                 .finally(() => { this.loading = false })
         },
         setOne(name, value) {
-            this.$set(this.granted, name, value)
+            this.granted[name] = value
         },
         setMany(names, value) {
-            names.forEach(name => this.$set(this.granted, name, value))
+            names.forEach(name => this.granted[name] = value)
         },
         columnNames(action) {
             return this.rows.map(row => row.cells[action]).filter(Boolean)
@@ -385,8 +385,8 @@ export default {
         }
 
         &:focus-visible {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(var(--vs-primary), .2);
+            outline: 2px solid rgb(var(--vs-primary));
+            outline-offset: 2px;
         }
 
         &:checked,

@@ -1,6 +1,7 @@
-import Vue from 'vue'
+// Display helpers for templates: {{ $filters.date(value) }} (Vue 3 has no {{ value | filter }})
+const filters = {}
 
-Vue.filter('capitalize', function (value) {
+filters.capitalize = function (value) {
 	if (!value) return ''
 	value = value.toString()
 	let arr = value.split(" ")
@@ -10,9 +11,8 @@ Vue.filter('capitalize', function (value) {
 		capitalized_array.push(capitalized)
 	})
 	return capitalized_array.join(" ");
-})
-
-Vue.filter('title', function (value, replacer="_") {
+}
+filters.title = function (value, replacer="_") {
   if (!value) return ''
   value = value.toString()
 
@@ -23,17 +23,14 @@ Vue.filter('title', function (value, replacer="_") {
     capitalized_array.push(capitalized)
   })
   return capitalized_array.join(" ");
-})
-
-Vue.filter('truncate', function(value, limit) {
+}
+filters.truncate = function(value, limit) {
 	return value.substring(0, limit)
-})
-
-Vue.filter('tailing', function(value, tail) {
+}
+filters.tailing = function(value, tail) {
 	return value + tail;
-})
-
-Vue.filter('time', function(value, is24HrFormat = false) {
+}
+filters.time = function(value, is24HrFormat = false) {
 	if(value) {
 		const date = new Date(Date.parse(value));
 		let hours = date.getHours();
@@ -45,9 +42,8 @@ Vue.filter('time', function(value, is24HrFormat = false) {
 		}
 		return hours + ':' + min
 	}
-})
-
-Vue.filter('date', function(value, fullDate = false) {
+}
+filters.date = function(value, fullDate = false) {
 	value = String(value)
 	const date = value.slice(8,10).trim();
 	const month = value.slice(4,7).trim();
@@ -55,9 +51,8 @@ Vue.filter('date', function(value, fullDate = false) {
 
 	if(!fullDate) return date + '-' + month + '-' + year;
 	else return date + '-' + month + '-' + year;
-})
-
-Vue.filter('month', function(val, showYear = true) {
+}
+filters.month = function(val, showYear = true) {
   val = String(val)
 
   const regx = /\w+\s(\w+)\s\d+\s(\d+)./;
@@ -67,9 +62,8 @@ Vue.filter('month', function(val, showYear = true) {
     return regx.exec(val)[1] + ' ' + regx.exec(val)[2];
   }
 
-})
-
-Vue.filter('khMonth', function(value, fullDate = false) {
+}
+filters.khMonth = function(value, fullDate = false) {
 	const _date = new Date(value);
 	const _dateStr = _date.toString();
 	// const date = new Date(value);
@@ -93,9 +87,8 @@ Vue.filter('khMonth', function(value, fullDate = false) {
 		month[11]="ធ្នូ";
 
 	return month[_date.getMonth()];
-})
-
-Vue.filter('khDay', function(value, fullDate = false) {
+}
+filters.khDay = function(value, fullDate = false) {
 	const _date = new Date(value);
 	const _dateStr = _date.toString();
 	// const date = new Date(value);
@@ -119,10 +112,8 @@ Vue.filter('khDay', function(value, fullDate = false) {
 		month[11]="ធ្នូ";
 
 	return month[_date.getDay()];
-})
-
-
-Vue.filter('khYear', function(value, fullDate = false) {
+}
+filters.khYear = function(value, fullDate = false) {
 	let _date = new Date(value);
 	let _dateStr = _date.toString();
 	let _year = _date.getFullYear();
@@ -151,20 +142,19 @@ Vue.filter('khYear', function(value, fullDate = false) {
 	return newKhmerNumber;
 
 	return month[_date.getYear()];
-})
-
-Vue.filter('csv', function(value) {
+}
+filters.csv = function(value) {
 	return value.join(', ')
-})
-
-Vue.filter('filter_tags', function(value) {
+}
+filters.filter_tags = function(value) {
 	return value.replace(/<\/?[^>]+(>|$)/g, "")
-})
-
-// Vue.filter('k_formatter', function(num) {
+}
+// filters.k_formatter = function(num) {
 // 	return num > 999 ? (num/1000).toFixed(1) + 'k' : num
-// })
-Vue.filter('k_formatter', function(num) {
+// }
+filters.k_formatter = function(num) {
 	// return num > 999 ? (num).toFixed(2) + '៛' : num
 	return Number(num).toLocaleString() + '៛';
-})
+}
+
+export default filters

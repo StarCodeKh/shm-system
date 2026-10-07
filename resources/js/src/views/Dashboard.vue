@@ -200,7 +200,9 @@
 </template>
 
 <script>
-import VueApexCharts from "vue-apexcharts"
+import { h } from "vue"
+import { RouterLink } from "vue-router"
+import VueApexCharts from "vue3-apexcharts"
 import flatPickr from "vue-flatpickr-component"
 import "flatpickr/dist/flatpickr.css"
 import axios from "@/axios.js"
@@ -231,13 +233,11 @@ const TARGETS = {
 }
 
 // A router link when `to` is set, otherwise the same content in a plain `tag`
-const DashLink = {
-    functional: true,
-    props: { to: String, tag: { type: String, default: "span" } },
-    render(h, { props, data, children }) {
-        return props.to ? h("router-link", { ...data, props: { to: props.to } }, children) : h(props.tag, data, children)
-    },
-}
+const DashLink = (props, { attrs, slots }) => props.to
+    ? h(RouterLink, { ...attrs, to: props.to }, slots)
+    : h(props.tag, attrs, slots.default && slots.default())
+DashLink.props = { to: String, tag: { type: String, default: "span" } }
+DashLink.inheritAttrs = false
 
 export default {
     components: { VueApexCharts, flatPickr, DashLink },
@@ -485,7 +485,7 @@ export default {
     },
     created() {
         if (!localStorage.getItem("accessToken")) {
-            router.push(router.currentRoute.query.to || "/pages/login")
+            router.push(router.currentRoute.value.query.to || "/pages/login")
             return
         }
         this.load()
@@ -494,7 +494,7 @@ export default {
         this.wasSidebarOpen = this.$store.state.reduceButton
         this.$store.commit("TOGGLE_REDUCE_BUTTON", true)
     },
-    beforeDestroy() {
+    beforeUnmount() {
         if (!this.wasSidebarOpen) this.$store.commit("TOGGLE_REDUCE_BUTTON", false)
     },
     methods: {

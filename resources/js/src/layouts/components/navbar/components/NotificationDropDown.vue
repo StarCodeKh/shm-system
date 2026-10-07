@@ -44,7 +44,7 @@
 <script>
   import axios from "@/axios.js"
   import apiConfig from "@/apiConfig.js"
-  import VuePerfectScrollbar from 'vue-perfect-scrollbar'
+  import VuePerfectScrollbar from '@/components/PerfectScrollbar.vue'
 
   const REFRESH_MS = 60 * 1000
 
@@ -68,7 +68,7 @@
       this.getData();
       this.poller = setInterval(this.getData, REFRESH_MS)
     },
-    beforeDestroy() {
+    beforeUnmount() {
       clearInterval(this.poller)
     },
     methods: {

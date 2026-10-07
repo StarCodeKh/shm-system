@@ -11,7 +11,8 @@
 
 ![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
 ![PHP](https://img.shields.io/badge/PHP-8.3+-777BB4?style=for-the-badge&logo=php&logoColor=white)
-![Vue.js](https://img.shields.io/badge/Vue.js-2.7-4FC08D?style=for-the-badge&logo=vuedotjs&logoColor=white)
+![Vue.js](https://img.shields.io/badge/Vue.js-3.5-4FC08D?style=for-the-badge&logo=vuedotjs&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Firebase-FCM-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
 
@@ -43,7 +44,7 @@
 | Layer | Technology |
 |---|---|
 | Backend | PHP 8.3+, Laravel 13, Laravel Passport (API auth), Spatie Permission |
-| Frontend | Vue 2.7, Vuesax / Vuexy, Laravel Mix (webpack) |
+| Frontend | Vue 3.5, Vue Router 5, Vuex 4, vue-i18n 11, Vite 8 (`laravel-vite-plugin`), Tailwind 3; Vuesax-style UI components in `resources/js/src/ui/` |
 | Database | MySQL (tables use the `tbl_` prefix) |
 | PDF / Excel | mPDF, Maatwebsite Excel |
 | Push | Firebase (kreait/laravel-firebase) |
@@ -53,7 +54,7 @@
 - PHP 8.3 or newer, with `mbstring`, `gd`, `zip`, `pdo_mysql`
 - Composer 2
 - MySQL 8 (or MariaDB 10.6+)
-- Node.js and npm
+- Node.js 20+ and npm
 
 ## Getting started
 
@@ -69,14 +70,16 @@ php artisan key:generate
 php artisan passport:keys
 ```
 
-1. **Database** — create a database (default name `shm`), set the `DB_*` values in `.env`, then import the latest SQL dump from the team. Migrations only cover part of the schema, so start from a dump.
+1. **Database** — create a database (default name `shm_system_db`), set the `DB_*` values in `.env`, then import the latest SQL dump from the team. Migrations only cover part of the schema, so start from a dump.
 2. **Firebase** — put the service account JSON in the project root as `service-account-key.json`, and a copy in `storage/firebase/firebase_credentials.json`. Fill in the `FIREBASE_*` and `FCM_*` values in `.env`.
 3. **Run** — in two terminals:
 
 ```bash
 php artisan serve      # http://127.0.0.1:8000
-npm run watch          # rebuilds the frontend on change
+npm run dev            # Vite dev server: changes show instantly
 ```
+
+> **"Vite manifest not found"** means the frontend was never built and `npm run dev` is not running. Start `npm run dev`, or run `npm run build` once.
 
 > Secrets (`.env`, `service-account-key.json`, `storage/firebase/`, `storage/oauth-*.key`) are git-ignored. Never commit them.
 
@@ -84,9 +87,9 @@ npm run watch          # rebuilds the frontend on change
 
 | Command | Purpose |
 |---|---|
-| `npm run dev` | Build frontend once (development) |
-| `npm run watch` | Build and watch for changes |
-| `npm run prod` | Minified production build |
+| `npm run dev` | Vite dev server with hot reload (local only) |
+| `npm run build` | Production build into `public/build/` |
+| `npm run watch` | Rebuild `public/build/` on every change |
 | `php artisan route:list --except-vendor` | List API routes |
 | `php artisan optimize:clear` | Clear config, route and view caches |
 | `php artisan schedule:work` | Run the scheduler locally |
@@ -144,13 +147,61 @@ Add an entry to `reports()` in `app/Http/Controllers/ReportController.php` (titl
 
 ## Deployment
 
+The same steps for **UAT** and **production (PRD)**; only `.env` differs.
+
+### 1. `.env` on the server
+
+Copy the UAT / production block from `.env.example`:
+
+| Key | UAT | Production |
+|---|---|---|
+| `APP_ENV` | `uat` | `production` |
+| `APP_DEBUG` | `false` | `false` |
+| `APP_URL` | `https://…` | `https://…` |
+| `LOG_STACK` | `daily` | `daily` |
+| `LOG_LEVEL` | `info` | `warning` |
+| `LOG_DAILY_DAYS` | `14` | `30` |
+
+`APP_DEBUG=true` on a server shows code, settings and SQL to anyone who triggers an error.
+
+### 2. Deploy
+
 ```bash
+git pull
 composer install --no-dev --optimize-autoloader
-npm ci && npm run prod
-php artisan config:cache && php artisan route:cache && php artisan view:cache
+npm ci
+npm run build                      # writes public/build/ (not in git)
+php artisan migrate --force
+php artisan optimize               # caches config, routes, events, views
+php artisan queue:restart          # workers pick up the new code
 ```
 
-Copy these to the server by hand: `.env`, `service-account-key.json`, `storage/firebase/firebase_credentials.json`, the Passport keys in `storage/`, and the `public/upload/` folder. Point the web server at `public/`.
+`npm run build` leaves `console.log` / `debug` / `info` out of the bundle (see `vite.config.mjs`); `console.error` and `console.warn` stay so real failures still reach the browser console.
+
+### 3. What goes to the server and what doesn't
+
+| Copy by hand (secrets, not in git) | Never upload |
+|---|---|
+| `.env` | `node_modules/` |
+| `service-account-key.json` | `public/hot` (only exists while `npm run dev` runs; its presence makes Laravel load the dev server) |
+| `storage/firebase/firebase_credentials.json` | `storage/logs/*` from a developer machine |
+| Passport keys `storage/oauth-*.key` | local `.env` |
+| `public/upload/` and `public/images/uploads/` (user files) | |
+
+Point the web server at `public/`.
+
+### 4. Logs
+
+- Laravel writes to `storage/logs/`. With `LOG_STACK=daily` there is one file per day (`laravel-YYYY-MM-DD.log`) and files older than `LOG_DAILY_DAYS` are deleted automatically.
+- To empty the logs by hand: `rm storage/logs/*.log` (the folder must stay writable by the web server).
+- Code never prints debug output into responses (`echo`, `print_r`, `dd`, `dump`); use `Log::info()` / `Log::error()` and never log tokens or passwords.
+
+### 5. After deploying
+
+```bash
+php artisan about                  # environment, debug mode, cache and log driver at a glance
+php artisan optimize:clear         # only if a change in .env or config does not show
+```
 
 ## Security
 
@@ -173,19 +224,20 @@ Reviewed on 2026-10-07. Update the **Status** column as issues are fixed.
 | Critical | Uploaded files keep their own name and extension and are saved under `public/`, so a script file can be uploaded and run | `FileManagerController::fileImageUploadService` | Open |
 | High | A successful OTP sign-in replaces the user's password with the OTP code | `OTPService::checkOTP` | Open |
 | High | Member spreadsheet import has no permission check and no file-type check | `FileManagerController::fileUploadService` (`POST /api/v1/file_upload`) | Open |
-| High | The sign-in form is pre-filled with an admin email and password; change that password and remove the defaults | `LoginJWT.vue` | Open |
+| High | The sign-in form was pre-filled with an admin email and password | `LoginJWT.vue` | Fixed 2026-10-07: pre-filled only with `npm run dev`, not in production builds. Still change that admin password |
 | Medium | CORS allows every origin together with credentials | `config/cors.php` | Open |
 | Medium | Access tokens last 1 year; "remember me" shortens them to 1 week instead of extending them | `AuthController` sign-in methods | Open |
 | Medium | 31 models use `$guarded = []` and controllers save the whole request, so extra columns can be set | models, controllers' `dataForm()` | Open |
 | Medium | No security headers (`X-Frame-Options`, `Content-Security-Policy`, `X-Content-Type-Options`, HSTS) | `public/.htaccess` / middleware | Open |
-| Low | Template leftovers: unused Firebase demo config and a Google Maps key in a comment (still in git history) | `resources/js/src/firebase/`, `main.js` | Open |
+| Low | Template leftovers: unused Firebase demo config and a Google Maps key in a comment (still in git history) | `resources/js/src/firebase/`, `main.js` | Fixed 2026-10-07 (removed from the code; still in git history) |
+| High | The push-notification service printed the Firebase access token into API responses | `PushNotificationService::generateAccessToken` | Fixed 2026-10-07: errors go to the log, the token is never printed or logged |
 | Low | Three report queries build SQL by joining strings (not exploitable today; values are dates or database ids) | `ReportController` | Open |
 | Low | The OTP request says whether a phone number has an account | `AuthController::loginMobileOTP` | Open |
-| Info | `npm audit` lists 169 issues (6 critical), mostly in build tools and the unused template Firebase login | `package.json` | Open |
+| Info | `npm audit` listed 169 issues (6 critical), mostly in build tools and the unused template Firebase login | `package.json` | Re-check: the Firebase login was removed and the build moved to Vite, but the old Laravel Mix packages (`laravel-mix`, `*-loader`, `vue-template-compiler`) are still in `package.json`; remove them, then run `npm audit` again |
 
 **Before going live**
 
-- `.env`: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL` with `https://`
+- `.env`: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL` with `https://`, `LOG_STACK=daily` (see [Deployment](#deployment))
 - Serve over HTTPS only
 - Make sure the web server does not run scripts inside `public/images/uploads/`
 - Fix the Critical and High issues above

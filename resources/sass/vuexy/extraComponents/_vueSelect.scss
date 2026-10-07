@@ -84,15 +84,11 @@
 }
 
 
-// Override vars
+// vue-select 4's own styles load before this file (see vite.config.mjs); its theme variables as before:
+// taller rows, and a soft hover row (the selected row is styled in custom.scss)
 
-//  Global Component Variables
-$vs-component-line-height: 1.8;
-
-//  Active State
-// Soft hover row; the selected row is styled in custom.scss
-$vs-state-active-bg: #f3f4f8 !default;
-$vs-state-active-color: #2c2e45 !default;
-
-
-@import "~vue-select/src/scss/vue-select.scss"
+.v-select {
+  --vs-line-height: 1.8;
+  --vs-dropdown-option--active-bg: #f3f4f8;
+  --vs-dropdown-option--active-color: #2c2e45;
+}

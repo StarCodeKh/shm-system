@@ -1,7 +1,6 @@
 // App-wide defaults for every flatpickr / <flat-pickr> instance:
 // Khmer or English labels (following the current i18n locale), dd/mm/yyyy display
 // with a Y-m-d model value, and a "Today / Clear" footer.
-import Vue from 'vue'
 import flatpickr from 'flatpickr'
 import { english } from 'flatpickr/dist/l10n/default'
 import flatPickr from 'vue-flatpickr-component'
@@ -32,7 +31,7 @@ const LABELS = {
   en: { today: 'Today', clear: 'Clear' },
 }
 
-const isKhmer = () => i18n.locale !== 'en'
+const isKhmer = () => i18n.global.locale !== 'en'
 
 // Laravel serializes date casts as UTC ISO strings ("2026-08-17T17:00:00.000000Z");
 // read those in local time so the picker shows the stored calendar day.
@@ -96,6 +95,9 @@ flatpickr.setDefaults({
   plugins: [shmDatePicker()],
 })
 
-Vue.component('flat-pickr', flatPickr)
+// <flat-pickr> in every template
+export function installDatePicker(app) {
+  app.component('flat-pickr', flatPickr)
+}
 
 export default flatpickr
