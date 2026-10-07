@@ -13,6 +13,6 @@ export const FEATURES = {
 // Before permissions are loaded (null) everything shows; the API still refuses what isn't allowed.
 export function can(permission) {
   const permissions = storedPermissions()
-  if (permissions === null) return true
+  if (permissions === null || permissions['*']) return true // '*': Super Admin has everything
   return Boolean(permissions[FEATURES[permission] || permission])
 }

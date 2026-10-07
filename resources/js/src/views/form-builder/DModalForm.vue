@@ -9,7 +9,7 @@
             <span v-if="!dataAttributes.hideFormData">
                 <d-form @clickForm="initTableData" @cancel="showModalForm = false" ref="refModalForm" :data="data" :dataInfo="dataInfo"
                     :parentDataInfo="parentDataInfo" :formAttributes="formAttributes" :api="api"
-                    :rowDisplay="rowDisplay"/>
+                    :rowDisplay="layout.grid"/>
             </span>
 
             <!-- <d-indicator v-if="dataAttributes.hasIndicatorSubPro" :dataInfo="dataInfo"
@@ -19,7 +19,7 @@
         <vs-popup v-else class="d-modal" :class="sizeClass" classContent="popup-example" :title="popupTitle" :active.sync="showModalForm">
             <d-form @clickForm="initTableData" @cancel="showModalForm = false" ref="refModalForm" :data="data" :dataInfo="dataInfo"
                 :parentDataInfo="parentDataInfo" :formAttributes="formAttributes" :api="api"
-                :rowDisplay="rowDisplay"/>
+                :rowDisplay="layout.grid"/>
             <!-- <d-indicator v-if="dataAttributes.hasIndicator" :dataInfo="dataInfo"
                 :dataAttributes="dataAttributes"></d-indicator> -->
 
@@ -31,7 +31,6 @@
 </template>
 
 <script>
-import { gridColumns } from "@/formGrid.js";
 import SettingBackup from "@/views/pages/settings/SettingBackup.vue"
 import { ref } from 'vue';
 import Vue from "vue";
@@ -82,14 +81,17 @@ export default {
         }
     },
     computed: {
-        // Popup width follows the form: column layout, number of fields, child tables
-        sizeClass() {
+        // Popup layout follows the form, so it fits without scrolling where it can:
+        // up to 4 fields one column, up to 10 two columns, more three, child tables extra wide
+        layout() {
             const fields = (this.formAttributes || []).filter(f => f && f.type !== 'hidden')
-            if (fields.some(f => f.type === 'grid' || f.type === 'text_group')) return 'd-modal--xl'
-            const columns = gridColumns(this.rowDisplay)
-            const used = Math.min(columns, Math.max(fields.length, 1))
-            if (used <= 1 || fields.length <= 3) return 'd-modal--sm'
-            return { 2: 'd-modal--md', 3: 'd-modal--lg' }[used]
+            if (fields.some(f => f.type === 'grid' || f.type === 'text_group')) return { size: 'd-modal--xl', grid: this.rowDisplay }
+            if (fields.length <= 4) return { size: 'd-modal--sm', grid: '1grid' }
+            if (fields.length <= 10) return { size: 'd-modal--md', grid: '2col' }
+            return { size: 'd-modal--lg', grid: '3grid' }
+        },
+        sizeClass() {
+            return this.layout.size
         },
         // "Create …" for new records, "Edit …" when a record is loaded
         popupTitle() {

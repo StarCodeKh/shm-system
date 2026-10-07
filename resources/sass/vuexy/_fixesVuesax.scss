@@ -195,29 +195,15 @@
 .con-vs-dialog {
   z-index: 99999;
 
+  // Layout, spacing and buttons: see custom.scss (dialogs follow the app's popup standard)
   .vs-dialog {
     header {
       .dialog-title {
-        padding: 0.8rem;
         color: inherit;
       }
 
       span.after {
         width: 0
-      }
-    }
-
-    .vs-dialog-text {
-      padding: 1rem;
-      font-size: 1rem;
-    }
-
-    footer {
-      padding: 1rem;
-
-      .vs-button:last-of-type {
-        margin-left: .5rem !important;
-        border-color: rgba(0, 0, 0, 0.2) !important;
       }
     }
   }

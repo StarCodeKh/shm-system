@@ -389,7 +389,6 @@ export default {
             dataTables: [],
             dataAttributes: "",
             title: "ទម្រង់បង្កើត",
-            styleClass: "",
             formAttribute: "",
             dataFields: [],
             showModalForm: false,
@@ -422,6 +421,10 @@ export default {
         formAttr
     },
     computed: {
+        // Column classes for every field; follows rowDisplay when a popup picks its layout
+        styleClass() {
+            return gridClass(this.rowDisplay)
+        },
         validateForm() {
             return !this.errors.any()
         }
@@ -936,7 +939,6 @@ export default {
     },
     created() {
         // this.form.attribute["budget_template_id"] = 11;
-        this.styleClass = gridClass(this.rowDisplay);
     },
     watch: {
 

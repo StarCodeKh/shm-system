@@ -25,7 +25,8 @@ export async function fetchPermissions() {
 // Keep only the items the user may open. Groups and sections left empty are removed.
 // `permissions === null` (not loaded yet) shows everything; the API still enforces access.
 export function filterMenu(items, permissions) {
-  const allowed = (item) => !item.permission || permissions === null || Boolean(permissions[item.permission])
+  // '*' is Super Admin: every item
+  const allowed = (item) => !item.permission || permissions === null || Boolean(permissions['*'] || permissions[item.permission])
 
   return items.reduce((list, item) => {
     if (item.header) {

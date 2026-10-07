@@ -1873,6 +1873,80 @@ input[type="file"] {
 }
 
 
+/* --- POPUP & DIALOG MOTION: one quick, calm movement instead of Vuesax's staggered pieces
+   (card scaling, title sliding 50px, text sliding, content fading in after a delay).
+   Opens: backdrop fades in, the card rises 8px and settles. Closes: faster fade. */
+:root {
+    --modal-in: .22s;
+    --modal-out: .15s;
+}
+
+.con-vs-popup,
+.con-vs-dialog {
+    transition: opacity var(--modal-in) ease !important;
+
+    .vs-popup,
+    .vs-dialog {
+        animation: none !important; // Vuesax's "rebound" bounce (scale .9 → 1.08 → 1)
+        transition: transform var(--modal-in) var(--tab-ease), opacity var(--modal-in) ease !important;
+    }
+
+    // The parts move with the card, not on their own
+    header h3,
+    .vs-popup--content,
+    .vs-dialog-text,
+    footer button,
+    .vs-popup--close,
+    .vs-dialog-cancel {
+        transition: none !important;
+    }
+}
+
+.con-vs-popup.popup-t-enter .vs-popup,
+.con-vs-dialog.dialog-t-enter .vs-dialog {
+    opacity: 0;
+    transform: translateY(8px) scale(.98) !important;
+}
+
+.con-vs-popup.popup-t-leave-to .vs-popup,
+.con-vs-dialog.dialog-t-leave-to .vs-dialog {
+    opacity: 0;
+    transform: scale(.98) !important;
+}
+
+.con-vs-popup.popup-t-leave-active,
+.con-vs-dialog.dialog-t-leave-active {
+    transition-duration: var(--modal-out) !important;
+
+    .vs-popup,
+    .vs-dialog {
+        transition-duration: var(--modal-out) !important;
+    }
+}
+
+.con-vs-popup.popup-t-enter,
+.con-vs-popup.popup-t-leave-to,
+.con-vs-dialog.dialog-t-enter,
+.con-vs-dialog.dialog-t-leave-to {
+    header h3,
+    .vs-dialog-text,
+    footer button,
+    .vs-popup--close,
+    .vs-dialog-cancel {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .con-vs-popup,
+    .con-vs-dialog,
+    .con-vs-popup .vs-popup,
+    .con-vs-dialog .vs-dialog {
+        transition-duration: 1ms !important;
+    }
+}
+
 /* --- MODAL SCROLL LOCK: while a popup or confirm dialog is open, the page behind stays still.
    Popups stay in <body> hidden with v-show (display: none); dialogs are removed when closed. */
 html:has(> body > .con-vs-popup:not([style*="display: none"])),

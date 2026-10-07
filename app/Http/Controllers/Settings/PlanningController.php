@@ -50,47 +50,20 @@ class PlanningController extends Controller
             $input = $request->all();
             $dataFields = $this->dataFields();
             $filter = CommonService::getFilter($input);
-            $years = array(
-                [
-                    "label" => "2020",
-                    "value" => "2020"
-                ],
-                [
-                    "label" => "2021",
-                    "value" => "2021"
-                ],
-                [
-                    "label" => "2022",
-                    "value" => "2022"
-                ],
-                [
-                    "label" => "2023",
-                    "value" => "2023"
-                ],
-                [
-                    "label" => "2024",
-                    "value" => "2024"
-                ],
-                [
-                    "label" => "2025",
-                    "value" => "2025"
-                ],
-                [
-                    "label" => "2026",
-                    "value" => "2026"
-                ],
-                [
-                    "label" => "2027",
-                    "value" => "2027"
-                ]
+            // Years from 2020 to next year, so the list never needs editing for a new year
+            $years = array_map(
+                fn ($year) => ['label' => (string) $year, 'value' => (string) $year],
+                range(2020, (int) date('Y') + 1)
             );
             $data = array(
                 "data_fields" => $this->dataFields(),
                 "year" => $years,
                 "data" => $this->db_table::getPlannings($filter),
                 "limit" => config_limit,
-                "total" => $this->db_table::getCount($filter)
+                "total" => $this->db_table::getCount($filter),
+                "is_display" => true,
             );
+            $status = 200;
             return response()->json($data, $status);
         } else {
             $status = 500;

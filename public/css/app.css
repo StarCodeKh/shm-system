@@ -6736,6 +6736,109 @@ input[type=file]:focus-visible {
   border-color: #414561;
 }
 
+/* --- POPUP & DIALOG MOTION: one quick, calm movement instead of Vuesax's staggered pieces
+   (card scaling, title sliding 50px, text sliding, content fading in after a delay).
+   Opens: backdrop fades in, the card rises 8px and settles. Closes: faster fade. */
+
+:root {
+  --modal-in: .22s;
+  --modal-out: .15s;
+}
+
+.con-vs-popup,
+.con-vs-dialog {
+  transition: opacity var(--modal-in) ease !important;
+}
+
+.con-vs-popup .vs-popup,
+.con-vs-popup .vs-dialog,
+.con-vs-dialog .vs-popup,
+.con-vs-dialog .vs-dialog {
+  transition: transform var(--modal-in) var(--tab-ease), opacity var(--modal-in) ease !important;
+}
+
+[dir=ltr] .con-vs-popup .vs-popup, [dir=ltr] .con-vs-popup .vs-dialog, [dir=ltr] .con-vs-dialog .vs-popup, [dir=ltr] .con-vs-dialog .vs-dialog {
+  animation: none !important;
+}
+
+[dir=rtl] .con-vs-popup .vs-popup, [dir=rtl] .con-vs-popup .vs-dialog, [dir=rtl] .con-vs-dialog .vs-popup, [dir=rtl] .con-vs-dialog .vs-dialog {
+  animation: none !important;
+}
+
+.con-vs-popup header h3,
+.con-vs-popup .vs-popup--content,
+.con-vs-popup .vs-dialog-text,
+.con-vs-popup footer button,
+.con-vs-popup .vs-popup--close,
+.con-vs-popup .vs-dialog-cancel,
+.con-vs-dialog header h3,
+.con-vs-dialog .vs-popup--content,
+.con-vs-dialog .vs-dialog-text,
+.con-vs-dialog footer button,
+.con-vs-dialog .vs-popup--close,
+.con-vs-dialog .vs-dialog-cancel {
+  transition: none !important;
+}
+
+.con-vs-popup.popup-t-enter .vs-popup,
+.con-vs-dialog.dialog-t-enter .vs-dialog {
+  opacity: 0;
+}
+
+[dir] .con-vs-popup.popup-t-enter .vs-popup, [dir] .con-vs-dialog.dialog-t-enter .vs-dialog {
+  transform: translateY(8px) scale(0.98) !important;
+}
+
+.con-vs-popup.popup-t-leave-to .vs-popup,
+.con-vs-dialog.dialog-t-leave-to .vs-dialog {
+  opacity: 0;
+}
+
+[dir] .con-vs-popup.popup-t-leave-to .vs-popup, [dir] .con-vs-dialog.dialog-t-leave-to .vs-dialog {
+  transform: scale(0.98) !important;
+}
+
+[dir] .con-vs-popup.popup-t-leave-active, [dir] .con-vs-dialog.dialog-t-leave-active {
+  transition-duration: var(--modal-out) !important;
+}
+
+[dir] .con-vs-popup.popup-t-leave-active .vs-popup, [dir] .con-vs-popup.popup-t-leave-active .vs-dialog, [dir] .con-vs-dialog.dialog-t-leave-active .vs-popup, [dir] .con-vs-dialog.dialog-t-leave-active .vs-dialog {
+  transition-duration: var(--modal-out) !important;
+}
+
+.con-vs-popup.popup-t-enter header h3,
+.con-vs-popup.popup-t-enter .vs-dialog-text,
+.con-vs-popup.popup-t-enter footer button,
+.con-vs-popup.popup-t-enter .vs-popup--close,
+.con-vs-popup.popup-t-enter .vs-dialog-cancel,
+.con-vs-popup.popup-t-leave-to header h3,
+.con-vs-popup.popup-t-leave-to .vs-dialog-text,
+.con-vs-popup.popup-t-leave-to footer button,
+.con-vs-popup.popup-t-leave-to .vs-popup--close,
+.con-vs-popup.popup-t-leave-to .vs-dialog-cancel,
+.con-vs-dialog.dialog-t-enter header h3,
+.con-vs-dialog.dialog-t-enter .vs-dialog-text,
+.con-vs-dialog.dialog-t-enter footer button,
+.con-vs-dialog.dialog-t-enter .vs-popup--close,
+.con-vs-dialog.dialog-t-enter .vs-dialog-cancel,
+.con-vs-dialog.dialog-t-leave-to header h3,
+.con-vs-dialog.dialog-t-leave-to .vs-dialog-text,
+.con-vs-dialog.dialog-t-leave-to footer button,
+.con-vs-dialog.dialog-t-leave-to .vs-popup--close,
+.con-vs-dialog.dialog-t-leave-to .vs-dialog-cancel {
+  opacity: 1 !important;
+}
+
+[dir] .con-vs-popup.popup-t-enter header h3, [dir] .con-vs-popup.popup-t-enter .vs-dialog-text, [dir] .con-vs-popup.popup-t-enter footer button, [dir] .con-vs-popup.popup-t-enter .vs-popup--close, [dir] .con-vs-popup.popup-t-enter .vs-dialog-cancel, [dir] .con-vs-popup.popup-t-leave-to header h3, [dir] .con-vs-popup.popup-t-leave-to .vs-dialog-text, [dir] .con-vs-popup.popup-t-leave-to footer button, [dir] .con-vs-popup.popup-t-leave-to .vs-popup--close, [dir] .con-vs-popup.popup-t-leave-to .vs-dialog-cancel, [dir] .con-vs-dialog.dialog-t-enter header h3, [dir] .con-vs-dialog.dialog-t-enter .vs-dialog-text, [dir] .con-vs-dialog.dialog-t-enter footer button, [dir] .con-vs-dialog.dialog-t-enter .vs-popup--close, [dir] .con-vs-dialog.dialog-t-enter .vs-dialog-cancel, [dir] .con-vs-dialog.dialog-t-leave-to header h3, [dir] .con-vs-dialog.dialog-t-leave-to .vs-dialog-text, [dir] .con-vs-dialog.dialog-t-leave-to footer button, [dir] .con-vs-dialog.dialog-t-leave-to .vs-popup--close, [dir] .con-vs-dialog.dialog-t-leave-to .vs-dialog-cancel {
+  transform: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [dir] .con-vs-popup, [dir] .con-vs-dialog, [dir] .con-vs-popup .vs-popup, [dir] .con-vs-dialog .vs-dialog {
+    transition-duration: 1ms !important;
+  }
+}
+
 /* --- MODAL SCROLL LOCK: while a popup or confirm dialog is open, the page behind stays still.
    Popups stay in <body> hidden with v-show (display: none); dialogs are removed when closed. */
 
@@ -9239,36 +9342,8 @@ label.vs-select--label {
   color: inherit;
 }
 
-[dir] .con-vs-dialog .vs-dialog header .dialog-title {
-  padding: 0.8rem;
-}
-
 .con-vs-dialog .vs-dialog header span.after {
   width: 0;
-}
-
-.con-vs-dialog .vs-dialog .vs-dialog-text {
-  font-size: 1rem;
-}
-
-[dir] .con-vs-dialog .vs-dialog .vs-dialog-text {
-  padding: 1rem;
-}
-
-[dir] .con-vs-dialog .vs-dialog footer {
-  padding: 1rem;
-}
-
-[dir] .con-vs-dialog .vs-dialog footer .vs-button:last-of-type {
-  border-color: rgba(0, 0, 0, 0.2) !important;
-}
-
-[dir=ltr] .con-vs-dialog .vs-dialog footer .vs-button:last-of-type {
-  margin-left: 0.5rem !important;
-}
-
-[dir=rtl] .con-vs-dialog .vs-dialog footer .vs-button:last-of-type {
-  margin-right: 0.5rem !important;
 }
 
 .vs-con-dropdown {

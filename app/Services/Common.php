@@ -31,11 +31,12 @@
 			$user = Auth::user();
 			if (!$user) return [];
 			if (!array_key_exists($user->id, $cache)) {
-				// Super Admin gets every permission that exists, so new ones never need ticking by hand
-				$permissions = self::isSuperAdmin($user)
-					? Permission::pluck('name')
-					: User::find($user->id)->getPermissionsViaRoles()->pluck('name');
-				$cache[$user->id] = $permissions->mapWithKeys(fn ($name) => [$name => true])->all();
+				// Super Admin passes every check, even on permission names that were never created
+				$cache[$user->id] = self::isSuperAdmin($user)
+					? new FullAccess(Permission::pluck('name')->all())
+					: User::find($user->id)->getPermissionsViaRoles()
+						->mapWithKeys(fn ($permission) => [$permission->name => true])
+						->all();
 			}
 			return $cache[$user->id];
 		}
