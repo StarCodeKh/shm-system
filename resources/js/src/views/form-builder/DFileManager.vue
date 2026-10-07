@@ -203,7 +203,6 @@ import { gridClass } from "@/formGrid.js";
 import axios from "@/axios.js";
 import { ref } from 'vue';
 import apiConfig from "@/apiConfig.js";
-import DSearch from '@/views/form-builder/DSearch.vue';
 
 const IMAGE_EXT = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp']
 const TYPE_COLORS = {
@@ -299,7 +298,6 @@ export default {
         }
     },
     components: {
-        DSearch,
     },
     computed: {
         canUpload() {

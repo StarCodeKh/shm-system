@@ -217,11 +217,6 @@
 <script>
 
 import axios from "@/axios.js";
-import DSearch from '@/views/form-builder/DSearch.vue';
-import DModalForm from '@/views/form-builder/DModalForm.vue';
-import DForm from '@/views/form-builder/DForm.vue'
-import DFormElement from '@/views/form-builder/DFormElement.vue'
-import DHeadingWizard from '@/views/form-builder/DHeadingWizard.vue';
 import { stringify } from 'querystring';
 import { ref } from 'vue';
 export default {

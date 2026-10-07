@@ -31,21 +31,17 @@
 </template>
 
 <script>
-import SettingBackup from "@/views/pages/settings/SettingBackup.vue"
 import { ref } from 'vue';
 import Vue from "vue";
 import apiConfig from "@/apiConfig.js"
 import DForm from '@/views/form-builder/DForm.vue'
-import DModalForm from '@/views/form-builder/DModalForm.vue';
 // import DIndicator from '@/views/form-builder/DIndicator.vue';
 // import ModalIndicatorSubProgram from '@/views/modules/program-management/indicator/_modal_indicator_subprogram.vue';
 // Vue.use("DForm", DForm);
 
 export default {
     components: {
-        SettingBackup,
         DForm,
-        DModalForm
     },
     props: {
         data: {

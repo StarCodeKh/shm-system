@@ -472,7 +472,7 @@ export default {
         gap: 10px;
         padding: 10px 12px;
         border-radius: 10px;
-        animation: payable-history-in .3s ease both;
+        animation: payable-history-in .3s ease backwards;
         animation-delay: var(--delay);
         transition: background .15s ease;
 

@@ -11,14 +11,9 @@
 
 <script>
 import FormWizardNumberTab from "./FormWizardNumberTab.vue"
-import FormWizardIconTab from "./FormWizardIconTab.vue"
-import FormWizardValidation from "./FormWizardValidation.vue"
-
 export default {
     components: {
         FormWizardNumberTab,
-        FormWizardIconTab,
-        FormWizardValidation,
     }
 }
 </script>

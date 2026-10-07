@@ -87,7 +87,6 @@ import Bank from '@/views/pages/settings/_Bank.vue';
 import LetterType from '@/views/pages/settings/_LetterType.vue';
 import Currency from '@/views/pages/settings/_Currency.vue';
 import CurrencyExchange from '@/views/pages/settings/_CurrencyExchange.vue';
-import PriceListType from '@/views/pages/settings/_Price_List_Type.vue';
 import BudgetTemplate from '@/views/pages/settings/_Budget_Template.vue';
 import PaymentMethod from '@/views/pages/settings/_PaymentMethod.vue';
 import PaymentTerm from '@/views/pages/settings/_PaymentTerm.vue';
@@ -105,7 +104,6 @@ export default {
         Unit,
         Bank,
         LetterType,
-        PriceListType,
         BudgetTemplate,
         Currency,
         CurrencyExchange,

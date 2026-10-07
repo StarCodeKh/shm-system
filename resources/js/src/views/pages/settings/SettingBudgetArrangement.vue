@@ -43,9 +43,6 @@
 
 
 <script>
-import PIPFinanceResource from '@/views/pages/settings/include_budget_arrangement/_PIPFinanceResource.vue';
-import PIPProjectStatus from '@/views/pages/settings/include_budget_arrangement/_PIPProjectStatus.vue';
-import PIPProjectType from '@/views/pages/settings/include_budget_arrangement/_PIPProjectType.vue';
 import ExpenditureGroup from '@/views/pages/settings/include_budget_arrangement/_ExpenditureGroup.vue';
 import ExpenditureType from '@/views/pages/settings/include_budget_arrangement/_ExpenditureType.vue';
 import CreditMovementType from '@/views/pages/settings/include_budget_arrangement/_CreditMovementType.vue';
@@ -54,9 +51,6 @@ import CeilingType from '@/views/pages/settings/ceiling/_CeilingType.vue';
 
 export default {
     components: {
-        PIPFinanceResource,
-        PIPProjectStatus,
-        PIPProjectType,
         ExpenditureGroup,
         ExpenditureType,
         CeilingGroup,

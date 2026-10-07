@@ -124,8 +124,6 @@ import axios from "@/axios.js";
 import apiConfig from "@/apiConfig.js";
 import { ref } from 'vue';
 import TabCredentialUser from "./_TabCredentialUser";
-import TabUserDetail from "./_TabUserDetail.vue";
-import TabSecurityLogin from "./_TabSecurityLogin.vue";
 import TabDetail from "./_TabDetail.vue";
 import TabDocument from "./_TabDocument.vue";
 import TabIncentive from "./_TabIncentive.vue";
@@ -137,8 +135,6 @@ import TabRecurring from "./_TabRecurring";
 export default {
   components: {
     TabCredentialUser,
-    TabUserDetail,
-    TabSecurityLogin,
     TabDetail,
     TabDocument,
     TabIncentive,

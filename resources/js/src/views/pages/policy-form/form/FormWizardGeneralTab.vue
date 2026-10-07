@@ -292,7 +292,6 @@
 import {FormWizard, TabContent} from 'vue-form-wizard'
 import CreateOfficerPopup from '../../officers/form/CreateOfficerPopup.vue'
 import 'vue-form-wizard/dist/vue-form-wizard.min.css'
-import DataViewSidebar from '@/views/pages/compositions-request/data-list/DataViewSidebar.vue'
 import moduleDataList from "@/store/data-list/moduleDataList.js"
 import VueSimpleSuggest from 'vue-simple-suggest';
 import 'vue-simple-suggest/dist/styles.css'

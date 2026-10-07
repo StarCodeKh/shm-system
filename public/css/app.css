@@ -5171,11 +5171,11 @@ span.text-danger.text-sm[style*="display: none"] {
 }
 
 [dir=ltr] .con-vs-tabs.vs-tabs-position-top > .con-slot-tabs > .vs-tabs--content {
-  animation: tab-content-in var(--tab-fade) var(--tab-ease) both;
+  animation: tab-content-in var(--tab-fade) var(--tab-ease) backwards;
 }
 
 [dir=rtl] .con-vs-tabs.vs-tabs-position-top > .con-slot-tabs > .vs-tabs--content {
-  animation: tab-content-in var(--tab-fade) var(--tab-ease) both;
+  animation: tab-content-in var(--tab-fade) var(--tab-ease) backwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -5353,11 +5353,11 @@ span.text-danger.text-sm[style*="display: none"] {
 }
 
 [dir=ltr] .con-vs-tabs.vs-tabs-position-left > .con-slot-tabs > .vs-tabs--content, [dir=ltr] .con-vs-tabs.vs-tabs-position-right > .con-slot-tabs > .vs-tabs--content {
-  animation: tab-content-in var(--tab-fade) var(--tab-ease) both;
+  animation: tab-content-in var(--tab-fade) var(--tab-ease) backwards;
 }
 
 [dir=rtl] .con-vs-tabs.vs-tabs-position-left > .con-slot-tabs > .vs-tabs--content, [dir=rtl] .con-vs-tabs.vs-tabs-position-right > .con-slot-tabs > .vs-tabs--content {
-  animation: tab-content-in var(--tab-fade) var(--tab-ease) both;
+  animation: tab-content-in var(--tab-fade) var(--tab-ease) backwards;
 }
 
 @media (max-width: 767px) {

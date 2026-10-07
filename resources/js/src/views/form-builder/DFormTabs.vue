@@ -429,7 +429,9 @@ export default {
   // Content slides in from the side the user is moving towards
   .form-section {
     padding-top: 16px;
-    animation: d-tabform-next var(--tab-fade) var(--tab-ease) both;
+    // "backwards", not "both": a kept end transform makes the section a stacking context, and its
+    // open dropdowns then slide under the sticky footer
+    animation: d-tabform-next var(--tab-fade) var(--tab-ease) backwards;
   }
 
   &[data-dir="prev"] .form-section {

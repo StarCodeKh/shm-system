@@ -151,7 +151,7 @@ export default {
     border-radius: 14px;
     background: #fff;
     cursor: pointer;
-    animation: report-card-in .35s ease both;
+    animation: report-card-in .35s ease backwards;
     animation-delay: var(--delay);
     transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
 

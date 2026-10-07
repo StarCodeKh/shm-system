@@ -362,14 +362,12 @@ import { gridClass } from "@/formGrid.js";
 import axios from "@/axios.js"
 import vSelect from 'vue-select';
 import flatPickr from 'vue-flatpickr-component';
-import DForm from '@/views/form-builder/DForm.vue'
 import apiConfig from "@/apiConfig.js"
 import { ref } from 'vue';
 import DFileManager from '@/views/form-builder/DFileManager.vue';
 import DFilePicker from '@/views/form-builder/DFilePicker.vue';
 export default {
   components: {
-    DForm,
     vSelect,
     DFileManager,
     DFilePicker

@@ -114,7 +114,6 @@
 import { gridClass } from "@/formGrid.js";
 
 import axios from "@/axios.js"
-import DForm from '@/views/form-builder/DForm.vue'
 import { AgGridVue } from "ag-grid-vue"
 import '@sass/vuexy/extraComponents/agGridStyleOverride.scss'
 import vSelect from 'vue-select'
@@ -139,7 +138,6 @@ export default {
     components: {
         AgGridVue,
         vSelect,
-        DForm,
         flatPickr
     },
     data() {

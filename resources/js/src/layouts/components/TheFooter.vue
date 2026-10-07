@@ -12,8 +12,6 @@
 </template>
 
 <script>
-import BuyNow from '../../components/BuyNow.vue'
-
 export default {
     name: "the-footer",
     props: {
@@ -24,7 +22,6 @@ export default {
     inject: {
       components:{
           default: {
-            BuyNow
           }
       }
     }

@@ -118,11 +118,6 @@ import StepIncomePlan from "./_StepIncomePlan.vue"
 import StepSubprogram from "./_StepSubprogram.vue"
 import StepIndicator from "./_StepIndicator.vue"
 
-import StepEconomicExppb from "./step-budget-package/_StepEconomicExppb.vue"
-import StepKPIProgress from "@/views/pages/modules/budget-arrangement/bsp/step-budget-package/_StepKPI.vue"
-import StepObjectiveSubProgram from "./step-budget-package/_StepObjectiveSubProgram.vue"
-import StepKPI from "./step-budget-package/_StepKPI.vue"
-// For custom error message
 import { Validator } from 'vee-validate';
 const dict = {
   custom: {
@@ -271,10 +266,6 @@ export default {
     StepSubprogram,
     StepIndicator,
 
-    StepEconomicExppb,
-    StepKPI,
-    StepKPIProgress,
-    StepObjectiveSubProgram,
   }
 }
 </script>

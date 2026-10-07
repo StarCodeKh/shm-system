@@ -11,11 +11,8 @@
 </template>
 
 <script>
-import COAGeneral from "./COAGeneral.vue"
-
 export default {
   components: {
-    COAGeneral
   },
   data() {
     return {

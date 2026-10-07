@@ -17,11 +17,9 @@
 </template>
 
 <script>
-import IncomeGeneral from "./IncomeGeneral.vue";
 import IncomeUpload from "./IncomeUpload.vue";
 export default {
   components: {
-    IncomeGeneral,
     IncomeUpload
   },
   data() {

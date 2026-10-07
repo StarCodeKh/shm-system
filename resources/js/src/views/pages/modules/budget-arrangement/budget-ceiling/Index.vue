@@ -13,7 +13,6 @@ import axios from "@/axios.js"
 import apiConfig from "@/apiConfig.js"
 import { ref } from 'vue';
 import DTableList from '@/views/form-builder/DTableList.vue'
-import DForm from '@/views/form-builder/DForm.vue'
 import FormCeilingEntity from '@/views/pages/modules/budget-arrangement/budget-ceiling/_FormCeilingEntity.vue';
 
 export default {
@@ -108,7 +107,6 @@ export default {
     },
     components: {
         DTableList,
-        DForm,
         FormCeilingEntity,
     },
     methods: {

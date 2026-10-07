@@ -803,7 +803,7 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
     // Tab content fades up when it appears
     > .con-slot-tabs > .vs-tabs--content {
         padding: 0;
-        animation: tab-content-in var(--tab-fade) var(--tab-ease) both;
+        animation: tab-content-in var(--tab-fade) var(--tab-ease) backwards;
     }
 }
 
@@ -921,7 +921,7 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
 
         > .vs-tabs--content {
             padding: 0;
-            animation: tab-content-in var(--tab-fade) var(--tab-ease) both;
+            animation: tab-content-in var(--tab-fade) var(--tab-ease) backwards;
         }
     }
 

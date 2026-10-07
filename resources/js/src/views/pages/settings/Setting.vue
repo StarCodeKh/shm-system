@@ -229,7 +229,7 @@ export default {
     border-radius: 12px;
     background: transparent;
     cursor: pointer;
-    animation: setting-item-in .35s ease both;
+    animation: setting-item-in .35s ease backwards;
     animation-delay: var(--delay);
     transition: background var(--tab-tap) ease, box-shadow var(--tab-tap) ease;
 
@@ -360,7 +360,7 @@ export default {
 
 // Same motion as every other tab: the old section fades out quickly, the new one rises in
 .setting-swap-enter-active {
-  animation: tab-content-in var(--tab-fade) var(--tab-ease) both;
+  animation: tab-content-in var(--tab-fade) var(--tab-ease) backwards;
 }
 .setting-swap-leave-active {
   transition: opacity var(--tab-tap) ease;

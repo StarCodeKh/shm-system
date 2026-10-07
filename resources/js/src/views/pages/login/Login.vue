@@ -84,7 +84,7 @@ $login-blue-dark: #324693;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 30px 60px -20px rgba(23, 23, 74, .25), 0 0 0 1px rgba(23, 23, 74, .04);
-  animation: login-shell-in .5s cubic-bezier(.22, 1, .36, 1) both;
+  animation: login-shell-in .5s cubic-bezier(.22, 1, .36, 1) backwards;
 }
 
 @keyframes login-shell-in {

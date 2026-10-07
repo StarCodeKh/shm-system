@@ -13,7 +13,6 @@ import axios from "@/axios.js"
 import apiConfig from "@/apiConfig.js"
 import { ref } from 'vue';
 import Form from '@/views/pages/modules/budget-arrangement/budget-ceiling/_Form.vue';
-import TableState from './TableState.vue'
 import DTableList from '@/views/form-builder/DTableList.vue'
 
 
@@ -445,7 +444,6 @@ export default {
     },
     components: {
         DTableList,
-        TableState,
         Form
     },
     methods: {

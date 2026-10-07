@@ -441,7 +441,6 @@
 import { gridClass } from "@/formGrid.js";
 import axios from "@/axios.js"
 import apiConfig from "@/apiConfig.js"
-import DFormInput from '@/views/form-builder/form-control/DFormInput.vue'
 import vSelect from 'vue-select'
 import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';

@@ -9,7 +9,6 @@
 <script>
     import axios from "@/axios.js";
     import apiConfig from "@/apiConfig.js";
-    import DTableList from '@/views/form-builder/DTableList.vue';
     import DForm from '@/views/form-builder/DForm.vue'
     export default {
         data() {
@@ -176,7 +175,6 @@
         },
         components: {
             DForm,
-            DTableList,
         },
         methods: {
             getDataInfo(){

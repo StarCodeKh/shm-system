@@ -233,7 +233,7 @@ export default {
 
   // The panel shown by v-show replays the shared tab entrance each time it appears
   &__body > * {
-    animation: tab-content-in var(--tab-fade) var(--tab-ease) both;
+    animation: tab-content-in var(--tab-fade) var(--tab-ease) backwards;
 
     @media (prefers-reduced-motion: reduce) {
       animation: none;

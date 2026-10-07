@@ -14,7 +14,6 @@ import axios from "@/axios.js"
 import apiConfig from "@/apiConfig.js"
 import { ref } from 'vue';
 import FormTask from '@/views/pages/modules/program-management/_FormTask.vue';
-import FormActivity from '@/views/pages/modules/program-management/_FormActivity.vue';
 import DTableList from '@/views/form-builder/DTableList.vue';
 
 export default {
@@ -647,7 +646,6 @@ export default {
     },
     components: {
         FormTask,
-        FormActivity,
         DTableList
     },
     methods: {
