@@ -19,7 +19,8 @@
 [Getting started](#getting-started) •
 [Commands](#common-commands) •
 [Guides](#guides) •
-[Deployment](#deployment)
+[Deployment](#deployment) •
+[Security](#security)
 
 </div>
 
@@ -150,6 +151,44 @@ php artisan config:cache && php artisan route:cache && php artisan view:cache
 ```
 
 Copy these to the server by hand: `.env`, `service-account-key.json`, `storage/firebase/firebase_credentials.json`, the Passport keys in `storage/`, and the `public/upload/` folder. Point the web server at `public/`.
+
+## Security
+
+Reviewed on 2026-10-07. Update the **Status** column as issues are fixed.
+
+**In place**
+
+- `.env`, `service-account-key.json` and the Passport keys are not in git; key files are readable by their owner only
+- Only the four sign-in endpoints (`/api/auth/*`) work without a token; every other route needs `auth:api`
+- Sign-in is limited to 10 attempts a minute, the rest of the API to 60 requests a minute
+- Create / update / delete on resource routes check the controller's permission (`EnforceModulePermission`)
+- `composer audit`: no known advisories
+
+**Open issues**
+
+| Severity | Issue | Where | Status |
+|---|---|---|---|
+| Critical | Setting a member's login password has no permission or ownership check, so any signed-in account can change another user's password | `OfficerController::updateIncentiveOfficer` (`POST /api/v1/update_officer_user`) | Open |
+| Critical | The mobile OTP code is returned in the API response and no SMS is sent, so the code does not prove who is signing in | `AuthController::loginMobileOTP`, `OTPService` | Open — needs an SMS provider |
+| Critical | Uploaded files keep their own name and extension and are saved under `public/`, so a script file can be uploaded and run | `FileManagerController::fileImageUploadService` | Open |
+| High | A successful OTP sign-in replaces the user's password with the OTP code | `OTPService::checkOTP` | Open |
+| High | Member spreadsheet import has no permission check and no file-type check | `FileManagerController::fileUploadService` (`POST /api/v1/file_upload`) | Open |
+| High | The sign-in form is pre-filled with an admin email and password; change that password and remove the defaults | `LoginJWT.vue` | Open |
+| Medium | CORS allows every origin together with credentials | `config/cors.php` | Open |
+| Medium | Access tokens last 1 year; "remember me" shortens them to 1 week instead of extending them | `AuthController` sign-in methods | Open |
+| Medium | 31 models use `$guarded = []` and controllers save the whole request, so extra columns can be set | models, controllers' `dataForm()` | Open |
+| Medium | No security headers (`X-Frame-Options`, `Content-Security-Policy`, `X-Content-Type-Options`, HSTS) | `public/.htaccess` / middleware | Open |
+| Low | Template leftovers: unused Firebase demo config and a Google Maps key in a comment (still in git history) | `resources/js/src/firebase/`, `main.js` | Open |
+| Low | Three report queries build SQL by joining strings (not exploitable today; values are dates or database ids) | `ReportController` | Open |
+| Low | The OTP request says whether a phone number has an account | `AuthController::loginMobileOTP` | Open |
+| Info | `npm audit` lists 169 issues (6 critical), mostly in build tools and the unused template Firebase login | `package.json` | Open |
+
+**Before going live**
+
+- `.env`: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL` with `https://`
+- Serve over HTTPS only
+- Make sure the web server does not run scripts inside `public/images/uploads/`
+- Fix the Critical and High issues above
 
 ## License
 

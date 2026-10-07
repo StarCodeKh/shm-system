@@ -95,14 +95,14 @@
 }
 
 :root {
-  --font-base: "Kantumruy Pro", "Khmer OS Battambang", sans-serif;
+  --font-base: 'Kantumruy Pro', 'Khmer OS Battambang', sans-serif;
   --font-heading: var(--font-base);
-  --font-document: "Khmer OS Battambang", serif;
-  --font-mef1: "Khmer MEF1", var(--font-document);
-  --font-mef2: "Khmer MEF2", var(--font-document);
-  --font-fk1: "FK1", var(--font-document);
-  --font-fk2: "FK2", var(--font-document);
-  --font-mono: Menlo, Monaco, Consolas, "Courier New", monospace;
+  --font-document: 'Khmer OS Battambang', serif;
+  --font-mef1: 'Khmer MEF1', var(--font-document);
+  --font-mef2: 'Khmer MEF2', var(--font-document);
+  --font-fk1: 'FK1', var(--font-document);
+  --font-fk2: 'FK2', var(--font-document);
+  --font-mono: Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 html {
