@@ -74,4 +74,6 @@ return [
     'notification_sent'        => 'Notification sent.',
     'notification_failed'      => 'The notification couldn\'t be sent.',
     'notification_read'        => 'Notification marked as read.',
+    'lookup_no_choices'        => 'This field has no choices.',
+    'lookup_no_form'           => 'New items can\'t be added here.',
 ];

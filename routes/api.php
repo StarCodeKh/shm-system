@@ -410,6 +410,7 @@ Route::prefix('v1')->middleware(['auth:api', 'global_site', 'cors', 'module_perm
 
     // User
     // Dropdown choices by field name, for forms whose page didn't send them
+    Route::get('lookup/form/{table}', [LookupController::class, 'form'])->where('table', '[a-z_]+');
     Route::get('lookup/{field}', [LookupController::class, 'show'])->where('field', '[a-z_]+');
 
     Route::post('user/device', [UserController::class, 'getUserDevice']);

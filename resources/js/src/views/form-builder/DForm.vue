@@ -11,10 +11,13 @@
             <d-file-manager ref="refModelFileManager" @clicked="initPassProps"></d-file-manager>
         </template>
 
-        <vs-popup style="z-index: 5200000;" class="d-modal" classContent="popup-example" :title="$t(title)"
-            :active.sync="showModalForm">
-            <DFormAttribute :data="data" :formAttributes="formAttributeData" :rowDisplay="rowDisplay" :api="newAPi"
-                :dataInfo="dataInfo" :parentDataInfo="parentDataInfo" @clickForm="initTableData" />
+        <!-- "+ Add" next to a dropdown: the same standard form, for the table that dropdown lists -->
+        <vs-popup style="z-index: 5200000;" class="d-modal" classContent="popup-example"
+            :title="quickAdd ? $t('form_quick_add', { field: fieldLabel(quickAdd.field) }) : ''"
+            :active.sync="quickAddOpen">
+            <d-form v-if="quickAdd && quickAdd.fields" :key="quickAdd.key" :data="quickAdd.data" :dataInfo="{}"
+                :parentDataInfo="{}" :formAttributes="quickAdd.fields" :api="quickAdd.api" :rowDisplay="rowDisplay"
+                @saved="onQuickAdded" @cancel="quickAddOpen = false" />
         </vs-popup>
         <div class="vx-row">
             <template v-for="(formAttribute, i) in formAttributes">
@@ -73,9 +76,9 @@
                 <div v-if="formAttribute.type == 'select'" :class="styleClass" class="d-field" dclass="mt-4">
                     <label class="mb-2">{{ fieldLabel(formAttribute.name) }} <span
                             v-if="formAttribute.required">*</span></label>
-                    <button v-if="variableReturn(formAttribute.name)" type="button" class="d-quick-add"
+                    <button v-if="canQuickAdd(formAttribute.name)" type="button" class="d-quick-add"
                         :title="$t('form_quick_add', { field: fieldLabel(formAttribute.name) })"
-                        @click.stop="initNewForm(formAttribute.name)">
+                        @click.stop="openQuickAdd(formAttribute.name)">
                         <feather-icon icon="PlusIcon" svgClasses="h-3 w-3" />
                         <span>{{ $t('form_add') }}</span>
                     </button>
@@ -351,7 +354,6 @@
 
 <script>
 import { gridClass } from "@/formGrid.js";
-import apiConfig from "@/apiConfig.js"
 import axios from "@/axios.js";
 
 // Dropdown choices fetched by field name (GET /api/v1/lookup/{field}), shared by every form for the session.
@@ -367,14 +369,18 @@ function lookupChoices(field, locale) {
     }
     return lookupRequests[key]
 }
-import formAttr from "@/formAttributes.js"
+// Forget a field's cached list (every language), so the next form sees a newly added choice
+function forgetLookup(field) {
+    Object.keys(lookupRequests).filter(key => key.endsWith(`:${field}`)).forEach(key => delete lookupRequests[key])
+}
+import { quickAddSource, savedRecord, optionForRecord, optionFromRecord } from "@/quickAdd.js"
 import vSelect from 'vue-select';
 import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
 import DFileManager from '@/views/form-builder/DFileManager.vue';
 import DFilePicker from '@/views/form-builder/DFilePicker.vue';
-import DFormAttribute from '@/views/form-builder/DFormAttribute.vue';
 export default {
+    name: 'DForm', // its "+ Add" popup is a DForm too
     props: {
         formAttributes: {
             required: Array
@@ -398,14 +404,12 @@ export default {
     data() {
         return {
             saving: false, // a save is in flight: further clicks / Enter are ignored
-            newAPi: null,
-            formAttributeData: [],
+            quickAdd: null, // { field, api, fields, data } while the "+ Add" popup is up
+            quickAddOpen: false,
             dataTables: [],
             dataAttributes: "",
-            title: "ទម្រង់បង្កើត",
             formAttribute: "",
             dataFields: [],
-            showModalForm: false,
             showFileManager: false,
             notFoundFile: "/images/not_found.png",
             iconThumnail: "",
@@ -431,8 +435,6 @@ export default {
         DFilePicker,
         vSelect,
         flatPickr,
-        DFormAttribute,
-        formAttr
     },
     computed: {
         // Column classes for every field; follows rowDisplay when a popup picks its layout
@@ -486,148 +488,44 @@ export default {
             let route = this.$router.resolve({ path: filePath });
             window.open(route.href, '_blank');
         },
-        initTableData(data) {
-            var _flag = 1; // mean to enable close modal form
-            this.showModalForm = false;
-            this.$emit('clickForm', _flag);
+        canQuickAdd(field) {
+            return !!quickAddSource(field)
         },
-        initNewForm(param) {
-            switch (param) {
-                case "account_group_id":
-                    this.title = "account_group_id";
-                    this.newAPi = apiConfig._apiAccountGroup;
-                    this.formAttributeData = formAttr.formAttributeAccountGroup;
-                    break;
-
-                case "account_type_group_id":
-                    this.title = "account_group_id";
-                    this.newAPi = apiConfig._apiAccountTypeGroup;
-                    this.formAttributeData = formAttr.formAttributeAccountTypeGroup;
-                    break;
-                case "account_type_id":
-                    this.title = "account_type_id";
-                    this.newAPi = apiConfig._apiAccountType;
-                    this.formAttributeData = formAttr.formAttributeAccountType;
-                    break;
-                case "account_id":
-                    this.title = "account_id";
-                    this.newAPi = apiConfig._apiAccount;
-                    this.formAttributeData = formAttr.formAttributeAccount;
-                    break;
-                case "sub_account_id":
-                    this.title = "sub_account_id";
-                    this.newAPi = "";
-                    this.formAttributeData = formAttr.formAttributeAccount;
-                    break;
-                case "category_id":
-                    this.title = "category_id";
-                    this.newAPi = apiConfig._apiItemCategory;
-                    this.formAttributeData = formAttr.formAttributeItemCategory;
-                    break;
-                case "item_id":
-                    this.title = "item_id";
-                    this.newAPi = apiConfig._apiItem;
-                    this.formAttributeData = formAttr.formAttributeItem;
-                    break;
-                case "role_id":
-                    this.title = "role_id";
-                    this.newAPi = apiConfig._apiRole;
-                    this.formAttributeData = formAttr.formAttributeRole;
-                    break;
-                case "unit_id":
-                    this.title = "unit_id";
-                    this.newAPi = apiConfig._apiUnit;
-                    this.formAttributeData = formAttr.formAttributeUnit;
-                    break;
-                case "user_id":
-                    this.title = "user_id";
-                    this.newAPi = apiConfig._apiUser;
-                    this.formAttributeData = formAttr.formAttributeUser;
-                    break;
-                case "title":
-                    this.title = "title";
-                    this.newAPi = apiConfig._apiTitle;
-                    this.formAttributeData = formAttr.formAttributeTitle;
-                    break;
-                case "department":
-                    this.title = "department";
-                    this.newAPi = apiConfig._apiDepartment;
-                    this.formAttributeData = formAttr.formAttributeDepartment;
-                    break;
-                case "department_id":
-                    this.title = "department_id";
-                    this.newAPi = apiConfig._apiDepartment;
-                    this.formAttributeData = formAttr.formAttributeDepartment;
-                    break;
-                case "entity_id":
-                    this.title = "entity_id";
-                    this.newAPi = apiConfig._apiEntity;
-                    this.formAttributeData = formAttr.formAttributeEntity;
-                    break;
-                case "entity_member_id":
-                    this.title = "entity_member_id";
-                    this.newAPi = apiConfig._apiEntityMember;
-                    this.formAttributeData = formAttr.formAttributeEntityMember;
-                    break;
-                case "position":
-                    this.title = "position";
-                    this.newAPi = apiConfig._apiPosition;
-                    this.formAttributeData = formAttr.formAttributePosition;
-                    break;
-                case "ceiling_group_id":
-                    this.title = "ceiling_group_id";
-                    this.newAPi = apiConfig._apiCeilingGroup;
-                    this.formAttributeData = formAttr.formAttributeCeilingGroup;
-                    break;
-                case "ceiling_type_id":
-                    this.title = "ceiling_type_id";
-                    this.newAPi = apiConfig._apiCeilingType;
-                    this.formAttributeData = formAttr.formAttributeCeilingType;
-                    break;
-                case "objective_id":
-                    this.title = "objective_id";
-                    this.newAPi = apiConfig._apiObjective;
-                    this.formAttributeData = formAttr.formAttributeObjective;
-                    break;
-
-                case "program_id":
-                    this.title = "program_id";
-                    this.newAPi = apiConfig._apiProgram;
-                    this.formAttributeData = formAttr.formAttributeProgram;
-                    break;
-                case "sub_program_id":
-                    this.title = "sub_program_id";
-                    this.newAPi = apiConfig._apiSubProgram;
-                    this.formAttributeData = formAttr.formAttributeSubProgram;
-                    break;
-                case "cluster_activity_id":
-                    this.title = "cluster_activity_id";
-                    this.newAPi = apiConfig._apiClusterActivity;
-                    this.formAttributeData = formAttr.formAttributeClusterActivity;
-                    break;
-                case "activity_id":
-                    this.title = "activity_id";
-                    this.newAPi = apiConfig._apiActivity;
-                    this.formAttributeData = formAttr.formAttributeActivity;
-                    break;
-
-                case "currency":
-                    this.title = "currency";
-                    this.newAPi = apiConfig._apiCurrency;
-                    this.formAttributeData = formAttr.formAttributeCurrency;
-                    break;
-                case "request_title":
-                    this.title = "request_title";
-                    this.newAPi = apiConfig._apiPaymentType;
-                    this.formAttributeData = this.data.form_payment_type;
-                    break;
-                default:
-                    this.formAttributeData = null;
-                    break;
+        // Open the add form for the table behind a dropdown: built from that table's columns
+        // (or the fixed form the field names in quickAdd.js)
+        async openQuickAdd(field) {
+            const source = quickAddSource(field)
+            if (!source) return
+            let fields = source.form ? source.form(this.data) : null
+            if (!Array.isArray(fields) || !fields.length) {
+                try {
+                    const { data } = await axios.get(`/api/v1/lookup/form/${source.table}`)
+                    fields = data
+                } catch (error) {
+                    const data = error.response && error.response.data
+                    this.notify(this.serverMessage(data) || this.$t('form_save_failed'), 'danger')
+                    return
+                }
             }
-            this.$emit('clickOpenNewPop', param);
-            // this.$ref.refModalOpenNewPop.initOpenNewPop();
-            this.showModalForm = true;
+            // Its own dropdowns start from this form's lists; missing ones come from the shared lookup
+            this.quickAdd = { field, api: source.api, fields, data: { ...(this.data || {}) }, key: Date.now() } // a blank form each time
+            this.quickAddOpen = true
+        },
+        // A new choice was saved: reload the dropdown's list, pick the new choice, close the popup
+        async onQuickAdded(answer) {
+            const { field } = this.quickAdd || {}
+            this.quickAddOpen = false
+            if (!field) return
+            const row = savedRecord(answer)
+            forgetLookup(field)
+            let choices = await lookupChoices(field, this.$i18n.locale)
+            if (!choices) {
+                choices = Array.isArray(this.data[field]) ? this.data[field].slice() : []
+                if (row && !optionForRecord(choices, row)) choices.push(optionFromRecord(field, row))
+            }
+            this.$set(this.data, field, choices)
+            const option = optionForRecord(choices, row)
+            if (option) this.$set(this.form.attribute, field, option)
         },
         onInitChange($event, _formAttribute, _formName, _apiRequest) {
             let _data = {
@@ -890,6 +788,7 @@ export default {
                     this.notify(this.serverMessage(data) || this.$t('form_save_failed'), 'danger')
                 } else {
                     this.notify(this.serverMessage(data) || this.$t('form_save'), 'primary')
+                    this.$emit('saved', data) // the server's answer, with the saved row
                     this.$emit('clickForm', '')
                 }
             } catch (error) {
@@ -909,43 +808,6 @@ export default {
         },
         notify(text, color) {
             this.$vs.notify({ title: 'Message', text, iconPack: 'feather', icon: color === 'danger' ? 'icon-alert-circle' : 'icon-check-circle', color, position: 'top-right' })
-        },
-        variableReturn(condition) {
-            switch (condition) {
-                case "status":
-                    return false;
-                    break;
-                case "title":
-                    return false;
-                    break;
-                case "gender":
-                    return false;
-                    break;
-                case "year":
-                    return false;
-                    break;
-                case "officer_id":
-                    return false;
-                    break;
-                case "currency_id":
-                    return false;
-                    break;
-                case "payment_method_id":
-                    return false;
-                    break;
-                case "department_id":
-                    return false;
-                    break;
-                case "entity_id":
-                    return false;
-                    break;
-                case "account_code":
-                    return false;
-                    break;
-                default:
-                    return true;
-                    break;
-            }
         }
     },
     mounted() {
