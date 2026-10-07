@@ -36,7 +36,8 @@ class MenuController extends Controller
             return response()->json(['is_display' => false, 'message' => trans('common.msg_no_permission_access')], 403);
         }
         $filter = CommonService::getFilter($request->all());
-        $types = [['label' => 'ផ្នែក / Section', 'value' => 'section'], ['label' => 'ក្រុម / Group', 'value' => 'group'], ['label' => 'តំណ / Link', 'value' => 'link']];
+        // Labels are shown in the user's language by the page (menu_type_*, permission "action · module")
+        $types = array_map(fn ($type) => ['label' => $type, 'value' => $type], Menu::TYPES);
         return response()->json([
             'data' => Menu::getData($filter),
             'total' => Menu::getTotal($filter),
@@ -45,8 +46,11 @@ class MenuController extends Controller
             'model_name' => 'menu',
             'type' => $types,
             'parent_id' => Menu::parentOptions(),
-            'permission' => Permission::where('guard_name', 'api')->orderBy('name')->pluck('name')
-                ->map(fn ($name) => ['label' => $name, 'value' => $name])->values(),
+            'permission' => Permission::query()->where('permissions.guard_name', 'api')
+                ->leftJoin('permission_group', 'permission_group.id', '=', 'permissions.group')
+                ->orderBy('permission_group.order_level')->orderBy('permissions.id')
+                ->get(['permissions.name', 'permission_group.name as module'])
+                ->map(fn ($p) => ['label' => $p->name, 'value' => $p->name, 'module' => $p->module])->values(),
             'data_fields' => Menu::dataFields(),
             'form_attributes' => Menu::formAttributes(),
             'is_display' => true,

@@ -91,6 +91,7 @@
 </template>
 
 <script>
+import { permissionActionLabel, permissionModuleLabel } from "@/i18n/i18n.js"
 import { can } from "@/acl/access.js"
 import axios from "@/axios.js"
 import apiConfig from "@/apiConfig.js"
@@ -211,13 +212,9 @@ export default {
         rowCount(row) {
             return row.names.filter(name => this.granted[name]).length
         },
-        actionLabel(action) {
-            const key = 'perm_action_' + action
-            return this.$te(key) ? this.$t(key) : action.replace(/_/g, ' ')
-        },
-        moduleLabel(module) {
-            return this.$te(module) ? this.$t(module) : module.replace(/_/g, ' ')
-        },
+        // Shared with every screen that shows permissions (see i18n.js)
+        actionLabel: permissionActionLabel,
+        moduleLabel: permissionModuleLabel,
         save_changes() {
             this.saving = true
             // Send every known permission: ones not shown in the matrix keep their loaded value

@@ -665,9 +665,16 @@ export default {
                                 "value": data["role"]?data["role"]:null,
                             };
                             break;
-                        default:
-                            this.form.attribute[_formAttribute["name"]] = data[_formAttribute["name"]];
+                        default: {
+                            // The saved value shows as its option (label) when the choices are loaded, e.g. list_officer -> "List · Members"
+                            const raw = data[_formAttribute["name"]];
+                            const choices = this.data && Array.isArray(this.data[_formAttribute["name"]]) ? this.data[_formAttribute["name"]] : [];
+                            const option = raw !== null && raw !== undefined && raw !== ""
+                                ? choices.find(choice => choice && typeof choice === "object" && String(choice.value) === String(raw))
+                                : null;
+                            this.form.attribute[_formAttribute["name"]] = option || raw;
                             break;
+                        }
                     }
                 }else if (_formAttribute["type"] == "hidden") {
                     this.form.attribute[_formAttribute["name"]] = data[_formAttribute["name"]];

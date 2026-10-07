@@ -86,6 +86,30 @@ export function requiredMessage(name) {
     return t.t('form_required', { field: fieldLabel(name) })
 }
 
+// Permissions are named "action_module" (create_account, list_users): shown as "Create · Accounts" in the current language.
+// The module is the permission group (role editor section); without it, the part after the action is used.
+// A name can have its own text as perm_<name> (e.g. perm_report_sale).
+export const PERMISSION_ACTIONS = ['list', 'show', 'create', 'edit', 'update', 'delete', 'download', 'import', 'export', 'print', 'execute', 'view_report', 'notify', 'permission', 'filemanager']
+
+const readable = text => String(text).replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase())
+
+export function permissionActionLabel(action) {
+    return t.te('perm_action_' + action) ? t.t('perm_action_' + action) : readable(action)
+}
+
+export function permissionModuleLabel(module) {
+    if (t.te('perm_module_' + module)) return t.t('perm_module_' + module)
+    return translatedLabel(String(module)) || readable(module)
+}
+
+export function permissionLabel(name, module = null) {
+    if (!name) return ''
+    if (t.te('perm_' + name)) return t.t('perm_' + name)
+    const action = PERMISSION_ACTIONS.find(a => name.startsWith(a + '_'))
+    if (!action) return module ? permissionModuleLabel(module) : readable(name)
+    return `${permissionActionLabel(action)} · ${permissionModuleLabel(module || name.slice(action.length + 1))}`
+}
+
 // Every toast gets the look of its type, whatever the calling screen passed:
 // one color, icon, title and display time per type, always in the top-right corner.
 const NOTIFY_TYPES = {
@@ -136,6 +160,7 @@ export function translateDialog(options) {
 // ($vs.notify / $vs.dialog are translated in ui/vs.js.)
 export function installPhraseTranslation(app) {
     const g = app.config.globalProperties
+    g.$tPermission = permissionLabel
     g.$tt = translatePhrase
     // Dropdown options follow the language too: a label written in the code (or sent by the server)
     // shows its phrases.js translation. Every <v-select> shares this component, so one hook covers all.
