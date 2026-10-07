@@ -17,7 +17,8 @@ use Spatie\Permission\PermissionRegistrar;
  * - controllers that declare none, or name a permission that doesn't exist yet, are left as
  *   they were (create the permission in Settings › Roles to protect them).
  *
- * It also drops fields a client must never set on these writes: the record id and timestamps.
+ * It also drops fields a client must never set on these writes: the record id, timestamps and the
+ * audit columns (created_by / modified_by are filled in by the server).
  */
 class EnforceModulePermission
 {
@@ -27,7 +28,7 @@ class EnforceModulePermission
         'destroy' => 'DELETE',
     ];
 
-    protected const PROTECTED_FIELDS = ['id', 'created_at', 'updated_at', 'deleted_at'];
+    protected const PROTECTED_FIELDS = ['id', 'created_at', 'updated_at', 'deleted_at', 'created_by', 'modified_by'];
 
     public function handle(Request $request, Closure $next)
     {

@@ -16,7 +16,8 @@ class Officer extends Model implements Auditable
   protected $table = 'officer';
   protected $primaryKey = 'id';
   protected $fillable = [];
-  protected $guarded = [];
+  // user_id (the member's login account) is set only by OfficerController::updateIncentiveOfficer
+  protected $guarded = ['id', 'user_id'];
   public $timestamps = true;
 
 
@@ -374,7 +375,7 @@ class Officer extends Model implements Auditable
    public static function insertOfficer($data)
   {
         $optional = [
-            'user_id', 'nationality', 'duty', 'entity_id', 'department_id', 'gender', 'address', 'email',
+            'nationality', 'duty', 'entity_id', 'department_id', 'gender', 'address', 'email',
             'bank_code', 'bank_account_no', 'updated_bank_acc', 'position', 'telephone_1', 'telephone_2',
             'register_date', 'married_status', 'emergency_person', 'emergency_relative', 'is_nssf_member',
             'nssf_card_no', 'social_media_fb', 'social_media_telegram', 'social_media_whatsapp',

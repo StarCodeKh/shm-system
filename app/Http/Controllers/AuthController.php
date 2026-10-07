@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Laravel\Passport\Passport;
 use OTPService;
 use App\User;
 use App\Models\Mobile\OTP;
@@ -45,6 +46,16 @@ class AuthController extends Controller
             'message' => __('common.user_created')
         ], 201);
     }
+    // Signs a token for $user. Lifetime: AUTH_TOKEN_HOURS on the web, AUTH_TOKEN_REMEMBER_DAYS with
+    // "remember me" and for the mobile app. The expiry is part of the token itself, so it is set before creating it.
+    protected function issueToken($user, bool $remember)
+    {
+        Passport::personalAccessTokensExpireIn($remember
+            ? now()->addDays(config('auth.token_lifetime.remember_days'))
+            : now()->addHours(config('auth.token_lifetime.hours')));
+        return $user->createToken('Personal Access Token');
+    }
+
     /**
      * Login user and create token
      *
@@ -75,11 +86,7 @@ class AuthController extends Controller
                 'message' => __('common.wrong_credentials')
             ], 200);
         $user = $request->user();
-        $tokenResult = $user->createToken('Personal Access Token');
-        $token = $tokenResult->token;
-        if ($request->remember_me)
-            $token->expires_at = Carbon::now()->addWeeks(1);
-        $token->save();
+        $tokenResult = $this->issueToken($user, $request->boolean('remember_me'));
         return response()->json([
             'accessToken' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
@@ -107,11 +114,7 @@ class AuthController extends Controller
         // register user device
         $this->registerDevice($input, $user->id);
         // Create User Token Access
-        $tokenResult = $user->createToken('Personal Access Token');
-        $token = $tokenResult->token;
-        if ($request->remember_me)
-            $token->expires_at = Carbon::now()->addWeeks(1);
-        $token->save();
+        $tokenResult = $this->issueToken($user, true);
         $data = array(
             'accessToken' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
@@ -128,30 +131,20 @@ class AuthController extends Controller
     public function loginMobileOTP(Request $request)
     {
         $input = $request->all();
-        $telephone = $input['telephone'];
-        $hasUser = User::checkHasUser($telephone);
-        $data = array();
-        if($hasUser){
+        $telephone = $input['telephone'] ?? null;
+
+        // Same answer whether or not the number has an account, so the endpoint cannot be used to
+        // find out who is a member. A code is only created for an existing account.
+        $data = array(
+            "success" => true,
+            "message" => __('common.otp_sent')
+        );
+        if ($telephone && User::checkHasUser($telephone)) {
             $otp = OTPService::getOTP($input);
-            // if(!$hasUser) {
-            //     $user = new User([
-            //         'username' => $request->telephone,
-            //         'telephone_1' => $request->telephone,
-            //         'password' => bcrypt($otp["optCode"])
-            //     ]);
-            //     $user->save();
-            // }
-            
-            $data = array(        
-                "success" => true,
-                "optCode" => $otp["optCode"],
-                "message" => __('common.otp_sent')
-            );
-        }else{
-            $data = array(        
-                "success" => false,
-                "message" => __('common.account_not_found')
-            );
+            // No SMS provider yet: test servers may return the code (OTP_EXPOSE_CODE=true), production never
+            if (config('services.otp.expose_code') && !empty($otp["optCode"])) {
+                $data["optCode"] = $otp["optCode"];
+            }
         }
         return response()->json([
             "data" => $data
@@ -164,31 +157,24 @@ class AuthController extends Controller
         $checkOTP = OTPService::checkOTP($request);
         $data = array();
         if($checkOTP){
-            // login
-            $credentials = array(
-                                'username' => $input['telephone'],
-                                'password' => $input['optCode']
-                            );
-            if(!Auth::attempt($credentials))
+            // The code was valid for this phone: sign that account in (its password stays unchanged)
+            $user = User::where('username', $input['telephone'])->first();
+            if (!$user)
                 return response()->json([
                     'message' => __('common.unauthorized')
                 ], 401);
-            $user = $request->user();
+            Auth::setUser($user);
             // register user device
             $this->registerDeviceWithF2A($input, $user->id);
             // Create User Token Access
-            $tokenResult = $user->createToken('Personal Access Token');
-            $token = $tokenResult->token;
-            if ($request->remember_me)
-                $token->expires_at = Carbon::now()->addWeeks(1);
-            $token->save();
+            $tokenResult = $this->issueToken($user, true);
             $data = array(
                 'accessToken' => $tokenResult->accessToken,
                 'token_type' => 'Bearer',
                 'expires_at' => Carbon::parse(
                     $tokenResult->token->expires_at
                 )->toDateTimeString(),
-                'userData' => $request->user()
+                'userData' => $user
             );
             return response()->json([
                 "data" => $data

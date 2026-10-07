@@ -5,6 +5,9 @@
 
     RewriteEngine On
 
+    # Never run scripts from the upload folders (user files are served as plain files only)
+    RewriteRule ^(images/uploads|upload)/.*\.(php[0-9]?|phtml|phar|pl|py|cgi|sh|asp|aspx|jsp)$ - [F,L,NC]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
@@ -18,4 +21,12 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+</IfModule>
+
+# Security headers for files served directly (images, built JS/CSS); the app adds the same to its own responses
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
 </IfModule>

@@ -32,7 +32,8 @@ axiosApi.interceptors.request.use(config => {
 // and uploads (FormData) always go through since two of them can look alike.
 const WRITE_METHODS = ['post', 'put', 'patch', 'delete']
 const inFlight = new Map()
-const send = axiosApi.defaults.adapter || axios.defaults.adapter
+// axios 1.x keeps adapters as a list of names: resolve it to the function that sends the request
+const send = axios.getAdapter(axiosApi.defaults.adapter || axios.defaults.adapter)
 axiosApi.defaults.adapter = config => {
   const body = config.data
   if (!WRITE_METHODS.includes(config.method) || (body != null && typeof body !== 'string')) return send(config)

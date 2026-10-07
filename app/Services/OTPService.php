@@ -11,26 +11,20 @@
 	use Session;
 	class OTPService{
 	
+	    // One-time sign-in code: 6 random digits from a secure generator, valid for config_otp_expire.
 	    public static function getOTP($request){
-			$randomOTP = mt_rand(OTP_config_limit, config_otp_start);
+			$randomOTP = random_int(100000, 999999);
 			$isSent = OTPService::sentOTP($randomOTP, $request);
-			$data = array();
-			if($isSent){
-				$data = array(
-					"success" => true,
-					"optCode" => $randomOTP
-				);
-			}else{
-				$data = array(
-					"success" => false
-				);
-			}
-			return $data;
+			return $isSent
+				? array("success" => true, "optCode" => $randomOTP)
+				: array("success" => false);
 		}
-		
+
+		// Saves the code. Delivery: no SMS provider is connected yet; send the SMS here when one is added
+		// (the code is never written to the log).
 		public static function sentOTP($otpCode, $request){
-			$saveOTP = OTP::create([
-				"device_token" => $request["device_token"],
+			OTP::create([
+				"device_token" => $request["device_token"] ?? null,
 				"telephone" => $request["telephone"],
 				"otp_code" => $otpCode,
 				"expired_date" => OTPService::setExpiredOTP(),
@@ -40,23 +34,21 @@
 			return true;
 		}
 
+		// True when the newest unused code for this phone matches and has not expired; the code is then used up.
+		// The user's password is not touched (signing in with an OTP issues a token directly).
 		public static function checkOTP($request){
-			$checkHasOTP = OTP::Where("otp_code", "=", $request["optCode"])->Where("telephone", "=", $request["telephone"])->Where("is_verify", 0)->OrderBy("id", "desc")->first();
-			if($checkHasOTP){
-				$checkIfExpiredOTP = OTPService::checkExpiredOTP($request["optCode"]);
-				if($checkIfExpiredOTP){
-					$fieldable = array(
-						"is_verify" => 1
-					);
-					OTP::where('id', $checkHasOTP->id)->update($fieldable);
-					User::where('username', $request["telephone"])->update(array("password" => bcrypt($request["optCode"])));
-					return true;
-				}else{
-					return false;		
-				}
-			}else{
+			$otp = OTP::where("telephone", $request["telephone"] ?? null)
+				->where("is_verify", 0)
+				->orderBy("id", "desc")
+				->first();
+			if (!$otp || !hash_equals((string) $otp->otp_code, (string) ($request["optCode"] ?? ""))) {
 				return false;
 			}
+			if (strtotime($otp->expired_date) <= time()) {
+				return false;
+			}
+			OTP::where('id', $otp->id)->update(array("is_verify" => 1));
+			return true;
 		}
 		
 		public static function setExpiredOTP(){
@@ -64,16 +56,5 @@
 			return $expiredDate;
 		}
 
-		public static function checkExpiredOTP($optCode){
-			$expiredDate = OTP::Select('expired_date')->where("otp_code", $optCode)->OrderBy('id', 'desc')->first();
-			$strExpiredDate = strtotime($expiredDate->expired_date);
-			$strCurrentDate = strtotime(date("Y-m-d H:i:s"));
-			if($strExpiredDate > $strCurrentDate){
-				return true;
-			}else{
-				return false;
-			}
-		}
-	
 	}
 ?>

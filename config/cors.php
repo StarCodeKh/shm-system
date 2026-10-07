@@ -19,7 +19,12 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    // Browsers on other sites may call the API only from these origins: APP_URL plus a comma-separated
+    // CORS_ALLOWED_ORIGINS list. The web app (same origin) and the mobile app (native) need no entry.
+    'allowed_origins' => array_values(array_filter(array_unique(array_map('trim', array_merge(
+        [rtrim((string) env('APP_URL', ''), '/')],
+        explode(',', (string) env('CORS_ALLOWED_ORIGINS', ''))
+    ))))),
 
     'allowed_origins_patterns' => [],
 
@@ -30,7 +35,7 @@ return [
     //'max_age' => false,
     'max_age' => 0,
 
-    // 'supports_credentials' => false,
-    'supports_credentials' => true,
+    // The API signs in with Bearer tokens, not cookies, so cross-site credentials are not needed
+    'supports_credentials' => false,
 
 ];

@@ -373,10 +373,27 @@
             }
         }
 
+        // Creates or updates the mobile login of one member. Needs the member "update" permission, and only
+        // ever touches the login linked to that member (a user_id sent by the client is ignored).
         public function updateIncentiveOfficer(Request $request){
-            $input = $request->all();
-            $id = $input["id"];
-            if($input['user_id'] == null){
+            if (!\App\Services\Common::can($this->PERMISSION_ACTION_UPDATE)) {
+                return response()->json([
+                    "success" => false,
+                    "message" => trans('common.msg_no_permission_access')
+                ], 403);
+            }
+            $input = $request->validate([
+                "id" => "required|integer",
+                "username" => "nullable|string|max:191",
+                "password" => "nullable|string|min:8|max:191",
+            ]);
+            $officer = Officer::findOrFail($input["id"]);
+
+            if(!$officer->user_id){
+                $request->validate([
+                    "username" => "required|unique:users,username",
+                    "password" => "required",
+                ]);
                 // Role Id 4 is default role for mobile user
                 $createUserId = User::insertGetId(
                     [
@@ -385,12 +402,11 @@
                         "password" => bcrypt($input["password"])
                     ]
                 );
-                $table = Officer::where('id', $id)->update([
-                    "user_id" => $createUserId
-                ]);
+                $officer->user_id = $createUserId;
+                $officer->save();
             }else{
-                if($input["password"] != null){
-                    $table = User::where('id', $input['user_id'])->update([
+                if(!empty($input["password"])){
+                    User::where('id', $officer->user_id)->update([
                         "password" => bcrypt($input["password"])
                     ]);
                 }
@@ -562,7 +578,6 @@
                     'title'                => 'required|string|max:255',
                     'status'               => 'required',
                     // Optional
-                    'user_id'              => 'nullable|integer',
                     'nationality'          => 'nullable|string|max:250',
                     'duty'                 => 'nullable|string|max:255',
                     'entity_id'            => 'nullable|integer',

@@ -30,8 +30,8 @@ export default {
       return Promise.reject(error)
     })
   },
-  login(email, pwd) {
-    return axios.post("/api/auth/login", {email: email, password: pwd})
+  login(email, pwd, rememberMe = false) {
+    return axios.post("/api/auth/login", {email: email, password: pwd, remember_me: !!rememberMe})
   },
   registerUser(name, email, pwd) {
     return axios.post("/api/auth/register", {displayName: name, email: email, password: pwd})

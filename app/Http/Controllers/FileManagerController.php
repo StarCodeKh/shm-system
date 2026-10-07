@@ -46,11 +46,26 @@ use Maatwebsite\Excel\Facades\Excel;
 use File;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Auth;
 use CommonService;
 
 class FileManagerController extends Controller
 {
+    // File types the file manager accepts (documents and images; no scripts or archives)
+    const UPLOAD_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv'];
+
+    // Spreadsheet imports: the caller needs $permission and the file must be a real Excel / CSV file (max 10 MB).
+    // Returns a response to send back when refused, otherwise null.
+    protected function guardSpreadsheetImport(Request $request, string $permission)
+    {
+        if (!CommonService::can($permission)) {
+            return response()->json(['success' => false, 'message' => trans('common.msg_no_permission_access')], 403);
+        }
+        $request->validate(['file' => 'required|file|max:10240|mimes:xlsx,xls,csv']);
+        return null;
+    }
+
     protected $PERMISSION_ACTION_LIST;
     protected $PERMISSION_ACTION_CREATE;
     protected $PERMISSION_ACTION_SHOW;
@@ -280,6 +295,7 @@ class FileManagerController extends Controller
     }
 
     public function fileUploadService(Request $request){
+        if ($denied = $this->guardSpreadsheetImport($request, 'import_officer')) return $denied;
         $path = $request->file('file')->getRealPath();
         $rows = Excel::import(new OfficerImport, $path);
         if($rows){
@@ -526,7 +542,7 @@ class FileManagerController extends Controller
     }
 
     public function fileIncomeUploadService(Request $request){
-        $data = $request->all();
+        if ($denied = $this->guardSpreadsheetImport($request, 'create_income')) return $denied;
         $path = $request->file('file')->getRealPath();
         $rows = Excel::import(new IncomeImport, $path);
         if($rows){
@@ -621,18 +637,24 @@ class FileManagerController extends Controller
         if (!CommonService::can('file_manager_upload')) {
             return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
         }
-        $input = $request->all();
-        $attachments_files = $request->file('file');
-        $file = $input['file'];
+        // Only documents and images, checked by content as well as name, up to 20 MB
+        $request->validate([
+            'file' => 'required|file|max:20480|mimes:'.implode(',', self::UPLOAD_EXTENSIONS),
+        ]);
+        $file = $request->file('file');
         $date_create = date('d-M-Y/');
         $destinationPath = 'images/uploads/'.$date_create; // upload path
-        $extension = $request->file('file')->getClientOriginalExtension(); // getting image extension
-        // $fileName = $this->generateRandomString(10).'.'.$extension; // renameing image
-        // $fileName = rand(11111111,99999999).'.'.$extension; // renameing image
-        $fileName = $file->getClientOriginalName();
-        $request->file('file')->move($destinationPath, $fileName); // uploading file to given path
-        // $imageUrl = config_url.'/'.$destinationPath.$fileName;
-        switch ($file->getClientOriginalExtension()) {
+        // The server picks the name: random, with the (validated) extension in lower case. The original
+        // name is kept only as the label shown in the file manager.
+        $extension = strtolower($file->getClientOriginalExtension());
+        if (!in_array($extension, self::UPLOAD_EXTENSIONS, true)) {
+            $extension = $file->guessExtension();
+        }
+        $originalName = Str::limit(preg_replace('/[^\pL\pN\s._()-]+/u', '', $file->getClientOriginalName()), 180, '');
+        $stem = Str::limit(Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)), 60, '');
+        $fileName = ($stem !== '' ? $stem.'-' : '').Str::random(10).'.'.$extension;
+        $file->move($destinationPath, $fileName); // uploading file to given path
+        switch ($extension) {
             case 'pdf':
                 $imageUrl = '/images/attach.png';
                 break;
@@ -651,10 +673,10 @@ class FileManagerController extends Controller
         }
         $createImage = FileManager::create([
             "image" => $imageUrl,
-            "file_name" => $fileName,
+            "file_name" => $originalName ?: $fileName,
             "path" => $imageUrl,
-            "type" => $file->getClientOriginalExtension(),
-            "extention" => $file->getClientOriginalExtension()
+            "type" => $extension,
+            "extention" => $extension
         ]);
         $imageUrl = '/'.$destinationPath.$fileName;
         return response()->json(['success'=>true,'message'=>__('common.file_uploaded'),'data'=>['image_url'=>$imageUrl,'extension'=>$extension]], 200);

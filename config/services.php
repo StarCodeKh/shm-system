@@ -34,6 +34,12 @@ return [
         'sender_id' => env('FCM_SENDER_ID'),
     ],
 
+    // Mobile sign-in codes (App\Services\OTPService). No SMS provider is connected yet, so a test
+    // server can return the code in the API response (OTP_EXPOSE_CODE=true); production keeps it false.
+    'otp' => [
+        'expose_code' => (bool) env('OTP_EXPOSE_CODE', false),
+    ],
+
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),

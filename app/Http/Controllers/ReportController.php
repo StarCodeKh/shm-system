@@ -441,7 +441,7 @@ class ReportController extends Controller
         
         $quarterIncomeLastYear = DB::table("income")->SELECT(DB::raw("QUARTER(`issue_date`) as quarter, sum(amount) as amount"))
                                                     ->groupBy(DB::raw("QUARTER(`issue_date`)"))
-                                                    ->whereRaw('year(`issue_date`) = YEAR(DATE_SUB("'.$filter.'", INTERVAL 1 YEAR))')
+                                                    ->whereRaw('year(`issue_date`) = YEAR(DATE_SUB(?, INTERVAL 1 YEAR))', [$filter])
                                                     ->get();
 
         $quarterExpenseThisYears = IncentiveToOfficer::whereBetween('issue_from_date', [$fromPeriod, $toPeriod])
@@ -464,7 +464,7 @@ class ReportController extends Controller
                                                     ->first();
         }else{
             $getLastDateExpThisYear = IncentiveToOfficer::Select("issue_to_date")
-                                                        ->whereRaw('year(`issue_to_date`) = YEAR(DATE_SUB("'.$filter.'", INTERVAL 1 YEAR))')
+                                                        ->whereRaw('year(`issue_to_date`) = YEAR(DATE_SUB(?, INTERVAL 1 YEAR))', [$filter])
                                                         ->OrderBy('issue_to_date', 'DESC')
                                                         ->first();
         }
@@ -893,7 +893,7 @@ class ReportController extends Controller
         $getTop10RankIncomesLastYear = DB::table('income')
                                 ->join('entity', 'entity.id' ,'=', 'income.entity_id')
                                 ->join('sector', 'sector.id' ,'=' ,'entity.sector_id')
-                                ->whereRaw('year(`issue_date`) = YEAR(DATE_SUB('.$convertDate.', INTERVAL 1 YEAR))')
+                                ->whereRaw('year(`issue_date`) = YEAR(DATE_SUB(?, INTERVAL 1 YEAR))', [$convertDate])
                                 ->select('sector.name as sector_name', 'entity.sector_id as sector_id', DB::raw('sum(amount) as amount'))
                                 ->groupBy('sector.name', 'entity.sector_id')
                                 ->OrderBy("entity.sector_id", "desc")
@@ -1386,7 +1386,7 @@ class ReportController extends Controller
         $entityArr = array();
         foreach($entities as $entity){
             $entityId= $entity->id;
-            $sum_last_year = Income::where(DB::raw("DATE_FORMAT(issue_date, '%Y') < YEAR(CURDATE() AND entity_id=".$entityId.")"))->sum("amount");
+            $sum_last_year = Income::whereRaw("DATE_FORMAT(issue_date, '%Y') < YEAR(CURDATE())")->where('entity_id', $entityId)->sum("amount");
             //"SELECT SUM(amount) as sum_last_year FROM tbl_income WHERE DATE_FORMAT(issue_date, '%Y') < YEAR(CURDATE()) AND entity_id=1)"));
             $sum_this_year = Income::whereYear('issue_date', "=" ,date('Y'))->sum("amount");
             $incentiveLastYear = IncentiveToOfficer::whereYear("issue_from_date", "<" , date('Y'))->where("entity_id", $entityId)->sum("incentive");

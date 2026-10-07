@@ -105,6 +105,12 @@ return [
     |
     */
 
+    // API sign-in tokens (App\Http\Controllers\AuthController::issueToken)
+    'token_lifetime' => [
+        'hours' => (int) env('AUTH_TOKEN_HOURS', 24),                 // web sign-in
+        'remember_days' => (int) env('AUTH_TOKEN_REMEMBER_DAYS', 30), // "remember me" and the mobile app
+    ],
+
     'passwords' => [
         'users' => [
             'provider' => 'users',

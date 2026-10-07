@@ -5,7 +5,7 @@ export default {
     // Sign in with email / password against /api/auth/login (Laravel Passport)
     loginJWT({ commit }, payload) {
       return new Promise((resolve, reject) => {
-        jwt.login(payload.userDetails.email, payload.userDetails.password)
+        jwt.login(payload.userDetails.email, payload.userDetails.password, payload.checkbox_remember_me)
           .then(response => {
             if (response.data.userData) {
               // Back to the page that sent the user here, else home

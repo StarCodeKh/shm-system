@@ -161,6 +161,8 @@ Copy the UAT / production block from `.env.example`:
 | `LOG_STACK` | `daily` | `daily` |
 | `LOG_LEVEL` | `info` | `warning` |
 | `LOG_DAILY_DAYS` | `14` | `30` |
+| `OTP_EXPOSE_CODE` | `true` (until SMS is connected) | `false` |
+| `CORS_ALLOWED_ORIGINS` | empty | empty, unless another site must call the API |
 
 `APP_DEBUG=true` on a server shows code, settings and SQL to anyone who triggers an error.
 
@@ -205,42 +207,56 @@ php artisan optimize:clear         # only if a change in .env or config does not
 
 ## Security
 
-Reviewed on 2026-10-07. Update the **Status** column as issues are fixed.
+Reviewed and fixed on 2026-10-07. Keep this section current: move an item to **In place** when it is done.
 
 **In place**
 
-- `.env`, `service-account-key.json` and the Passport keys are not in git; key files are readable by their owner only
-- Only the four sign-in endpoints (`/api/auth/*`) work without a token; every other route needs `auth:api`
-- Sign-in is limited to 10 attempts a minute, the rest of the API to 60 requests a minute
-- Create / update / delete on resource routes check the controller's permission (`EnforceModulePermission`)
-- `composer audit`: no known advisories
+- Secrets stay out of git: `.env`, `service-account-key.json`, `storage/firebase/`, Passport keys (`storage/oauth-*.key`)
+- Every API route needs a token (`auth:api`) except the four sign-in endpoints under `/api/auth/*`
+- Rate limits: sign-in 10 attempts a minute, the rest of the API 60 requests a minute
+- Permissions: create / update / delete on resource routes check the controller's permission (`EnforceModulePermission`); setting a member's login, member import and income import check theirs too
+- Requests cannot set `id`, timestamps or the audit columns `created_by` / `modified_by`; a member's link to a login account (`officer.user_id`) changes only through the permission-checked endpoint
+- Sign-in tokens expire: 24 hours on the web, 30 days with "remember me" and on the mobile app (`AUTH_TOKEN_HOURS`, `AUTH_TOKEN_REMEMBER_DAYS`)
+- Mobile OTP: 6 random digits from a secure generator, single use, expires per `config_otp_expire`; the user's password is never changed; the request answers the same for unknown numbers; the code is only returned when `OTP_EXPOSE_CODE=true` (test servers)
+- Uploads: only images, PDF, Word, Excel and CSV (checked by content, max 20 MB; imports max 10 MB); the server picks the file name; the web server refuses to run scripts in `public/images/uploads/` and `public/upload/` (`public/.htaccess`, `public/web.config`)
+- CORS: only `APP_URL` and `CORS_ALLOWED_ORIGINS`, without credentials
+- Security headers on every response: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, a Content-Security-Policy for framing / plugins / forms, and HSTS over HTTPS
+- SQL: report queries pass values as bound parameters
+- No debug output in responses; logs never contain tokens or passwords; production bundles leave out `console.log`
+- `composer audit`: no known advisories. `npm audit`: nothing in the browser bundle (see below)
 
-**Open issues**
+**Open**
 
-| Severity | Issue | Where | Status |
+| Severity | Issue | Where | What is needed |
 |---|---|---|---|
-| Critical | Setting a member's login password has no permission or ownership check, so any signed-in account can change another user's password | `OfficerController::updateIncentiveOfficer` (`POST /api/v1/update_officer_user`) | Open |
-| Critical | The mobile OTP code is returned in the API response and no SMS is sent, so the code does not prove who is signing in | `AuthController::loginMobileOTP`, `OTPService` | Open — needs an SMS provider |
-| Critical | Uploaded files keep their own name and extension and are saved under `public/`, so a script file can be uploaded and run | `FileManagerController::fileImageUploadService` | Open |
-| High | A successful OTP sign-in replaces the user's password with the OTP code | `OTPService::checkOTP` | Open |
-| High | Member spreadsheet import has no permission check and no file-type check | `FileManagerController::fileUploadService` (`POST /api/v1/file_upload`) | Open |
-| High | The sign-in form was pre-filled with an admin email and password | `LoginJWT.vue` | Fixed 2026-10-07: pre-filled only with `npm run dev`, not in production builds. Still change that admin password |
-| Medium | CORS allows every origin together with credentials | `config/cors.php` | Open |
-| Medium | Access tokens last 1 year; "remember me" shortens them to 1 week instead of extending them | `AuthController` sign-in methods | Open |
-| Medium | 31 models use `$guarded = []` and controllers save the whole request, so extra columns can be set | models, controllers' `dataForm()` | Open |
-| Medium | No security headers (`X-Frame-Options`, `Content-Security-Policy`, `X-Content-Type-Options`, HSTS) | `public/.htaccess` / middleware | Open |
-| Low | Template leftovers: unused Firebase demo config and a Google Maps key in a comment (still in git history) | `resources/js/src/firebase/`, `main.js` | Fixed 2026-10-07 (removed from the code; still in git history) |
-| High | The push-notification service printed the Firebase access token into API responses | `PushNotificationService::generateAccessToken` | Fixed 2026-10-07: errors go to the log, the token is never printed or logged |
-| Low | Three report queries build SQL by joining strings (not exploitable today; values are dates or database ids) | `ReportController` | Open |
-| Low | The OTP request says whether a phone number has an account | `AuthController::loginMobileOTP` | Open |
-| Info | `npm audit` listed 169 issues (6 critical), mostly in build tools and the unused template Firebase login | `package.json` | Re-check: the Firebase login was removed and the build moved to Vite, but the old Laravel Mix packages (`laravel-mix`, `*-loader`, `vue-template-compiler`) are still in `package.json`; remove them, then run `npm audit` again |
+| High | Mobile OTP codes are not delivered by SMS; on production (`OTP_EXPOSE_CODE=false`) mobile OTP sign-in cannot complete | `OTPService::sentOTP` | Connect an SMS provider and send the code there |
+| High | The admin password that was in the sign-in form (`LoginJWT.vue`, in git history) is still the live password | user `admin@admin.com` | Change it on every server |
+| Medium | Old keys are still in git history (Firebase demo config, a Google Maps key) | git history | Revoke / rotate those keys in their consoles |
+| Low | Most models accept any column the form sends (only id, timestamps, audit columns and `officer.user_id` are blocked) | models with `$guarded = []`, controllers' `dataForm()` | List the allowed columns per model (`$fillable`) |
+| Low | The Content-Security-Policy does not restrict scripts | `SecurityHeaders` | Add nonces to the inline `<script>` blocks in `application.blade.php`, then a `script-src` rule |
+| Info | `npm audit`: 7 build-time advisories in Tailwind CSS 3 tooling (`braces`, `chokidar`, `fast-glob`, `micromatch`, `postcss-nested`); none reach the browser | `package.json` | Upgrade to Tailwind 4 when convenient |
+
+**Fixed on 2026-10-07**
+
+- Any signed-in account could set another user's password (`update_officer_user`): now needs the member update permission and only touches that member's own login
+- Mobile OTP code was returned in every response, and a successful OTP replaced the user's password
+- Uploaded files kept their own name and extension under `public/` (a script could be uploaded and run)
+- Member and income spreadsheet imports had no permission or file-type check
+- The sign-in form was pre-filled with an admin email and password (now only with `npm run dev`)
+- The push service printed the Firebase access token into API responses; a test sender with a hard-coded device token was removed
+- CORS allowed every origin with credentials
+- Tokens lasted 1 year and "remember me" did not change the real expiry
+- No security headers
+- Report SQL built by joining strings (one query also never matched; another ignored its entity filter)
+- The OTP request told whether a phone number has an account
+- `npm audit` went from 169 issues (6 critical) to 7 build-time ones: removed 21 unused Vue 2 / Laravel Mix packages, upgraded `axios` to 1.x and SheetJS (`xlsx`) to 0.20.3
 
 **Before going live**
 
-- `.env`: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL` with `https://`, `LOG_STACK=daily` (see [Deployment](#deployment))
+- `.env`: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL` with `https://`, `LOG_STACK=daily`, `OTP_EXPOSE_CODE=false`, `CORS_ALLOWED_ORIGINS` only if another site must call the API (see [Deployment](#deployment))
 - Serve over HTTPS only
-- Make sure the web server does not run scripts inside `public/images/uploads/`
-- Fix the Critical and High issues above
+- Change the admin password; rotate the keys listed under **Open**
+- On nginx (no `.htaccess`): deny `\.php$` under `/images/uploads/` and `/upload/`, and add the security headers for static files
 
 ## License
 
