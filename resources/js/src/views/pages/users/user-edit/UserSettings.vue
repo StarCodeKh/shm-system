@@ -64,7 +64,7 @@ export default {
   },
   data() {
     return {
-      tab: 'general',
+      tab: this.tabFromRoute(),
       loading: false,
       profile: null,   // the user being viewed
       options: {},     // titles, roles, positions, departments, entities
@@ -94,7 +94,7 @@ export default {
   },
   watch: {
     userId() {
-      this.tab = 'general'
+      this.tab = this.tabFromRoute()
       this.load()
     },
   },
@@ -102,6 +102,10 @@ export default {
     this.load()
   },
   methods: {
+    // ?tab=password opens the password tab (the lock button on the users list)
+    tabFromRoute() {
+      return this.$route.params.userId && this.$route.query.tab === 'password' ? 'password' : 'general'
+    },
     // One request: the user plus every option list both tabs need
     load() {
       this.loading = true

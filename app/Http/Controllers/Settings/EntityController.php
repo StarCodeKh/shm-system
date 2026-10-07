@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Settings;
-use App\Exports\EntityExport;
 use App\Imports\EntityImport;
 use App\Http\Controllers\Controller;
 use App\Models\Settings\Entity;
@@ -215,10 +214,6 @@ class EntityController extends Controller
             "message" => $message
         );
         return response()->json($data, $status);
-    }
-
-    public function export(Request $request){
-        return Excel::download(new EntityExport, $this->db_table->getTable().'.xlsx');
     }
 
     public function import(Request $request){

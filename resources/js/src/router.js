@@ -57,20 +57,6 @@ const router = createRouter({
                     },
                 },
                 {
-                path: '/user/view/:userId',
-                    name: 'user-view',
-                    component: () => import('@/views/pages/users/user-edit/UserSettings.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'អ្នកប្រើប្រាស់', url: '/user' },
-                            { title: 'ព័ត៌មានអ្នកប្រើប្រាស់', active: true },
-                        ],
-                        pageTitle: 'ព័ត៌មានអ្នកប្រើប្រាស់',
-                        rule: 'editor'
-                    },
-                },
-                {
                     path: '/user/edit/:userId',
                     name: 'user-edit',
                     component: () => import('@/views/pages/users/user-edit/UserSettings.vue'),
@@ -101,33 +87,6 @@ const router = createRouter({
                 // =============================================================================
                 // Policy Form
                 // =============================================================================
-                {
-                    path: '/policy/list',
-                    name: 'PolicyRequestList',
-                    component: () => import('@/views/pages/policy-form/List.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'បញ្ជីសំណើរ', active: true },
-                        ],
-                        pageTitle: 'បញ្ជីសំណើរ',
-                        rule: 'editor'
-                    },
-                },
-                {
-                    path: '/policy/form',
-                    name: 'PolicyRequestForm',
-                    component: () => import('@/views/pages/policy-form/form/FormWizard.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'បញ្ជីសំណើរ', url: '/policy/list' },
-                            { title: 'ទម្រង់សំណើរ', active: true },
-                        ],
-                        pageTitle: 'ទម្រង់សំណើរ',
-                        rule: 'editor'
-                    },
-                },
                 // =============================================================================
                 // Role
                 // =============================================================================
@@ -159,323 +118,15 @@ const router = createRouter({
                         rule: 'editor'
                     },
                 },
-                 {
-                    path: '/role/menu/form/:roleId',
-                    name: 'data-role-menu-form',
-                    component: () => import('@/views/pages/roles/RoleForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គ្រប់គ្រងសិទ្ធិ', url: '/role' },
-                            { title: 'សិទ្ធិម៉ឺនុយ', active: true },
-                        ],
-                        pageTitle: 'សិទ្ធិម៉ឺនុយ',
-                        rule: 'editor'
-                    },
-                },
                 // =============================================================================
                 // Program Management
                 // =============================================================================
-                {
-                    path: 'module/program-arrangement',
-                    name: 'ProgramManagement',
-                    component: () => import('./views/pages/modules/program-management/Index.vue'),
-                    meta: {
-                        pageTitle: 'គ្រប់គ្រងកម្មវិធី',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'គ្រប់គ្រងកម្មវិធី', active: true },
-                        ],
-                        rule: 'editor',
-                    }
-                },
-                {
-                    path: '/module/program-arrangement/objective',
-                    name: "objective",
-                    component: () => import('./views/pages/modules/program-management/_Objective.vue'),
-                    meta: {
-                        pageTitle: 'គោលបំណង',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'គ្រប់គ្រងកម្មវិធី', url: '/module/program-arrangement' },
-                            { title: 'គោលបំណង', active: true },
-                        ],
-                        rule: 'editor',
-                    }
-                },
-                {
-                    path: '/module/program-arrangement/program',
-                    slug: 'program',
-                    name: "program",
-                    icon: "UserIcon",
-                    i18n: "Program",
-                    component: () => import('./views/pages/modules/program-management/_Program.vue'),
-                    meta: {
-                        pageTitle: 'កម្មវិធី',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'គ្រប់គ្រងកម្មវិធី', url: '/module/program-arrangement' },
-                            { title: 'កម្មវិធី', active: true },
-                        ],
-                        rule: 'editor',
-                    }
-                },
-                {
-                    path: '/module/program-arrangement/subprogram',
-                    slug: 'subprogram',
-                    name: "subprogram",
-                    icon: "UserIcon",
-                    i18n: "ProgramSubProgram",
-                    component: () => import('./views/pages/modules/program-management/_Subprogram.vue'),
-                    meta: {
-                        pageTitle: 'អនុកម្មវិធី',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'គ្រប់គ្រងកម្មវិធី', url: '/module/program-arrangement' },
-                            { title: 'អនុកម្មវិធី', active: true },
-                        ],
-                        rule: 'editor',
-                    }
-                },
-                {
-                    path: '/module/program-arrangement/cluster-activity',
-                    slug: 'cluster-activity',
-                    name: "cluster-activity",
-                    icon: "UserIcon",
-                    i18n: "ProgramClusterActivity",
-                    component: () => import('./views/pages/modules/program-management/_ClusterActivity.vue'),
-                    meta: {
-                        pageTitle: 'ចង្កោមសកម្មភាព',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'គ្រប់គ្រងកម្មវិធី', url: '/module/program-arrangement' },
-                            { title: 'ចង្កោមសកម្មភាព', active: true },
-                        ],
-                        rule: 'editor',
-                    }
-                },
-                {
-                    path: '/module/program-arrangement/activity',
-                    slug: 'activity',
-                    name: "activity",
-                    icon: "UserIcon",
-                    i18n: "ProgramActivity",
-                    component: () => import('./views/pages/modules/program-management/_Activity.vue'),
-                    meta: {
-                        pageTitle: 'សកម្មភាព',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'គ្រប់គ្រងកម្មវិធី', url: '/module/program-arrangement' },
-                            { title: 'សកម្មភាព', active: true },
-                        ],
-                        rule: 'editor',
-                    }
-                },
-                {
-                    path: '/module/program-arrangement/task',
-                    slug: 'task',
-                    name: "task",
-                    icon: "UserIcon",
-                    i18n: "ProgramTask",
-                    component: () => import('./views/pages/modules/program-management/_Task.vue'),
-                    meta: {
-                        pageTitle: 'ការងារ',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'គ្រប់គ្រងកម្មវិធី', url: '/module/program-arrangement' },
-                            { title: 'ការងារ', active: true },
-                        ],
-                        rule: 'editor',
-                    }
-                },
                 // =============================================================================
                 // Budget Arrangement
                 // =============================================================================
-                {           
-                    path: 'module/budget-arrangement/credit-revenue-rule',
-                    name: 'CreditIncomeRule',
-                    component: () => import('@/views/pages/modules/budget-arrangement/credit-revenue-rule/Index.vue'),
-                    meta: {
-                        pageTitle: 'ឥណទានច្បាប់ចំណូល',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'រៀបចំថវិកា', url: '/' },
-                            { title: 'ឥណទានច្បាប់ចំណូល', active: true },
-                        ],
-                        rule: 'editor'
-                    }
-                },
-                {           
-                    path: 'module/budget-arrangement/credit-expense-rule',
-                    name: 'CreditExpenseRule',
-                    component: () => import('@/views/pages/modules/budget-arrangement/credit-expense-rule/Index.vue'),
-                    meta: {
-                        pageTitle: 'ឥណទានច្បាប់ចំណាយ',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'រៀបចំថវិកា', url: '/' },
-                            { title: 'ឥណទានច្បាប់ចំណាយ', active: true },
-                        ],
-                        rule: 'editor'
-                    }
-                },
-                {           
-                    path: 'module/budget-arrangement/budget-ceiling',
-                    name: 'Ceiling',
-                    component: () => import('@/views/pages/modules/budget-arrangement/budget-ceiling/Index.vue'),
-                    meta: {
-                        pageTitle: 'ពិដានថវិកា',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'រៀបចំថវិកា', url: '/' },
-                            { title: 'ពិដានថវិកា', active: true },
-                        ],
-                        rule: 'editor'
-                    }
-                },
-                {           
-                    path: 'module/budget-arrangement/budget-ceiling/list',
-                    name: 'BudgetCeilingList',
-                    component: () => import('@/views/pages/modules/budget-arrangement/budget-ceiling/List.vue'),
-                    meta: {
-                        pageTitle: 'បញ្ជីពិដានថវិកា',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'ពិដានថវិកា', url: '/module/budget-arrangement/budget-ceiling' },
-                            { title: 'បញ្ជីពិដានថវិកា', active: true },
-                        ],
-                        rule: 'editor'
-                    }
-                },
-                {           
-                    path: 'module/budget-arrangement/pip',
-                    name: 'PIP',
-                    component: () => import('@/views/pages/modules/budget-arrangement/pip/index.vue'),
-                    meta: {
-                        pageTitle: 'រៀបចំគម្រោងវិនិយោគសាធារណៈ',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'រៀបចំថវិកា', url: '/' },
-                            { title: 'រៀបចំគម្រោងវិនិយោគសាធារណៈ', active: true },
-                        ],
-                        rule: 'editor'
-                    }
-                },
-                {           
-                    path: 'module/budget-arrangement/bsp',
-                    name: 'BPS',
-                    component: () => import('@/views/pages/modules/budget-arrangement/bsp/index.vue'),
-                    meta: {
-                        pageTitle: 'រៀបចំយុទ្ធសាស្ត្រថវិកា',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'រៀបចំថវិកា', url: '/' },
-                            { title: 'រៀបចំយុទ្ធសាស្ត្រថវិកា', active: true },
-                        ],
-                        rule: 'editor'
-                    }
-                },
-                {           
-                    path: 'module/budget-arrangement/pb',
-                    name: 'PB',
-                    component: () => import('@/views/pages/modules/budget-arrangement/pb/index.vue'),
-                    meta: {
-                        pageTitle: 'រៀបចំគម្រោងថវិកាប្រចាំឆ្នាំ',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'រៀបចំថវិកា', url: '/' },
-                            { title: 'រៀបចំគម្រោងថវិកាប្រចាំឆ្នាំ', active: true },
-                        ],
-                        rule: 'editor'
-                    }
-                },
                 // =============================================================================
                 // Budget Implementing Monitoring
                 // =============================================================================
-                {           
-                    path: 'module/budget-monitoring/income-arrangement',
-                    name: 'IncomeArrangement',
-                    component: () => import('@/views/pages/modules/budget-monitoring/income-expense-arrangement/_income_program.vue'),
-                    meta: {
-                        pageTitle: 'រៀបចំកម្មវិធីចំណូល',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'តាមដានអនុវត្តថវិកា', url: '/' },
-                            { title: 'រៀបចំកម្មវិធីចំណូល', active: true },
-                        ],
-                        rule: 'editor'
-                    }
-                },
-                {           
-                    path: 'module/budget-monitoring/expense-arrangement',
-                    name: 'ExpenseArrangement',
-                    component: () => import('@/views/pages/modules/budget-monitoring/income-expense-arrangement/_expense_program.vue'),
-                    meta: {
-                        pageTitle: 'រៀបចំកម្មវិធីចំណាយត្រីមាស',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'តាមដានអនុវត្តថវិកា', url: '/' },
-                            { title: 'រៀបចំកម្មវិធីចំណាយត្រីមាស', active: true },
-                        ],
-                        rule: 'editor'
-                    }
-                },
-                {           
-                    path: 'module/budget-monitoring/income-implementing-result',
-                    name: 'IncomeExpenseResult',
-                    component: () => import('@/views/pages/modules/budget-monitoring/income-implementing-result/_income_implementing_result.vue'),
-                    meta: {
-                        pageTitle: 'ចុះលទ្ធផលអនុវត្តចំណូល',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'តាមដានអនុវត្តថវិកា', url: '/' },
-                            { title: 'ចុះលទ្ធផលអនុវត្តចំណូល', active: true },
-                        ],
-                        rule: 'editor'
-                    }
-                },
-                {
-                    path: 'module/budget-monitoring/expense-implementing-result',
-                    name: 'ExpenseImplementingResult',
-                    component: () => import('@/views/pages/modules/budget-monitoring/income-implementing-result/_expenditure_implementing_result.vue'),
-                    meta: {
-                        pageTitle: 'ចុះលទ្ធផលអនុវត្តចំណាយ',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'តាមដានអនុវត្តថវិកា', url: '/' },
-                            { title: 'ចុះលទ្ធផលអនុវត្តចំណាយ', active: true },
-                        ],
-                        rule: 'editor'
-                    }
-                },
-                {           
-                    path: 'module/budget-monitoring/expenditure-certificate',
-                    name: 'ExpenditureCertificate',
-                    component: () => import('@/views/pages/modules/budget-monitoring/expenditure-certificate/Index.vue'),
-                    meta: {
-                        pageTitle: 'ចុះសលាកបត្រចំណាយ',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'តាមដានអនុវត្តថវិកា', url: '/' },
-                            { title: 'ចុះសលាកបត្រចំណាយ', active: true },
-                        ],
-                        rule: 'editor'
-                    }
-                },
-                {           
-                    path: 'module/budget-monitoring/credit-movement',
-                    name: 'CreditMovement',
-                    component: () => import('@/views/pages/modules/budget-monitoring/credit-movement/Index.vue'),
-                    meta: {
-                        pageTitle: 'ចលនាឥណទាន',
-                        breadcrumb: [
-                            { title: 'ផ្ទាំងគ្រប់គ្រង', url: '/' },
-                            { title: 'តាមដានអនុវត្តថវិកា', url: '/' },
-                            { title: 'ចលនាឥណទាន', active: true },
-                        ],
-                        rule: 'editor'
-                    }
-                },
                 // =============================================================================
                 // Report
                 // =============================================================================
@@ -494,76 +145,6 @@ const router = createRouter({
                     }
                 },
 
-                    {           
-                        path: 'report/program',
-                        name: 'ReportProgram',
-                        component: () => import('@/views/pages/modules/program-management/_Program.vue'),//import('@/views/pages/reports/program/Index.vue'),
-                        meta: {
-                            pageTitle: 'របាយការណ៍កម្មវិធី',
-                            breadcrumb: [
-                                { title: 'ទំព័រដើម', url: '/' },
-                                { title: 'គ្រប់គ្រងរបាយការណ៍', url: '/report' },
-                                { title: 'របាយការណ៍កម្មវិធី', active: true },
-                            ],
-                            rule: 'editor'
-                        }
-                    },
-                    {           
-                        path: 'report/pip',
-                        name: 'ReportPIP',
-                        component: () => import('@/views/pages/modules/budget-arrangement/pip/index.vue'), //import('@/views/pages/reports/pip/Index.vue'),
-                        meta: {
-                            pageTitle: 'របាយការណ៍គម្រោងវិនិយោគ',
-                            breadcrumb: [
-                                { title: 'ទំព័រដើម', url: '/' },
-                                { title: 'គ្រប់គ្រងរបាយការណ៍', url: '/report' },
-                                { title: 'របាយការណ៍គម្រោងវិនិយោគ', active: true },
-                            ],
-                            rule: 'editor'
-                        }
-                },
-                    {           
-                        path: 'report/bsp',
-                        name: 'ReportBSP',
-                        component: () => import('@/views/pages/modules/budget-arrangement/bsp/index.vue'),//import('@/views/pages/reports/bsp/Index.vue'),
-                        meta: {
-                            pageTitle: 'របាយការណ៍ផែនការថវិកា',
-                            breadcrumb: [
-                                { title: 'ទំព័រដើម', url: '/' },
-                                { title: 'គ្រប់គ្រងរបាយការណ៍', url: '/report' },
-                                { title: 'របាយការណ៍ផែនការថវិកា', active: true },
-                            ],
-                            rule: 'editor'
-                        }
-                },
-                    {           
-                        path: 'report/pb',
-                        name: 'ReportPB',
-                        component: () => import('@/views/pages/modules/budget-arrangement/pb/index.vue'),//import('@/views/pages/reports/pb/Index.vue'),
-                        meta: {
-                            pageTitle: 'របាយការណ៍គម្រោងថវិកាប្រចាំឆ្នាំ',
-                            breadcrumb: [
-                                { title: 'ទំព័រដើម', url: '/' },
-                                { title: 'គ្រប់គ្រងរបាយការណ៍', url: '/report' },
-                                { title: 'របាយការណ៍គម្រោងថវិកាប្រចាំឆ្នាំ', active: true },
-                            ],
-                            rule: 'editor'
-                        }
-                },
-                    {           
-                        path: 'report/quarterly',
-                        name: 'ReportQuarterly',
-                        component: () => import('@/views/pages/modules/budget-monitoring/income-expense-arrangement/Index.vue'),//import('@/views/pages/reports/quarterly/Index.vue'),
-                        meta: {
-                            pageTitle: 'របាយការណ៍ចំណូល/ចំណាយត្រីមាស',
-                            breadcrumb: [
-                                { title: 'ទំព័រដើម', url: '/' },
-                                { title: 'គ្រប់គ្រងរបាយការណ៍', url: '/report' },
-                                { title: 'របាយការណ៍ចំណូល/ចំណាយត្រីមាស', active: true },
-                            ],
-                            rule: 'editor'
-                        }
-                },
                 // {           
                 //     path: 'report/income',
                 //     name: 'ReportIncome',
@@ -592,20 +173,6 @@ const router = createRouter({
                 //             rule: 'editor'
                 //         }
                 //  },
-                    {           
-                        path: 'report/credit-movement',
-                        name: 'ReportCreditMovement',
-                        component: () => import('@/views/pages/modules/budget-monitoring/credit-movement/Index.vue'), //import('@/views/pages/reports/credit-movement/Index.vue'),
-                        meta: {
-                            pageTitle: 'របាយការណ៍ចលនាឥណទាន',
-                            breadcrumb: [
-                                { title: 'ទំព័រដើម', url: '/' },
-                                { title: 'គ្រប់គ្រងរបាយការណ៍', url: '/report' },
-                                { title: 'របាយការណ៍ចលនាឥណទាន', active: true },
-                            ],
-                            rule: 'editor'
-                        }
-                    },
                 {
                     path: '/nofication',
                     name: 'nofication',
@@ -694,62 +261,6 @@ const router = createRouter({
                     },
                 },
                 {
-                    path: '/incentive/composition',
-                    name: 'data-composition-form-list',
-                    component: () => import('@/views/pages/compositions/data-list/list-view/DataListListView.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គ្រប់គ្រងប្រាក់ឧបត្ថម្ភ' },
-                            { title: 'រាយនាមមន្ត្រីផ្លាស់ប្តូរសមាសភាព', active: true },
-                        ],
-                        pageTitle: 'រាយនាមមន្ត្រីផ្លាស់ប្តូរសមាសភាព',
-                        rule: 'editor'
-                    },
-                },
-                {
-                    path: '/incentive/composition-request',
-                    name: 'data-composition-request-list',
-                    component: () => import('@/views/pages/compositions-request/data-list/list-view/DataListListView.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គ្រប់គ្រងប្រាក់ឧបត្ថម្ភ' },
-                            { title: 'សំណើរផ្លាស់ប្តូរសមាសភាព', active: true },
-                        ],
-                        pageTitle: 'សំណើរផ្លាស់ប្តូរសមាសភាព',
-                        rule: 'editor'
-                    },
-                },
-                {
-                    path: '/incentive/composition-request/form',
-                    name: 'data-composition-request-form',
-                    component: () => import('@/views/pages/compositions-request/form/FormWizard.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'សំណើរផ្លាស់ប្តូរសមាសភាព', url: '/incentive/composition-request' },
-                            { title: 'ទម្រង់បង្កើត', active: true },
-                        ],
-                        pageTitle: 'បង្កើតសំណើរផ្លាស់ប្តូរសមាសភាព',
-                        rule: 'editor'
-                    },
-                },
-                {
-                    path: '/incentive/composition-request/edit/:id',
-                    name: 'data-composition-request-edit',
-                    component: () => import('@/views/pages/compositions-request/form/FormWizard.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'សំណើរផ្លាស់ប្តូរសមាសភាព', url: '/incentive/composition-request' },
-                            { title: 'ទម្រង់កែប្រែ', active: true },
-                        ],
-                        pageTitle: 'កែប្រែសំណើរផ្លាស់ប្តូរសមាសភាព',
-                        rule: 'editor'
-                    },
-                },
-                {
                     path: '/incentive',
                     name: 'data-incentive-list',
                     // component: () => import('@/views/pages/incentives/data-list/list-view/DataListListView.vue'),
@@ -779,133 +290,21 @@ const router = createRouter({
                         rule: 'editor'
                     },
                 },
-                {
-                    path: '/incentive/form',
-                    name: 'data-incentive-form',
-                    component: () => import('@/views/pages/incentives/incentive-form-wizard/FormWizard.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'បញ្ជីបើកផ្តល់ប្រាក់ឧបត្ថម្ភ', url: '/incentive' },
-                            { title: 'ទម្រង់បង្កើត', active: true },
-                        ],
-                        pageTitle: 'បង្កើតប្រាក់ឧបត្ថម្ភ',
-                        rule: 'editor'
-                    },
-                },
-                {
-                    path: '/incentive/edit/:id',
-                    name: 'data-incentive-edit',
-                    component: () => import('@/views/pages/incentives/incentive-form-wizard/FormWizard.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'បញ្ជីបើកផ្តល់ប្រាក់ឧបត្ថម្ភ', url: '/incentive' },
-                            { title: 'ទម្រង់កែប្រែ', active: true },
-                        ],
-                        pageTitle: 'កែប្រែប្រាក់ឧបត្ថម្ភ',
-                        rule: 'editor'
-                    },
-                },
-                {
-                    path: '/account/payment-method',
-                    name: 'account-paymentMethod-list',
-                    component: () => import('@/views/pages/account/payment-method/PaymentMethodList.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'វិធីបង់ប្រាក់' },
-                            { title: 'បញ្ជី', active: true },
-                        ],
-                        pageTitle: 'វិធីបង់ប្រាក់',
-                        rule: 'editor'
-                    },
-                },
                 // Records are added and edited in the side panel of the list
                 { path: '/account/payment-method/form', redirect: '/account/payment-method' },
 
-                {
-                    path: '/account/category',
-                    name: 'account-category-list',
-                    component: () => import('@/views/pages/account/category/CategoryList.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ប្រភេទផលិតផល/សេវាកម្ម' },
-                            { title: 'បញ្ជី', active: true },
-                        ],
-                        pageTitle: 'ប្រភេទផលិតផល/សេវាកម្ម',
-                        rule: 'editor'
-                    },
-                },
                 // Records are added and edited in the side panel of the list
                 { path: '/account/category/form', redirect: '/account/category' },
 
-                {
-                    path: '/account/account',
-                    name: 'account-account-list',
-                    component: () => import('@/views/pages/account/account/AccountList.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គណនី' },
-                            { title: 'បញ្ជី', active: true },
-                        ],
-                        pageTitle: 'គណនី',
-                        rule: 'editor'
-                    },
-                },
                 // Records are added and edited in the side panel of the list
                 { path: '/account/account/form', redirect: '/account/account' },
 
-                {
-                    path: '/account/account-group',
-                    name: 'account-account-group-list',
-                    component: () => import('@/views/pages/account/account-group/AccountGroupList.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ក្រុមគណនី' },
-                            { title: 'បញ្ជី', active: true },
-                        ],
-                        pageTitle: 'ក្រុមគណនី',
-                        rule: 'editor'
-                    },
-                },
                 // Records are added and edited in the side panel of the list
                 { path: '/account/account-group/form', redirect: '/account/account-group' },
 
-                {
-                    path: '/account/account-type',
-                    name: 'account-account-type-list',
-                    component: () => import('@/views/pages/account/account-type/AccountTypeList.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ប្រភេទគណនី' },
-                            { title: 'បញ្ជី', active: true },
-                        ],
-                        pageTitle: 'ប្រភេទគណនី',
-                        rule: 'editor'
-                    },
-                },
                 // Records are added and edited in the side panel of the list
                 { path: '/account/account-type/form', redirect: '/account/account-type' },
 
-                {
-                    path: '/account/bank-account',
-                    name: 'account-bank-account-list',
-                    component: () => import('@/views/pages/account/bank-account/BankAccountList.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គណនីធនាគារ' },
-                            { title: 'បញ្ជី', active: true },
-                        ],
-                        pageTitle: 'គណនីធនាគារ',
-                        rule: 'editor'
-                    },
-                },
                 // Records are added and edited in the side panel of the list
                 { path: '/account/bank-account/form', redirect: '/account/bank-account' },
                 {
@@ -922,37 +321,8 @@ const router = createRouter({
                         rule: 'editor'
                     },
                 },
-                {
-                    path: '/account/expense/form',
-                    name: 'account-expense-form',
-                    component: () => import('@/views/pages/account/expense/ExpenseForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គ្រប់គ្រងចំណាយ', url: '/account/expense' },
-                            { title: 'ទម្រង់បង្កើត', active: true },
-                        ],
-                        pageTitle: 'បង្កើតចំណាយ',
-                        rule: 'editor'
-                    },
-                },
 
-                {
-                    path: '/account/expense/edit/:id',
-                    name: 'account-expense-edit',
-                    component: () => import('@/views/pages/account/expense/ExpenseForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គ្រប់គ្រងចំណាយ', url: '/account/expense' },
-                            { title: 'ទម្រង់កែប្រែ', active: true },
-                        ],
-                        pageTitle: 'កែប្រែចំណាយ',
-                        rule: 'editor'
-                    },
-                },
-                
-                {
+{
                     path: '/account/chart-account',
                     name: 'account-chart-account',
                     component: () => import('@/views/pages/account/coa/Index.vue'),
@@ -966,38 +336,8 @@ const router = createRouter({
                         rule: 'editor'
                     },
                 },
-                {
-                    path: '/account/chart-account/form',
-                    name: 'account-chart-account-form',
-                    component: () => import('@/views/pages/account/coa/COAForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'តារាងគណនី', url: '/account/chart-account' },
-                            { title: 'ទម្រង់បង្កើត', active: true },
-                        ],
-                        pageTitle: 'បង្កើតគណនី',
-                        rule: 'editor'
-                    },
-                },
 
-                {
-                    path: '/account/chart-account/edit/:id',
-                    name: 'account-chart-account-edit',
-                    component: () => import('@/views/pages/account/coa/COAForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'តារាងគណនី', url: '/account/chart-account' },
-                            { title: 'ទម្រង់កែប្រែ', active: true },
-                        ],
-                        pageTitle: 'កែប្រែគណនី',
-                        rule: 'editor'
-                    },
-                },
-
-
-                {
+{
                     path: '/account/income',
                     name: 'account-income-list',
                     component: () => import('@/views/pages/account/income/Index.vue'),
@@ -1008,76 +348,6 @@ const router = createRouter({
                             { title: 'បញ្ជី', active: true },
                         ],
                         pageTitle: 'គ្រប់គ្រងចំណូល',
-                        rule: 'editor'
-                    },
-                },
-                {
-                    path: '/account/income/form',
-                    name: 'account-income-form',
-                    component: () => import('@/views/pages/account/income/IncomeForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គ្រប់គ្រងចំណូល', url: '/account/income' },
-                            { title: 'ទម្រង់បង្កើត', active: true },
-                        ],
-                        pageTitle: 'បង្កើតចំណូល',
-                        rule: 'editor'
-                    },
-                },
-                {
-                    path: '/account/income/edit/:id',
-                    name: 'account-income-edit',
-                    component: () => import('@/views/pages/account/income/IncomeForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'គ្រប់គ្រងចំណូល', url: '/account/income' },
-                            { title: 'ទម្រង់កែប្រែ', active: true },
-                        ],
-                        pageTitle: 'កែប្រែចំណូល',
-                        rule: 'editor'
-                    },
-                },
-                {
-                    path: '/account/taxable-salary',
-                    name: 'account-taxable-salary-list',
-                    component: () => import('@/views/pages/account/taxable-salary/TaxList.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ការគណនាពន្ធ', url: '/account/taxable-salary' },
-                            { title: 'បញ្ជី', active: true },
-                        ],
-                        pageTitle: 'ការគណនាពន្ធ',
-                        rule: 'editor'
-                    },
-                },
-                {
-                    path: '/account/taxable-salary/form',
-                    name: 'account-taxable-salary-form',
-                    component: () => import('@/views/pages/account/taxable-salary/TaxForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ការគណនាពន្ធ', url: '/account/taxable-salary' },
-                            { title: 'ទម្រង់បង្កើត', active: true },
-                        ],
-                        pageTitle: 'បង្កើតការគណនាពន្ធ',
-                        rule: 'editor'
-                    },
-                },
-                {
-                    path: '/account/taxable-salary/edit/:id',
-                    name: 'account-taxable-salary-edit',
-                    component: () => import('@/views/pages/account/taxable-salary/TaxForm.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'ការគណនាពន្ធ', url: '/account/taxable-salary' },
-                            { title: 'ទម្រង់កែប្រែ', active: true },
-                        ],
-                        pageTitle: 'កែប្រែការគណនាពន្ធ',
                         rule: 'editor'
                     },
                 },
@@ -1112,87 +382,17 @@ const router = createRouter({
                 // =============================================================================
                 // Incentives Setup
                 // =============================================================================
-                {
-                    path: '/setup/department',
-                    name: 'department-list',
-                    component: () => import('@/views/pages/setup/department/DepartmentList.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'រៀបចំទិន្នន័យ' },
-                            { title: 'ផ្នែក', active: true },
-                        ],
-                        pageTitle: 'ផ្នែក',
-                        rule: 'editor'
-                    },
-                },
                 // Records are added and edited in the side panel of the list
                 { path: '/setup/department/form', redirect: '/setup/department' },
                 
-                {
-                    path: '/setup/circular',
-                    name: 'circular-list',
-                    component: () => import('@/views/pages/setup/circular/CircularList.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'រៀបចំទិន្នន័យ' },
-                            { title: 'សារាចរ', active: true },
-                        ],
-                        pageTitle: 'សារាចរ',
-                        rule: 'editor'
-                    },
-                },
                 // Records are added and edited in the side panel of the list
                 { path: '/setup/circular/form', redirect: '/setup/circular' },
                 
-                {
-                    path: '/setup/entity',
-                    name: 'entity-list',
-                    component: () => import('@/views/pages/setup/entity/EntityList.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'រៀបចំទិន្នន័យ' },
-                            { title: 'អង្គភាព', active: true },
-                        ],
-                        pageTitle: 'អង្គភាព',
-                        rule: 'editor'
-                    },
-                },
                 // Records are added and edited in the side panel of the list
                 { path: '/setup/entity/form', redirect: '/setup/entity' },
                 
-                {
-                    path: '/setup/role',
-                    name: 'role-list',
-                    component: () => import('@/views/pages/setup/role/RoleList.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'រៀបចំទិន្នន័យ' },
-                            { title: 'សិទ្ធិប្រើប្រាស់', active: true },
-                        ],
-                        pageTitle: 'សិទ្ធិប្រើប្រាស់',
-                        rule: 'editor'
-                    },
-                },
                 // Records are added and edited in the side panel of the list
                 { path: '/setup/role/form', redirect: '/setup/role' },
-                {
-                    path: '/setup/sector',
-                    name: 'sector-list',
-                    component: () => import('@/views/pages/setup/sector/SectorList.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'រៀបចំទិន្នន័យ' },
-                            { title: 'វិស័យ', active: true },
-                        ],
-                        pageTitle: 'វិស័យ',
-                        rule: 'editor'
-                    },
-                },
                 // Records are added and edited in the side panel of the list
                 { path: '/setup/sector/form', redirect: '/setup/sector' },
                 // Report viewer: /report/{type} (types come from GET /api/v1/report/types)

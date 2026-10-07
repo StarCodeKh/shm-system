@@ -211,14 +211,4 @@ class AccountTypeController extends Controller
     public function export(){
         return Excel::download(new AccountTypeExport, $this->db_table->getTable().'.xlsx');
     }
-
-    public function import(Request $request){
-        $path = $request->file('file')->getRealPath();
-        $rows = Excel::import(new ObjectiveImport, $path);
-        if($rows){
-            return response()->json(['success'=>true,'message'=>__('common.file_uploaded')], 200);
-        }else{
-            return response()->json(['success'=>false,'message'=>__('common.file_upload_failed')], 500);
-        }
-    }
 }

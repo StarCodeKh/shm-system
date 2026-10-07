@@ -34,10 +34,6 @@
                     <currency-exchange></currency-exchange>
                 </vs-tab>
 
-                <vs-tab v-if="tab8" icon-pack="feather" icon="icon-box" :label="$t('setting_unit')">
-                    <unit></unit>
-                </vs-tab>
-
                 <vs-tab v-if="tab9" icon-pack="feather" icon="icon-clipboard" :label="$t('setting_planning')">
                     <planning></planning>
                 </vs-tab>
@@ -53,22 +49,6 @@
                 <vs-tab v-if="tab12" icon-pack="feather" icon="icon-list" :label="$t('setting_account_sub_account')">
                     <account></account>
                 </vs-tab>
-
-                <vs-tab v-if="tab13" icon-pack="feather" icon="icon-bookmark" :label="$t('setting_category')">
-                    <item-category></item-category>
-                </vs-tab>
-
-                <vs-tab v-if="tab14" icon-pack="feather" icon="icon-shopping-bag" :label="$t('setting_product_service')">
-                    <item></item>
-                </vs-tab>
-
-                <vs-tab v-if="tab15" icon-pack="feather" icon="icon-file" :label="$t('setting_budget_template')">
-                    <budget-template></budget-template>
-                </vs-tab>
-
-                <!-- <vs-tab icon-pack="feather" icon="icon-list" :label="$t('setting_cost_list')">
-                    <price-list-type></price-list-type>
-                </vs-tab> -->
             </vs-tabs>
         </div>
     </vx-card>
@@ -76,18 +56,18 @@
 
 <script>
 import Planning from '@/views/pages/settings/_Planning.vue';
-import Item from '@/views/pages/settings/_Item.vue';
-import ItemCategory from '@/views/pages/settings/_Item_Category.vue';
+
+
 import AccountTypeGroup from '@/views/pages/settings/_Account_Type_Group.vue';
 import AccountType from '@/views/pages/settings/_Account_Type.vue';
 import AccountGroup from '@/views/pages/settings/_Account_Group.vue';
 import Account from '@/views/pages/settings/_Account.vue';
-import Unit from '@/views/pages/settings/_Unit.vue';
+
 import Bank from '@/views/pages/settings/_Bank.vue';
 import LetterType from '@/views/pages/settings/_LetterType.vue';
 import Currency from '@/views/pages/settings/_Currency.vue';
 import CurrencyExchange from '@/views/pages/settings/_CurrencyExchange.vue';
-import BudgetTemplate from '@/views/pages/settings/_Budget_Template.vue';
+
 import PaymentMethod from '@/views/pages/settings/_PaymentMethod.vue';
 import PaymentTerm from '@/views/pages/settings/_PaymentTerm.vue';
 import PaymentType from '@/views/pages/settings/_PaymentType.vue';
@@ -95,16 +75,12 @@ import PaymentType from '@/views/pages/settings/_PaymentType.vue';
 export default {
     components: {
         Planning,
-        ItemCategory,
-        Item,
         AccountTypeGroup,
         AccountType,
         AccountGroup,
         Account,
-        Unit,
         Bank,
         LetterType,
-        BudgetTemplate,
         Currency,
         CurrencyExchange,
         PaymentMethod,
@@ -121,14 +97,10 @@ export default {
             tab5: true,
             tab6: true,
             tab7: true,
-            tab8: true,
             tab9: true,
             tab10: true,
             tab11: true,
             tab12: true,
-            tab13: true,
-            tab14: true,
-            tab15: true,
         }
     },
 }

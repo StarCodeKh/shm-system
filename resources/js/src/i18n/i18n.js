@@ -81,10 +81,9 @@ export function fieldHint(name, kind = 'text') {
   return t.t(kind === 'select' ? 'form_select_field' : 'form_enter_field', { field })
 }
 
-// "Required" message for a field: its own required_<field> text, or the standard one
+// "Required" message for a field, built from its label so it always matches the label above it
 export function requiredMessage(name) {
-  const key = 'required_' + name
-  return t.te(key) ? t.t(key) : t.t('validation_required', { field: fieldLabel(name) })
+  return t.t('form_required', { field: fieldLabel(name) })
 }
 
 // Every toast gets the look of its type, whatever the calling screen passed:

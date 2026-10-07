@@ -31,8 +31,6 @@ class AuthController extends Controller
         //     'password' => 'required|string|confirmed'
         // ]);
         $user = new User([
-            'role' => $request->role,
-            'role_id' => $request->role_id,
             'fullname' => $request->fullname,
             'username' => $request->username,
             'email' => $request->email,
@@ -42,6 +40,7 @@ class AuthController extends Controller
             'password' => bcrypt($request->password)
         ]);
         $user->save();
+        if ($request->role) $user->syncRoles([$request->role]);
         return response()->json([
             'message' => __('common.user_created')
         ], 201);

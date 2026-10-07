@@ -26,10 +26,6 @@ const sources = {
     payment_term: apiConfig._apiPaymentTerm,
     payment_type_id: apiConfig._apiPaymentType,
     request_title: { api: apiConfig._apiPaymentType, form: data => data && data.form_payment_type },
-    expenditure_group_id: apiConfig._apiExpenditureGroup,
-    expenditure_type_id: apiConfig._apiExpenditureType,
-    credit_movement_type_id: apiConfig._apiCreditMovementType,
-    finance_resource_id: apiConfig._apiFinanceResource,
     // Organisation
     department: apiConfig._apiDepartment,
     department_id: apiConfig._apiDepartment,
@@ -40,21 +36,6 @@ const sources = {
     role_id: { api: apiConfig._apiRole, form: () => formAttr.formAttributeRole },
     user_id: { api: apiConfig._apiUser, form: () => formAttr.formAttributeUser },
     letter_type_id: apiConfig._apiLetterType,
-    // Items
-    category_id: apiConfig._apiItemCategory,
-    item_id: apiConfig._apiItem,
-    unit_id: apiConfig._apiUnit,
-    // Budget / programs
-    ceiling_group_id: apiConfig._apiCeilingGroup,
-    ceiling_type_id: apiConfig._apiCeilingType,
-    objective_id: apiConfig._apiObjective,
-    program_id: apiConfig._apiProgram,
-    sub_program_id: apiConfig._apiSubProgram,
-    cluster_activity_id: apiConfig._apiClusterActivity,
-    activity_id: apiConfig._apiActivity,
-    task_id: apiConfig._apiTask,
-    project_type_id: apiConfig._apiProjectType,
-    project_status_id: apiConfig._apiProjectStatus,
 };
 
 /** { api, table, form? } for a field, or null when the field has no "+ Add" */

@@ -23,7 +23,6 @@
                     actionButton: [
                         {
                             icon: "CalendarIcon",
-                            path: "/module/budget-arrangement/budget-ceiling/list",
                             api: apiConfig._apiOfficerExecutePaymentRecurring,
                             method: "Execute",
                             allow: true,

@@ -27,8 +27,7 @@ class Entity extends Model implements Auditable
       return $this->belongsTo(Entity::class,'parent_id');
     }
 
-
-    public static function getSingleOpt(){
+public static function getSingleOpt(){
       $data = array();
       $query = Entity::whereNotDeleted();
       $whereClause = $query;
@@ -107,22 +106,5 @@ class Entity extends Model implements Auditable
     $whereClause = Entity::checkQuery($filter);
     $total = $whereClause->count();
     return $total;
-  }
-
-  public static function getEntityByActivity($param){
-    $query = DB::table("mef_activity as a")
-              ->select("e.id", "e.code", "e.name_en", "e.name_kh")
-              ->join("entity as e", "e.id", "=", "a.entity_id")
-              ->where("a.id", $param["param"]["value"])
-              ->orderBy("a.code")
-              ->get();
-    $data = array();
-    foreach($query as $row){
-      $data[] = array(
-        "label" => $row->code.'-'.$row->name_kh,
-        "value" => $row->id,
-      );
-    }
-    return $data;
   }
 }

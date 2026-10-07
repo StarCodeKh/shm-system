@@ -2157,8 +2157,8 @@ export default {
                 this.$emit('clickPrivateForm', data);
             }
             if (method == "PrivateLink") {
-                this.$router.push(rowBtnAction.path + "/" + data.id)
-                // this.$emit('clickPrivateForm', data);
+                // Optional query, e.g. { tab: 'password' } to open a page on one of its tabs
+                this.$router.push({ path: rowBtnAction.path + "/" + data.id, query: rowBtnAction.query || {} })
             }
             if (method == "Delete") {
                 this.dataId = data.id;

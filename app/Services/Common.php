@@ -59,17 +59,6 @@
 			return !empty(self::permission()[$name]);
 		}
 
-		public static function enablePermission($permission){
-			$check = "";
-			$role = Role::find(Auth::user()->role_id);
-			if($role->hasPermissionTo($permission)){
-				$check = true;
-			}else{
-				$check = false;
-			}
-			return boolval($check);
-		}
-
 		public static function getPermissionsViaRoles(){
 			$user = User::find(Auth::user()->id);
 			return $user->getPermissionsViaRoles();
@@ -98,11 +87,6 @@
 			return $data; 
 		}
 
-		public static function assignUserToRole(){
-			$user = User::find(Auth::user()->id);
-			$user->assignRole('admin');
-		}
-
 		public static function getAllPermissionData(){
 			$data = array();
 			$query = DB::table("permission_group")->orderBy("name")->get();
@@ -124,20 +108,6 @@
 			return $data; 
 		}
 		
-		public static function getRoleByUser(){
-			$roles = $user->getRoleNames();
-		}
-
-		public static function givePermissionToUser(){
-			$user = User::find(Auth::user()->id);
-			$user->givePermissionTo($permissions);
-		}
-
-		public static function givePermissionToRole($permission_name){
-			$permission = Permission::findByName($permission_name);
-        	$role->givePermissionTo($permission);
-		}
-
 		public static function convertDataType($case){
 			// Fields with a shared choice list are dropdowns (see LookupController)
 			if (\App\Http\Controllers\LookupController::has(strtolower($case->Field))) {
@@ -322,9 +292,6 @@
 				'currency' => 'select',
 				'status'   => 'select',
 			],
-			'users' => [
-				'role'     => 'select',
-			],
 		];
 
 
@@ -418,91 +385,6 @@
 			return $result;
 		}
 
-		// getMenu
-		public static function getMenus($language_id=1, $menu_type_id=1){
-			$menu = array();
-			$Group_ID = Auth::user()->group_id;
-			$parent_menus = DB::table("group_role as gr")
-				->JOIN('group_role_detail as grd', 'grd.group_role_id', '=', 'gr.id')
-				->JOIN('menu as m','m.menu_code','=','grd.menu_code')
-				->JOIN('menu_description as md','m.id','=','md.menu_id')
-				->WHERE('m.is_active',1)
-				->WHERE('gr.group_id','=',$Group_ID)
-				->WHERE('m.parent_id',0)
-				->WHERE('m.menu_type_id',$menu_type_id)
-				->WHERE('md.language_id',$language_id)
-				->SELECT('grd.menu_id as groupMenu_id','gr.id as grouRole_id','m.fa_icon as fa_icon','m.default as default','m.menu_link as p_menu_link','m.menu_code as menu_code','md.name as parent_menu_name','m.id as parent_menu_id')
-				->OrderBy('m.ordering')
-				->get();
-
-			  foreach ($parent_menus as $parent_menu) {
-			  	 $groupMenu_id = $parent_menu->groupMenu_id;
-            	 $grouRole_id = $parent_menu->grouRole_id;
-
-				$children_menu = array();
-				$children = DB::table("menu as m")
-							->JOIN('menu_description as md','m.id','=','md.menu_id')
-							->JOIN('group_role_detail as grd','grd.menu_id','=','m.id')
-							->WHERE('m.is_active',1)
-							->WHERE('grd.group_role_id','=',$grouRole_id)
-							->WHERE('m.parent_id','=',$groupMenu_id)
-							->WHERE('m.parent_id','>',0)
-							->WHERE('m.parent_id',$parent_menu->parent_menu_id)
-							->WHERE('md.language_id',$language_id)
-							->SELECT('m.menu_code as menu_code','m.menu_link as c_menu_link','md.name as child_menu_name')
-							->OrderBy('m.ordering')
-							->OrderBy('md.name')
-							->get(); 
-
-				foreach ($children as $child) {
-					$children_menu[] = array(
-						'child_menu_name' => $child->child_menu_name,
-						'c_menu_link' => $child->c_menu_link,
-						'menu_code' => $child->menu_code,
-					);
-				}
-
-				$menu[] = array(
-					'parent_menu_name' => $parent_menu->parent_menu_name,
-					'fa_icon' => $parent_menu->fa_icon,
-					'default' => $parent_menu->default,
-					'menu_code' => $parent_menu->menu_code,
-					'p_menu_link' => $parent_menu->p_menu_link,
-					'children_menu' => $children_menu
-				);
-			}
-			// dd($menu);
-			return $menu;
-		}
-		public static function getMenusName($language_id=2,$menu_code){
-			
-			$data = DB::table("menu_description as md")
-							->join("menu as m",'m.id','=','md.menu_id')			  				
-							->WHERE('m.menu_code',$menu_code)							
-							->WHERE('md.language_id',$language_id)
-							->SELECT('md.name','md.menu_id')							
-							->get();
-			if(sizeof($data)>0)
-				return $data[0]->name; 
-			else return '';
-		}
-		public static function getMenusTitle($language_id=2,$menu_code){
-			
-			$data = DB::table("menu_description as md")
-							->join("menu as m",'m.id','=','md.menu_id')			  				
-							->WHERE('m.menu_code',$menu_code)							
-							->WHERE('md.language_id',$language_id)
-							->SELECT('md.name','md.meta_description','md.menu_id')							
-							->get();
-			if(sizeof($data)>0)
-				if($data[0]->meta_description!='')
-					return $data[0]->meta_description; 
-				else
-					return $data[0]->name; 
-
-			else return '';
-		}
-		
 		public static function getLanguage(){
 			$lang = DB::table("language")->Where('is_delete',0)->Where('is_active',1)->OrderBy('order_level','ASC')->get();
 			return $lang;

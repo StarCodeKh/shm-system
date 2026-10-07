@@ -386,23 +386,31 @@
                 "id" => "required|integer",
                 "username" => "nullable|string|max:191",
                 "password" => "nullable|string|min:8|max:191",
+                "email" => "nullable|email|max:120",
             ]);
             $officer = Officer::findOrFail($input["id"]);
 
             if(!$officer->user_id){
-                $request->validate([
+                $input["email"] = $input["email"] ?? $officer->email;
+                validator($input, [
                     "username" => "required|unique:users,username",
                     "password" => "required",
+                    "email" => "required|email|unique:users,email",
+                ])->validate();
+                // Mobile app login for this officer, with the standard role for staff
+                $user = User::create([
+                    "officer_id" => $officer->id,
+                    "entity_id" => $officer->entity_id,
+                    "fullname" => trim($officer->first_name." ".$officer->last_name),
+                    "latin" => $officer->latin ?? "",
+                    "gender" => $officer->gender,
+                    "email" => $input["email"],
+                    "username" => $input["username"],
+                    "password" => bcrypt($input["password"]),
+                    "created_by" => Auth::id(),
                 ]);
-                // Role Id 4 is default role for mobile user
-                $createUserId = User::insertGetId(
-                    [
-                        "role_id" =>  4,
-                        "username" => $input["username"],
-                        "password" => bcrypt($input["password"])
-                    ]
-                );
-                $officer->user_id = $createUserId;
+                $user->syncRoles(["Normal User"]);
+                $officer->user_id = $user->id;
                 $officer->save();
             }else{
                 if(!empty($input["password"])){

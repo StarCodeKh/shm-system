@@ -5,7 +5,6 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Settings\Entity;
-use App\Models\Settings\RoleUser;
 use App\Models\Settings\Status;
 use App\Models\Officer;
 use App\Models\UserDevice;
@@ -27,15 +26,17 @@ class User extends Authenticatable implements Auditable
   protected $primaryKey = 'id';
   protected $guarded = [];
   protected $fillable = [];
+  // `role` is the user's one Spatie role (tbl_model_has_roles), not a column
+  protected $appends = ['role'];
+
+  public function getRoleAttribute(){
+    return $this->roles->first()?->name;
+  }
 
   public $timestamps = true;
   
   public function entity(){
     return $this->belongsTo(Entity::class, 'entity_id');
-  }
-
-  public function role(){
-      return $this->belongsTo(RoleUser::class,'role_id');
   }
 
   public function status(){
@@ -59,46 +60,38 @@ class User extends Authenticatable implements Auditable
   }
 
     // public static function
+  // Columns of the users table (Settings > Users), in display order
   public static function dataFields(){
-    // Loop Data Field From Table to put in array for mapping data field to search data table
-    $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new User)->getTable());
-    $str = "";
-    for($i=0; $i < count($data["tables"]); $i++){
-      if($data["tables"][$i]->Null == "NO" && $data["tables"][$i]->Field != 'id'){
-        $str .= $data["tables"][$i]->Field.",";
-      }
-    }
-    $newArr = explode(",", $str);
-    array_pop($newArr);
-    $dataFields = $newArr;
-    return $dataFields;
+    return ["fullname", "latin", "username", "email", "telephone_1", "role", "entity_id", "status"];
   }
 
+  // Add / edit form of the users table. Choices for the selects come with the list response (role, gender, status).
+  // Password is checked on the server: required when creating, optional when editing.
   public static function formAttributes(){
-    $formAttributes = array();
-    $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new User)->getTable());
-    for($i=0; $i < count($data["tables"]); $i++){
-      if($data["tables"][$i]->Field != "id" && $data["tables"][$i]->Field != "created_by" && $data["tables"][$i]->Field != "modified_by" && $data["tables"][$i]->Field != "created_at" && $data["tables"][$i]->Field != "updated_at"){
-        $formAttributes[] = array(
-          "name" => $data["tables"][$i]->Field,
-          "type" => CommonService::convertDataType($data["tables"][$i]),
-          "required" => $data["tables"][$i]->Null=="NO"?true:false,
-        );
-      }
-    }
-    return $formAttributes;
+    return [
+      ["name" => "fullname", "type" => "text", "required" => true],
+      ["name" => "latin", "type" => "text", "required" => true],
+      ["name" => "role", "type" => "select", "required" => true],
+      ["name" => "gender", "type" => "select", "required" => false],
+      ["name" => "email", "type" => "text", "required" => true],
+      ["name" => "telephone_1", "type" => "text", "required" => true],
+      ["name" => "username", "type" => "text", "required" => true],
+      ["name" => "password", "type" => "password", "required" => false],
+      ["name" => "password_confirmation", "type" => "password", "required" => false],
+      ["name" => "status", "type" => "select", "required" => true],
+      ["name" => "receive_daily_notifications", "type" => "checkbox", "required" => false],
+      ["name" => "receive_all_notification", "type" => "checkbox", "required" => false],
+    ];
   }
 
   public static function checkQuery($filter){
     $data = array();
     if(isset($filter["data"]["officer_id"])){
-      $query = User::with('roles')->with('permissions')->with('officer')->with('status')->where("officer_id", (int)$filter["data"]["officer_id"]);
+      $query = User::with('roles', 'entity', 'status', 'officer')->where("officer_id", (int)$filter["data"]["officer_id"]);
     }else{
-      $query = User::with('roles')->with('permissions')->with('status')->orderByFilter($filter);
+      $query = User::with('roles', 'entity', 'status')->orderByFilter($filter);
     }
     $whereClause = $query;
-    // $whereClause->orwhereNull("status");
-    // $whereClause->where("is_default", 0);
 
     if(Auth::user()->entity_id !=0 || Auth::user()->entity_id !=null){
       $whereClause->where("entity_id", Auth::user()->entity_id);
@@ -113,10 +106,11 @@ class User extends Authenticatable implements Auditable
         for($i=0 ; $i < count($filter["search_field"]); $i++){
           $field = array_key_first($filter["search_field"][$i]); //array('key1', 'key2', 'key3');
           if (array_key_exists($field, $dataFields)) {
-            if(isset($filter["search_field"][$i][$field]["value"])){
-              $whereClause->Where($field, 'Like', '%'.$filter["search_field"][$i][$field]["value"].'%');
-            }else{
-              $whereClause->Where($field, 'Like', '%'.$filter["search_field"][$i][$field].'%');
+            $value = $filter["search_field"][$i][$field]["value"] ?? $filter["search_field"][$i][$field];
+            if ($field == "role") {
+              $whereClause->whereHas('roles', fn ($q) => $q->where('name', 'Like', '%'.$value.'%'));
+            } else {
+              $whereClause->Where($field, 'Like', '%'.$value.'%');
             }
           }
         }

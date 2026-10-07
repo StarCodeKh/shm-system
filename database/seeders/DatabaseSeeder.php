@@ -13,6 +13,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
+        // Each seeder only adds what is missing, so this is safe on a live server too
+        $this->call([
+            ConfigSeeder::class,
+            RolePermissionSeeder::class,
+            OfficerLookupSeeder::class,
+            UserSeeder::class,
+        ]);
     }
 }

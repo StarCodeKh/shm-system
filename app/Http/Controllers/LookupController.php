@@ -14,7 +14,6 @@ use App\Models\Settings\PaymentMethod;
 use App\Models\Settings\PaymentType;
 use App\Models\Settings\RoleUser;
 use App\Models\Settings\Title;
-use App\Models\Settings\Unit;
 use CommonService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -50,13 +49,14 @@ class LookupController extends Controller
             'department_id' => fn () => Department::getSingleOpt(),
             'entity_id' => fn () => Entity::getSingleOpt(),
             'role_id' => fn () => RoleUser::getSingleOpt(),
+            // Users store their role by name (Spatie role)
+            'role' => fn () => RoleUser::getSingleValueOpt(),
             'payment_method_id' => fn () => PaymentMethod::getSingleOpt(),
             'payment_type_id' => fn () => $this->byId(PaymentType::class),
             'account_type_group_id' => fn () => $this->byId(AccountTypeGroup::class),
             'account_type_id' => fn () => $this->byId(AccountType::class),
             'account_group_id' => fn () => $this->byId(AccountGroup::class),
             'letter_type_id' => fn () => $this->byId(LetterType::class),
-            'unit_id' => fn () => $this->byId(Unit::class),
         ];
     }
 

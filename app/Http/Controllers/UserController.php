@@ -14,10 +14,8 @@ use App\Models\Settings\Status;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\User;
-use DB;
 use Auth;
 use CommonService;
-use Spatie\Permission\Models\Permission;
 class UserController extends Controller
 {   
     protected $PERMISSION_ACTION_LIST;
@@ -56,32 +54,18 @@ class UserController extends Controller
                 $input["officer_id"] = $input["officer_id"];
             }
             $filter = CommonService::getFilter($input);
-            $genders = array(
-                [
-                    "label" => "ប្រុស",
-                    "value" => "ប្រុស"
-                ],[
-                    "label" => "ស្រី",
-                    "value" => "ស្រី"
-                ],
-            );
-            $entities = Entity::getSingleOpt();
-            $roles = "";//Role::getRoleValues($filter);
-            $titles = Title::getSingleOpt();
-            $positions = Position::getSingleOpt();
-            
             $data = array(
                 "data" => $this->db_table::getData($filter),
                 "permissions" => CommonService::permission($this->db_table),
                 "role_permissions" => CommonService::getPermissionsViaRoles(),
                 "model_name" => $this->db_table->getTable(),
-                // "entity_id" => $entities,
-                "officer_id" => isset($filter["data"]["officer_id"])?Officer::getSingleOptById($filter["data"]["officer_id"]):Officer::getSingleOpt(),
-                "role_id" => RoleUser::getSingleOpt(),
+                // The login tab of an officer profile (it always sends officer_id) picks that officer
+                "officer_id" => isset($filter["data"]["officer_id"]) ? Officer::getSingleOptById($filter["data"]["officer_id"]) : [],
                 "role" => RoleUser::getSingleValueOpt(),
-                "gender" => $genders,
-                "title" => $titles,
-                "position" => $positions,
+                "gender" => array(
+                    ["label" => "ប្រុស", "value" => "ប្រុស"],
+                    ["label" => "ស្រី", "value" => "ស្រី"],
+                ),
                 "status" => Status::getSingleOpt("STATUS"),
                 "form_attributes" => User::formAttributes(),
                 "data_fields" => User::dataFields(),
@@ -90,7 +74,7 @@ class UserController extends Controller
             );
             $status = 200;
             $data["is_display"] = true;
-            $data["message"] = trans('common.msg_save_successfully');
+            $data["message"] = trans('common.msg_successfully');
             return response()->json($data, $status);
         }else{
             $status = 500;
@@ -100,16 +84,6 @@ class UserController extends Controller
         }
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -220,18 +194,6 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -337,8 +299,9 @@ class UserController extends Controller
         $arr = $input;
         $pushArray = array_merge(array(["created_by" => Auth::user()->id]));
         $arraySingle = array_merge($arr, $pushArray);
-        $result = call_user_func_array('array_merge', $arraySingle);
-        $dataFields = $result;
+        $dataFields = call_user_func_array('array_merge', $arraySingle);
+        // The role is saved with syncRoles(), not in the users table
+        unset($dataFields["role"], $dataFields["role_id"]);
         return $dataFields;
     }
 
@@ -374,56 +337,6 @@ class UserController extends Controller
         );
         return response()->json($data, $status);
     }
-
-    public function dataFields(){
-        // Loop Data Field From Table to put in array for mapping data field to search data table
-        $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().($this->db_table)->getTable());
-        $str = "";
-        for($i=0; $i < count($data["tables"]); $i++){
-            $str .= $data["tables"][$i]->Field.",";
-        }
-        $newArr = explode(",", $str);
-        array_pop($newArr);
-        $dataFields = $newArr;
-        return $dataFields;
-    }
-
-    // public function getUserByOfficers(Request $request){
-    //     $input = $request->all();
-    //     $data = array();
-    //     $filter = CommonService::getFilter($input);
-    //     $filter["officer_id"] = $input["officer_id"];
-    //     $genders = array(
-    //         [
-    //             "label" => "ប្រុស",
-    //             "value" => "ប្រុស"
-    //         ],[
-    //             "label" => "ស្រី",
-    //             "value" => "ស្រី"
-    //         ],
-    //     );
-    //     $entities = Entity::getSingleOpt();
-    //     $roles = "";//Role::getRoleValues($filter);
-    //     $titles = Title::getSingleOpt();
-    //     $positions = Position::getSingleOpt();
-    //     $data = array(
-    //         "data" => $this->db_table::getData($filter),
-    //         "permissions" => CommonService::permission($this->db_table),
-    //         "role_permissions" => CommonService::getPermissionsViaRoles(),
-    //         "model_name" => $this->db_table->getTable(),
-    //         // "entity_id" => $entities,
-    //         "role_id" => RoleUser::getSingleOpt(),
-    //         "gender" => $genders,
-    //         "title" => $titles,
-    //         "position" => $positions,
-    //         "status" => Status::getSingleOpt("STATUS"),
-    //         "form_attributes" => User::formAttributes(),
-    //         "data_fields" => User::dataFields(),
-    //         "limit" => config_limit,
-    //         "total" => User::getTotal($filter)
-    //     );
-    //     return response()->json($data);
-    // }
 
     public function getProfile(Request $request){
         

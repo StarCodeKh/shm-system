@@ -159,7 +159,6 @@ export default {
         { fullname: f.fullname },
         { title: this.label(f.title) },
         { position: this.label(f.position) },
-        { role_id: this.label(f.role) },
         { role: this.value(f.role) },
         { department: this.label(f.department) },
         { entity_id: this.value(f.entity) },

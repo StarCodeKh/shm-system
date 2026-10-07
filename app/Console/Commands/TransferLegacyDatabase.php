@@ -33,8 +33,6 @@ class TransferLegacyDatabase extends Command
     // Tables and columns renamed by the standard migrations: new name => old name
     private const RENAMED_TABLES = [
         'incentive_to_stakeholder' => 'incentive_to_stackholder',
-        'mef_ceiling_column' => 'mef_ceiling_columne',
-        'mef_planning_budget_group' => 'mef_planing_budget_group',
     ];
     private const RENAMED_COLUMNS = [
         'incentive_to_stakeholder' => ['stakeholder' => 'stackholder'],

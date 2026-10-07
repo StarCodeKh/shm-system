@@ -353,7 +353,7 @@
 <script>
 import { gridClass } from "@/formGrid.js";
 import axios from "@/axios.js";
-import { fieldLabel, fieldHint } from "@/i18n/i18n.js";
+import { fieldLabel, fieldHint, requiredMessage } from "@/i18n/i18n.js";
 
 // Dropdown choices fetched by field name (GET /api/v1/lookup/{field}), shared by every form for the session.
 // Used only when the page didn't send a list for that field; fields without a lookup resolve to null.
@@ -764,8 +764,7 @@ export default {
             return fieldHint(attribute && attribute.name, kind) // shared with every screen ($tHint): see i18n.js
         },
         requiredMessage(name) {
-            const key = 'required_' + name
-            return this.$te(key) ? this.$t(key) : this.$t('form_required', { field: this.fieldLabel(name) })
+            return requiredMessage(name) // shared with every screen ($tRequired): see i18n.js
         },
         // Save the form: validate, send once, keep the spinner until the server answers,
         // then show the server's message (or its validation errors) in the user's language.

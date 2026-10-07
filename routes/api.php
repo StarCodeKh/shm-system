@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\COAController;
 use App\Http\Controllers\CompositionRequestController;
 use App\Http\Controllers\ConfigurationController;
@@ -11,21 +10,6 @@ use App\Http\Controllers\FileManagerController;
 use App\Http\Controllers\IncentiveController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\MobileIncentiveController;
-use App\Http\Controllers\Modules\BudgetArrangement\CeilingEntityController;
-use App\Http\Controllers\Modules\BudgetArrangement\CeilingRuleController;
-use App\Http\Controllers\Modules\BudgetArrangement\PIPInvestmentController;
-use App\Http\Controllers\Modules\BudgetMonitoring\CreditMovementController;
-use App\Http\Controllers\Modules\BudgetMonitoring\RevImplementBudgetController;
-use App\Http\Controllers\Modules\BudgetMonitoring\RevProgramController;
-use App\Http\Controllers\Modules\ProgramManagement\ActivityController;
-use App\Http\Controllers\Modules\ProgramManagement\ClusterActivityController;
-use App\Http\Controllers\Modules\ProgramManagement\KPIClusterActivityController;
-use App\Http\Controllers\Modules\ProgramManagement\KPIProgramController;
-use App\Http\Controllers\Modules\ProgramManagement\KPISubProgramController;
-use App\Http\Controllers\Modules\ProgramManagement\ObjectiveController;
-use App\Http\Controllers\Modules\ProgramManagement\ProgramController;
-use App\Http\Controllers\Modules\ProgramManagement\SubProgramController;
-use App\Http\Controllers\Modules\ProgramManagement\TaskController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OfficerController;
 use App\Http\Controllers\OfficerDocumentController;
@@ -43,33 +27,20 @@ use App\Http\Controllers\Settings\AccountTypeController;
 use App\Http\Controllers\Settings\AccountTypeGroupController;
 use App\Http\Controllers\Settings\AuditController;
 use App\Http\Controllers\Settings\BankController;
-use App\Http\Controllers\Settings\BudgetTemplateController;
-use App\Http\Controllers\Settings\BudgetTemplateItemCostController;
-use App\Http\Controllers\Settings\CeilingGroupController;
-use App\Http\Controllers\Settings\CeilingTypeController;
-use App\Http\Controllers\Settings\CreditMovementTypeController;
 use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\CurrencyExchangeController;
 use App\Http\Controllers\Settings\DepartmentController;
 use App\Http\Controllers\Settings\EntityController;
 use App\Http\Controllers\Settings\EntityMemberController;
-use App\Http\Controllers\Settings\ExpenditureGroupController;
-use App\Http\Controllers\Settings\ExpenditureTypeController;
-use App\Http\Controllers\Settings\FinanceResourceController;
-use App\Http\Controllers\Settings\ItemCategoryController;
-use App\Http\Controllers\Settings\ItemController;
 use App\Http\Controllers\Settings\LetterTypeController;
 use App\Http\Controllers\Settings\PaymentMethodController;
 use App\Http\Controllers\Settings\PaymentTermController;
 use App\Http\Controllers\Settings\PaymentTypeController;
 use App\Http\Controllers\Settings\PlanningController;
 use App\Http\Controllers\Settings\PositionController;
-use App\Http\Controllers\Settings\ProjectStatusController;
-use App\Http\Controllers\Settings\ProjectTypeController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\StatusController;
 use App\Http\Controllers\Settings\TitleController;
-use App\Http\Controllers\Settings\UnitController;
 use App\Http\Controllers\TaxableSalaryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -228,76 +199,10 @@ Route::prefix('v1')->middleware(['auth:api', 'global_site', 'cors', 'module_perm
     // Role menu
     Route::post('role_menu/permission/index', [RoleMenuController::class, 'index']);
 
-    // Module: Program management
-    Route::prefix('module/program_management')->group(function () {
-        Route::post('objective/search', [ObjectiveController::class, 'index']);
-        Route::get('objective/overview', [ObjectiveController::class, 'overview']); // objectives > programs > sub-program count
-        Route::apiResource('objective', ObjectiveController::class);
-
-        Route::post('program/search', [ProgramController::class, 'index']);
-        Route::post('program_by_obj', [ProgramController::class, 'getProgByObj']);
-        Route::apiResource('program', ProgramController::class);
-
-        Route::post('sub_program/search', [SubProgramController::class, 'index']);
-        Route::post('entity_by_subprog', [SubProgramController::class, 'getEntityBySubprog']);
-        Route::post('sub_program_by_prog', [SubProgramController::class, 'getSubProgByProg']);
-        Route::apiResource('sub_program', SubProgramController::class);
-
-        Route::post('cluster_activity/search', [ClusterActivityController::class, 'index']);
-        Route::post('get_cluster_act_by_subprog', [ClusterActivityController::class, 'getClusActBySprog']);
-        Route::post('get_cluster_act', [ClusterActivityController::class, 'getClusterAct']);
-        Route::apiResource('cluster_activity', ClusterActivityController::class);
-
-        Route::post('activity/search', [ActivityController::class, 'index']);
-        Route::post('get_entity_by_activity', [ActivityController::class, 'getEntityByAct']);
-        Route::post('get_act', [ActivityController::class, 'getActByCluster']);
-        Route::apiResource('activity', ActivityController::class);
-
-        Route::post('task/search', [TaskController::class, 'index']);
-        Route::post('get_task_detail', [TaskController::class, 'getTaskDetail']);
-        Route::post('get_task_by_act', [TaskController::class, 'getTaskByAct']);
-        Route::apiResource('task', TaskController::class);
-
-        // KPI
-        Route::post('kpi_cluster_activity/get_kpi', [KPIClusterActivityController::class, 'index']);
-        Route::apiResource('kpi_cluster_activity', KPIClusterActivityController::class);
-        Route::post('kpi_program/get_kpi', [KPIProgramController::class, 'index']);
-        Route::apiResource('kpi_program', KPIProgramController::class);
-        Route::post('kpi_sub_program/get_kpi', [KPISubProgramController::class, 'index']);
-        Route::apiResource('kpi_sub_program', KPISubProgramController::class);
-    });
-
-    // Module: Budget monitoring
-    Route::prefix('module/budget_monitoring')->group(function () {
-        Route::post('income_arrangement/search', [RevProgramController::class, 'index']);
-        Route::post('income_imple_result/search', [RevImplementBudgetController::class, 'index']);
-        Route::post('credit_movement/search', [CreditMovementController::class, 'index']);
-        Route::apiResource('credit_movement', CreditMovementController::class);
-    });
-
-    // Module: Budget arrangement
-    Route::prefix('module/budget_arrangement')->group(function () {
-        Route::post('ceiling_rule/search', [CeilingRuleController::class, 'index']);
-        Route::apiResource('ceiling_rule', CeilingRuleController::class);
-        Route::post('ceiling_entity/search', [CeilingEntityController::class, 'index']);
-        Route::apiResource('ceiling_entity', CeilingEntityController::class);
-        Route::post('pip/search', [PIPInvestmentController::class, 'index']);
-        Route::apiResource('pip', PIPInvestmentController::class);
-    });
-
     // Settings
     Route::prefix('setting')->group(function () {
-        Route::post('expenditure_group/search', [ExpenditureGroupController::class, 'index']);
-        Route::apiResource('expenditure_group', ExpenditureGroupController::class);
-        Route::post('expenditure_type/search', [ExpenditureTypeController::class, 'index']);
-        Route::apiResource('expenditure_type', ExpenditureTypeController::class);
 
-        Route::post('budget_template_item_cost/get_item_cost', [BudgetTemplateItemCostController::class, 'index']);
-        Route::apiResource('budget_template_item_cost', BudgetTemplateItemCostController::class);
-        Route::post('budget_template/search', [BudgetTemplateController::class, 'index']);
-        Route::apiResource('budget_template', BudgetTemplateController::class);
-
-        Route::post('account_type_group/search', [AccountTypeGroupController::class, 'index']);
+Route::post('account_type_group/search', [AccountTypeGroupController::class, 'index']);
         Route::apiResource('account_type_group', AccountTypeGroupController::class);
 
         Route::get('account_type/export', [AccountTypeController::class, 'export']);
@@ -324,7 +229,6 @@ Route::prefix('v1')->middleware(['auth:api', 'global_site', 'cors', 'module_perm
 
         Route::post('entity/get_entity_by_dept', [EntityController::class, 'getOptionByDept']);
         Route::post('entity/import', [EntityController::class, 'import']);
-        Route::post('entity/export', [EntityController::class, 'export']);
         Route::post('entity/search', [EntityController::class, 'index']);
         Route::apiResource('entity', EntityController::class);
 
@@ -334,16 +238,7 @@ Route::prefix('v1')->middleware(['auth:api', 'global_site', 'cors', 'module_perm
         Route::post('title/search', [TitleController::class, 'index']);
         Route::apiResource('title', TitleController::class);
 
-        Route::post('unit/search', [UnitController::class, 'index']);
-        Route::apiResource('unit', UnitController::class);
-
-        Route::post('item/search', [ItemController::class, 'index']);
-        Route::apiResource('item', ItemController::class);
-
-        Route::post('item_category/search', [ItemCategoryController::class, 'index']);
-        Route::apiResource('item_category', ItemCategoryController::class);
-
-        Route::post('currency/search', [CurrencyController::class, 'index']);
+Route::post('currency/search', [CurrencyController::class, 'index']);
         Route::apiResource('currency', CurrencyController::class);
 
         Route::post('currency_exchange/search', [CurrencyExchangeController::class, 'index']);
@@ -358,29 +253,13 @@ Route::prefix('v1')->middleware(['auth:api', 'global_site', 'cors', 'module_perm
         Route::post('role/search', [RoleController::class, 'index']);
         Route::apiResource('role', RoleController::class);
 
-        Route::post('ceiling_group/search', [CeilingGroupController::class, 'index']);
-        Route::apiResource('ceiling_group', CeilingGroupController::class);
-
-        Route::post('ceiling_type/search', [CeilingTypeController::class, 'index']);
-        Route::apiResource('ceiling_type', CeilingTypeController::class);
-
-        Route::post('planning/search', [PlanningController::class, 'index']);
+Route::post('planning/search', [PlanningController::class, 'index']);
         Route::apiResource('planning', PlanningController::class);
 
-        Route::post('finance_resource/search', [FinanceResourceController::class, 'index']);
-        Route::apiResource('finance_resource', FinanceResourceController::class);
-        Route::post('project_status/search', [ProjectStatusController::class, 'index']);
-        Route::apiResource('project_status', ProjectStatusController::class);
-        Route::post('project_type/search', [ProjectTypeController::class, 'index']);
-        Route::apiResource('project_type', ProjectTypeController::class);
-
-        Route::post('audit/search', [AuditController::class, 'index']);
+Route::post('audit/search', [AuditController::class, 'index']);
         Route::apiResource('audit', AuditController::class);
 
-        Route::post('credit_movement_type/search', [CreditMovementTypeController::class, 'index']);
-        Route::apiResource('credit_movement_type', CreditMovementTypeController::class);
-
-        Route::post('letter_type/search', [LetterTypeController::class, 'index']);
+Route::post('letter_type/search', [LetterTypeController::class, 'index']);
         Route::apiResource('letter_type', LetterTypeController::class);
 
         Route::post('payment_method/search', [PaymentMethodController::class, 'index']);
@@ -397,7 +276,6 @@ Route::prefix('v1')->middleware(['auth:api', 'global_site', 'cors', 'module_perm
     });
 
     Route::apiResource('taxable_salary', TaxableSalaryController::class);
-    Route::apiResource('bank_account', BankAccountController::class);
     // Current planning year (config_planning_year), used by the budget screens for their year headers
     Route::get('configuration/planning', [ConfigurationController::class, 'planning']);
     Route::apiResource('configuration', ConfigurationController::class)->only(['index', 'show', 'update']);
