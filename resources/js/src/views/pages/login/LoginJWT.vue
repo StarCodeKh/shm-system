@@ -41,7 +41,7 @@
     </div>
 
     <div class="flex items-center justify-between mt-2 mb-6">
-      <vs-checkbox v-model="checkbox_remember_me" class="ml-0">{{ $t('remember_me') }}</vs-checkbox>
+      <vs-checkbox v-model="checkbox_remember_me" class="login-remember">{{ $t('remember_me') }}</vs-checkbox>
       <!-- <router-link to="/pages/forgot-password">Forgot Password?</router-link> -->
     </div>
 
@@ -185,6 +185,37 @@ export default {
 
 <style lang="scss">
 .login-jwt {
+  // "Remember me": the same checkbox as the forms (20px box, 6px corners, theme colour), inline under the fields
+  .login-remember.con-vs-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 !important;
+    cursor: pointer;
+    user-select: none;
+
+    .vs-checkbox {
+      flex-shrink: 0;
+      width: 20px !important;
+      height: 20px !important;
+      margin: 0 !important;
+      border-radius: 6px !important;
+    }
+
+    .con-slot-label {
+      font-size: 14px;
+      line-height: 20px;
+      color: #4b4d68;
+    }
+
+    // Keyboard focus only (not shown for mouse clicks)
+    &:has(:focus-visible) {
+      border-radius: 6px;
+      outline: 2px solid rgb(var(--vs-primary));
+      outline-offset: 4px;
+    }
+  }
+
   .login-field {
     margin-bottom: 16px;
 
@@ -338,6 +369,10 @@ export default {
 }
 
 .theme-dark .login-jwt {
+  .login-remember .con-slot-label {
+    color: #c2c6dc;
+  }
+
   .login-field label {
     color: #c2c6dc;
   }
