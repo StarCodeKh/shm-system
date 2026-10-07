@@ -12,8 +12,8 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->id();
             $table->string('type_code', 5);
-            $table->longText('name_en')->nullable();
-            $table->longText('name_kh')->nullable();
+            $table->string('name_en')->nullable();
+            $table->string('name_kh')->nullable();
             $table->longText('description')->nullable();
             $table->integer('order_level')->nullable();
             $table->unsignedBigInteger('status')->nullable();

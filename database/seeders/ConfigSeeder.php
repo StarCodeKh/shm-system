@@ -22,7 +22,7 @@ class ConfigSeeder extends Seeder
         $rows = [];
         foreach (require __DIR__.'/data/config.php' as $key => $value) {
             if (in_array($key, $existing, true)) continue;
-            $rows[] = ['key' => $key, 'value' => $value, 'created_at' => $now, 'updated_at' => $now];
+            $rows[] = ['code' => 'config', 'key' => $key, 'value' => $value, 'created_at' => $now, 'updated_at' => $now];
         }
         if ($rows) DB::table('config')->insert($rows);
     }

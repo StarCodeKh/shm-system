@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('reference', 100)->nullable();
             $table->decimal('tax', 20, 4)->nullable();
             $table->decimal('amount_after_tax', 20, 4)->nullable();
-            $table->tinyText('is_notify')->nullable();
+            $table->boolean('is_notify')->nullable();
             $table->unsignedBigInteger('status')->nullable();
             $table->longText('remark')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();

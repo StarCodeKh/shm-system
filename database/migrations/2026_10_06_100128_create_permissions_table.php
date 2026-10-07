@@ -11,10 +11,12 @@ return new class extends Migration
         Schema::create('permissions', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->id();
-            $table->string('group', 255)->nullable();
-            $table->string('name', 255)->nullable();
-            $table->string('guard_name', 255)->nullable();
+            $table->unsignedBigInteger('group')->nullable(); // permission_group.id (role editor section)
+            $table->string('name');
+            $table->string('guard_name');
             $table->timestamps();
+            $table->unique(['name', 'guard_name']);
+            $table->index('group');
         });
     }
 

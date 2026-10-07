@@ -25,9 +25,9 @@ return new class extends Migration
             $table->string('khmer_day', 120)->nullable();
             $table->dateTime('effective_date')->nullable();
             $table->longText('attach_fille')->nullable();
-            $table->tinyInteger('is_approve')->default(0);
+            $table->boolean('is_approve')->default(0);
             $table->string('currency', 50)->nullable();
-            $table->tinyInteger('is_notify')->default(0);
+            $table->boolean('is_notify')->default(0);
             $table->integer('notification_count')->default(0);
             $table->decimal('total_incentive', 20, 4)->default(0.0000);
             $table->decimal('total_return', 20, 4)->nullable()->default(0.0000);

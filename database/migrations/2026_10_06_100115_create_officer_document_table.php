@@ -12,7 +12,7 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->id();
             $table->unsignedBigInteger('officer_id')->nullable();
-            $table->longText('document_name');
+            $table->string('document_name');
             $table->longText('attach');
             $table->unsignedBigInteger('status')->nullable();
             $table->timestamps();

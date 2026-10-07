@@ -12,7 +12,7 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->id();
             $table->longText('image');
-            $table->text('file_name');
+            $table->string('file_name');
             $table->text('path');
             $table->string('type', 50);
             $table->longText('size')->nullable();

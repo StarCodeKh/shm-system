@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('title', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->id();
-            $table->longText('name_en');
-            $table->longText('name_kh');
+            $table->string('name_en');
+            $table->string('name_kh');
             $table->integer('order_level');
             $table->unsignedBigInteger('status')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();

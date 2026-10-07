@@ -14,7 +14,7 @@ return new class extends Migration
             $table->longText('device_token');
             $table->string('telephone', 120);
             $table->string('otp_code', 45);
-            $table->tinyInteger('is_verify')->default(0);
+            $table->boolean('is_verify')->default(0);
             $table->dateTime('expired_date')->nullable();
             $table->text('remark')->nullable();
             $table->timestamps();  // added: standard timestamps

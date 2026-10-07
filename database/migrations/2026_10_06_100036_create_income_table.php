@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('income', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->id();
-            $table->longText('title_kh');
-            $table->longText('title_en');
+            $table->string('title_kh', 500);
+            $table->string('title_en', 500);
             $table->unsignedBigInteger('department_id')->nullable();
             $table->unsignedBigInteger('entity_id')->nullable();
             $table->bigInteger('account_code');

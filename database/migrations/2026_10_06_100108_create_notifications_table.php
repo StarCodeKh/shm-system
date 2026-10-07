@@ -15,7 +15,7 @@ return new class extends Migration
             $table->text('subject');
             $table->longText('message')->nullable();
             $table->unsignedBigInteger('notifiable_id')->nullable();
-            $table->text('notifiable_type')->nullable();
+            $table->string('notifiable_type')->nullable();
             $table->longText('data')->nullable();
             $table->dateTime('read_at')->nullable();
             $table->unsignedBigInteger('status')->nullable();

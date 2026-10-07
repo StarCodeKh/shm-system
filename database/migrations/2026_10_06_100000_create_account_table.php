@@ -14,8 +14,8 @@ return new class extends Migration
             $table->string('code', 50);
             $table->string('parent_code', 50)->nullable();
             $table->string('account_type', 5);
-            $table->longText('name_en');
-            $table->longText('name_kh');
+            $table->string('name_en');
+            $table->string('name_kh');
             $table->longText('description')->nullable();
             $table->integer('order_level')->nullable();
             $table->unsignedBigInteger('status')->nullable();

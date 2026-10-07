@@ -12,15 +12,15 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->id();
             $table->string('type', 100);
-            $table->text('name_kh');
-            $table->text('name_en');
+            $table->string('name_kh');
+            $table->string('name_en');
             $table->unsignedBigInteger('currency_id')->nullable();
             $table->integer('execute_number');
             $table->decimal('recurring_amount', 20, 4);
             $table->integer('order_level');
             $table->longText('remark')->nullable();
             $table->unsignedBigInteger('status')->nullable();
-            $table->tinyText('is_default')->nullable();
+            $table->boolean('is_default')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('modified_by')->nullable();
             $table->timestamps();

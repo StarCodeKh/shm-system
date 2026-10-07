@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('account_type_group', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->id();
-            $table->longText('name_en');
-            $table->longText('name_kh');
+            $table->string('name_en');
+            $table->string('name_kh');
             $table->integer('order_level')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('modified_by')->nullable();

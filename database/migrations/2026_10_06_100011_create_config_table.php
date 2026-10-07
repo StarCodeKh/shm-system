@@ -12,7 +12,7 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->id();
             $table->unsignedBigInteger('entity_id')->nullable();
-            $table->string('code', 64);
+            $table->string('code', 64)->default('config'); // settings group
             $table->string('key', 64);
             $table->longText('value')->nullable();
             $table->timestamps();  // added: standard timestamps

@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('payment_method', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->id();
-            $table->text('name_kh');
-            $table->text('name_en');
+            $table->string('name_kh');
+            $table->string('name_en');
             $table->unsignedBigInteger('status')->nullable();
             $table->text('remark')->nullable();
             $table->integer('order_level')->nullable();

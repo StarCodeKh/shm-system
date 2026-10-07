@@ -13,8 +13,8 @@ return new class extends Migration
             $table->id();
             $table->string('group', 120);
             $table->string('code', 50);
-            $table->longText('name_en')->nullable();
-            $table->longText('name_kh')->nullable();
+            $table->string('name_en')->nullable();
+            $table->string('name_kh')->nullable();
             $table->longText('description')->nullable();
             $table->integer('order_level')->nullable();
             $table->unsignedBigInteger('status')->nullable();

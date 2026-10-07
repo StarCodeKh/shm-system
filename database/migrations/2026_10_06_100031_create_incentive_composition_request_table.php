@@ -24,7 +24,7 @@ return new class extends Migration
             $table->dateTime('effective_date')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('modified_by')->nullable();
-            $table->integer('is_approved')->default(0);
+            $table->boolean('is_approved')->default(0);
             $table->timestamps();
             $table->index('status');
             $table->index('entity_id');

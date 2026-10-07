@@ -13,17 +13,13 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('officer_id')->nullable();
             $table->unsignedBigInteger('entity_id')->nullable();
-            $table->string('entity', 120);
-            $table->unsignedBigInteger('role_id')->nullable();
-            $table->string('role', 255);
-            $table->text('fullname');
-            $table->text('latin');
+            $table->string('fullname');
+            $table->string('latin');
             $table->string('username', 120);
             $table->string('email', 120);
             $table->string('password', 255)->nullable();
             $table->string('title', 120)->nullable();
             $table->string('department', 120)->nullable();
-            $table->string('duty', 120)->nullable();
             $table->string('position', 120)->nullable();
             $table->string('telephone_1', 120)->nullable();
             $table->string('telephone_2', 120)->nullable();
@@ -31,8 +27,6 @@ return new class extends Migration
             $table->string('gender', 50)->nullable();
             $table->string('remember_token', 100)->nullable();
             $table->date('dob')->nullable();
-            $table->tinyInteger('is_default')->nullable()->default(0);
-            $table->tinyInteger('is_active')->nullable()->default(1);
             $table->tinyInteger('receive_daily_notifications')->nullable();
             $table->tinyInteger('receive_all_notification')->nullable();
             $table->unsignedBigInteger('status')->nullable();
@@ -44,7 +38,6 @@ return new class extends Migration
             $table->unique('email');
             $table->index('officer_id');
             $table->index('entity_id');
-            $table->index('role_id');
             $table->index('status');
         });
     }

@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('expense', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->id();
-            $table->longText('title_kh');
-            $table->longText('title_en');
+            $table->string('title_kh', 500);
+            $table->string('title_en', 500);
             $table->bigInteger('account_code');
             $table->unsignedBigInteger('payment_method_id')->nullable();
             $table->dateTime('issue_date')->nullable();

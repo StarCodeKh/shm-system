@@ -11,10 +11,10 @@ return new class extends Migration
         Schema::create('position', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->id();
-            $table->longText('name_en');
-            $table->longText('name_kh')->nullable();
+            $table->string('name_en');
+            $table->string('name_kh')->nullable();
             $table->integer('order_level');
-            $table->integer('is_active')->nullable();
+            $table->boolean('is_active')->nullable();
             $table->unsignedBigInteger('status')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('modified_by')->nullable();

@@ -14,8 +14,8 @@ return new class extends Migration
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->string('code', 45)->nullable();
             $table->unsignedBigInteger('department_id')->nullable();
-            $table->longText('name_en')->nullable();
-            $table->longText('name_kh')->nullable();
+            $table->string('name_en')->nullable();
+            $table->string('name_kh')->nullable();
             $table->string('color', 50)->nullable();
             $table->string('abbreviation', 45)->nullable();
             $table->integer('limit_member')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->longText('professional_officer')->nullable();
             $table->integer('order_level')->nullable()->default(1);
             $table->unsignedBigInteger('status')->nullable();
-            $table->integer('is_active')->nullable()->default(1);
+            $table->boolean('is_active')->nullable()->default(1);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('modified_by')->nullable();
             $table->timestamps();

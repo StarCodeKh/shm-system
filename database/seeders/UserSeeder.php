@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
             DB::table('mef_status')->insert(['group' => 'STATUS', 'title_en' => $titleEn, 'title_kh' => $titleKh, 'order_level' => $order]);
         }
 
-        $password = env('SEED_USER_PASSWORD') ?: (app()->environment('production') ? null : 'Passwrd@123');
+        $password = env('SEED_USER_PASSWORD') ?: (app()->environment('production') ? null : 'Password@123');
         if (!$password) {
             $this->command?->warn('Users not created: set SEED_USER_PASSWORD in .env, then run: php artisan db:seed --class=UserSeeder');
             return;

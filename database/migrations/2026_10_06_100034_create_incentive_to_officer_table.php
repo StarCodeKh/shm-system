@@ -33,7 +33,7 @@ return new class extends Migration
             $table->string('remark', 255)->nullable();
             $table->dateTime('issue_from_date')->nullable();
             $table->dateTime('issue_to_date')->nullable();
-            $table->tinyInteger('is_notify')->default(0);
+            $table->boolean('is_notify')->default(0);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();
             $table->index('incentive_id');

@@ -11,12 +11,12 @@ return new class extends Migration
         Schema::create('mef_planning', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->id();
-            $table->text('name_en')->nullable();
-            $table->text('name_kh')->nullable();
+            $table->string('name_en')->nullable();
+            $table->string('name_kh')->nullable();
             $table->year('year')->nullable();
             $table->dateTime('start_date')->nullable();
             $table->dateTime('end_date')->nullable();
-            $table->tinyInteger('is_default')->nullable();
+            $table->boolean('is_default')->nullable();
             $table->unsignedBigInteger('status')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('modified_by')->nullable();

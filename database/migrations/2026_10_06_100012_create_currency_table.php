@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('symbol_left', 50)->nullable();
             $table->string('symbol_right', 50)->nullable();
             $table->text('remark')->nullable();
-            $table->tinyInteger('is_default')->nullable();
+            $table->boolean('is_default')->nullable();
             $table->unsignedBigInteger('status')->nullable();
             $table->integer('order_level')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();

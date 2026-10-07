@@ -20,7 +20,7 @@ return new class extends Migration
             $table->dateTime('schedule_end_date')->nullable();
             $table->text('remark')->nullable();
             $table->unsignedBigInteger('status')->nullable();
-            $table->tinyText('is_default');
+            $table->boolean('is_default');
             $table->timestamps();
             $table->index('officer_id');
             $table->index('currency_id');
