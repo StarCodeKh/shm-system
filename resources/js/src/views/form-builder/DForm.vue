@@ -340,8 +340,8 @@
                 <button v-if="$listeners.cancel" type="button" class="d-form__btn" @click="$emit('cancel')">
                     {{ $t('dt_cancel') }}
                 </button>
-                <button type="button" class="d-form__btn d-form__btn--primary" @click.prevent="submitForm">
-                    <feather-icon icon="CheckIcon" svgClasses="h-4 w-4" />
+                <button type="button" class="d-form__btn d-form__btn--primary" :disabled="saving" @click.prevent="submitForm">
+                    <feather-icon :icon="saving ? 'LoaderIcon' : 'CheckIcon'" svgClasses="h-4 w-4" :class="{ 'd-form__spin': saving }" />
                     <span>{{ dataInfo && dataInfo.id ? $t('form_save_changes') : $t('form_save') }}</span>
                 </button>
             </div>
@@ -383,6 +383,7 @@ export default {
     },
     data() {
         return {
+            saving: false, // a save is in flight: further clicks / Enter are ignored
             newAPi: null,
             formAttributeData: [],
             dataTables: [],
@@ -843,119 +844,55 @@ export default {
             const key = 'required_' + name
             return this.$te(key) ? this.$t(key) : this.$t('form_required', { field: this.fieldLabel(name) })
         },
-        submitForm() {
-            let _d;
-            this.dataFields = [];
-            let _formAttribute = this.formAttributes;
-            this.formAttributes.forEach(_formAttribute => {
-                if (_formAttribute["type"] == "select") {
-                    if (typeof this.form.attribute[_formAttribute["name"]] !== 'undefined' && this.form.attribute[_formAttribute["name"]]) {
-                        _d = {
-                            [_formAttribute["name"]]: this.form.attribute[_formAttribute["name"]].value
-                        }
-                    } else {
-                        _d = {
-                            [_formAttribute["name"]]: this.form.attribute[_formAttribute["name"]]
-                        }
-                    }
-                } else {
-                    _d = {
-                        [_formAttribute["name"]]: this.form.attribute[_formAttribute["name"]]
-                    }
-                }
-                this.dataFields.push(_d);
-            });
-            this.$validator.validateAll().then(result => {
-                if (result) {
-                    let _data = this.dataFields;
-                    this.$vs.loading();
-                    if (this.dataInfo.id) {
-                        let _id = this.dataInfo.id;
-                        // this.$vs.loading.close();
-                        return new Promise((resolve, reject) => {
-                            axios.put(this.api + '/' + _id, _data)
-                                .then((response) => {
-                                    if (response.data.success == false) {
-                                        this.$vs.notify({
-                                            title: 'Message',
-                                            text: response.data.message,
-                                            iconPack: 'feather',
-                                            icon: 'icon-check-circle',
-                                            color: 'danger',
-                                            position: 'top-right'
-                                        })
-                                    } else {
-                                        this.$vs.notify({
-                                            title: 'Message',
-                                            text: response.data.message,
-                                            iconPack: 'feather',
-                                            icon: 'icon-check-circle',
-                                            color: 'primary',
-                                            position: 'top-right'
-                                        })
-                                        this.$emit('clickForm', '');
-                                    }
-                                    this.$vs.loading.close();
-                                    // this.$router.push('/account/expense').catch(() => { })
-                                }).catch((error) => {
-                                    reject(error)
-                                    this.$vs.notify({
-                                        title: 'Message',
-                                        text: 'msg.check_criteria',
-                                        iconPack: 'feather',
-                                        icon: 'icon-check-circle',
-                                        color: 'danger',
-                                        position: 'top-right'
-                                    })
-                                    this.$vs.loading.close();
-                                })
-                        })
-                    } else {
-                        return new Promise((resolve, reject) => {
-                            axios.post(this.api, _data)
-                                .then((response) => {
-                                    if (response.data.success) {
-                                        this.$vs.notify({
-                                            title: 'Message',
-                                            text: response.data.message,
-                                            iconPack: 'feather',
-                                            icon: 'icon-check-circle',
-                                            color: 'primary',
-                                            position: 'top-right'
-                                        })
-                                        this.$vs.loading.close();
-                                    } else {
-                                        this.$vs.notify({
-                                            title: 'Message',
-                                            text: response.data.message,
-                                            iconPack: 'feather',
-                                            icon: 'icon-check-circle',
-                                            color: 'danger',
-                                            position: 'top-right'
-                                        })
-                                        this.$vs.loading.close();
-                                        return false;
-                                    }
-
-                                    this.$emit('clickForm', '');
-                                    // this.$router.push('/account/expense').catch(() => { })
-                                }).catch((error) => {
-                                    reject(error)
-                                    this.$vs.notify({
-                                        title: 'Message',
-                                        text: 'msg.action_failed',
-                                        iconPack: 'feather',
-                                        icon: 'icon-check-circle',
-                                        color: 'danger',
-                                        position: 'top-right'
-                                    })
-                                    this.$vs.loading.close();
-                                })
-                        })
-                    }
-                }
-                this.$vs.loading.close();
+        // Save the form: validate, send once, keep the spinner until the server answers,
+        // then show the server's message (or its validation errors) in the user's language.
+        async submitForm() {
+            if (this.saving) return
+            const payload = this.formAttributes.map(({ type, name }) => {
+                const value = this.form.attribute[name]
+                return { [name]: type == "select" && value ? value.value : value }
             })
+            this.dataFields = payload
+
+            if (!(await this.$validator.validateAll())) {
+                this.notify(this.$t('form_check_fields'), 'danger')
+                this.$nextTick(() => {
+                    const field = this.$el.querySelector('.d-field input[aria-invalid="true"], .d-field .is-invalid, .d-field .text-danger:not([style*="display: none"])')
+                    if (field) field.closest('.d-field').scrollIntoView({ behavior: 'smooth', block: 'center' })
+                })
+                return
+            }
+
+            this.saving = true
+            this.$vs.loading()
+            try {
+                const id = this.dataInfo && this.dataInfo.id
+                const { data } = id
+                    ? await axios.put(this.api + '/' + id, payload)
+                    : await axios.post(this.api, payload)
+                if (data && data.success === false) {
+                    this.notify(this.serverMessage(data) || this.$t('form_save_failed'), 'danger')
+                } else {
+                    this.notify(this.serverMessage(data) || this.$t('form_save'), 'primary')
+                    this.$emit('clickForm', '')
+                }
+            } catch (error) {
+                const data = error.response && error.response.data
+                this.notify(this.serverMessage(data) || this.$t('form_save_failed'), 'danger')
+            } finally {
+                this.saving = false
+                this.$vs.loading.close()
+            }
+        },
+        // Server answers carry a message string, or Laravel validation errors as { field: [messages] }
+        serverMessage(data) {
+            const message = data && (data.errors || data.message)
+            if (!message) return ''
+            if (typeof message === 'object') return Object.values(message).flat().join(' ')
+            return String(message)
+        },
+        notify(text, color) {
+            this.$vs.notify({ title: 'Message', text, iconPack: 'feather', icon: color === 'danger' ? 'icon-alert-circle' : 'icon-check-circle', color, position: 'top-right' })
         },
         variableReturn(condition) {
             switch (condition) {
@@ -1042,6 +979,15 @@ export default {
     margin-left: auto;
   }
 
+  &__btn:disabled {
+    opacity: .7;
+    cursor: progress;
+  }
+
+  &__spin svg {
+    animation: d-form-spin .8s linear infinite;
+  }
+
   &__btn {
     display: inline-flex;
     align-items: center;
@@ -1087,5 +1033,9 @@ export default {
   .d-form .d-field > label { color: #c2c6dc; }
   .d-form__footer { background: #262c49; border-color: #414561; }
   .d-form__btn:not(.d-form__btn--primary) { background: #262c49; border-color: #414561; color: #c2c6dc; }
+}
+
+@keyframes d-form-spin {
+  to { transform: rotate(360deg); }
 }
 </style>

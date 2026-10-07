@@ -747,15 +747,30 @@
 		return $data;
 		}
 
+		/**
+		 * List filter from request input. Column names, sort direction and paging come from the
+		 * client and end up in SQL, so only plain column names are accepted, secrets can never be
+		 * searched (a LIKE on password would leak hashes one character at a time), and page size is capped.
+		 */
 		public static function getFilter($obj){
+			$column = '/^[a-z][a-z0-9_]*$/i';
+			$secret = '/pass|token|secret|remember/i';
+			$searchFields = [];
+			foreach ((array) ($obj["search_field"] ?? []) as $item) {
+				if (!is_array($item)) continue;
+				$item = array_filter($item, fn ($name) => is_string($name) && preg_match($column, $name) && !preg_match($secret, $name), ARRAY_FILTER_USE_KEY);
+				if ($item) $searchFields[] = $item;
+			}
+			$sort = isset($obj["sort"]) && is_string($obj["sort"]) && preg_match('/^[a-z][a-z0-9_.]*$/i', $obj["sort"]) ? $obj["sort"] : config_sort;
+			$order = isset($obj["order"]) && in_array(strtolower((string) $obj["order"]), ['asc', 'desc'], true) ? $obj["order"] : config_order;
+			$limit = isset($obj["limit"]) ? (int) $obj["limit"] : config_limit;
 			$filter = array(
 				"data" => $obj,
-				// "offset" => isset($obj["offset"]) ? $obj["offset"] : config_offset,
-				"limit" => isset($obj["limit"]) ? $obj["limit"] : config_limit,
-				"sort" => isset($obj["sort"]) ? $obj["sort"] : config_sort,
-				"order" => isset($obj["order"]) ? $obj["order"] : config_order,
-				"page_number" => isset($obj["page_number"]) ? $obj["page_number"] : config_order,
-				"search_field" => isset($obj["search_field"]) ? $obj["search_field"] : "",
+				"limit" => max(1, min((int) ($limit ?: config_limit), 1000)),
+				"sort" => $sort,
+				"order" => $order,
+				"page_number" => max(1, (int) ($obj["page_number"] ?? 1)),
+				"search_field" => $searchFields ?: "",
 			);
 			return $filter;
 		}

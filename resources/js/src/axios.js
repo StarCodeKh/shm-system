@@ -26,4 +26,20 @@ axiosApi.interceptors.request.use(config => {
   return config
 })
 
+// One save at a time: the same write sent again while the first is still running (double click,
+// Enter + click) joins the first request instead of saving the record twice. Reads are never merged,
+// and uploads (FormData) always go through since two of them can look alike.
+const WRITE_METHODS = ['post', 'put', 'patch', 'delete']
+const inFlight = new Map()
+const send = axiosApi.defaults.adapter || axios.defaults.adapter
+axiosApi.defaults.adapter = config => {
+  const body = config.data
+  if (!WRITE_METHODS.includes(config.method) || (body != null && typeof body !== 'string')) return send(config)
+  const key = `${config.method} ${config.url} ${body || ''}`
+  if (!inFlight.has(key)) {
+    inFlight.set(key, send(config).finally(() => inFlight.delete(key)))
+  }
+  return inFlight.get(key)
+}
+
 export default axiosApi;

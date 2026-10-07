@@ -21,6 +21,9 @@ class AuthController extends Controller
      */
     public function signup(Request $request)
     {
+        if (!\CommonService::can('create_users')) {
+            return response()->json(['success' => false, 'message' => __('common.msg_no_permission_access')], 403);
+        }
         // $request->validate([
         //     'name' => 'required|string',
         //     'email' => 'required|string|email|unique:users',

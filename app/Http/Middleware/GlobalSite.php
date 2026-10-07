@@ -27,7 +27,8 @@ class GlobalSite
     //    $config_site = DB::table('config')->where('config_group_id', 1)->get(); 
         $config_site = DB::table('config')->get(); 
        foreach ($config_site as $key => $value) {
-          define($value->key, $value->value);
+          // Defined once per process (a second define() is an error in PHP 9)
+          if (!defined($value->key)) define($value->key, $value->value);
        }
     
        return $next($request);  

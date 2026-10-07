@@ -271,6 +271,9 @@ class RoleController extends Controller
     }
 
     public function createPermission(Request $request){
+        if (!CommonService::can('role_permissions')) {
+            return response()->json(['success' => false, 'message' => trans('common.msg_no_permission_access')], 403);
+        }
         $input = $request->all();
         $check = RoleUser::createPermission($input);
         $status = 200;
