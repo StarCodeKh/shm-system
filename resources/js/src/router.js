@@ -470,8 +470,9 @@ const router = createRouter({
                 {
                     path: '/pages/error-404',
                     name: 'page-error-404',
-                    component: () => import('@/views/pages/Error404.vue'),
+                    component: () => import('@/views/pages/ErrorPage.vue'),
                     meta: {
+                        errorCode: 404,
                         title: 'រកមិនឃើញទំព័រ', // browser tab only (no page header)
                         rule: 'editor'
                     }
@@ -479,8 +480,9 @@ const router = createRouter({
                 {
                     path: '/pages/error-500',
                     name: 'page-error-500',
-                    component: () => import('@/views/pages/Error500.vue'),
+                    component: () => import('@/views/pages/ErrorPage.vue'),
                     meta: {
+                        errorCode: 500,
                         title: 'កំហុសម៉ាស៊ីនមេ', // browser tab only (no page header)
                         rule: 'editor'
                     }
@@ -488,20 +490,26 @@ const router = createRouter({
                 {
                     path: '/pages/not-authorized',
                     name: 'page-not-authorized',
-                    component: () => import('@/views/pages/NotAuthorized.vue'),
+                    component: () => import('@/views/pages/ErrorPage.vue'),
                     meta: {
+                        errorCode: 403,
                         title: 'គ្មានសិទ្ធិចូលប្រើ', // browser tab only (no page header)
+                        rule: 'editor'
+                    }
+                },
+                // Any other address: the 404 page in place, so the address that failed stays in the bar
+                {
+                    path: '/:pathMatch(.*)*',
+                    name: 'page-not-found',
+                    component: () => import('@/views/pages/ErrorPage.vue'),
+                    meta: {
+                        errorCode: 404,
+                        title: 'រកមិនឃើញទំព័រ', // browser tab only (no page header)
                         rule: 'editor'
                     }
                 },
             ]
         },
-        
-        // Redirect to 404 page, if no match found
-        {
-            path: '/:pathMatch(.*)*',
-            redirect: '/pages/error-404'
-        }
     ],
 })
 
