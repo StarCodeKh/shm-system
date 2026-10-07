@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 334" role="img" aria-label="ភាសាខ្មែរ">
+  <title>ភាសាខ្មែរ</title>
+  <clipPath id="r"><rect width="512" height="334" rx="24"/></clipPath>
+  <g clip-path="url(#r)">
+    <rect width="512" height="334" fill="#41479B"/>
+    <rect y="79" width="512" height="176" fill="#FF4B55"/>
+    <path fill="#F5F5F5" d="M254 92h4v5h-4zM252 97h8v4h-8zM248 101h16v8h-16zM244 109h24v8h-24zM181 113h8v4h-8zM323 113h8v4h-8zM177 117h16v9h-16zM240 117h32v13h-32zM319 117h16v9h-16zM173 126h24v8h-24zM315 126h24v8h-24zM235 130h42v12h-42zM169 134h32v12h-32zM311 134h32v12h-32zM231 142h50v13h-50zM168 146h34v1h-34zM310 146h34v1h-34zM165 147h41v8h-41zM306 147h41v8h-41zM160 155h192v12h-192zM161 167h190v1h-190zM162 168h188v1h-188zM163 169h186v1h-186zM164 170h184v1h-184zM165 171h182v25h-182zM164 196h184v1h-184zM152 197h208v8h-208zM148 205h216v8h-216zM144 213h224v8h-224zM143 221h226v1h-226zM140 222h232v12h-232zM135 234h242v12h-242z"/>
+  </g>
+</svg>

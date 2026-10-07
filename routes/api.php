@@ -311,9 +311,6 @@ Route::post('letter_type/search', [LetterTypeController::class, 'index']);
         Route::get('expense_by_entity', 'expenseByEntity');
         Route::get('expense_by_sector', 'expenseBySector');
         Route::get('income_outcome_by_quarter', 'getIncomeOutcomeByQuarter');
-        Route::post('convert/convert_annex_lm_to_excel', 'convertAnnexLMToExcel');
-        Route::post('convert/convert_annex_bank_to_excel', 'convertAnnexBankToExcel');
-        Route::post('convert/convert_annex_gdnt_excel', 'convertAnnexGDNTToExcel');
 
         // PDF reports: officers, income, expense, officer_incentive, officers_payment, ...
         Route::get('types', 'types');

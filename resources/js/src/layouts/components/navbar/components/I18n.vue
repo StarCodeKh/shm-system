@@ -14,8 +14,8 @@
 
 <script>
 import { setLocale } from '@/i18n/i18n'
-import flagKh from '@assets/images/flags/kh.jpg'
-import flagEn from '@assets/images/flags/en.png'
+import flagKh from '@assets/images/flags/kh.svg'
+import flagEn from '@assets/images/flags/en.svg'
 
 const LANGUAGES = [
     { code: 'kh', label: 'ខ្មែរ', name: 'ភាសាខ្មែរ', flag: flagKh },

@@ -10,12 +10,12 @@
         <!-- Dropdown menu -->
         <vs-dropdown-menu class="w-32 vx-navbar-dropdown">
             <vs-dropdown-item @click="selectCurrency('KHR')">
-                <img class="h-4 w-5 mr-1" src="@assets/images/flags/kh.jpg" />
+                <img class="h-4 w-5 mr-1" src="@assets/images/flags/kh.svg" />
                 KHR
             </vs-dropdown-item>
 
             <vs-dropdown-item @click="selectCurrency('USD')">
-                <img class="h-4 w-5 mr-1" src="@assets/images/flags/en.png" />
+                <img class="h-4 w-5 mr-1" src="@assets/images/flags/en.svg" />
                 USD
             </vs-dropdown-item>
         </vs-dropdown-menu>
@@ -23,8 +23,8 @@
 </template>
 
 <script>
-import flagKh from '@assets/images/flags/kh.jpg'
-import flagEn from '@assets/images/flags/en.png'
+import flagKh from '@assets/images/flags/kh.svg'
+import flagEn from '@assets/images/flags/en.svg'
 export default {
     name: 'CurrencyDropDown',
 
