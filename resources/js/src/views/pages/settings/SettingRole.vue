@@ -50,7 +50,6 @@ export default {
         this.roleMenuTab = stored;
         this.tab1 = !!this.roleMenuTab.list_users;//getAllow("tab_user");
         this.tab2 = !!this.roleMenuTab.list_roles;//getAllow("usage_rights");
-        console.log(this.tab1);
       } catch (e) {
         console.error("Invalid localStorage format for role_menus_3", e);
       }

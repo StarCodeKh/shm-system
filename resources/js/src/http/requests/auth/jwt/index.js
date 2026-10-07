@@ -1,45 +1,29 @@
 import axios from "../../../axios/index.js"
-import store from "../../../../store/store.js"
+import router from "../../../../router.js"
 
-// Token Refresh
-let isAlreadyFetchingAccessToken = false
-let subscribers = []
-
-function onAccessTokenFetched(access_token) {
-  subscribers = subscribers.filter(callback => callback(access_token))
-}
-
-function addSubscriber(callback) {
-  subscribers.push(callback)
-}
+// A signed-in request answered 401 means the session expired or the token was revoked:
+// clear it and go to the login page once, coming back to this page after signing in.
+// (The template "refreshed" the token through a fake endpoint, which hung or looped.)
+let redirecting = false
 
 export default {
   init() {
-    axios.interceptors.response.use(function (response) {
-      return response
-    }, function (error) {
-      // const { config, response: { status } } = error
+    axios.interceptors.response.use(response => response, error => {
       const { config, response } = error
-      const originalRequest = config
-
-      // if (status === 401) {
-      if (response && response.status === 401) {
-        if (!isAlreadyFetchingAccessToken) {
-          isAlreadyFetchingAccessToken = true
-          store.dispatch("auth/fetchAccessToken")
-            .then((access_token) => {
-              isAlreadyFetchingAccessToken = false
-              onAccessTokenFetched(access_token)
-            })
+      const isLogin = config && /\/api\/auth\/(login|device_login)/.test(config.url || '')
+      if (response && response.status === 401 && !isLogin && !redirecting) {
+        redirecting = true
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('userInfo')
+        localStorage.removeItem('role_menus')
+        const current = router.currentRoute
+        if (current.path !== '/pages/login') {
+          router.push({ path: '/pages/login', query: { to: current.fullPath } })
+            .catch(() => {})
+            .finally(() => { redirecting = false })
+        } else {
+          redirecting = false
         }
-
-        const retryOriginalRequest = new Promise((resolve) => {
-          addSubscriber(access_token => {
-            originalRequest.headers.Authorization = 'Bearer ' + access_token
-            resolve(axios(originalRequest))
-          })
-        })
-        return retryOriginalRequest
       }
       return Promise.reject(error)
     })

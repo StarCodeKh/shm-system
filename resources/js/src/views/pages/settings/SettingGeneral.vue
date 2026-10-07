@@ -876,7 +876,6 @@ this.$vs.notify({
         }
         this.dataFields.push(_d);
       });
-      console.log("==========", this.dataFields);
       this.$validator.validateAll().then(result => {
         if (result) {
           let _data = this.dataFields;

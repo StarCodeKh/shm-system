@@ -268,7 +268,6 @@
                     ],
                     data_info: this.dataInfo
                 }
-                console.log("testing", _params);
                 return new Promise((resolve, reject) => {
                     axios.post(this.api, _params)
                         .then((response) => {
@@ -397,7 +396,6 @@
                     "label": "sdf",
                     "value": "1"
                 }
-                console.log("test===>", _formAttribute);
                 // this.dataSubAccounts[_formAttribute] = [];
                 // this.dataSubAccounts[_formAttribute].push([
                 //     {

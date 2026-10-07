@@ -1,36 +1,6 @@
 import axios from "@/axios.js"
 
 export default {
-  fetchDataListItems({ commit }) {
-    return new Promise((resolve, reject) => {
-      axios.get("/api/data-list/products")
-        .then((response) => {
-          commit('SET_PRODUCTS', response.data)
-          resolve(response)
-        })
-        .catch((error) => { reject(error) })
-    })
-  },
-  fetchDataListIncentiveItems({ commit }) {
-    return new Promise((resolve, reject) => {
-      axios.get("/api/data-list/incentive-officer")
-        .then((response) => {
-          commit('SET_PRODUCTS', response.data)
-          // resolve(response)
-        })
-        .catch((error) => { reject(error) })
-    })
-  },
-  fetchDataListSectorItems({ commit }) {
-    return new Promise((resolve, reject) => {
-      axios.get("/api/data-list/sector")
-        .then((response) => {
-          commit('SET_PRODUCTS', response.data)
-          // resolve(response)
-        })
-        .catch((error) => { reject(error) })
-    })
-  },
   // fetchEventLabels({ commit }) {
   //   return new Promise((resolve, reject) => {
   //     axios.get("/api/apps/calendar/labels")
@@ -167,7 +137,6 @@ export default {
     })
   },
   addItem({ commit }, item) {
-    console.log("item", item);
     return new Promise((resolve, reject) => {
       axios.post(item.api, item)
         .then((response) => {

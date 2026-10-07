@@ -433,7 +433,6 @@ export default {
             return new Promise((resolve, reject) => {
                 axios.post("/api/v1/incentive", fd)
                     .then((response) => {
-                    console.log("upload success");
                 }).catch((error) => { reject(error) })
             })
         },
@@ -476,7 +475,6 @@ export default {
                             if(response){
                                 this.$vs.loading.close()
                             }
-                            console.log("officer and entity", response.data.data);
                         }).catch((error) => { 
                             reject(error) 
                             this.$vs.loading.close()
@@ -748,7 +746,6 @@ export default {
             this.$store.registerModule('dataList', moduleDataList)
             moduleDataList.isRegistered = true
         }
-        this.$store.dispatch("dataList/fetchDataListIncentiveItems");
         this.getEntity();
         this.getBank();
         this.getLetterType();

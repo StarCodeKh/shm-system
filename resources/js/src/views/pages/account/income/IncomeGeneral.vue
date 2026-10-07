@@ -306,7 +306,6 @@ export default {
             return new Promise((resolve, reject) => {
                 axios.post("/api/v1/income", _data)
                     .then((response) => {
-                      console.log("message", response);
                     this.$vs.notify({
                       title: 'Message',
                       text: response.data.message,

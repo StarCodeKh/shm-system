@@ -322,7 +322,6 @@ export default {
             });
         },
         showNewFormByParent(obj) {
-            console.log("found you did", obj);
             this.form.attribute = [];
             this.formAttributes.forEach(_formAttribute => {
                 if (_formAttribute["type"] == "select") {
@@ -339,7 +338,6 @@ export default {
             //     this.form.attribute[_formAttribute[i]["name"]] = data[_formAttribute[i]["name"]];// "I got all";
             // }
             // alert("test");
-            console.log("form attribute", this.formAttributes);
             this.formAttributes.forEach(_formAttribute => {
                 if (_formAttribute["type"] == "select") {
                     this.form.attribute[_formAttribute["name"]] = data[_formAttribute["name"]];
@@ -363,7 +361,6 @@ export default {
                 }
                 this.dataFields.push(_d);
             });
-            console.log("Here is form data===>", this.dataFields);
             // return false;
             this.$validator.validateAll().then(result => {
                 if (result) {

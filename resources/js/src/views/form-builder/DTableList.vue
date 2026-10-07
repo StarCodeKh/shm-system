@@ -18,7 +18,7 @@
                   class="mb-base"
                   icon="UserIcon"
                   icon-right
-                  :statistic="dataTables.summary.male"
+                  :statistic="summary.male"
                   :statisticTitle="$t('stat_male_total')"
                   color="primary" />
             </div>
@@ -29,7 +29,7 @@
                   class="mb-base"
                   icon="UserIcon"
                   icon-right
-                  :statistic="dataTables.summary.female"
+                  :statistic="summary.female"
                   :statisticTitle="$t('stat_female_total')"
                   color="primary" />
             </div>
@@ -43,7 +43,7 @@
                   class="mb-base"
                   icon="ServerIcon"
                   icon-right
-                  :statistic="dataTables.summary.approved"
+                  :statistic="summary.approved"
                   :statisticTitle="$t('stat_approved')"
                   color="primary" />
             </div>
@@ -54,7 +54,7 @@
                   class="mb-base"
                   icon="CpuIcon"
                   icon-right
-                  :statistic="dataTables.summary.in_review"
+                  :statistic="summary.in_review"
                   :statisticTitle="$t('stat_reviewing')" />
             </div>
 
@@ -64,7 +64,7 @@
                   class="mb-base"
                   icon="ServerIcon"
                   icon-right
-                   :statistic="dataTables.summary.in_progress"
+                   :statistic="summary.in_progress"
                   :statisticTitle="$t('stat_processing')"
                   color="primary" />
             </div>
@@ -85,7 +85,7 @@
                   class="mb-base"
                   icon="ServerIcon"
                   icon-right
-                  :statistic="dataTables.summary.rejected"
+                  :statistic="summary.rejected"
                   :statisticTitle="$t('stat_rejected')"
                   color="primary" />
             </div>
@@ -133,7 +133,7 @@
                   class="mb-base"
                   icon="CheckCircleIcon"
                   icon-right
-                  :statistic="dataTables.summary.total_paid_khr"
+                  :statistic="summary.total_paid_khr"
                   :statisticTitle="$t('stat_paid_riel')" /></small>
             </div>
 
@@ -143,7 +143,7 @@
                   class="mb-base"
                   icon="AlertCircleIcon"
                   icon-right
-                  :statistic="dataTables.summary.total_unpaid_khr"
+                  :statistic="summary.total_unpaid_khr"
                   :statisticTitle="$t('stat_unpaid_riel')"
                   color="warning" /></small>
             </div>
@@ -167,7 +167,7 @@
                   class="mb-base"
                   icon="ServerIcon"
                   icon-right
-                  :statistic="dataTables.summary.paid"
+                  :statistic="summary.paid"
                   :statisticTitle="$t('stat_paid')"
                   color="primary" />
             </div>
@@ -178,7 +178,7 @@
                   class="mb-base"
                   icon="ServerIcon"
                   icon-right
-                  :statistic="dataTables.summary.void"
+                  :statistic="summary.void"
                   :statisticTitle="$t('stat_void')"
                   color="primary" />
             </div>
@@ -189,7 +189,7 @@
                   class="mb-base"
                   icon="CpuIcon"
                   icon-right
-                  :statistic="dataTables.summary.exceptional"
+                  :statistic="summary.exceptional"
                   :statisticTitle="$t('stat_exempt')" />
             </div>
 
@@ -1899,6 +1899,10 @@ export default {
         StatisticsCardLine
     },
     computed: {
+        // Totals for the cards above the table; empty until the list has loaded
+        summary() {
+            return (this.dataTables && this.dataTables.summary) || {}
+        },
         pageRange() {
             const total = Number(this.dataTables.total) || 0
             const limit = Number(this.dataTables.limit) || 10
@@ -1965,7 +1969,6 @@ export default {
             return _val;
         },
         viewUrl(obj) {
-            console.log(obj);
             this.$router.push(obj.path).catch(() => { });
         },
         initPushDataTable(obj) {

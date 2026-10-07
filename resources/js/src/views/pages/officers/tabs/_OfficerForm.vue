@@ -594,7 +594,6 @@ export default {
         return new Promise((resolve, reject) => {
             axios.get(this.api+"/form")
                 .then((response) => {
-                    console.log("===========", response.data.data.position);
                     // this.data = response.data.officers;
                     // this.paymentMethods = response.data.payment_method_id;
                     // this.currencies = response.data.currency_id;
@@ -720,7 +719,6 @@ export default {
       this.$store.registerModule('dataList', moduleDataList)
       moduleDataList.isRegistered = true
     }
-    this.$store.dispatch("dataList/fetchDataListItems")
   },
   mounted() {
     this.isMounted = true;

@@ -110,7 +110,6 @@ class ExpenditureGroupController extends Controller
     {
         $input = $request->all();
         $dataFields = $this->dataForm($input);
-        dd($dataFields);
         $table = $table = $this->db_table::find($id);
         $table->update($dataFields);
         if ($table) {

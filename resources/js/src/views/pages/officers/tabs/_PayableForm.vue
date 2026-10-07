@@ -386,7 +386,6 @@ export default {
       this.$store.registerModule('dataList', moduleDataList)
       moduleDataList.isRegistered = true
     }
-    this.$store.dispatch("dataList/fetchDataListItems")
   },
   mounted() {
     this.isMounted = true;

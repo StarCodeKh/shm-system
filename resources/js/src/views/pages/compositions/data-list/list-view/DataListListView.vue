@@ -207,7 +207,6 @@ export default {
       this.$store.registerModule('dataList', moduleDataList)
       moduleDataList.isRegistered = true
     }
-    this.$store.dispatch("dataList/fetchDataListIncentiveItems")
   },
   mounted() {
     this.isMounted = true;

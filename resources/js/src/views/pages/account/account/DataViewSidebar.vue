@@ -40,7 +40,6 @@ export default {
   },
   watch: {
     isSidebarActive(val) {
-      console.log("sidarbar", this.data);
       if(!val) return
       if(Object.entries(this.data).length === 0) {
         this.initValues()

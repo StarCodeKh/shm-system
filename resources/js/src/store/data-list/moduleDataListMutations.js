@@ -19,7 +19,6 @@ export default {
   //   state.eventLabels = labels
   // },
   UPDATE_PRODUCT(state, product) {
-    console.log("here is sample update data");
       const productIndex = state.products.findIndex((p) => p.id == product.id)
       Object.assign(state.products[productIndex], product)
   },

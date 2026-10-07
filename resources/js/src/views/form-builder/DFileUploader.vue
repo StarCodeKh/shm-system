@@ -44,7 +44,6 @@ export default {
             this.modelName = dataTables.model_name;
         },
         selectedFile(event) {
-  	        console.log(event);
   	        this.file = event.target.files[0];
   	    },
         initUploadFile(){
@@ -52,7 +51,6 @@ export default {
             let formData = new FormData();
             formData.append('file', this.file);
             for(var pair of formData.entries()) {
-                console.log(pair[0]+ ', '+ pair[1]);
             }
             // console.log('uploadTodos', formData);
             return new Promise((resolve, reject) => {

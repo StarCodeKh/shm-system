@@ -22,20 +22,6 @@ const router = new Router({
             children: [
                 // Components
 
-                {
-                    path: '/components/tabs',
-                    name: 'component-tabs',
-                    component: () => import('@/views/components/vuesax/tabs/Tabs.vue'),
-                    meta: {
-                        breadcrumb: [
-                            { title: 'ទំព័រដើម', url: '/' },
-                            { title: 'Components' },
-                            { title: 'Tabs', active: true },
-                        ],
-                        pageTitle: 'Tabs',
-                        rule: 'editor'
-                    },
-                },
             // =============================================================================
             // Theme Routes
             // =============================================================================
@@ -1280,64 +1266,11 @@ const router = new Router({
         // PAGES
         // =============================================================================
                 {
-                    path: '/callback',
-                    name: 'auth-callback',
-                    component: () => import('@/views/Callback.vue'),
-                    meta: {
-                        rule: 'editor'
-                    }
-                },
-                {
                     path: '/pages/login',
                     name: 'page-login',
                     component: () => import('@/views/pages/login/Login.vue'),
                     meta: {
                         title: 'ចូលប្រើប្រាស់ប្រព័ន្ធ', // browser tab only (no page header)
-                        rule: 'editor'
-                    }
-                },
-                {
-                    path: '/pages/register',
-                    name: 'page-register',
-                    component: () => import('@/views/pages/register/Register.vue'),
-                    meta: {
-                        title: 'ចុះឈ្មោះ', // browser tab only (no page header)
-                        rule: 'editor'
-                    }
-                },
-                {
-                    path: '/pages/forgot-password',
-                    name: 'page-forgot-password',
-                    component: () => import('@/views/pages/ForgotPassword.vue'),
-                    meta: {
-                        title: 'ភ្លេចពាក្យសម្ងាត់', // browser tab only (no page header)
-                        rule: 'editor'
-                    }
-                },
-                {
-                    path: '/pages/reset-password',
-                    name: 'page-reset-password',
-                    component: () => import('@/views/pages/ResetPassword.vue'),
-                    meta: {
-                        title: 'កំណត់ពាក្យសម្ងាត់ឡើងវិញ', // browser tab only (no page header)
-                        rule: 'editor'
-                    }
-                },
-                {
-                    path: '/pages/lock-screen',
-                    name: 'page-lock-screen',
-                    component: () => import('@/views/pages/LockScreen.vue'),
-                    meta: {
-                        title: 'ចាក់សោអេក្រង់', // browser tab only (no page header)
-                        rule: 'editor'
-                    }
-                },
-                {
-                    path: '/pages/comingsoon',
-                    name: 'page-coming-soon',
-                    component: () => import('@/views/pages/ComingSoon.vue'),
-                    meta: {
-                        title: 'មកដល់ឆាប់ៗ', // browser tab only (no page header)
                         rule: 'editor'
                     }
                 },
@@ -1365,15 +1298,6 @@ const router = new Router({
                     component: () => import('@/views/pages/NotAuthorized.vue'),
                     meta: {
                         title: 'គ្មានសិទ្ធិចូលប្រើ', // browser tab only (no page header)
-                        rule: 'editor'
-                    }
-                },
-                {
-                    path: '/pages/maintenance',
-                    name: 'page-maintenance',
-                    component: () => import('@/views/pages/Maintenance.vue'),
-                    meta: {
-                        title: 'កំពុងថែទាំប្រព័ន្ធ', // browser tab only (no page header)
                         rule: 'editor'
                     }
                 },

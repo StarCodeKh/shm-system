@@ -672,7 +672,6 @@ export default {
             })
         },
         onInitFormData($event, _formAttribute, _formName, _apiRequest) {
-            console.log("welcome", this.form.attribute[_formName]);
             let _data = {
                 type: "autocomplete",
                 param: this.form.attribute[_formName]

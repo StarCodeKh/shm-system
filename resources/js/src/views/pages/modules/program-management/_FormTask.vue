@@ -264,7 +264,6 @@ export default {
                 ],
                 data_info: this.dataInfo
             }
-            console.log("testing", _params);
             return new Promise((resolve, reject) => {
                 axios.post(this.api, _params)
                     .then((response) => {

@@ -401,7 +401,6 @@ export default {
                             color: 'primary',
                             position: 'top-right'
                         });
-                        console.log(response["data"]["data"]);
                         for (let i = 0; i < response["data"]["data"].length; i++) {
                             // let _d = {
                             //     "label": response["data"]["data"][i]["label"],
@@ -467,7 +466,6 @@ export default {
             });
         },
         showDataForm(data) {
-            console.log("form Data", data);
             // let _formAttribute = this.formAttributes;
             // for (let i = 0; i < _formAttribute.length; i++) {
             //     this.form.attribute[_formAttribute[i]["name"]] = data[_formAttribute[i]["name"]];// "I got all";

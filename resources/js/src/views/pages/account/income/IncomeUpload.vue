@@ -267,7 +267,6 @@ export default {
           return new Promise((resolve, reject) => {
               axios.post("/api/v1/file_income_upload", formData)
                   .then((response) => {
-                    console.log("file is uploaded", response);
                   this.$vs.notify({
                     title: 'Message',
                     text: response.data.message,

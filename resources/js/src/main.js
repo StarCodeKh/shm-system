@@ -13,8 +13,6 @@ Vue.prototype.$http = axios
 // API Calls
 import "./http/requests"
 
-// mock
-import "./fake-db/index.js"
 
 // Theme Configurations
 import '../themeConfig.js'

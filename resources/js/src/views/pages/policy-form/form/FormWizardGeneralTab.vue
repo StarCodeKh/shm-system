@@ -445,7 +445,6 @@ export default {
     },
     watch: {
         from_officer() {
-            console.log(this.from_officer);
         }
     },
     methods: {
@@ -464,7 +463,6 @@ export default {
         },
         addMore() {
             this.dataOfficers.push({from_officer: "", from_acc_no: "", to_officer: "", to_acc_no: ""})
-            console.log("data", this.dataOfficers);
         },
         removeOffier(index){
             this.rows.splice(index, 1)
@@ -698,7 +696,6 @@ export default {
         this.$store.registerModule('dataList', moduleDataList)
         moduleDataList.isRegistered = true
         }
-        this.$store.dispatch("dataList/fetchDataListIncentiveItems")
 
         if(this.$route.params.id){
             this.$vs.loading();

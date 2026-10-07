@@ -27,13 +27,8 @@ class OfficerIncentiveImport implements ToModel,WithHeadingRow,Auditable
             $field = $data["tables"][$i]->Field;
             $value = $row[$field] ?? null;
             if(isset($data["tables"][$i]->Field)){
-                try {
-                    $arr[] = [$data["tables"][$i]->Field => $row[$data["tables"][$i]->Field]];
-                    //code...
-                } catch (\Throwable $th) {
-                    dd($th);
-                    //throw $th;
-                }
+                // A column missing from the sheet is imported as empty instead of stopping the import
+                $arr[] = [$field => $value];
             }
 
             if(in_array($data["tables"][$i]->Field,["issue_date", "request_date", "created_at"])){
