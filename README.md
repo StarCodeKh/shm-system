@@ -51,10 +51,10 @@
 
 ## Requirements
 
-- PHP 8.3 or newer, with `mbstring`, `gd`, `zip`, `pdo_mysql`
+- PHP 8.3 or newer, with `mbstring`, `gd`, `zip`, `pdo_mysql`, `xml`, `curl`, `fileinfo` (upload checks), `openssl`
 - Composer 2
 - MySQL 8 (or MariaDB 10.6+)
-- Node.js 20+ and npm
+- Node.js 20+ and npm (on a server only to build the frontend)
 
 ## Getting started
 
@@ -104,11 +104,7 @@ Defined in `app/Console/Kernel.php`:
 | `payments:dispatch` | Hourly, 02:00–23:00 — queues pending payments |
 | `queue:work --queue=payments,default` | Every minute — processes queued jobs |
 
-On a server, add one cron entry:
-
-```cron
-* * * * * cd /path/to/shm-system && php artisan schedule:run >> /dev/null 2>&1
-```
+On a server these run from one cron entry, see [Deployment › Scheduler](#6-scheduler).
 
 ## Project structure
 
@@ -147,63 +143,144 @@ Add an entry to `reports()` in `app/Http/Controllers/ReportController.php` (titl
 
 ## Deployment
 
-The same steps for **UAT** and **production (PRD)**; only `.env` differs.
+Server setup for **UAT** and **production (PRD)**. Both use the same steps; only `.env` differs.
 
-### 1. `.env` on the server
+### 1. Server
 
-Copy the UAT / production block from `.env.example`:
+| Item | Value |
+|---|---|
+| OS user | one deploy user owns the code; the web server user (e.g. `www-data`) only needs write access to the folders in step 4 |
+| PHP | 8.3+ with the extensions listed under [Requirements](#requirements); `upload_max_filesize` and `post_max_size` at least `20M` (largest upload) |
+| Database | MySQL 8 / MariaDB 10.6+, `utf8mb4`; a database user with rights on this database only |
+| Web server | Apache 2.4 (`mod_rewrite`, `mod_headers`) or nginx; document root is `public/` |
+| HTTPS | required on UAT and PRD |
+| Time zone | `Asia/Phnom_Penh` (server and `APP_TIMEZONE`) |
 
-| Key | UAT | Production |
+### 2. First install
+
+```bash
+git clone https://github.com/StarCodeKh/shm-system.git
+cd shm-system
+cp .env.example .env               # then fill it in, see step 3
+composer install --no-dev --optimize-autoloader
+php artisan key:generate           # first install only: a new key logs everyone out and breaks encrypted data
+npm ci && npm run build
+php artisan migrate --force
+php artisan optimize
+```
+
+Copy these by hand (never in git): `service-account-key.json`, `storage/firebase/firebase_credentials.json`, and the Passport keys `storage/oauth-private.key` / `storage/oauth-public.key`. Keep the same Passport keys on a server across deploys; new keys sign out every user. Restrict the key files: `chmod 600 storage/oauth-*.key service-account-key.json`.
+
+### 3. `.env` per server
+
+Start from the UAT / production block in `.env.example`:
+
+| Key | UAT | PRD |
 |---|---|---|
 | `APP_ENV` | `uat` | `production` |
 | `APP_DEBUG` | `false` | `false` |
-| `APP_URL` | `https://…` | `https://…` |
+| `APP_URL` | `https://<uat-domain>` | `https://<prd-domain>` |
 | `LOG_STACK` | `daily` | `daily` |
 | `LOG_LEVEL` | `info` | `warning` |
 | `LOG_DAILY_DAYS` | `14` | `30` |
+| `AUTH_TOKEN_HOURS` | `24` | `24` |
+| `AUTH_TOKEN_REMEMBER_DAYS` | `30` | `30` |
 | `OTP_EXPOSE_CODE` | `true` (until SMS is connected) | `false` |
 | `CORS_ALLOWED_ORIGINS` | empty | empty, unless another site must call the API |
+| `DB_*` | UAT database | PRD database |
+| `SERVICE_ACCOUNT_KEY_PATH`, `FCM_*`, `FIREBASE_*` | Firebase project for UAT | Firebase project for PRD |
+| `QUEUE_CONNECTION` | `sync` | `sync` |
 
-`APP_DEBUG=true` on a server shows code, settings and SQL to anyone who triggers an error.
+- `APP_DEBUG=true` on a server shows code, settings and SQL to anyone who triggers an error.
+- After any change to `.env`: `php artisan optimize` (config is cached).
+- `QUEUE_CONNECTION=sync` runs jobs straight away. To run them in the background instead, create the jobs table first (`php artisan make:queue-table && php artisan migrate`) and set `database`; the scheduler then works the queue every minute.
 
-### 2. Deploy
+### 4. Folder permissions
 
 ```bash
+sudo chown -R deploy:www-data storage bootstrap/cache public/upload public/images/uploads
+sudo chmod -R ug+rwX storage bootstrap/cache public/upload public/images/uploads
+```
+
+Everything else stays read-only for the web server.
+
+### 5. Web server
+
+**Apache**: point the virtual host at `public/` with `AllowOverride All`. `public/.htaccess` already routes requests to Laravel, refuses scripts in the upload folders and adds the security headers to static files. (IIS: `public/web.config` does the same.)
+
+**nginx**: `.htaccess` is not read, so add the same rules:
+
+```nginx
+server {
+    listen 443 ssl http2;
+    server_name <domain>;
+    root /var/www/shm-system/public;
+    index index.php;
+    client_max_body_size 20M;
+
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+    # User files are served as plain files, never run
+    location ~* ^/(images/uploads|upload)/.*\.(php[0-9]?|phtml|phar|pl|py|cgi|sh)$ { return 403; }
+
+    location / { try_files $uri $uri/ /index.php?$query_string; }
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+    }
+
+    location ~ /\.(?!well-known) { deny all; }
+}
+
+server { listen 80; server_name <domain>; return 301 https://$host$request_uri; }
+```
+
+### 6. Scheduler
+
+One cron entry for the deploy user runs every job listed under [Scheduled jobs](#scheduled-jobs):
+
+```cron
+* * * * * cd /var/www/shm-system && php artisan schedule:run >> /dev/null 2>&1
+```
+
+### 7. Each deploy
+
+```bash
+php artisan down                   # maintenance page while updating
 git pull
 composer install --no-dev --optimize-autoloader
-npm ci
-npm run build                      # writes public/build/ (not in git)
+npm ci && npm run build            # writes public/build/ (not in git)
 php artisan migrate --force
 php artisan optimize               # caches config, routes, events, views
-php artisan queue:restart          # workers pick up the new code
+php artisan queue:restart
+php artisan up
 ```
 
-`npm run build` leaves `console.log` / `debug` / `info` out of the bundle (see `vite.config.mjs`); `console.error` and `console.warn` stay so real failures still reach the browser console.
+- `npm run build` leaves `console.log` / `debug` / `info` out of the bundle; `console.error` / `console.warn` stay.
+- Never upload `node_modules/`, `public/hot` (it exists only while `npm run dev` runs and makes Laravel load the dev server), a local `.env` or `storage/logs/*`.
+- Back up the database and `public/upload/` + `public/images/uploads/` before a deploy that runs migrations.
+- Roll back: check out the previous commit or tag, run the same steps (without `migrate`), and restore the database backup if a migration changed data.
 
-### 3. What goes to the server and what doesn't
+### 8. Logs
 
-| Copy by hand (secrets, not in git) | Never upload |
-|---|---|
-| `.env` | `node_modules/` |
-| `service-account-key.json` | `public/hot` (only exists while `npm run dev` runs; its presence makes Laravel load the dev server) |
-| `storage/firebase/firebase_credentials.json` | `storage/logs/*` from a developer machine |
-| Passport keys `storage/oauth-*.key` | local `.env` |
-| `public/upload/` and `public/images/uploads/` (user files) | |
+- Laravel writes to `storage/logs/`. With `LOG_STACK=daily` there is one file per day (`laravel-YYYY-MM-DD.log`); files older than `LOG_DAILY_DAYS` are deleted automatically.
+- To empty them by hand: `rm storage/logs/*.log` (keep the folder writable).
+- Code never prints debug output into responses (`echo`, `print_r`, `dd`, `dump`); use `Log::info()` / `Log::error()`, and never log tokens or passwords.
 
-Point the web server at `public/`.
-
-### 4. Logs
-
-- Laravel writes to `storage/logs/`. With `LOG_STACK=daily` there is one file per day (`laravel-YYYY-MM-DD.log`) and files older than `LOG_DAILY_DAYS` are deleted automatically.
-- To empty the logs by hand: `rm storage/logs/*.log` (the folder must stay writable by the web server).
-- Code never prints debug output into responses (`echo`, `print_r`, `dd`, `dump`); use `Log::info()` / `Log::error()` and never log tokens or passwords.
-
-### 5. After deploying
+### 9. Check after deploying
 
 ```bash
-php artisan about                  # environment, debug mode, cache and log driver at a glance
-php artisan optimize:clear         # only if a change in .env or config does not show
+php artisan about                  # environment, debug off, caches on, log driver
+php artisan route:list --path=api | head
+curl -sI https://<domain>/pages/login | grep -iE "x-frame-options|strict-transport|x-content-type"
 ```
+
+Then sign in, open one list page and one report. If a `.env` or config change does not show, run `php artisan optimize:clear && php artisan optimize`.
 
 ## Security
 
@@ -256,7 +333,7 @@ Reviewed and fixed on 2026-10-07. Keep this section current: move an item to **I
 - `.env`: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL` with `https://`, `LOG_STACK=daily`, `OTP_EXPOSE_CODE=false`, `CORS_ALLOWED_ORIGINS` only if another site must call the API (see [Deployment](#deployment))
 - Serve over HTTPS only
 - Change the admin password; rotate the keys listed under **Open**
-- On nginx (no `.htaccess`): deny `\.php$` under `/images/uploads/` and `/upload/`, and add the security headers for static files
+- On nginx, use the server block in [Deployment › Web server](#5-web-server)
 
 ## License
 
