@@ -253,9 +253,11 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
         backdrop-filter: blur(3px);
     }
 
+    // Width follows the message: short confirms stay compact, long ones grow up to a readable line length
     .vs-dialog {
-        width: 420px;
-        max-width: calc(100vw - 32px);
+        width: fit-content;
+        min-width: min(var(--dialog-min), calc(100vw - 32px));
+        max-width: min(var(--dialog-max), calc(100vw - 32px));
         padding: 28px 24px 20px;
         border-radius: 16px;
         text-align: center;
@@ -306,6 +308,7 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
 
         .dialog-title {
             padding: 0;
+            text-wrap: balance;
             font-size: 1.15rem;
             font-weight: 700;
             color: #2c2e45;
@@ -323,6 +326,7 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
     }
 
     .vs-dialog-text {
+        text-wrap: pretty;
         padding: 8px 4px 0;
         font-size: .92rem;
         line-height: 1.7;
@@ -1869,12 +1873,29 @@ input[type="file"] {
 }
 
 
-/* --- POPUPS: every <vs-popup> is a centered card; width via .d-modal--sm / md (default) / lg / xl --- */
+/* --- MODAL SCROLL LOCK: while a popup or confirm dialog is open, the page behind stays still.
+   Popups stay in <body> hidden with v-show (display: none); dialogs are removed when closed. */
+html:has(> body > .con-vs-popup:not([style*="display: none"])),
+html:has(> body > .con-vs-dialog) {
+    overflow: hidden;
+}
+
+// Keep the scrollbar's space so the page doesn't shift sideways when the lock hides it
+html {
+    scrollbar-gutter: stable;
+}
+
+/* --- POPUPS: every <vs-popup> is a centered card with a fixed width per size: .d-modal--sm / md (default) / lg / xl.
+   Form popups pick their size from their fields (DModalForm sizeClass). A fixed width keeps the
+   layout still: a width that followed the content flickered scrollbars on and off in forms.
+   Confirm dialogs ($vs.dialog) hold only text, so their width follows the message. */
 :root {
     --popup-sm: 560px;
     --popup-md: 820px;
     --popup-lg: 1000px;
     --popup-xl: 1200px;
+    --dialog-min: 340px;
+    --dialog-max: 480px;
 }
 
 .con-vs-popup {
@@ -1910,8 +1931,16 @@ input[type="file"] {
         border-bottom: 1px solid #eceef4;
     }
 
+    // Long titles wrap onto balanced lines instead of pushing the close button out
+    .vs-popup--title {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
     .vs-popup--title h3 {
         padding: 0;
+        text-wrap: balance;
+        overflow-wrap: anywhere;
         font-size: 1.1rem;
         font-weight: 700;
         color: #2c2e45;
@@ -1945,7 +1974,20 @@ input[type="file"] {
         max-height: none !important;
         margin: 0;
         padding: 16px 24px;
+        overflow-x: hidden; // the form footer bleeds to the edges with negative margins; never scroll sideways
         overflow-y: auto;
+        overscroll-behavior: contain; // scrolling past the end of the popup doesn't move the page
+
+        // A form's footer is the popup's bottom edge: no padding below it and no negative margin
+        // pulling it into that padding (that left a couple of pixels to scroll even when all fits)
+        &:has(.d-form__footer) {
+            padding-bottom: 0;
+        }
+
+        .d-form__footer {
+            margin-bottom: 0;
+            bottom: 0;
+        }
     }
 
     // One column inside small dialogs and on phones

@@ -466,7 +466,7 @@
   z-index: 53000;
   // z-index: 99999;
   .vs-popup--content {
-    padding: 1rem;
+    // padding: set in custom.scss (POPUPS), which the form footer lines up with
     font-size: 1rem;
   }
 }

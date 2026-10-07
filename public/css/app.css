@@ -4343,8 +4343,10 @@ textarea {
 }
 
 .con-vs-dialog .vs-dialog {
-  width: 420px;
-  max-width: calc(100vw - 32px);
+  width: -moz-fit-content;
+  width: fit-content;
+  min-width: min(var(--dialog-min), 100vw - 32px);
+  max-width: min(var(--dialog-max), 100vw - 32px);
 }
 
 [dir] .con-vs-dialog .vs-dialog {
@@ -4411,6 +4413,7 @@ textarea {
 }
 
 .con-vs-dialog .vs-dialog-header .dialog-title {
+  text-wrap: balance;
   font-size: 1.15rem;
   font-weight: 700;
   color: #2c2e45;
@@ -4441,6 +4444,7 @@ textarea {
 }
 
 .con-vs-dialog .vs-dialog-text {
+  text-wrap: pretty;
   font-size: 0.92rem;
   line-height: 1.7;
   color: #6e7091;
@@ -6732,13 +6736,30 @@ input[type=file]:focus-visible {
   border-color: #414561;
 }
 
-/* --- POPUPS: every <vs-popup> is a centered card; width via .d-modal--sm / md (default) / lg / xl --- */
+/* --- MODAL SCROLL LOCK: while a popup or confirm dialog is open, the page behind stays still.
+   Popups stay in <body> hidden with v-show (display: none); dialogs are removed when closed. */
+
+html:has(> body > .con-vs-popup:not([style*="display: none"])),
+html:has(> body > .con-vs-dialog) {
+  overflow: hidden;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+/* --- POPUPS: every <vs-popup> is a centered card with a fixed width per size: .d-modal--sm / md (default) / lg / xl.
+   Form popups pick their size from their fields (DModalForm sizeClass). A fixed width keeps the
+   layout still: a width that followed the content flickered scrollbars on and off in forms.
+   Confirm dialogs ($vs.dialog) hold only text, so their width follows the message. */
 
 :root {
   --popup-sm: 560px;
   --popup-md: 820px;
   --popup-lg: 1000px;
   --popup-xl: 1200px;
+  --dialog-min: 340px;
+  --dialog-max: 480px;
 }
 
 .con-vs-popup .vs-popup--background {
@@ -6800,7 +6821,14 @@ input[type=file]:focus-visible {
   padding: 14px 24px 14px 16px;
 }
 
+.con-vs-popup .vs-popup--title {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .con-vs-popup .vs-popup--title h3 {
+  text-wrap: balance;
+  overflow-wrap: anywhere;
   font-size: 1.1rem;
   font-weight: 700;
   color: #2c2e45;
@@ -6849,12 +6877,26 @@ input[type=file]:focus-visible {
   flex: 1 1 auto;
   width: auto !important;
   max-height: none !important;
+  overflow-x: hidden;
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 [dir] .con-vs-popup .vs-popup--content {
   margin: 0;
   padding: 16px 24px;
+}
+
+[dir] .con-vs-popup .vs-popup--content:has(.d-form__footer) {
+  padding-bottom: 0;
+}
+
+.con-vs-popup .vs-popup--content .d-form__footer {
+  bottom: 0;
+}
+
+[dir] .con-vs-popup .vs-popup--content .d-form__footer {
+  margin-bottom: 0;
 }
 
 .con-vs-popup.d-modal--sm .d-form .d-field {
@@ -9459,10 +9501,6 @@ label.vs-select--label {
 
 .con-vs-popup .vs-popup--content {
   font-size: 1rem;
-}
-
-[dir] .con-vs-popup .vs-popup--content {
-  padding: 1rem;
 }
 
 .con-vs-checkbox,

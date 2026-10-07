@@ -13,24 +13,27 @@
                     <!-- Member -->
                     <div class="form-section" data-section="member" v-show="tab === 'member'">
                         <div class="form-grid">
-                            <div class="form-group half-width">
+                            <!-- Search on its own row; the member's details fill the row below once picked -->
+                            <div class="form-group full-width">
                                 <label>{{ $t('pay_search_member') }} <span class="required"></span></label>
                                 <v-select label="label" name="officer_id" v-validate="'required'" :options="data"
                                     v-model="officer_id" @search="onSearchOfficer" @input="onSelectOfficer($event)"
-                                    :filterable="false" :dir="$vs.rtl ? 'rtl' : 'ltr'" />
+                                    :filterable="false" :placeholder="$t('pay_search_member_hint')" :dir="$vs.rtl ? 'rtl' : 'ltr'">
+                                    <template #no-options>{{ $t('pay_search_member_empty') }}</template>
+                                </v-select>
                                 <span class="text-danger" v-show="errors.has('officer_id')">{{ $t('payable_required_officer') }}</span>
                             </div>
                             <div class="form-group">
                                 <label>{{ $t('pay_member_no') }}</label>
-                                <input readonly v-model="identity_member_no" type="text" :placeholder="$t('pay_member_no')">
+                                <input readonly tabindex="-1" v-model="identity_member_no" type="text" placeholder="—">
                             </div>
                             <div class="form-group">
                                 <label>{{ $t('pay_department') }}</label>
-                                <input readonly v-model="department" type="text" :placeholder="$t('pay_department')">
+                                <input readonly tabindex="-1" v-model="department" type="text" placeholder="—">
                             </div>
                             <div class="form-group">
                                 <label>{{ $t('pay_entity') }}</label>
-                                <input readonly v-model="entity" type="text" :placeholder="$t('pay_entity')">
+                                <input readonly tabindex="-1" v-model="entity" type="text" placeholder="—">
                             </div>
                         </div>
                     </div>
@@ -42,6 +45,7 @@
                                 <label>{{ $t('pay_year_owed') }} <span class="required"></span></label>
                                 <v-select label="label" name="payable" v-validate="'required'" :options="payables"
                                     v-model="payable" @input="onSelectPayable($event)" :filterable="false"
+                                    :placeholder="$t('form_select_field', { field: $t('pay_year_owed') })"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" />
                                 <span class="text-danger" v-show="errors.has('payable')">{{ $t('payable_required_year') }}</span>
                             </div>
@@ -51,20 +55,23 @@
                             </div>
                             <div class="form-group">
                                 <label>{{ $t('pay_date') }} <span class="required"></span></label>
-                                <flat-pickr v-model="payment_date" name="payment_date" v-validate="'required'" class="w-full" />
+                                <flat-pickr v-model="payment_date" name="payment_date" v-validate="'required'" class="w-full"
+                                    :placeholder="$t('form_pick_date')" />
                                 <span class="text-danger" v-show="errors.has('payment_date')">{{ $t('payable_required_date') }}</span>
                             </div>
                             <div class="form-group">
                                 <label>{{ $t('pay_method') }} <span class="required"></span></label>
                                 <v-select label="label" name="payment_method_id" v-validate="'required'"
                                     :options="paymentMethods" v-model="payment_method_id" :filterable="false"
+                                    :placeholder="$t('form_select_field', { field: $t('pay_method') })"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" />
                                 <span class="text-danger" v-show="errors.has('payment_method_id')">{{ $t('payable_required_method') }}</span>
                             </div>
                             <div class="form-group">
                                 <label>{{ $t('pay_status') }} <span class="required"></span></label>
                                 <v-select label="label" name="status" v-validate="'required'" :options="paymentStatus"
-                                    v-model="status" :filterable="false" :dir="$vs.rtl ? 'rtl' : 'ltr'" />
+                                    v-model="status" :filterable="false" :dir="$vs.rtl ? 'rtl' : 'ltr'"
+                                    :placeholder="$t('form_select_field', { field: $t('pay_status') })" />
                                 <span class="text-danger" v-show="errors.has('status')">{{ $t('payable_required_status') }}</span>
                             </div>
                         </div>
