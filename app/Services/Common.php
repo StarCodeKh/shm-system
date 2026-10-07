@@ -139,6 +139,10 @@
 		}
 
 		public static function convertDataType($case){
+			// Fields with a shared choice list are dropdowns (see LookupController)
+			if (\App\Http\Controllers\LookupController::has(strtolower($case->Field))) {
+				return "select";
+			}
 			if($case->Field=='attach' || $case->Field=='file' || $case->Field=='photo' || $case->Field=='image' || $case->Field=='thumbnail'){
 				$type = "file";
 			}elseif($case->Field=='request_title'){
@@ -207,7 +211,10 @@
 			if (in_array($field, $fileFields)) {
 				return "file";
 			}
-			// 2. Select/lookup fields by convention
+			// 2. Select/lookup fields by convention (choices: the page's own list, else /api/v1/lookup/{field})
+			if (\App\Http\Controllers\LookupController::has($field)) {
+				return "select";
+			}
 			if (preg_match('/_id$/', $field) && $field!="user_id"  || preg_match('/_type$/', $field) || preg_match('/_code$/', $field) && $field != "bank_code" || preg_match('/_method$/', $field) || preg_match('/status$/', $field) || preg_match('/department$/', $field) || preg_match('/title$/', $field) && $field != "request_title" || preg_match('/bank$/', $field)) {
 				return "select";
 			}
@@ -265,7 +272,10 @@
 			if (in_array($field, $fileFields)) {
 				return "file";
 			}
-			// 2. Select/lookup fields by convention
+			// 2. Select/lookup fields by convention (choices: the page's own list, else /api/v1/lookup/{field})
+			if (\App\Http\Controllers\LookupController::has($field)) {
+				return "select";
+			}
 			if (preg_match('/_id$/', $field) && $field!="user_id"  || preg_match('/_type$/', $field) || preg_match('/_code$/', $field) && $field != "bank_code" || preg_match('/_method$/', $field) || preg_match('/status$/', $field) || preg_match('/department$/', $field) || preg_match('/title$/', $field) || preg_match('/bank$/', $field)) {
 				return "select";
 			}

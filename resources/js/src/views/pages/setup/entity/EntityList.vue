@@ -53,7 +53,7 @@
           <!-- ADD NEW -->
           <div class="btn-add-new p-3 mb-4 mr-4 rounded-lg cursor-pointer flex items-center justify-center text-lg font-medium text-base text-primary border border-solid border-primary" @click="addNewData">
               <feather-icon icon="PlusIcon" svgClasses="h-4 w-4" />
-              <span class="ml-2 text-base text-primary">បង្កើតថ្មី</span>
+              <span class="ml-2 text-base text-primary">{{ $tt('បង្កើតថ្មី') }}</span>
           </div>
         </div>
 
@@ -115,10 +115,10 @@
               </vs-td>
 
               <vs-td>
-                <vs-chip v-if="tr.is_active == 1" :color="getOrderStatusColor('success')" class="product-order-status">សកម្ម</vs-chip>
-                <vs-chip v-else :color="getOrderStatusColor('inactive')" class="product-order-status">អសកម្ម</vs-chip>
+                <vs-chip v-if="tr.is_active == 1" :color="getOrderStatusColor('success')" class="product-order-status">{{ $tt('សកម្ម') }}</vs-chip>
+                <vs-chip v-else :color="getOrderStatusColor('inactive')" class="product-order-status">{{ $tt('អសកម្ម') }}</vs-chip>
                 <!-- <vs-progress :percent="Number(tr.popularity)" :color="getPopularityColor(Number(tr.popularity))" class="shadow-md" /> -->
-                <!-- <p class="product-bank">សកម្ម</p> -->
+                <!-- <p class="product-bank">{{ $tt('សកម្ម') }}</p> -->
               </vs-td>
 
               <vs-td class="whitespace-no-wrap">

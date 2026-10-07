@@ -35,6 +35,7 @@ use App\Http\Controllers\OfficerPaymentController;
 use App\Http\Controllers\OfficerPaymentRecurringController;
 use App\Http\Controllers\OfficerRequestController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\LookupController;
 use App\Http\Controllers\RoleMenuController;
 use App\Http\Controllers\Settings\AccountController;
 use App\Http\Controllers\Settings\AccountGroupController;
@@ -408,6 +409,9 @@ Route::prefix('v1')->middleware(['auth:api', 'global_site', 'cors', 'module_perm
     Route::apiResource('notification', NotificationController::class);
 
     // User
+    // Dropdown choices by field name, for forms whose page didn't send them
+    Route::get('lookup/{field}', [LookupController::class, 'show'])->where('field', '[a-z_]+');
+
     Route::post('user/device', [UserController::class, 'getUserDevice']);
     Route::post('user/profile', [UserController::class, 'getProfile']);
     Route::post('user_index', [UserController::class, 'index']);

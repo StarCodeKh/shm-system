@@ -11,63 +11,63 @@
 
         <!-- NAME -->
       <vs-input :label="$tt('ឈ្មោះអង្គភាព')" v-model="dataName" class="mt-5 w-full" name="name" v-validate="'required'" />
-        <span class="text-danger text-sm" v-show="errors.has('name')">{{ errors.first('name') }}</span>
+        <span class="text-danger text-sm" v-show="errors.has('name')">{{ $tt(errors.first('name')) }}</span>
 
         <vs-input :label="$tt('លេខ​កូដ')" v-model="code" class="mt-5 w-full" name="code" v-validate="'required'" />
-        <span class="text-danger text-sm" v-show="errors.has('code')">{{ errors.first('code') }}</span>
+        <span class="text-danger text-sm" v-show="errors.has('code')">{{ $tt(errors.first('code')) }}</span>
 
         <vs-input :label="$tt('ពណ៌តំណាង')" v-model="color" class="mt-5 w-full" name="color" v-validate="'required'" />
-        <span class="text-danger text-sm" v-show="errors.has('color')">{{ errors.first('color') }}</span>
+        <span class="text-danger text-sm" v-show="errors.has('color')">{{ $tt(errors.first('color')) }}</span>
 
         <vs-input :label="$tt('អក្សកាត់')" v-model="abbreviation" class="mt-5 w-full" name="abbreviation" v-validate="'required'" />
-        <span class="text-danger text-sm" v-show="errors.has('abbreviation')">{{ errors.first('abbreviation') }}</span>
+        <span class="text-danger text-sm" v-show="errors.has('abbreviation')">{{ $tt(errors.first('abbreviation')) }}</span>
 
         <vs-input type="number" :label="$tt('លំដាប់លេខរៀង')" v-model="order_level" class="mt-5 w-full" name="order_level" v-validate="'required'" />
-        <span class="text-danger text-sm" v-show="errors.has('order_level')">{{ errors.first('order_level') }}</span>
+        <span class="text-danger text-sm" v-show="errors.has('order_level')">{{ $tt(errors.first('order_level')) }}</span>
 
         <vs-input type="number" :label="$tt('កំណត់ចំនួនសមាជិកបើកផ្តល់')" v-model="limit_member" class="mt-5 w-full" name="limit_member" v-validate="'required'" />
-        <span class="text-danger text-sm" v-show="errors.has('limit_member')">{{ errors.first('limit_member') }}</span>
+        <span class="text-danger text-sm" v-show="errors.has('limit_member')">{{ $tt(errors.first('limit_member')) }}</span>
         
         <!-- <vs-input label="ផ្នែក" v-model="department_id" class="mt-5 w-full" name="department_id" v-validate="'required'" />
-        <span class="text-danger text-sm" v-show="errors.has('department_id')">{{ errors.first('department_id') }}</span> -->
+        <span class="text-danger text-sm" v-show="errors.has('department_id')">{{ $tt(errors.first('department_id')) }}</span> -->
         <!-- <vs-input label="វិស័យ" v-model="sector_id" class="mt-5 w-full" name="sector_id" v-validate="'required'" />
-        <span class="text-danger text-sm" v-show="errors.has('sector_id')">{{ errors.first('sector_id') }}</span> -->
+        <span class="text-danger text-sm" v-show="errors.has('sector_id')">{{ $tt(errors.first('sector_id')) }}</span> -->
         
         <div class="vx-col md:w-1/1 w-full mt-5">
-          <label for="" class="vs-input--label">ផ្នែកទទួលខុសត្រូវ</label>
+          <label for="" class="vs-input--label">{{ $tt('ផ្នែកទទួលខុសត្រូវ') }}</label>
           <v-select name="department" v-model="department" :options="departments" :dir="$vs.rtl ? 'rtl' : 'ltr'" v-validate="'required'" />
-          <span class="text-danger">{{ errors.first('department') }}</span>
+          <span class="text-danger">{{ $tt(errors.first('department')) }}</span>
         </div>
 
         <div class="vx-col md:w-1/1 w-full mt-5">
           <label for="" class="vs-input--label">វិស័យ</label>
           <v-select name="sector" v-model="sector" :options="sectors" :dir="$vs.rtl ? 'rtl' : 'ltr'" v-validate="'required'" />
-          <span class="text-danger">{{ errors.first('sector') }}</span>
+          <span class="text-danger">{{ $tt(errors.first('sector')) }}</span>
         </div>
         
         <div class="vx-col md:w-1/1 w-full mt-5">
           <label class="text-sm">ស្ថានភាព</label>
           <div class="mt-2">
-          <vs-radio v-model="is_active" vs-value="1" class="mr-4">សកម្ម</vs-radio>
-          <vs-radio v-model="is_active" vs-value="0" class="mr-4">អសកម្ម</vs-radio>
+          <vs-radio v-model="is_active" vs-value="1" class="mr-4">{{ $tt('សកម្ម') }}</vs-radio>
+          <vs-radio v-model="is_active" vs-value="0" class="mr-4">{{ $tt('អសកម្ម') }}</vs-radio>
           </div>
         </div>
         <!-- <span>
           <vs-input​ type="number" :label="$tt('លំដាប់លេខរៀង')" v-model="order_level" class="mt-5 w-full" name="order_level" v-validate="'required'" />
-          <span class="text-danger text-sm" v-show="errors.has('order_level')">{{ errors.first('order_level') }}</span>
+          <span class="text-danger text-sm" v-show="errors.has('order_level')">{{ $tt(errors.first('order_level')) }}</span>
         </span> -->
 
 
         <!-- <div class="vx-col md:w-1/1 w-full mt-5">
           <label for="" class="vs-input--label">អគ្គរងទទួលបន្ទុក</label>
           <v-select name="deputy_commissionerofficer" multiple v-model="deputy_commissionerofficer" :options="departments" :dir="$vs.rtl ? 'rtl' : 'ltr'" v-validate="'required'" />
-          <span class="text-danger">{{ errors.first('deputy_commissionerofficer') }}</span>
+          <span class="text-danger">{{ $tt(errors.first('deputy_commissionerofficer')) }}</span>
         </div>
 
         <div class="vx-col md:w-1/1 w-full mt-5">
           <label for="" class="vs-input--label">មន្ត្រីជំនាញ</label>
           <v-select name="professional_offier" multiple v-model="professional_offier" :options="sectors" :dir="$vs.rtl ? 'rtl' : 'ltr'" v-validate="'required'" />
-          <span class="text-danger">{{ errors.first('professional_offier') }}</span>
+          <span class="text-danger">{{ $tt(errors.first('professional_offier')) }}</span>
         </div> -->
 
 

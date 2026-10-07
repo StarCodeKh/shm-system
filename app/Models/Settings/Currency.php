@@ -69,11 +69,19 @@ class Currency extends Model implements Auditable
     $data = array();
     foreach($query as $row){
       $data[] = array(
-        "label" => $row->name_en,
+        "label" => $row->label(),
         "value" => $row->id,
       );
     }
     return $data;
+  }
+
+  /** "៛ រៀល" / "$ Dollar": symbol plus the name in the user's language (X-Locale, see SetLocale) */
+  public function label(): string
+  {
+    $name = app()->getLocale() === 'kh' ? ($this->name_kh ?: $this->name_en) : ($this->name_en ?: $this->name_kh);
+    $symbol = $this->symbol_left ?: $this->symbol_right;
+    return trim(($symbol ? $symbol.' ' : '').$name);
   }
 
   public static function checkQuery($filter){

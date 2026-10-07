@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import i18nData from './i18nData'
 import phrases from './phrases'
+import vSelect from 'vue-select'
 
 Vue.use(VueI18n)
 
@@ -125,6 +126,12 @@ function notOnRepeat(notify) {
 // beforeCreate, so they are re-wrapped right after.
 export function installPhraseTranslation(VueCtor) {
   VueCtor.prototype.$tt = translatePhrase
+  // Dropdown options follow the language too: a label written in the code (or sent by the server)
+  // shows its phrases.js translation. Every <v-select> shares this component, so one hook covers all.
+  const optionLabel = vSelect.props.getOptionLabel.default
+  vSelect.props.getOptionLabel.default = function (option) {
+    return translatePhrase(optionLabel.call(this, option))
+  }
   VueCtor.prototype.$tField = fieldLabel
   VueCtor.prototype.$tRequired = requiredMessage
   VueCtor.mixin({

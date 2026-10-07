@@ -353,6 +353,20 @@
 import { gridClass } from "@/formGrid.js";
 import apiConfig from "@/apiConfig.js"
 import axios from "@/axios.js";
+
+// Dropdown choices fetched by field name (GET /api/v1/lookup/{field}), shared by every form for the session.
+// Used only when the page didn't send a list for that field; fields without a lookup resolve to null.
+// Cached per language: labels come back in the language the app sends (X-Locale).
+const lookupRequests = {}
+function lookupChoices(field, locale) {
+    const key = `${locale}:${field}`
+    if (!(key in lookupRequests)) {
+        lookupRequests[key] = axios.get(`/api/v1/lookup/${field}`)
+            .then(({ data }) => (Array.isArray(data) ? data : null))
+            .catch(() => null)
+    }
+    return lookupRequests[key]
+}
 import formAttr from "@/formAttributes.js"
 import vSelect from 'vue-select';
 import flatPickr from 'vue-flatpickr-component';
@@ -940,7 +954,18 @@ export default {
         // this.form.attribute["budget_template_id"] = 11;
     },
     watch: {
-
+        // Dropdowns the page sent no choices for get them from the shared lookup
+        formAttributes: {
+            immediate: true,
+            handler(attributes) {
+                (attributes || []).filter(field => field && field.type === 'select').forEach(({ name }) => {
+                    if (!this.data || Array.isArray(this.data[name])) return
+                    lookupChoices(name, this.$i18n.locale).then(choices => {
+                        if (choices && this.data && !Array.isArray(this.data[name])) this.$set(this.data, name, choices)
+                    })
+                })
+            },
+        },
     }
 }
 </script>

@@ -36,7 +36,7 @@ export default {
                 ],
             },
             childrenAttributes: {
-                title: "តារាងទិន្នន័យពុម្ភថវិកា",
+                title: "តារាងទិន្នន័យពុម្ពថវិកា",
                 api: apiConfig._apiBudgetTemplateItemCost,
                 dataAttributes: {
                     tableStyle: 1,

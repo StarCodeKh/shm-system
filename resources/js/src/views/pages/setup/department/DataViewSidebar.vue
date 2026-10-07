@@ -11,7 +11,7 @@
 
         <!-- NAME -->
         <vs-input :label="$tt('Name')" v-model="dataName" class="mt-5 w-full" name="name" v-validate="'required'" />
-        <span class="text-danger text-sm" v-show="errors.has('name')">{{ errors.first('name') }}</span>
+        <span class="text-danger text-sm" v-show="errors.has('name')">{{ $tt(errors.first('name')) }}</span>
 
       </div>
     </VuePerfectScrollbar>

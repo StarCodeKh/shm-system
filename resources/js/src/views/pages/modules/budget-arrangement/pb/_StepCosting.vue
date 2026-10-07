@@ -104,7 +104,7 @@ export default {
                     colspan: 0,
                 },
                 header12: {
-                    label: "រូបបីយប័ណ្ណ",
+                    label: "រូបិយប័ណ្ណ",
                     rowspan: 0,
                     colspan: 0,
                 },

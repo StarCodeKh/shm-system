@@ -3,11 +3,11 @@
     <!-- Info -->
     <!-- <vs-input class="w-full mb-base" label="Username" v-model="username"></vs-input> -->
     <!-- <vs-input class="w-full" name="username" :label="$tt('Name')" v-model="username" v-validate="'required'" />
-    <span class="text-danger">{{ errors.first('username') }}</span>
+    <span class="text-danger">{{ $tt(errors.first('username')) }}</span>
     <vs-input class="w-full" name="name" :label="$tt('Name')" v-model="name" v-validate="'required'"></vs-input>
-    <span class="text-danger">{{ errors.first('name') }}</span>
+    <span class="text-danger">{{ $tt(errors.first('name')) }}</span>
     <vs-input class="w-full" name="email" :label="$tt('Email')" v-model="email" v-validate="'required'"></vs-input>
-    <span class="text-danger">{{ errors.first('email') }}</span> -->
+    <span class="text-danger">{{ $tt(errors.first('email')) }}</span> -->
 
     <!-- <vs-alert icon-pack="feather" icon="icon-info" class="h-full my-4" color="warning">
       <span>Your account is not verified. <a href="#" class="hover:underline">Resend Confirmation</a></span>
@@ -26,7 +26,7 @@
     <div class="vx-row">
       <div class="vx-col md:w-1/2 w-full mt-5">
         <vs-input :label="$tt('ចំណងជើង')" autocomplete="off" name="title" v-model="title" class="w-full" v-validate="'required'"/>
-        <span class="text-danger">{{ errors.first('title') }}</span>
+        <span class="text-danger">{{ $tt(errors.first('title')) }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
         <vs-input :label="$tt('លេខយោង')" autocomplete="off" name="reference" v-model="reference" class="w-full"/>
@@ -34,39 +34,39 @@
       <div class="vx-col md:w-1/2 w-full mt-5">
         <label for="" class="vs-input--label">ថ្ងៃបង់ចំណូល</label>
         <flat-pickr class="w-full" v-validate="'required'" :placeholder="$tt('ថ្ងៃបង់ចំណូល')" name="issue_date" v-model="issue_date" />
-        <span class="text-danger">{{ errors.first('issue_date') }}</span>
+        <span class="text-danger">{{ $tt(errors.first('issue_date')) }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
         <label for="" class="vs-input--label">គណនី</label>
         <v-select name="account" v-model="account" :options="accounts" :dir="$vs.rtl ? 'rtl' : 'ltr'"/>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
-        <label for="" class="vs-input--label">ប្រភេទ</label>
+        <label for="" class="vs-input--label">{{ $tt('ប្រភេទ') }}</label>
         <v-select name="category" v-model="category" :options="categories" :dir="$vs.rtl ? 'rtl' : 'ltr'" />
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
         <label for="" class="vs-input--label">អង្គភាព</label>
         <v-select name="entity" v-model="entity" :options="entities" :dir="$vs.rtl ? 'rtl' : 'ltr'" v-validate="'required'" />
-        <span class="text-danger">{{ errors.first('entity') }}</span>
+        <span class="text-danger">{{ $tt(errors.first('entity')) }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
-        <label for="" class="vs-input--label">រូបបីយវត្ថុទូទាត់</label>
+        <label for="" class="vs-input--label">{{ $t('payment_currency') }}</label>
         <v-select name="currency" v-model="currency" :options="currencies" :dir="$vs.rtl ? 'rtl' : 'ltr'" v-validate="'required'" />
-        <span class="text-danger">{{ errors.first('currency') }}</span>
+        <span class="text-danger">{{ $tt(errors.first('currency')) }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
-        <label for="" class="vs-input--label">អត្រាប្តូរប្រាក់</label>
+        <label for="" class="vs-input--label">{{ $tt('អត្រាប្តូរប្រាក់') }}</label>
         <vs-input name="exchange_rate" v-model="exchange_rate" :dir="$vs.rtl ? 'rtl' : 'ltr'" v-validate="'required'" class="w-full" />
-        <span class="text-danger">{{ errors.first('exchange_rate') }}</span>
+        <span class="text-danger">{{ $tt(errors.first('exchange_rate')) }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
         <vs-input :label="$tt('ចំនួនទឹកប្រាក់')" autocomplete="off" name="amount" v-model="amount" class="w-full" v-validate="'required'"/>
-        <span class="text-danger">{{ errors.first('amount') }}</span>
+        <span class="text-danger">{{ $tt(errors.first('amount')) }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
-        <label for="" class="vs-input--label">វិធីទូទាត់</label>
+        <label for="" class="vs-input--label">{{ $tt('វិធីទូទាត់') }}</label>
         <v-select name="payment_method" v-model="payment_method" :options="paymentMethods" :dir="$vs.rtl ? 'rtl' : 'ltr'" v-validate="'required'" />
-        <span class="text-danger">{{ errors.first('payment_method') }}</span>
+        <span class="text-danger">{{ $tt(errors.first('payment_method')) }}</span>
       </div>
       <div class="vx-col md:w-1/2 w-full mt-5">
         <vs-textarea :label="$tt('ពិពណ៌នា')" class="w-full" v-model="description" />
@@ -96,16 +96,16 @@ const dict = {
           required: 'សូមជ្រើសថ្ងៃដែលបានទទួល'
         },
         category: {
-          required: 'សូមជ្រើសរើសប្រភេទចំនាយ'
+          required: 'សូមជ្រើសរើសប្រភេទចំណាយ'
         },
         currency: {
-          required: 'សូមជ្រើសរើសរូបបីយវត្ថុ'
+          required: 'សូមជ្រើសរើសរូបិយវត្ថុ'
         },
         amount: {
           required: 'សូមបញ្ចូលចំនួនទឹកប្រាក់'
         },
         entity: {
-          required: 'សូមជ្រើសរើសអង្គភាពចំនាយ'
+          required: 'សូមជ្រើសរើសអង្គភាពចំណាយ'
         },
         payment_method: {
           required: 'សូមជ្រើសរើសវិធីបង់ប្រាក់'

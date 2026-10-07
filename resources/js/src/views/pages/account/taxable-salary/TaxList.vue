@@ -51,7 +51,7 @@
           <!-- ADD NEW -->
           <div class="btn-add-new p-3 mb-4 mr-4 rounded-lg cursor-pointer flex items-center justify-center text-lg font-medium text-base text-primary border border-solid border-primary" @click="addNewData">
               <feather-icon icon="PlusIcon" svgClasses="h-4 w-4" />
-              <span class="ml-2 text-base text-primary">បង្កើតថ្មី</span>
+              <span class="ml-2 text-base text-primary">{{ $tt('បង្កើតថ្មី') }}</span>
           </div>
         </div>
 

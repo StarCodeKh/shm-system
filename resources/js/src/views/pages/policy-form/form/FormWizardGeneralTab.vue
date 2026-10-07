@@ -16,7 +16,7 @@
                             <!-- ADD NEW -->
                             <div @click="addRow()" class="btn-add-new p-2 mb-4 mr-4 rounded-lg cursor-pointer flex items-center justify-center text-lg font-medium text-base text-primary border border-solid border-primary">
                                 <feather-icon icon="PlusIcon" svgClasses="h-4 w-4" />
-                                <span class="ml-2 text-base text-primary">ជ្រើសរើសពុម្ភថវិកា</span>
+                                <span class="ml-2 text-base text-primary">ជ្រើសរើសពុម្ពថវិកា</span>
                             </div>
                         </div>
                     </div>
