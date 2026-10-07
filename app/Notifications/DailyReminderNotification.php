@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notification;
 class DailyReminderNotification extends Notification
 {
     use Queueable;
-    public $incrementing = true;  
+    public $incrementing = true;
     protected $keyType = 'int';
     /**
      * Create a new notification instance.
@@ -45,12 +45,6 @@ class DailyReminderNotification extends Notification
                     ->line('The introduction to the notification.')
                     ->action('Notification Action', url('/'))
                     ->line('Thank you for using our application!');
-        // return (new MailMessage)
-        //             ->subject('Daily Reminder')
-        //             ->greeting('Hello ' . $notifiable->name)
-        //             ->line('This is your scheduled daily reminder.')
-        //             ->action('View Dashboard', url('/dashboard'))
-        //             ->line('Thank you for using our application!');
     }
 
     // Optional: Save to database

@@ -8,30 +8,30 @@
 
 <script>
 export default {
-  name: 'VuePerfectScrollbar',
-  props: {
-    settings: { type: Object, default: () => ({}) },
-  },
-  emits: ['ps-scroll-y', 'ps-scroll-x'],
-  data: () => ({ top: 0, left: 0 }),
-  methods: {
-    onScroll(event) {
-      const { scrollTop, scrollLeft } = event.target
-      if (scrollTop !== this.top) this.$emit('ps-scroll-y', event)
-      if (scrollLeft !== this.left) this.$emit('ps-scroll-x', event)
-      this.top = scrollTop
-      this.left = scrollLeft
+    name: 'VuePerfectScrollbar',
+    props: {
+        settings: { type: Object, default: () => ({}) },
     },
-    // Same call as the old component; native scrolling needs no recalculation
-    update() {},
-  },
+    emits: ['ps-scroll-y', 'ps-scroll-x'],
+    data: () => ({ top: 0, left: 0 }),
+    methods: {
+        onScroll(event) {
+            const { scrollTop, scrollLeft } = event.target
+            if (scrollTop !== this.top) this.$emit('ps-scroll-y', event)
+            if (scrollLeft !== this.left) this.$emit('ps-scroll-x', event)
+            this.top = scrollTop
+            this.left = scrollLeft
+        },
+        // Same call as the old component; native scrolling needs no recalculation
+        update() {},
+    },
 }
 </script>
 
 <style>
 .scroll-area {
-  position: relative;
-  overflow: auto;
-  scrollbar-width: thin;
+    position: relative;
+    overflow: auto;
+    scrollbar-width: thin;
 }
 </style>

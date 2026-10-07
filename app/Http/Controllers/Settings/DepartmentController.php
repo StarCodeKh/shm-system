@@ -227,7 +227,7 @@ class DepartmentController extends Controller
                 $boolen = false;
                 $message = trans('common.error_msg');
             }
-            
+
         }else{
             $status = 500;
             $boolen = false;

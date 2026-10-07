@@ -5,13 +5,13 @@ const supported = typeof CSS !== 'undefined' && CSS.supports && CSS.supports('fi
 const isAuto = el => el && el.tagName === 'TEXTAREA' && !el.hasAttribute('rows')
 
 function fit(el) {
-  el.style.height = 'auto'
-  el.style.height = el.scrollHeight + 2 + 'px'
+    el.style.height = 'auto'
+    el.style.height = el.scrollHeight + 2 + 'px'
 }
 
 if (!supported && typeof document !== 'undefined') {
-  document.addEventListener('focusin', e => isAuto(e.target) && fit(e.target))
-  document.addEventListener('input', e => isAuto(e.target) && document.activeElement === e.target && fit(e.target))
-  // Back to one line when leaving the field
-  document.addEventListener('focusout', e => isAuto(e.target) && (e.target.style.height = ''))
+    document.addEventListener('focusin', e => isAuto(e.target) && fit(e.target))
+    document.addEventListener('input', e => isAuto(e.target) && document.activeElement === e.target && fit(e.target))
+    // Back to one line when leaving the field
+    document.addEventListener('focusout', e => isAuto(e.target) && (e.target.style.height = ''))
 }

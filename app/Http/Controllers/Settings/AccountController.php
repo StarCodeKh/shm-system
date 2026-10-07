@@ -113,7 +113,7 @@ class AccountController extends Controller
     }
 
     public function show($id)
-    {   
+    {
         $data = array();
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW] == true){
             $query = $this->db_table::find($id);
@@ -179,12 +179,10 @@ class AccountController extends Controller
         return response()->json($data, $status);
     }
 
-
     public function getAccountByGroup(Request $request){
         $params = $request->all();
         $data = array(
             "data" => $this->db_table::getAccountByGroup($params),
-            // "total" => Program::getCount($filter)
         );
         return response()->json($data);
     }
@@ -193,7 +191,6 @@ class AccountController extends Controller
         $params = $request->all();
         $data = array(
             "data" => $this->db_table::getSubAccount($params),
-            // "total" => Program::getCount($filter)
         );
         return response()->json($data);
     }
@@ -221,7 +218,7 @@ class AccountController extends Controller
                 $boolen = false;
                 $message = trans('common.error_msg');
             }
-            
+
         }else{
             $status = 500;
             $boolen = false;

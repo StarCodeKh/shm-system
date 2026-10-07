@@ -114,7 +114,7 @@
                         .then((response) => {
                             if (response.data) {
                                 this.data = response.data;
-                                this.dataHeaders = response.data.data_fields; 
+                                this.dataHeaders = response.data.data_fields;
                                 this.formAttributes = response.data.form_attributes;
                             } else {
                                 this.data = this.data;

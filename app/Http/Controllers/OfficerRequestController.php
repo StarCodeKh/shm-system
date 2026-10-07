@@ -25,7 +25,7 @@ class OfficerRequestController extends Controller
      *
      * @return \Illuminate\Http\Response
     */
-    
+
     protected $PERMISSION_ACTION_LIST;
     protected $PERMISSION_ACTION_CREATE;
     protected $PERMISSION_ACTION_SHOW;
@@ -105,7 +105,7 @@ class OfficerRequestController extends Controller
      */
     public function create()
     {
-        
+
     }
 
      /**
@@ -126,7 +126,7 @@ class OfficerRequestController extends Controller
                 $table->update($dataFields);
                 // Status 3 mean this status has been approved so the notification will start notify to users
                 if($dataFields["status"] == 3){// Status approved
-                    $incentiveData = $dataFields;       
+                    $incentiveData = $dataFields;
                     unset($incentiveData['order_level']);
                     $incentiveData['ref_request_id'] = $table->id;
                     $incentiveData['code'] = $table->code;
@@ -153,10 +153,10 @@ class OfficerRequestController extends Controller
 
                         $checkExistUser->notify(new DailyReminderNotification($body));
                         $sendPushNotification = PushNotificationService::sendToMultipleDevices($deviceTokens, $title, $body, $data);
-                    } 
+                    }
                     // ####End Send Push Notification
                 }
-                
+
                 $status = 200;
                 $boolen = true;
                 $message = trans('common.msg_save_successfully');
@@ -164,7 +164,7 @@ class OfficerRequestController extends Controller
                 $status = 500;
                 $boolen = false;
                 $message = trans('common.error_msg');
-            }       
+            }
         }else{
             $status = 500;
             $boolen = false;
@@ -185,7 +185,7 @@ class OfficerRequestController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {   
+    {
         $data = array();
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW] == true){
             $query = $this->db_table::find($id);
@@ -244,7 +244,7 @@ class OfficerRequestController extends Controller
             if($table){
                 // Status 3 mean this status has been approved so the notification will start notify to users
                 if($dataFields["status"] == 3){// Status approved
-                    $incentiveData = $dataFields;       
+                    $incentiveData = $dataFields;
                     unset($incentiveData['order_level']);
                     $incentiveData['ref_request_id'] = $table->id;
                     $incentiveData['code'] = $table->code;
@@ -256,7 +256,7 @@ class OfficerRequestController extends Controller
                     $currencyCode = $table['currency_id'] == "1" ? "KHR": "USD";
                     $amount = number_format($table['amount'], 2);
                     $getOfficer = Officer::where("id", $id)->first();
-                    
+
                     $title = "Request from ".$getOfficer->first_name.' '.$getOfficer->last_name.'-'.$getOfficer->identity_member_no." has been approved";
                     $message = "This Request from member to request the amount: " . $amount . " " . $currencyCode;
 
@@ -314,7 +314,7 @@ class OfficerRequestController extends Controller
                 $boolen = false;
                 $message = trans('common.error_msg');
             }
-            
+
         }else{
             $status = 500;
             $boolen = false;
@@ -330,18 +330,18 @@ class OfficerRequestController extends Controller
     /** Make Validation */
     public function validateCheck($param) {
         $data = array();
-        $query = $this->db_table::where('code', $param['code'])->first();        
+        $query = $this->db_table::where('code', $param['code'])->first();
         if (!empty($query) ) {
             $status = 200;
             $data = array(
                 "success" => false,
                 "message" =>   $message = trans('common.msg_request_code_exist', ['code' => $param['code']]),
                 "data" => $data,
-            );            
+            );
             return response()->json($data, $status);
         }
     }
-    
+
     public function getField(){
         $data = array(
             "form_attributes" => $this->db_table::formAttributes(),

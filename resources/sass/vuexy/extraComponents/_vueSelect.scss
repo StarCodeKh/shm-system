@@ -1,94 +1,90 @@
 @import "../_variables.scss";
 
 .v-select {
-  &:not(.vs--single) {
+    &:not(.vs--single) {
+        .vs__selected {
+            font-size: .9rem;
+        }
+    }
+
+    .vs__dropdown-toggle {
+        padding: .59px 0 4px 0;
+
+        .vs__search {
+            color: $content-color;
+        }
+
+        .vs__deselect {
+            svg {
+                stroke: $content-color;
+                opacity: 0.5;
+                margin-top: 0 !important;
+            }
+        }
+
+        .vs__selected-options {
+            .vs__selected {
+            }
+        }
+
+        .vs__actions {
+
+            .vs__clear {
+                color: $content-color;
+            }
+        }
+    }
+
+    .vs__dropdown-menu  {
+        .vs__dropdown-option {
+            color: $content-color;
+        }
+    }
+
     .vs__selected {
-      font-size: .9rem;
-    }
-  }
-
-  .vs__dropdown-toggle {
-    padding: .59px 0 4px 0;
-
-    .vs__search {
-      color: $content-color;
-    }
-
-    .vs__deselect {
-      svg {
-        stroke: $content-color;
-        opacity: 0.5;
-        margin-top: 0 !important;
-      }
-    }
-
-    .vs__selected-options {
-      .vs__selected {
-        // margin: 0px 4px 0;
-      }
-    }
-
-    .vs__actions {
-
-      .vs__clear {
         color: $content-color;
-      }
     }
-  }
-
-  .vs__dropdown-menu  {
-    .vs__dropdown-option {
-      color: $content-color;
-    }
-  }
-
-
-  .vs__selected {
-    color: $content-color;
-  }
 }
 
 .theme-dark {
-  .v-select{
-      .vs__dropdown-toggle{
-          background: $content-dark-bg;
+    .v-select{
+        .vs__dropdown-toggle{
+            background: $content-dark-bg;
 
-          .vs__clear svg{
-              stroke: $grey;
-          }
-          .vs__deselect svg{
-              stroke: $grey;
-              opacity: 0.7;
-          }
-      }
-      &:not(.vs--single) {
-        .vs__selected{
-            // color: $white;
-            background: $dark-card-color;
-            border: none;
+            .vs__clear svg{
+                stroke: $grey;
+            }
+            .vs__deselect svg{
+                stroke: $grey;
+                opacity: 0.7;
+            }
         }
-      }
-      .vs__selected{
-        color: $white;
-      }
-      .vs__open-indicator{
-          fill: $grey;
-      }
-      .vs__dropdown-menu{
-          background: $content-dark-bg;
-          .vs__dropdown-option {
-            color: $theme-dark-text-color;
-          }
-      }
-  }
+        &:not(.vs--single) {
+            .vs__selected{
+                background: $dark-card-color;
+                border: none;
+            }
+        }
+        .vs__selected{
+            color: $white;
+        }
+        .vs__open-indicator{
+            fill: $grey;
+        }
+        .vs__dropdown-menu{
+            background: $content-dark-bg;
+            .vs__dropdown-option {
+                color: $theme-dark-text-color;
+            }
+        }
+    }
 }
-
 
 // vue-select 4's own styles load before this file (see vite.config.mjs); its theme variables as before:
 // taller rows, and a soft hover row (the selected row is styled in custom.scss)
 
 .v-select {
-  --vs-line-height: 1.8;
-  --vs-dropdown-option--active-bg: #f3f4f8;
-  --vs-dropdown-option--active-color: #2c2e45;
+    --vs-line-height: 1.8;
+    --vs-dropdown-option--active-bg: #f3f4f8;
+    --vs-dropdown-option--active-color: #2c2e45;
 }

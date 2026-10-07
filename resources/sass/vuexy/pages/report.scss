@@ -1,11 +1,9 @@
 .container{
     font-family: var(--font-document);
-    // font-size: 10.5pt;
     font-size: 10pt;
     margin: 0 auto;
     clear: both;
     width: 80%;
-    // width: 90%;
     line-height: 28px;
 }
 .container-inner{
@@ -16,51 +14,6 @@
     width: 85%;
     line-height: 30px;
 }
-// .rotate-screen{
-//     // -ms-transform: rotate(270deg); /* IE 9 */
-//     // transform: rotate(270deg);
-//     // writing-mode:tb-rl;
-//     // transform: rotate(-90deg);
-//     // transform-origin: top left;
-//     display: block;
-//     transform-origin: top left;
-//     /* Note: for a CLOCKWISE rotation, use the commented-out
-//         transform instead of this one. */
-//     transform: rotate(-90deg) translate(-100%);
-//     /* transform: rotate(90deg) translate(0, -100%); */
-//     margin-top: 0%;
-
-//     /* Not vital, but possibly a good idea if the element you're rotating contains
-//         text and you want a single long vertical line of text and the pre-rotation
-//         width of your element is small enough that the text wraps: */
-//     white-space: nowrap;
-// }
-// .clearfix{
-//     padding: 0;
-//     margin: 0;
-//     clear: both;
-// }
-// .pull-right{
-//     float: right;
-// }
-// .objective, .reference, .description{
-//     padding-bottom: 15px;
-// }
-// ul.list{
-//     list-style: none;
-//     padding: 0;
-//     margin: 0;
-// }
-// ul.list li{
-//     padding: 0;
-//     margin: 0;
-// }
-// .italic{
-//     font-style: italic;
-// }
-// .text-indent{
-//     text-indent: 40px;
-// }
 
 @media print {
     footer {
@@ -69,23 +22,11 @@
         left: 0pt;
         right: 0pt;
         text-align: center;
-    }  
-    #page-number::after {
-        counter-increment: pages; 
-        content: counter(page) " of " counter(pages); 
     }
-
-    // #page-number { content: counter(page) }
-
-    // @page {
-    //     counter-increment: page;
-    //     counter-reset: page 1;
-    //     @top-right {
-    //         content: "Page " counter(page) " of " counter(pages);
-    //     }
-    // }
-
-    // @page { counter-increment: page }
+    #page-number::after {
+        counter-increment: pages;
+        content: counter(page) " of " counter(pages);
+    }
 
     @page { counter-increment: page }
     @page:first { counter-reset: page 9 }
@@ -94,7 +35,7 @@
         display: block;
         page-break-inside: avoid;
     }
-    
+
     .rotate-screen{
     }
     .hidden-space, span.hidden-space{
@@ -150,7 +91,6 @@ table.table tr th.border-dash{
 .container{
     margin: 0 auto;
     width: 680px;
-    // width: 700px;
 }
 .clearfix{
     padding: 0;
@@ -198,9 +138,6 @@ li.text-indent, .text-indent{
     float: left;
     width: 10%;
 }
-// .hidden-space{
-//     visibility: hidden;
-// }
 .padding-bottom-p{
     padding-bottom: 5px;
 }

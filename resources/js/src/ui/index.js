@@ -1,7 +1,7 @@
 /*=========================================================================================
-  The app's UI components, replacing Vuesax 3 (which only runs on Vue 2).
-  They keep Vuesax's tag names (<vs-input>, <vs-popup>, ...), props, events and HTML/class names,
-  so the templates, vuesax.css and custom.scss work unchanged. Ported from Vuesax 3 (MIT).
+    The app's UI components, replacing Vuesax 3 (which only runs on Vue 2).
+    They keep Vuesax's tag names (<vs-input>, <vs-popup>, ...), props, events and HTML/class names,
+    so the templates, vuesax.css and custom.scss work unchanged. Ported from Vuesax 3 (MIT).
 ==========================================================================================*/
 import VsAvatar from './VsAvatar.vue'
 import VsButton from './VsButton.vue'
@@ -39,15 +39,15 @@ import VsTr from './VsTr.vue'
 import { installVs } from './vs'
 
 const components = {
-  VsAvatar, VsButton, VsCheckbox, VsChip, VsDivider, VsDropdown, VsDropdownItem, VsDropdownMenu, VsIcon,
-  VsInput, VsInputNumber, VsList, VsListItem, VsNavbar, VsNavbarItem, VsNavbarTitle, VsPagination, VsPopup,
-  VsProgress, VsPrompt: VsDialog, VsRadio, VsSelect, VsSelectItem, VsSidebar, VsSpacer, VsSwitch, VsTab,
-  VsTable, VsTabs, VsTd, VsTextarea, VsTh, VsTr,
+    VsAvatar, VsButton, VsCheckbox, VsChip, VsDivider, VsDropdown, VsDropdownItem, VsDropdownMenu, VsIcon,
+    VsInput, VsInputNumber, VsList, VsListItem, VsNavbar, VsNavbarItem, VsNavbarTitle, VsPagination, VsPopup,
+    VsProgress, VsPrompt: VsDialog, VsRadio, VsSelect, VsSelectItem, VsSidebar, VsSpacer, VsSwitch, VsTab,
+    VsTable, VsTabs, VsTd, VsTextarea, VsTh, VsTr,
 }
 
 export default {
-  install(app, options = {}) {
-    Object.entries(components).forEach(([name, component]) => app.component(name, component))
-    installVs(app, options)
-  },
+    install(app, options = {}) {
+        Object.entries(components).forEach(([name, component]) => app.component(name, component))
+        installVs(app, options)
+    },
 }

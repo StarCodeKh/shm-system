@@ -394,11 +394,11 @@ class ReportController extends Controller
     public function summary(Request $request){
         $input = $request->all();
         $filter = date("Y-m-d", strtotime($input["filter"]));
-        $year = $input["filter"]; 
+        $year = $input["filter"];
         $fromPeriod = $year.'-01-01';
         $toPeriod = $year.'-12-01';
         $lastYearfromPeriod = ($year-1).'-01-01';
-        $lastYeartoPeriod = ($year-1).'-12-01';     
+        $lastYeartoPeriod = ($year-1).'-12-01';
         // #################
         $mulNum = 1000000;
         $exchangeRate = 4000;
@@ -423,7 +423,7 @@ class ReportController extends Controller
                                 ->Select(DB::raw("DATE_FORMAT(issue_date, '%m-%Y') as month, sum(amount) as total_amount"))
                                 ->groupBy(DB::raw("DATE_FORMAT(issue_date, '%m-%Y')"))
                                 ->get();
-        
+
         $getLastYearIncomes = Income::whereRaw('year(`issue_date`) = YEAR(DATE_SUB("'.$filter.'", INTERVAL 1 YEAR))')
                                 ->Select(DB::raw("DATE_FORMAT(issue_date, '%m-%Y') as month, sum(amount) as total_amount"))
                                 ->groupBy(DB::raw("DATE_FORMAT(issue_date, '%m-%Y')"))
@@ -438,7 +438,7 @@ class ReportController extends Controller
                                                     ->whereRaw('year(`issue_date`) = ?', array($year-1))
                                                     ->orderBy('issue_date', "desc")
                                                     ->first();
-        
+
         $quarterIncomeLastYear = DB::table("income")->SELECT(DB::raw("QUARTER(`issue_date`) as quarter, sum(amount) as amount"))
                                                     ->groupBy(DB::raw("QUARTER(`issue_date`)"))
                                                     ->whereRaw('year(`issue_date`) = YEAR(DATE_SUB(?, INTERVAL 1 YEAR))', [$filter])
@@ -451,12 +451,11 @@ class ReportController extends Controller
                                                     ->OrderBy('issue_to_date', 'ASC')
                                                     ->get();
 
-                                                   
         $getLastDateExpThisYear = IncentiveToOfficer::whereBetween('issue_from_date', [$fromPeriod, $toPeriod])
                                                     ->Select("issue_to_date")
                                                     ->OrderBy('issue_to_date', 'DESC')
                                                     ->first();
-        
+
         if($getLastDateExpThisYear){
             $getLastDateExpThisYear = IncentiveToOfficer::whereBetween('issue_from_date', [$fromPeriod, $toPeriod])
                                                     ->Select("issue_to_date")
@@ -468,7 +467,6 @@ class ReportController extends Controller
                                                         ->OrderBy('issue_to_date', 'DESC')
                                                         ->first();
         }
-        
 
         $quarterExpenseLastYears = IncentiveToOfficer::whereBetween('issue_from_date', [$lastYearfromPeriod, $lastYeartoPeriod])
                                                     ->Select(DB::raw("issue_from_date as from_date, issue_to_date as to_date, SUM(incentive) as incentive, SUM(reminder_amount) as reminder_incentive, (SUM(incentive)+SUM(reminder_amount)) as total_incentive"))
@@ -476,7 +474,6 @@ class ReportController extends Controller
                                                     ->OrderBy('issue_from_date', 'ASC')
                                                     ->OrderBy('issue_to_date', 'ASC')
                                                     ->get();
-    
 
         // #### Income By Quarter This Year
         $dataIncomThisYear = "";
@@ -496,7 +493,7 @@ class ReportController extends Controller
         }
 
         // #### Income By Quarter Last Year
-        $dataIncomLastYear = ""; 
+        $dataIncomLastYear = "";
         $m=0;
         $countIncomeLastYear = count($quarterIncomeLastYear);
         if($countIncomeLastYear > 0){
@@ -511,20 +508,20 @@ class ReportController extends Controller
         }else{
             $dataIncomLastYear = "0,0,0,0";
         }
-        
+
         // Expense By Quarter This year
         $strExThisYear = "0,0,0,0";
         if(count($quarterExpenseThisYears) > 0){
-            $dataExpThisYear = ""; 
+            $dataExpThisYear = "";
             foreach($quarterExpenseThisYears as $quarterExpenseThisYear){
                 $date1 = $quarterExpenseThisYear->from_date;
                 $date2 = $quarterExpenseThisYear->to_date;
-                $ts1 =strtotime($date1); 
-                $ts2 = strtotime($date2); 
-                $year1 = date('Y', $ts1); 
-                $year2 = date('Y', $ts2); 
-                $month1 = date('m', $ts1); 
-                $month2 = date('m', $ts2); 
+                $ts1 =strtotime($date1);
+                $ts2 = strtotime($date2);
+                $year1 = date('Y', $ts1);
+                $year2 = date('Y', $ts2);
+                $month1 = date('m', $ts1);
+                $month2 = date('m', $ts2);
                 $diff = (($year2 - $year1) * 12) + ($month2 - $month1) ;
                 if($diff > 0){
                     $j=1;
@@ -549,7 +546,7 @@ class ReportController extends Controller
                     $dataExpThisYear .= $this->convertToKhAmount($mulNum, $quarterExpenseThisYear->incentive) . ",";
                 }
             }
-            
+
             // If Data Exp is not enought will be add more value 0 to full fill the data
             $numExpThisYear = count(explode(',', $dataExpThisYear));
             if($numExpThisYear < 12){
@@ -558,7 +555,6 @@ class ReportController extends Controller
                     $dataExpThisYear .= "0,";
                 }
             }
-            // $dataExpThisYear2 = "1,2,3,4,5,6,7,8,9,10,11,12,";
             $explodedataExpThisYear = explode(',', $dataExpThisYear);
             array_pop($explodedataExpThisYear);
             $k1 = "";
@@ -594,16 +590,16 @@ class ReportController extends Controller
         $strExLastYear = "0,0,0,0";
         $getLastDateOfExpLastYear = "";
         if(count($quarterExpenseLastYears) > 0){
-            $dataExpLastYear = ""; 
+            $dataExpLastYear = "";
             foreach($quarterExpenseLastYears as $quarterExpenseLastYear){
                 $date1 = $quarterExpenseLastYear->from_date;
                 $date2 = $quarterExpenseLastYear->to_date;
-                $ts1 =strtotime($date1); 
-                $ts2 = strtotime($date2); 
-                $year1 = date('Y', $ts1); 
-                $year2 = date('Y', $ts2); 
-                $month1 = date('m', $ts1); 
-                $month2 = date('m', $ts2); 
+                $ts1 =strtotime($date1);
+                $ts2 = strtotime($date2);
+                $year1 = date('Y', $ts1);
+                $year2 = date('Y', $ts2);
+                $month1 = date('m', $ts1);
+                $month2 = date('m', $ts2);
                 $diff = (($year2 - $year1) * 12) + ($month2 - $month1) ;
                 if($diff > 0){
                     $j=1;
@@ -628,7 +624,7 @@ class ReportController extends Controller
                     $dataExpLastYear .= $this->convertToKhAmount($mulNum, $quarterExpenseLastYear->incentive) . ",";
                 }
             }
-            
+
             // If Data Exp is not enought will be add more value 0 to full fill the data
             $numExpLastYear = count(explode(',', $dataExpLastYear));
             if($numExpLastYear < 12){
@@ -637,7 +633,6 @@ class ReportController extends Controller
                     $dataExpLastYear .= "0,";
                 }
             }
-            // $dataExpLastYear2 = "1,2,3,4,5,6,7,8,9,10,11,12,";
             $explodedataExpLastYear = explode(',', $dataExpLastYear);
             array_pop($explodedataExpLastYear);
             $k1 = "";
@@ -673,7 +668,6 @@ class ReportController extends Controller
         $quaterLastYearIncome = explode(",", $dataIncomLastYear);
         $quaterThisYearExpense = explode(",", $strExThisYear);
         $quaterLastYearExpense = explode(",", $strExLastYear);
-        // dd(count($quaterLastYearExpense));
         $g = 0;
 
         // ### Remain Amount This Year & Last Year
@@ -693,7 +687,7 @@ class ReportController extends Controller
             $m = $this->convertToKhmerNumber(date("m", strtotime(date("Y-m-d"))));
             $y = $this->convertToKhmerNumber(date("y", strtotime(date("Y-m-d"))));
         }
-        
+
         $dataInfo = array(
             "quaterThisYearIncome" => $quaterThisYearIncome,
             "quaterLastYearIncome" => $quaterLastYearIncome,
@@ -722,11 +716,7 @@ class ReportController extends Controller
             "currentDateOfficer" => "គិតត្រឹមថ្ងៃទី ".$d." ខែ ".$m." ឆ្នាំ".$y,
             "lastUpdatedDateIncome" => "គិតត្រឹមថ្ងៃទី ".$this->convertToKhmerNumber(date("d", strtotime($getLastDateIncomeThisYear?$getLastDateIncomeThisYear->issue_date:date("Y-m-d"))))." ខែ ".$this->convertKhMonth(date("m", strtotime($getLastDateIncomeThisYear?$getLastDateIncomeThisYear->issue_date:date("Y-m-d"))))." ឆ្នាំ".$this->convertToKhmerNumber(date("Y", strtotime($getLastDateIncomeThisYear?$getLastDateIncomeThisYear->issue_date:date("Y-m-d")))),
             "lastUpdatedDateExp" => "គិតត្រឹមថ្ងៃទី ".$d." ខែ ".$m." ឆ្នាំ".$y,
-            
-            // "currentDateOfficer" => "គិតត្រឹមថ្ងៃទី ".$this->convertToKhmerNumber(date("d", strtotime($getLastDateExpThisYear->issue_to_date?$getLastDateExpThisYear->issue_to_date:$getLastDateExpThisYear2->issue_to_date)))." ខែ ".$this->convertKhMonth(date("m", strtotime($getLastDateExpThisYear->issue_to_date?$getLastDateExpThisYear->issue_to_date:$getLastDateExpThisYear2->issue_to_date)))." ឆ្នាំ".$this->convertToKhmerNumber(date("Y", strtotime($getLastDateExpThisYear->issue_to_date?$getLastDateExpThisYear->issue_to_date:$getLastDateExpThisYear2->issue_to_date))),
-            // // "lastUpdatedDateIncome" => "គិតត្រឹមថ្ងៃទី ".$this->convertToKhmerNumber(date("d", strtotime($getLastDateIncomeThisYear->issue_date?$getLastDateIncomeThisYear->issue_date:date("Y-m-d"))))." ខែ ".$this->convertKhMonth(date("m", strtotime($getLastDateIncomeThisYear->issue_date?$getLastDateIncomeThisYear->issue_date:date("Y-m-d"))))." ឆ្នាំ".$this->convertToKhmerNumber(date("Y", strtotime($getLastDateIncomeThisYear->issue_date?$getLastDateIncomeThisYear->issue_date:date("Y-m-d")))),
-            // "lastUpdatedDateIncome" => "គិតត្រឹមថ្ងៃទី ".$this->convertToKhmerNumber(date("d", strtotime($getLastDateIncomeThisYear?$getLastDateIncomeThisYear->issue_date:date("Y-m-d"))))." ខែ ".$this->convertKhMonth(date("m", strtotime($getLastDateIncomeThisYear?$getLastDateIncomeThisYear->issue_date:date("Y-m-d"))))." ឆ្នាំ".$this->convertToKhmerNumber(date("Y", strtotime($getLastDateIncomeThisYear?$getLastDateIncomeThisYear->issue_date:date("Y-m-d")))),
-            // "lastUpdatedDateExp" => "គិតត្រឹមថ្ងៃទី ".$this->convertToKhmerNumber(date("d", strtotime($getLastDateExpThisYear->issue_to_date?$getLastDateExpThisYear->issue_to_date:$getLastDateExpThisYear2->issue_to_date)))." ខែ ".$this->convertKhMonth(date("m", strtotime($getLastDateExpThisYear->issue_to_date?$getLastDateExpThisYear->issue_to_date:$getLastDateExpThisYear2->issue_to_date)))." ឆ្នាំ".$this->convertToKhmerNumber(date("Y", strtotime($getLastDateExpThisYear->issue_to_date?$getLastDateExpThisYear->issue_to_date:$getLastDateExpThisYear2->issue_to_date))),
+
         );
         $data = array(
             "data" => $dataInfo
@@ -802,15 +792,7 @@ class ReportController extends Controller
         $i = 1;
         foreach ($arrNumbers as $number){
             $newKhmerNumber .= $khmerNumber[$number];
-            // $newKHNumber = "";
-            // if($i % 3 == 0){
-            //     $newKHNumber .= $khmerNumber[$number].",";
-            // }else{
-            //     $newKHNumber .= $khmerNumber[$number];
-            // }
-            // $i++;
         }
-        // return $newKHNumber;
         return $newKhmerNumber;
     }
 
@@ -865,7 +847,7 @@ class ReportController extends Controller
                 # code...
                 $str = 'ធ្នូ';
                 break;
-            
+
             default:
                 # code...
                 $str = 'មករា';
@@ -878,7 +860,6 @@ class ReportController extends Controller
         $input = $request->all();
         $year = $input["year"];
         $convertDate = date("Y-m-d", strtotime($year));
-        // dd($convertDate);
         $mulNum = 1000000;
         $getTop10RankIncomes = DB::table('income')
                                 ->join('entity', 'entity.id' ,'=', 'income.entity_id')
@@ -887,9 +868,8 @@ class ReportController extends Controller
                                 ->select('sector.name as sector_name', 'entity.sector_id as sector_id', DB::raw('sum(amount) as amount'))
                                 ->groupBy('sector.name', 'entity.sector_id')
                                 ->OrderBy("entity.sector_id", "desc")
-                                // ->Limit(10)
                                 ->get();
-                              
+
         $getTop10RankIncomesLastYear = DB::table('income')
                                 ->join('entity', 'entity.id' ,'=', 'income.entity_id')
                                 ->join('sector', 'sector.id' ,'=' ,'entity.sector_id')
@@ -897,18 +877,7 @@ class ReportController extends Controller
                                 ->select('sector.name as sector_name', 'entity.sector_id as sector_id', DB::raw('sum(amount) as amount'))
                                 ->groupBy('sector.name', 'entity.sector_id')
                                 ->OrderBy("entity.sector_id", "desc")
-                                // ->Limit(10)
                                 ->get();
-        
-        // $getTop10RankIncomesLastYear = DB::table('income')
-        //                         ->join('entity', 'entity.id' ,'=', 'incentive_to_officer.entity_id')
-        //                         ->join('sector', 'sector.id' ,'=' ,'entity.sector_id')
-        //                         ->whereRaw('year(`issue_from_date`) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 YEAR))')
-        //                         ->select('sector.name as sector_name', 'entity.sector_id as sector_id', DB::raw('sum(incentive) as amount'))
-        //                         ->groupBy('sector.name', 'entity.sector_id')
-        //                         ->OrderBy("entity.sector_id", "desc")
-        //                         // ->Limit(10)
-        //                         ->get();
 
         $lastYearIncome = "";
         $k = 0;
@@ -924,10 +893,8 @@ class ReportController extends Controller
         }else{
             $lastYearIncome = "0,0,0,0,";
         }
-        
+
         $lastYearIncomeExplode = explode(",", $lastYearIncome);
-        // dd($getTop10RankIncomesLastYear);
-        // dd($getTop10RankIncomesLastYear);
         $i = 0;
         $thisYearIncome = "";
         $titleEntityArr = "";
@@ -941,12 +908,8 @@ class ReportController extends Controller
                 $titleEntityArr .= $getTop10RankIncome->sector_name.",";
                 $amountEntityArr .= $this->convertToKhAmount($mulNum, $getTop10RankIncome->amount).",";
             }
-            
+
             $calDevide100 = floatval($lastYearIncomeExplode[$i]) / 100;
-            // if(){
-            // }else{
-                
-            // }
 
             $data[] = array(
                 "no" => ($i + 1),
@@ -965,9 +928,7 @@ class ReportController extends Controller
         // 1831540890, 49526010, 46130800, 68567641, 458613153
         // last year
         // 2071500000,769200000,141600000,626700000,1378800000
-        
-        // print_r($amountEntityArr);
-        // dd($lastYearIncome);
+
         return response()->json(
             [
                 "data" => $data,
@@ -979,16 +940,7 @@ class ReportController extends Controller
 
     public function expenseBySector(){
         $mulNum = 1000000;
-        // $getTop10RankIncomes = DB::table('income')
-        //                         ->join('entity', 'entity.id' ,'=', 'income.entity_id')
-        //                         ->join('sector', 'sector.id' ,'=' ,'entity.sector_id')
-        //                         ->whereRaw('year(`issue_date`) = ?', array(date('Y')))
-        //                         ->select('sector.name as sector_name', 'entity.sector_id as sector_id', DB::raw('sum(amount) as amount'))
-        //                         ->groupBy('sector.name', 'entity.sector_id')
-        //                         ->OrderBy("entity.sector_id", "desc")
-        //                         // ->Limit(10)
-        //                        ->get();
-        
+
         $getTop10RankExpensesThisYear = DB::table('incentive_to_officer')
                                 ->join('entity', 'entity.id' ,'=', 'incentive_to_officer.entity_id')
                                 ->join('sector', 'sector.id' ,'=' ,'entity.sector_id')
@@ -996,8 +948,7 @@ class ReportController extends Controller
                                 ->select('sector.name as sector_name', 'entity.sector_id as sector_id', DB::raw('sum(incentive) as amount'))
                                 ->groupBy('sector.name', 'entity.sector_id')
                                 ->OrderBy("entity.sector_id", "desc")
-                                // ->Limit(10)
-                                ->get();      
+                                ->get();
 
         $getTop10RankExpensesLastYear = DB::table('incentive_to_officer')
                                 ->join('entity', 'entity.id' ,'=', 'incentive_to_officer.entity_id')
@@ -1006,7 +957,6 @@ class ReportController extends Controller
                                 ->select('sector.name as sector_name', 'entity.sector_id as sector_id', DB::raw('sum(incentive) as amount'))
                                 ->groupBy('sector.name', 'entity.sector_id')
                                 ->OrderBy("entity.sector_id", "desc")
-                                // ->Limit(10)
                                 ->get();
 
         $lastYearIncome = "";
@@ -1019,10 +969,9 @@ class ReportController extends Controller
             }
             $k++;
         }
-        
+
         $lastYearExpenseExplode = explode(",", $lastYearIncome);
 
-        // dd($getTop10RankExpensesThisYear);
         $i = 0;
         $thisYearIncome = "";
         $titleEntityArr = "";
@@ -1056,9 +1005,7 @@ class ReportController extends Controller
         // 1831540890, 49526010, 46130800, 68567641, 458613153
         // last year
         // 2071500000,769200000,141600000,626700000,1378800000
-        
-        // print_r($amountEntityArr);
-        // dd($lastYearIncome);
+
         return response()->json(
             [
                 "data" => $data,
@@ -1070,21 +1017,6 @@ class ReportController extends Controller
 
     public function incomeByEntity(){
         $mulNum = 1000000;
-        // $query = DB::table("income as i")
-        //             ->Select(DB::raw("sum('i.amount') as amount"))
-        //             ->Join("entity as e", "i.entity_id", "e.id")
-        //             ->Limit(10)
-        //             ->GroupBy("i.entity_id")
-        //             ->OrderBy(DB::raw("sum('i.amount')"))
-        //             ->get();
-        // $query = DB::table("income as i")
-        //         ->Select("e.name as entity_name")
-        //         ->Join("entity as e", "e.id", "i.entity_id")
-        //         ->GroupBy("i.entity_id")
-        //         ->OrderBy("amount", "desc")
-        //         ->whereRaw("year(`issue_date`) = '2020'")
-        //         ->Limit(10)
-        //         ->get();
         $data = array();
         $getTop10RankIncomes = DB::table('income')
                                 ->join('entity', 'entity.id' ,'=', 'income.entity_id')
@@ -1094,7 +1026,7 @@ class ReportController extends Controller
                                 ->OrderBy("amount", "desc")
                                 ->Limit(10)
                                 ->get();
-        
+
         $i = 0;
         $titleEntityArr = "";
         $amountEntityArr = "";
@@ -1112,7 +1044,6 @@ class ReportController extends Controller
                 "entity_id" => $getTop10RankIncome->entity_id,
                 "entity_name" => $getTop10RankIncome->entity_name,
                 "amount" => $this->convertToKhAmount($mulNum, floatval($getTop10RankIncome->amount))
-                // "comparedResult" => '800'
             );
             $i++;
         }
@@ -1127,22 +1058,7 @@ class ReportController extends Controller
 
     public function expenseByEntity(){
         $mulNum = 1000000;
-        // $query = DB::table("income as i")
-        //             ->Select(DB::raw("sum('i.amount') as amount"))
-        //             ->Join("entity as e", "i.entity_id", "e.id")
-        //             ->Limit(10)
-        //             ->GroupBy("i.entity_id")
-        //             ->OrderBy(DB::raw("sum('i.amount')"))
-        //             ->get();
-        // $query = DB::table("income as i")
-        //         ->Select("e.name as entity_name")
-        //         ->Join("entity as e", "e.id", "i.entity_id")
-        //         ->GroupBy("i.entity_id")
-        //         ->OrderBy("amount", "desc")
-        //         ->whereRaw("year(`issue_date`) = '2020'")
-        //         ->Limit(10)
-        //         ->get();
-        
+
         $getTop10RankIncomes = DB::table('incentive_to_officer')
                                 ->join('entity', 'entity.id' ,'=', 'incentive_to_officer.entity_id')
                                 ->whereRaw('year(`issue_from_date`) = ?', array(date('Y')))
@@ -1151,7 +1067,7 @@ class ReportController extends Controller
                                 ->OrderBy("amount", "desc")
                                 ->Limit(10)
                                 ->get();
-        
+
         $i = 0;
         $titleEntityArr = "";
         $amountEntityArr = "";
@@ -1171,7 +1087,6 @@ class ReportController extends Controller
                     "entity_id" => $getTop10RankIncome->entity_id,
                     "entity_name" => $getTop10RankIncome->entity_name,
                     "amount" => $this->convertToKhAmount($mulNum, floatval($getTop10RankIncome->amount))
-                    // "comparedResult" => '800'
                 );
                 $i++;
             }
@@ -1206,7 +1121,7 @@ class ReportController extends Controller
         $totalTaxIncentive = round(Incentive::sum("total_tax") / $mulNum);
         $totalRemainDollar = round(floatval($totalIncomeDollar) - floatval($totalExpenseDollar));
         $currentDate = date("Y-m-d");
-        
+
         $fromPeriod = $year.'-01-01';
         $toPeriod = $year.'-12-01';
 
@@ -1214,15 +1129,14 @@ class ReportController extends Controller
                         ->Select(DB::raw("DATE_FORMAT(issue_date, '%m-%Y') as month, sum(amount) as total_amount"))
                         ->groupBy(DB::raw("DATE_FORMAT(issue_date, '%m-%Y')"))
                         ->get();
-        
+
         $getLast12MonthExpenses = IncentiveToOfficer::whereBetween('issue_from_date', [$fromPeriod, $toPeriod])
                         ->Select(DB::raw("issue_from_date as from_date, issue_to_date as to_date, SUM(incentive) as incentive, SUM(reminder_amount) as reminder_incentive, (SUM(incentive)+SUM(reminder_amount)) as total_incentive"))
                         ->groupBy(DB::raw("DATE_FORMAT(issue_from_date, '%m-%Y')"))
                         ->OrderBy('issue_from_date', 'ASC')
                         ->OrderBy('issue_to_date', 'ASC')
                         ->get();
-        
-        
+
         $dataIncomeArr = "";
         foreach($getLast12MonthIncomes as $data){
             $dataIncomeArr .= $this->convertToKhAmount($mulNum, $data->total_amount) . ",";
@@ -1238,18 +1152,16 @@ class ReportController extends Controller
         foreach($getLast12MonthExpenses as $data){
             $date1 = $data->from_date;
             $date2 = $data->to_date;
-            $ts1 =strtotime($date1); 
-            $ts2 = strtotime($date2); 
-            $year1 = date('Y', $ts1); 
-            $year2 = date('Y', $ts2); 
-            $month1 = date('m', $ts1); 
-            $month2 = date('m', $ts2); 
+            $ts1 =strtotime($date1);
+            $ts2 = strtotime($date2);
+            $year1 = date('Y', $ts1);
+            $year2 = date('Y', $ts2);
+            $month1 = date('m', $ts1);
+            $month2 = date('m', $ts2);
             $diff = (($year2 - $year1) * 12) + ($month2 - $month1) ;
             if($diff > 0){
                 $j=1;
                 for($j=0; $j < ($diff + 1); $j++){
-                    // // $from_date = $from_date;
-                    // // $to_date = $to_date;
                     if($j > 1){
                         if(date("m",strtotime($data->from_date)) < 10){
                             $newDate = '0'.date("m",strtotime($data->from_date)) + $j;
@@ -1278,7 +1190,7 @@ class ReportController extends Controller
                 "reminder_incentive" => $data->reminder_incentive,
                 "total_incentive" => $data->total_incentive
             );
-            
+
         }
 
         $arrOutCome = explode(",", $dataOutComeStr);
@@ -1291,7 +1203,7 @@ class ReportController extends Controller
                 $strLenthMonth .= '0,';
             }
         }
-        
+
         $newStr = $dataOutComeStr.$strLenthMonth;
         $dateOutcome = explode(",",$newStr);
         array_pop($dateOutcome);
@@ -1348,31 +1260,27 @@ class ReportController extends Controller
 
         // // $ddd = DB::insert(DB::raw("
         // //                 INSERT INTO tmp(entity_id, entity_code, entity, last_total_income, total_income,last_total_expense, total_expense, issue_from_date, issue_to_date)
-        // //                 SELECT 
-        // //                 e.`id`, 
-        // //                 e.`code`, 
-        // //                 e.name, 
+        // //                 SELECT
+        // //                 e.`id`,
+        // //                 e.`code`,
+        // //                 e.name,
         // //                 (SELECT SUM(amount) FROM tbl_income WHERE DATE_FORMAT(issue_date, '%Y') < YEAR(CURDATE()) AND entity_id=i.entity_id) as sum_last_year,
         // //                 (SELECT SUM(amount) FROM tbl_income WHERE DATE_FORMAT(issue_date, '%Y') = YEAR(CURDATE()) AND entity_id=i.entity_id) as sum_this_year,
         // //                 (SELECT SUM(incentive) FROM tbl_incentive_to_officer WHERE DATE_FORMAT(issue_to_date, '%Y') < YEAR(CURDATE()) AND entity_id=i.entity_id),
         // //                 (SELECT SUM(incentive) FROM tbl_incentive_to_officer WHERE DATE_FORMAT(issue_to_date, '%Y') = YEAR(CURDATE()) AND entity_id=i.entity_id),
-        // //                 i.issue_from_date, 
-        // //                 i.issue_from_date 
+        // //                 i.issue_from_date,
+        // //                 i.issue_from_date
         // //                 FROM tbl_incentive_to_officer AS i
         // //                 JOIN tbl_entity AS e ON e.id = i.`entity_id`
         // //                 WHERE e.is_active=1
         // //                 GROUP BY i.entity_id
         // //             "));
 
-        // $total_income = DB::select(DB::raw("SELECT ROUND(SUM(total_income) / 1000000) as total_income FROM tmp"));
-        // $total_expense = DB::select(DB::raw("SELECT ROUND(SUM(total_expense) / 1000000) as total_expense FROM tmp"));
-        // $query = DB::select(DB::raw("SELECT * FROM tmp GROUP BY entity_id config_order BY entity_id"));
-
         // $resultQuery = DB::select(DB::raw("
-        //     SELECT 
-        //     DATE_FORMAT(issue_from_date, '%Y') as year, 
+        //     SELECT
+        //     DATE_FORMAT(issue_from_date, '%Y') as year,
         //     entity_id,
-        //     entity_code, 
+        //     entity_code,
         //     entity,
         //     last_total_income,
         //     total_income,
@@ -1381,16 +1289,14 @@ class ReportController extends Controller
         //     issue_to_date
         //     FROM tmp
         // "));
-        
+
         $entities = Entity::where("is_active", 1)->OrderBy("order_level")->get();
         $entityArr = array();
         foreach($entities as $entity){
             $entityId= $entity->id;
             $sum_last_year = Income::whereRaw("DATE_FORMAT(issue_date, '%Y') < YEAR(CURDATE())")->where('entity_id', $entityId)->sum("amount");
-            //"SELECT SUM(amount) as sum_last_year FROM tbl_income WHERE DATE_FORMAT(issue_date, '%Y') < YEAR(CURDATE()) AND entity_id=1)"));
             $sum_this_year = Income::whereYear('issue_date', "=" ,date('Y'))->sum("amount");
             $incentiveLastYear = IncentiveToOfficer::whereYear("issue_from_date", "<" , date('Y'))->where("entity_id", $entityId)->sum("incentive");
-            // DB::raw("SELECT SUM(incentive) FROM tbl_incentive_to_officer WHERE DATE_FORMAT(issue_to_date, '%Y') < YEAR(CURDATE()) AND entity_id=".$entityId.")");
             $incentiveThisYear = IncentiveToOfficer::whereYear("issue_from_date", "=" , date('Y'))->where("entity_id", $entityId)->sum("incentive");
 
             $entityArr[] = array(
@@ -1410,7 +1316,6 @@ class ReportController extends Controller
         $data = array(
             "data" => $entityArr
         );
-        // dd($data);
         return response()->json($data);
     }
 
@@ -1421,10 +1326,8 @@ class ReportController extends Controller
             $topIncome = DB::table("income")->Where("entity_id", $row->id)
                          ->sum("amount");
             $entityData[] = array(
-                // "entity" => $row->name,
-                // "income" => $topIncome
-                'customerType' => $row->name, 
-                'counts' => $topIncome . '៛', 
+                'customerType' => $row->name,
+                'counts' => $topIncome . '៛',
                 'color' => 'primary'
             );
         }
@@ -1440,13 +1343,11 @@ class ReportController extends Controller
         $html = view('GDNTExcel');
         $filename = "./upload/GDNT_Annex_Excel.xls";
         file_put_contents($filename, $html);
-        // $dataIncentive = $this->getFormIncentive(32);
         return true;
     }
 
     public function convertAnnexLMToExcel(Request $request){
         $input = $request->all();
-        // dd($input);
         $incentiveId = $input["incentive_id"];
         $incentiveInfo = $this->getFormIncentive($incentiveId);
         $html = view('template/AnnexToLM')->with("incentiveInfo", $incentiveInfo);
@@ -1463,10 +1364,9 @@ class ReportController extends Controller
         );
         return $data;
     }
-    
+
     public function convertAnnexBankToExcel(Request $request){
         $input = $request->all();
-        // dd($input);
         $incentiveId = $input["incentive_id"];
         $bankId = $input["bank_id"];
         $bankName = $input["bank_name"];
@@ -1488,7 +1388,6 @@ class ReportController extends Controller
 
     public function convertAnnexGDNTToExcel(Request $request){
         $input = $request->all();
-        // dd($input);
         $incentiveId = $input["incentive_id"];
         $incentiveInfo = $this->getFormIncentive($incentiveId);
         $html = view('template/AnnexToGDNT')->with("incentiveInfo", $incentiveInfo);
@@ -1508,7 +1407,6 @@ class ReportController extends Controller
 
     public function convertSummaryIncomeOutcomeToExcel(Request $request){
         $input = $request->all();
-        // dd($input);
         $year = $input["year"];
         $html = view('template/SummaryIncomeOutcome');
         $filename = "./upload/".$year."_summary_income_outcome.xls";
@@ -1529,8 +1427,6 @@ class ReportController extends Controller
         $table = Incentive::find($id);
         $getIncentiveByBanks = Incentive::getIncentiveByBanks($id);
         $getIncentiveByEntities = Incentive::getIncentiveByEntities($id, 0);
-        // dd($this->num2khtext("1273800000", true));
-        // dd($getIncentiveByEntities);
         $incentiveByBanks = array();
         foreach($getIncentiveByBanks as $getIncentiveByBank){
             $incentiveByBanks[] = array(
@@ -1587,7 +1483,6 @@ class ReportController extends Controller
             "khmer_date" => $table->khmer_date,
             "khmer_day" => $table->khmer_day,
             "khmer_year" => $this->convertToKhmerNumber2(date("Y", strtotime($table["issue_from_date"]))),
-            //"khmer_day1" => $this->convertToKhmerDay(date("D", strtotime($table["issue_date"]))),
             "count_month" => CommonService::GetNumberOfMonth($table["issue_from_date"], $table["issue_to_date"]),
             "khmer_month" => $this->convertToKhmerMonth(date("m", strtotime($table["issue_from_date"]))),
             "khmer_from_month" => $this->convertToKhmerMonth(date("m", strtotime($table["issue_from_date"] . " +1 days"))),
@@ -1613,7 +1508,7 @@ class ReportController extends Controller
             "total_incentive" => number_format($table->total_incentive),
             "total_incentive_in_khmer" => $this->convertToKhmerNumber2(number_format($table->total_incentive), 0),
             "total_incentive_in_word" => $this->num2khtext($table->total_incentive, true),
-            
+
             "total_incentive_with_reminder_in_khmer" => $this->convertToKhmerNumber2(number_format(($table->total_reminder + $table->total_incentive)), 0),
             "total_incentive_with_reminder_in_word" => $this->num2khtext($table->total_reminder + $table->total_incentive, true),
             "total_return_amount_in_khmer" => $this->convertToKhmerNumber2(number_format($table->total_return_amount), 0),
@@ -1703,15 +1598,15 @@ class ReportController extends Controller
 
     public function num2khtext($complete_char,$enableThousand){
         //function for split uft8 character
-        // function mb_str_split( $string ) { 
-        //     //Split at all position not after the start: ^ 
-        //     //and not before the end: $ 
-        //     return preg_split('/(?<!^)(?!$)/u', $string ); 
-        // }		
+        // function mb_str_split( $string ) {
+        //     //Split at all position not after the start: ^
+        //     //and not before the end: $
+        //     return preg_split('/(?<!^)(?!$)/u', $string );
+        // }
         //remove left zeros
-        $cleanStr = ltrim($complete_char, '0');	
+        $cleanStr = ltrim($complete_char, '0');
         //split number/string to array
-        $num_arr = mb_str_split($cleanStr);	
+        $num_arr = mb_str_split($cleanStr);
         $translated=''; $addThousand=false;
         //string array
         $khNUMTxt = array('','មួយ','ពីរ','បី','បួន','ប្រាំ');
@@ -1741,12 +1636,11 @@ class ReportController extends Controller
         }
         //concatenate number level
         if($value>0 or ($pos==4 and $addThousand and $enableThousand) or $pos==7){
-        $translated .= $khNUMLev[$pos];			
+        $translated .= $khNUMLev[$pos];
         }
         //make addthousand to default value (false)
-        if($pos==4){$addThousand=false;}		
+        if($pos==4){$addThousand=false;}
         }
-        //return the complete number in text
         return $translated;
     }
 }

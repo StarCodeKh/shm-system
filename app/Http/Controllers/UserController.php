@@ -17,7 +17,7 @@ use App\User;
 use Auth;
 use CommonService;
 class UserController extends Controller
-{   
+{
     protected $PERMISSION_ACTION_LIST;
     protected $PERMISSION_ACTION_CREATE;
     protected $PERMISSION_ACTION_SHOW;
@@ -84,7 +84,6 @@ class UserController extends Controller
         }
     }
 
-
     /**
      * Store a newly created resource in storage.
      *
@@ -97,11 +96,6 @@ class UserController extends Controller
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_CREATE]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_CREATE] == true){
             $input = $request->all();
             $dataFields = $this->dataForm($input);
-            // $validator = Validator::make($dataFields, [
-            //     'username' => 'required|string|unique:users,username',
-            //     'email' => 'required|email|unique:users,email',
-            //     'password' => 'required|confirmed|min:6',
-            // ]);
             $rules = array(
                 'username' => 'required|string|unique:users,username',
                 'email' => 'required|email|unique:users,email',
@@ -119,7 +113,7 @@ class UserController extends Controller
                     'message' => $validator->errors(),
                 ], 200);
             }
-        
+
             unset($dataFields['password_confirmation']);
             $dataFields["password"] = bcrypt($dataFields["password"]);
             $query = $this->db_table::create($dataFields);
@@ -159,7 +153,7 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {   
+    {
         $data = array();
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW] == true){
             $query = $this->db_table::find($id);
@@ -171,7 +165,6 @@ class UserController extends Controller
                 $data["role"] = RoleUser::getSingleValueOpt();
                 $data["departments"] = Department::getSingleOpt();
                 $data["entities"] = Entity::getSingleOpt();
-                // $data["entity_id"] = Entity::getSingleOpt();
                 $data["position"] = Position::getSingleOpt();
                 $data["title"] = Title::getSingleOpt();
                 $data["status"] = Title::getSingleOpt("STATUS");
@@ -231,17 +224,8 @@ class UserController extends Controller
                     ], 200);
                 }
             }
-        
+
             if(isset($dataFields["password"])){
-                // $validator = Validator::make($dataFields, [
-                //     'password' => 'required|confirmed|min:6|string|regex:/[0-9]/|regex:/[A-Z]/',
-                // ]);
-                // if ($validator->fails()) {
-                //     return response()->json([
-                //         "success" => false,
-                //         'message' => $validator->errors(),
-                //     ], 200);
-                // }
                 // 'regex:/[a-z]/',            // at least one lowercase
                 // 'regex:/[A-Z]/',            // at least one uppercase
                 // 'regex:/[0-9]/',            // at least one digit
@@ -325,7 +309,7 @@ class UserController extends Controller
                 $boolen = false;
                 $message = trans('common.error_msg');
             }
-            
+
         }else{
             $status = 500;
             $boolen = false;
@@ -339,7 +323,7 @@ class UserController extends Controller
     }
 
     public function getProfile(Request $request){
-        
+
         $input = $request->all();
         $data = array();
         $officer = "";
@@ -364,7 +348,6 @@ class UserController extends Controller
         $data["role"] = RoleUser::getSingleValueOpt();
         $data["departments"] = Department::getSingleOpt();
         $data["entities"] = Entity::getSingleOpt();
-        // $data["entity_id"] = Entity::getSingleOpt();
         $data["position"] = Position::getSingleOpt();
         $data["title"] = Title::getSingleOpt();
         $data["status"] = Title::getSingleOpt("STATUS");
@@ -378,16 +361,7 @@ class UserController extends Controller
         $input = $request->all();
         if(isset($input["officer_id"]) && $input["officer_id"]!=null){
             $filter["officer_id"] = $input["officer_id"];
-            // $officer = Officer::where("id", (int)$input["officer_id"])->first();
-            // if($officer){
-            //     $input["user_id"] = $officer->user_id;
-            // }else{
-            //     $input["user_id"] = null;
-            // }
         }
-        // else{
-        //     // $input["user_id"] = Auth::user()->id;
-        // }
         $filter = CommonService::getFilter($input);
         $table = UserDevice::getData($filter);
         $data = array(
@@ -399,9 +373,6 @@ class UserController extends Controller
             "model_name" => $this->db_table->getTable(),
             "data_fields" => UserDevice::dataFields(),
             "form_attributes" => $this->db_table::formAttributes(),
-            // "permissions" => CommonService::permission($this->db_table),
-            // "role_permissions" => CommonService::getPermissionsViaRoles(),
-            // "model_name" => $this->db_table->getTable(),
         );
         return response()->json($data);
     }

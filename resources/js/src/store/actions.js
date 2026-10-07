@@ -6,7 +6,7 @@ const actions = {
 
     // Vertical NavMenu
     updateVerticalNavMenuWidth({ commit }, width) {
-      commit('UPDATE_VERTICAL_NAV_MENU_WIDTH', width)
+        commit('UPDATE_VERTICAL_NAV_MENU_WIDTH', width)
     },
 
     // /////////////////////////////////////////////
@@ -14,10 +14,10 @@ const actions = {
     // /////////////////////////////////////////////
 
     toggleContentOverlay({ commit }) {
-      commit('TOGGLE_CONTENT_OVERLAY')
+        commit('TOGGLE_CONTENT_OVERLAY')
     },
     updateTheme({ commit }, val) {
-      commit('UPDATE_THEME', val)
+        commit('UPDATE_THEME', val)
     },
 
     // /////////////////////////////////////////////
@@ -25,16 +25,16 @@ const actions = {
     // /////////////////////////////////////////////
 
     updateUserInfo({ commit }, payload) {
-      commit('UPDATE_USER_INFO', payload)
+        commit('UPDATE_USER_INFO', payload)
     },
     updateUserRole({ dispatch }, payload) {
-      // Change client side
-      payload.aclChangeRole(payload.userRole)
+        // Change client side
+        payload.aclChangeRole(payload.userRole)
 
-      // Make API call to server for changing role
+        // Make API call to server for changing role
 
-      // Change userInfo in localStorage and store
-      dispatch('updateUserInfo', {userRole: payload.userRole})
+        // Change userInfo in localStorage and store
+        dispatch('updateUserInfo', {userRole: payload.userRole})
     },
 }
 

@@ -182,26 +182,22 @@
                 return new Promise((resolve, reject) => {
                     axios.get(this.api + "/" +_id)
                         .then((response) => {
-                        // this.formAttributes = response.data.data.form_attributes;
                         this.data = response.data.data;
                         this.dataInfo = response.data.data.data;
-                        // if(this.formAttributes){
                         this.$refs.refModalForm.showDataForm(this.data.data);
-                        // }
                         this.$vs.loading.close();
                     }).catch((error) => { reject(error) })
                 })
             },
         },
         mounted(){
-            // this.$refs.refModalForm.showDataForm(this.data.data);
         },
         created() {
             this.$vs.loading();
             this.getDataInfo();
         },
         watch: {
-            
+
         }
     }
 </script>

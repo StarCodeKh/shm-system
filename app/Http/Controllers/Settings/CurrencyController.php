@@ -80,7 +80,7 @@ class CurrencyController extends Controller
      */
     public function create()
     {
-        
+
     }
 
     /**
@@ -125,7 +125,7 @@ class CurrencyController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {   
+    {
         $data = array();
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW] == true){
             $query = $this->db_table::find($id);
@@ -233,7 +233,7 @@ class CurrencyController extends Controller
                 $boolen = false;
                 $message = trans('common.error_msg');
             }
-            
+
         }else{
             $status = 500;
             $boolen = false;

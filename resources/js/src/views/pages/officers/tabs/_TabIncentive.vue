@@ -7,7 +7,6 @@
 <script>
     import axios from "@/axios.js";
     import apiConfig from "@/apiConfig.js";
-    import { ref } from 'vue';
     import DTableList from '@/views/form-builder/DTableList.vue';
 
     export default {
@@ -21,11 +20,6 @@
                     offset: 0,
                     dataGrid: "row",
                     actionButton: [
-                        // {
-                        //     icon: "DollarSignIcon",
-                        //     path: "/module/budget-arrangement/budget-ceiling/list",
-                        //     method: "View"
-                        // }
                     ],
                     enableImport: true,
                     enableDownload: true,
@@ -107,14 +101,13 @@
                         .then((response) => {
                             if (response.data) {
                                 this.data = response.data;
-                                this.dataHeaders = response.data.data_fields; 
+                                this.dataHeaders = response.data.data_fields;
                                 this.formAttributes = response.data.form_attributes;
                             } else {
                                 this.data = this.data;
                             }
                             this.$vs.loading.close();
                         }).catch((error) => {
-                            // reject(error)
                             this.$vs.loading.close();
                         })
                 })
@@ -139,7 +132,6 @@
                 return false;
             },
             initImport(params){
-                // alert("testing");
             }
         },
         created() {

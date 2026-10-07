@@ -1,8 +1,8 @@
 <template>
     <div class="vx-row">
         <!-- <d-form @clickForm="initTableData" ref="refModalForm" :data="data" :dataInfo="dataInfo"
-                    :parentDataInfo="parentDataInfo" :formAttributes="formAttributes" :api="api"
-                    :rowDisplay="rowDisplay"/> -->
+            :parentDataInfo="parentDataInfo" :formAttributes="formAttributes" :api="api"
+            :rowDisplay="rowDisplay"/> -->
             <d-file-manager ref="refModelFileManager" @clicked="initPassProps"></d-file-manager>
         <div class="vx-col lg:w-2/3 w-full mt-5">
             <d-form-tabs ref="tabs" v-model="tab" :sections="tabSections" :errors="errors" icon="CreditCardIcon"
@@ -105,289 +105,285 @@
         </div>
 
         <div class="vx-col lg:w-1/3 w-full mt-5">
-          <div class="payable-history">
-            <div class="payable-history__head">
-                <span class="payable-history__icon"><feather-icon icon="ClockIcon" svgClasses="h-4 w-4" /></span>
-                <h3>{{ $t('pay_history') }}</h3>
-            </div>
-
-            <!-- <div id="data-list-list-view" class="data-list-container"> -->
-                <!-- Empty: no member chosen yet, or no payments recorded -->
-                <div v-if="!historyRows.length" class="payable-history__empty">
-                    <span class="payable-history__empty-icon"><feather-icon icon="InboxIcon" svgClasses="h-6 w-6" /></span>
-                    <strong>{{ $t('payable_history_empty') }}</strong>
-                    <span>{{ officer_id ? $t('payable_history_none') : $t('payable_history_pick') }}</span>
+            <div class="payable-history">
+                <div class="payable-history__head">
+                    <span class="payable-history__icon"><feather-icon icon="ClockIcon" svgClasses="h-4 w-4" /></span>
+                    <h3>{{ $t('pay_history') }}</h3>
                 </div>
 
-                <template v-else>
-                    <ul class="payable-history__list">
-                        <li v-for="(row, i) in historyRows" :key="row.id || i" class="payable-history__item"
-                            :style="{ '--delay': (i * 40) + 'ms' }">
-                            <span class="payable-history__dot"><feather-icon icon="CheckIcon" svgClasses="h-3 w-3" /></span>
-                            <span class="payable-history__date">{{ row.payment_date || '—' }}</span>
-                            <span class="payable-history__amount">{{ formatAmount(row.amount) }}</span>
-                        </li>
-                    </ul>
-                    <div class="payable-history__total">
-                        <span>{{ $t('payable_history_total', { count: historyRows.length }) }}</span>
-                        <strong>{{ formatAmount(historyTotal) }}</strong>
+                    <!-- Empty: no member chosen yet, or no payments recorded -->
+                    <div v-if="!historyRows.length" class="payable-history__empty">
+                        <span class="payable-history__empty-icon"><feather-icon icon="InboxIcon" svgClasses="h-6 w-6" /></span>
+                        <strong>{{ $t('payable_history_empty') }}</strong>
+                        <span>{{ officer_id ? $t('payable_history_none') : $t('payable_history_pick') }}</span>
                     </div>
-                </template>
-          </div>
+
+                    <template v-else>
+                        <ul class="payable-history__list">
+                            <li v-for="(row, i) in historyRows" :key="row.id || i" class="payable-history__item"
+                                :style="{ '--delay': (i * 40) + 'ms' }">
+                                <span class="payable-history__dot"><feather-icon icon="CheckIcon" svgClasses="h-3 w-3" /></span>
+                                <span class="payable-history__date">{{ row.payment_date || '—' }}</span>
+                                <span class="payable-history__amount">{{ formatAmount(row.amount) }}</span>
+                            </li>
+                        </ul>
+                        <div class="payable-history__total">
+                            <span>{{ $t('payable_history_total', { count: historyRows.length }) }}</span>
+                            <strong>{{ formatAmount(historyTotal) }}</strong>
+                        </div>
+                    </template>
+            </div>
         </div>
     </div>
 </template>
 <script>
-// import DataViewSidebar from '@/views/components/ui-elements/data-list/DataViewSidebar.vue'
 import axios from "@/axios.js";
 import apiConfig from "@/apiConfig.js";
-import { ref } from 'vue';
 import moduleDataList from "@/store/data-list/moduleDataList.js";
 import vSelect from 'vue-select';
 import DFileManager from '@/views/form-builder/DFileManager.vue';
 export default {
-  data() {
-    return {
-        tab: 'member',
-        sections: [
-            { key: 'member', icon: 'UserIcon', titleKey: 'pay_tab_member' },
-            { key: 'payment', icon: 'CreditCardIcon', titleKey: 'pay_tab_payment' },
-            { key: 'extra', icon: 'PaperclipIcon', titleKey: 'pay_tab_extra' },
-        ],
-        apiPayable: apiConfig._apiOfficerPayable,
-        api: apiConfig._apiOfficerPayableInfo,
-        apiOfficerGeneralDataForPayable: apiConfig._apiOfficerGeneralDataForPayable,
-        paymentHistories: [],
-        isMounted: false,
-        iconThumnail: null,
-        officer_id: null,
-        identity_member_no: null,
-        entity: null,
-        department: null,
-        payment_date: null,
-        payment_method_id: null,
-        currency_id: null,
-        amount: 0.00,
-        attach: null,
-        payable: null,
-        payable_id: null,
-        remark: null,
-        status: {
-            label: "បានបង់រួច (Paid)",
-            value: 19,
-        },
-        searchTimeout: null,
-        // Data Sidebar
-        payables: [],
-        currencies: [],
-        paymentMethods: [],
-        paymentStatus: [
-            
-        ],
-        data: [],
-        iconExcel: "../images/file-icons/xls.png",
-        iconDoc: "../images/file-icons/doc.png",
-        iconPDF: "../images/file-icons/pdf.png",
-    }
-  },
-  components: {
-        DFileManager,
-        'v-select': vSelect,
-    },
-  computed: {
-    // Tab titles follow the current language
-    tabSections() {
-      return this.sections.map(section => ({ ...section, title: this.$t(section.titleKey) }))
-    },
-    historyRows() {
-      return Array.isArray(this.paymentHistories) ? this.paymentHistories : []
-    },
-    historyTotal() {
-      return this.historyRows.reduce((sum, row) => sum + (Number(String(row.amount || 0).replace(/,/g, '')) || 0), 0)
-    },
-  },
-  methods: {
-    formatAmount(value) {
-      const number = Number(String(value || 0).replace(/,/g, ''))
-      return isNaN(number) ? value : number.toLocaleString('en-US', { maximumFractionDigits: 2 })
-    },
-    initPassProps(props) {
-        switch (props.data.type) {
-            case "xlsx":
-                this.attach = props.data.path;
-                this.iconThumnail = this.iconExcel;
-                break;
-            case "xls":
-                this.attach = props.data.path;
-                this.iconThumnail = this.iconExcel;
-                break;
-            case "doc":
-                this.attach = props.data.path;
-                this.iconThumnail = this.iconDoc;
-                break;
-            case "docx":
-                this.attach = props.data.path;
-                this.iconThumnail = this.iconDoc;
-                break;
-            case "pdf":
-                this.attach = props.data.path;
-                this.iconThumnail = this.iconPDF;
-                break;
-            default:
-                this.attach = props.data.path;
-                this.iconThumnail = props.data.path;
-                break;
+    data() {
+        return {
+            tab: 'member',
+            sections: [
+                { key: 'member', icon: 'UserIcon', titleKey: 'pay_tab_member' },
+                { key: 'payment', icon: 'CreditCardIcon', titleKey: 'pay_tab_payment' },
+                { key: 'extra', icon: 'PaperclipIcon', titleKey: 'pay_tab_extra' },
+            ],
+            apiPayable: apiConfig._apiOfficerPayable,
+            api: apiConfig._apiOfficerPayableInfo,
+            apiOfficerGeneralDataForPayable: apiConfig._apiOfficerGeneralDataForPayable,
+            paymentHistories: [],
+            isMounted: false,
+            iconThumnail: null,
+            officer_id: null,
+            identity_member_no: null,
+            entity: null,
+            department: null,
+            payment_date: null,
+            payment_method_id: null,
+            currency_id: null,
+            amount: 0.00,
+            attach: null,
+            payable: null,
+            payable_id: null,
+            remark: null,
+            status: {
+                label: "បានបង់រួច (Paid)",
+                value: 19,
+            },
+            searchTimeout: null,
+            // Data Sidebar
+            payables: [],
+            currencies: [],
+            paymentMethods: [],
+            paymentStatus: [
+
+            ],
+            data: [],
+            iconExcel: "../images/file-icons/xls.png",
+            iconDoc: "../images/file-icons/doc.png",
+            iconPDF: "../images/file-icons/pdf.png",
         }
     },
-    initOpenFileManager(props) {
-        this.$refs.refModelFileManager.initFileManager(props);
+    components: {
+        DFileManager,
+        'v-select': vSelect,
+        },
+    computed: {
+        // Tab titles follow the current language
+        tabSections() {
+            return this.sections.map(section => ({ ...section, title: this.$t(section.titleKey) }))
+        },
+        historyRows() {
+            return Array.isArray(this.paymentHistories) ? this.paymentHistories : []
+        },
+        historyTotal() {
+            return this.historyRows.reduce((sum, row) => sum + (Number(String(row.amount || 0).replace(/,/g, '')) || 0), 0)
+        },
     },
-    getGeneralDataForPayable(_search){
-        let _keySearch = {"keyword": _search}
-        // Lookup only: the payment fields are validated on submit
-        return axios.post(this.apiOfficerGeneralDataForPayable, _keySearch)
-            .then((response) => {
-                this.data = response.data.officers;
-                this.paymentMethods = response.data.payment_method_id;
-                this.currencies = response.data.currency_id;
-                this.payables = response.data.payables;
-                this.paymentStatus = response.data.status;
-                return response.data;
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    },
-    onSearchOfficer(search) {
-        // console.log("User searching:", search);
-        // clear previous typing timer
-      clearTimeout(this.searchTimeout);
-      // wait 500ms after user stops typing
-      this.searchTimeout = setTimeout(() => {
-      if (search.length < 2) return;
-        this.getGeneralDataForPayable(search);
-      }, 500);
-    },
-    onSelectOfficer(value) {
-        this.clearForm();
-        this.paymentHistories = [];
-        // Clearing the payment fields is not a user mistake: drop the errors it would trigger
-        this.$nextTick(() => this.$validator.reset());
-        if (!value) return;
-        axios.post(this.api, value)
-            .then((response) => {
-                if (response.data.success) {
-                    const detail = response.data.officerDetail || {};
-                    this.entity = detail.entity ? detail.entity.name_kh : null;
-                    this.department = detail.department ? detail.department.name_kh : null;
-                    this.identity_member_no = detail.identity_member_no;
-                    this.paymentHistories = response.data.paymentHistories;
+    methods: {
+        formatAmount(value) {
+            const number = Number(String(value || 0).replace(/,/g, ''))
+            return isNaN(number) ? value : number.toLocaleString('en-US', { maximumFractionDigits: 2 })
+        },
+        initPassProps(props) {
+            switch (props.data.type) {
+                case "xlsx":
+                    this.attach = props.data.path;
+                    this.iconThumnail = this.iconExcel;
+                    break;
+                case "xls":
+                    this.attach = props.data.path;
+                    this.iconThumnail = this.iconExcel;
+                    break;
+                case "doc":
+                    this.attach = props.data.path;
+                    this.iconThumnail = this.iconDoc;
+                    break;
+                case "docx":
+                    this.attach = props.data.path;
+                    this.iconThumnail = this.iconDoc;
+                    break;
+                case "pdf":
+                    this.attach = props.data.path;
+                    this.iconThumnail = this.iconPDF;
+                    break;
+                default:
+                    this.attach = props.data.path;
+                    this.iconThumnail = props.data.path;
+                    break;
+            }
+        },
+        initOpenFileManager(props) {
+            this.$refs.refModelFileManager.initFileManager(props);
+        },
+        getGeneralDataForPayable(_search){
+            let _keySearch = {"keyword": _search}
+            // Lookup only: the payment fields are validated on submit
+            return axios.post(this.apiOfficerGeneralDataForPayable, _keySearch)
+                .then((response) => {
+                    this.data = response.data.officers;
+                    this.paymentMethods = response.data.payment_method_id;
+                    this.currencies = response.data.currency_id;
                     this.payables = response.data.payables;
-                }
-            })
-            .catch((error) => console.error(error));
-    },
-    clearForm(){
-        this.identity_member_no = null;
-        this.entity = null;
-        this.department = null;
-        this.payment_date = null;
-        this.payment_method_id = null;
-        this.currency_id = null;
-        this.attach = null;
-        this.payable = null;
-        this.searchTimeout = null;
-        this.amount = null;
-        this.payable_id = null;
-        this.remark = null;
-    },
-    onSelectPayable(obj){
-        this.amount = obj ? obj.value : null;
-        this.payable_id = obj ? obj.id : null;
-    },
-    resetAll() {
-        this.clearForm();
-        this.officer_id = null;
-        this.paymentHistories = [];
-        this.tab = 'member';
-        this.$nextTick(() => this.$validator.reset());
-    },
-    submitForm() {
-        let _data = [
-            {officer_id: this.officer_id["value"]},
-            {account_id: 0},
-            {payment_method_id: this.payment_method_id["value"]},
-            {payment_date: this.payment_date},
-            {status: this.status["value"]},
-            {remark: this.remark},
-        ];
-        this.$validator.validateAll().then(result => {
-            if (result) {
-                this.$vs.loading();
-                return new Promise((resolve, reject) => {
-                    axios.put(this.apiPayable+"/"+this.payable["id"], _data)
-                        .then((response) => {
-                            if (response.data.success) {
+                    this.paymentStatus = response.data.status;
+                    return response.data;
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        },
+        onSearchOfficer(search) {
+            // console.log("User searching:", search);
+            // clear previous typing timer
+            clearTimeout(this.searchTimeout);
+            // wait 500ms after user stops typing
+            this.searchTimeout = setTimeout(() => {
+            if (search.length < 2) return;
+                this.getGeneralDataForPayable(search);
+            }, 500);
+        },
+        onSelectOfficer(value) {
+            this.clearForm();
+            this.paymentHistories = [];
+            // Clearing the payment fields is not a user mistake: drop the errors it would trigger
+            this.$nextTick(() => this.$validator.reset());
+            if (!value) return;
+            axios.post(this.api, value)
+                .then((response) => {
+                    if (response.data.success) {
+                        const detail = response.data.officerDetail || {};
+                        this.entity = detail.entity ? detail.entity.name_kh : null;
+                        this.department = detail.department ? detail.department.name_kh : null;
+                        this.identity_member_no = detail.identity_member_no;
+                        this.paymentHistories = response.data.paymentHistories;
+                        this.payables = response.data.payables;
+                    }
+                })
+                .catch((error) => console.error(error));
+        },
+        clearForm(){
+            this.identity_member_no = null;
+            this.entity = null;
+            this.department = null;
+            this.payment_date = null;
+            this.payment_method_id = null;
+            this.currency_id = null;
+            this.attach = null;
+            this.payable = null;
+            this.searchTimeout = null;
+            this.amount = null;
+            this.payable_id = null;
+            this.remark = null;
+        },
+        onSelectPayable(obj){
+            this.amount = obj ? obj.value : null;
+            this.payable_id = obj ? obj.id : null;
+        },
+        resetAll() {
+            this.clearForm();
+            this.officer_id = null;
+            this.paymentHistories = [];
+            this.tab = 'member';
+            this.$nextTick(() => this.$validator.reset());
+        },
+        submitForm() {
+            let _data = [
+                {officer_id: this.officer_id["value"]},
+                {account_id: 0},
+                {payment_method_id: this.payment_method_id["value"]},
+                {payment_date: this.payment_date},
+                {status: this.status["value"]},
+                {remark: this.remark},
+            ];
+            this.$validator.validateAll().then(result => {
+                if (result) {
+                    this.$vs.loading();
+                    return new Promise((resolve, reject) => {
+                        axios.put(this.apiPayable+"/"+this.payable["id"], _data)
+                            .then((response) => {
+                                if (response.data.success) {
+                                    this.$vs.notify({
+                                        title: 'Message',
+                                        text: response.data.message,
+                                        iconPack: 'feather',
+                                        icon: 'icon-check-circle',
+                                        color: 'primary',
+                                        position: 'top-right'
+                                    })
+                                    this.resetAll();
+                                    this.$vs.loading.close();
+                                }else{
+                                    this.$vs.notify({
+                                        title: 'Message',
+                                        text: 'msg.check_criteria',
+                                        iconPack: 'feather',
+                                        icon: 'icon-check-circle',
+                                        color: 'danger',
+                                        position: 'top-right'
+                                    })
+                                    this.$vs.loading.close();
+                                }
+                            }).catch((error) => {
+                                reject(error)
                                 this.$vs.notify({
                                     title: 'Message',
-                                    text: response.data.message,
-                                    iconPack: 'feather',
-                                    icon: 'icon-check-circle',
-                                    color: 'primary',
-                                    position: 'top-right'
-                                })
-                                this.resetAll();
-                                this.$vs.loading.close();
-                                // this.$router.push('/account/expense').catch(() => { })
-                            }else{
-                                this.$vs.notify({
-                                    title: 'Message',
-                                    text: 'msg.check_criteria',
+                                    text: 'msg.action_failed',
                                     iconPack: 'feather',
                                     icon: 'icon-check-circle',
                                     color: 'danger',
                                     position: 'top-right'
                                 })
                                 this.$vs.loading.close();
-                            }
-                        }).catch((error) => {
-                            reject(error)
-                            this.$vs.notify({
-                                title: 'Message',
-                                text: 'msg.action_failed',
-                                iconPack: 'feather',
-                                icon: 'icon-check-circle',
-                                color: 'danger',
-                                position: 'top-right'
                             })
-                            this.$vs.loading.close();
-                        })
-                    });
-            }else{
-                this.$refs.tabs.focusFirstError();
-                this.$vs.notify({
-                    title: 'Message',
-                    text: 'msg.check_criteria',
-                    iconPack: 'feather',
-                    icon: 'icon-check-circle',
-                    color: 'danger',
-                    position: 'top-right'
-                })
-            }
-        });
+                        });
+                }else{
+                    this.$refs.tabs.focusFirstError();
+                    this.$vs.notify({
+                        title: 'Message',
+                        text: 'msg.check_criteria',
+                        iconPack: 'feather',
+                        icon: 'icon-check-circle',
+                        color: 'danger',
+                        position: 'top-right'
+                    })
+                }
+            });
+        }
+    },
+    created() {
+        let _search = null;
+        this.getGeneralDataForPayable(_search);
+        if(!moduleDataList.isRegistered) {
+            this.$store.registerModule('dataList', moduleDataList)
+            moduleDataList.isRegistered = true
+        }
+    },
+    mounted() {
+        this.isMounted = true;
     }
-  },
-  created() {
-    let _search = null;
-    this.getGeneralDataForPayable(_search);
-    if(!moduleDataList.isRegistered) {
-      this.$store.registerModule('dataList', moduleDataList)
-      moduleDataList.isRegistered = true
-    }
-  },
-  mounted() {
-    this.isMounted = true;
-  }
 }
 </script>
 

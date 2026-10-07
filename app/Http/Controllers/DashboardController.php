@@ -9,10 +9,9 @@ use App\User;
 use CommonService;
 use Exception;
 
-
 class DashboardController extends BaseController
 {
-    
+
     public function getOfficerGrowth()
     {
         try {
@@ -40,7 +39,6 @@ class DashboardController extends BaseController
             ]);
         }
     }
-
 
     public function totalIncome()
     {
@@ -98,7 +96,6 @@ class DashboardController extends BaseController
         }
     }
 
-   
     public function quarterlySummary(Request $request)
     {
         try {
@@ -169,7 +166,6 @@ class DashboardController extends BaseController
             $totalIncome->total_in_khr = CommonService::formatDoubleNum($totalIncome->total_in_khr);
             $totalIncome->total_in_usd = CommonService::formatDoubleNum($totalIncome->total_in_usd);
 
-
             $totalRemaining = Dashboard::getTotalRemainingBalanceKHR($start_date, $end_date);
             $totalRemaining->remaining_balance_khr_kh =
             $this->convertToKhmerNumber(
@@ -189,8 +185,7 @@ class DashboardController extends BaseController
                 $item['total_amount_usd'] = CommonService::formatDoubleNum($item['total_amount_usd']);
                 return $item;
             });
-            
-            
+
             $officerPaymentSummary = Dashboard::getOfficerPaymentSummaryFilterByDate($start_date,$end_date);
 
             $TotalQuarterlyIncomeExpense = Dashboard::getQuarterlyIncomeExpense($year, $quarter);
@@ -236,7 +231,6 @@ class DashboardController extends BaseController
                     'totalMember' => $totalOfficer,
                     "officerStatisticYears" => $officerStatisticYears,
                     "officerStatisticSeries" => $officerStatisticSeries,
-                    //'totalMemberLatest5Years' => $growthData,
                     'totalExpense' => $totalExpense,
                     'totalIncome' => $totalIncome,
                     'totalRemainingBalance' => $totalRemaining,
@@ -257,10 +251,6 @@ class DashboardController extends BaseController
                         ],
                         "incomes" => Income::getIncomeByDpts(),
                         "departments" => Income::getDptsByIncome(),
-                        // "incomes" => [100, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380],
-                        // "departments" => ['អគ្គលេខាធិការដ្ឋានកែទម្រង់', 'មន្ទីរសេដ្ឋកិច្ចនិងហិរញ្ញវត្ថុ', 'ក្រសួងព្រះបរមរាជវាំង', 'ក្រសួងប្រៃសនីយ', 'ក្រួសួងសុខាភិបាល', 'ក្រសួងអភិវឌ្ឍជនបទ', 'ក្រសួងទូរគមនាគមន៍កម្ពុជា',
-                        //     'ក្រសួងកសិកម្ម', 'ក្រសួងរ៉ែនិងថាមពល', 'ក្រសួងពាពិញ្ជកម្ម'
-                        // ],
                     ],
                     "monthlyTrend" => Dashboard::getMonthlyTrend($start_date, $end_date),
                     "monthlyIncomes" => Income::getMonthlyIncome(),
@@ -283,9 +273,6 @@ class DashboardController extends BaseController
             '5'=>'៥','6'=>'៦','7'=>'៧','8'=>'៨','9'=>'៩'
         ]);
     }
-
-
-
 
     public function getUserDetail(Request $request)
     {
@@ -330,7 +317,6 @@ class DashboardController extends BaseController
             return $this->errorResponse($e->getMessage());
         }
     }
-
 
     public function getIncomeListing(Request $request)
     {

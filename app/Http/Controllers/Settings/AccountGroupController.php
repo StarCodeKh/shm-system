@@ -30,7 +30,7 @@ class AccountGroupController extends Controller
         $this->PERMISSION_ACTION_UPDATE = "update_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_DELETE = "delete_".$this->db_table->getTable();
     }
-  
+
     public function dataFields(){
         $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().($this->db_table)->getTable());
         $str = "";
@@ -73,7 +73,7 @@ class AccountGroupController extends Controller
 
     public function create()
     {
-        
+
     }
 
     public function store(Request $request)

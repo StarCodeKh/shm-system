@@ -6,7 +6,6 @@ use App\Jobs\ProcessPaymentJob;
 use App\Models\OfficerPayable;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
-// use Illuminate\Support\Facades\Bus; // Not available in Laravel 7 for batching
 
 class DispatchPendingPayments extends Command
 {
@@ -22,8 +21,6 @@ class DispatchPendingPayments extends Command
 
         $count = 0;
         OfficerPayable::where('status', 15) // Status pending = 15
-            // ->where('due_date', '>=', $targetMonth->startOfMonth())
-            // ->where('due_date', '<=', $targetMonth->endOfMonth())
             ->chunkById(500, function ($payables) use (&$count) {
                 foreach ($payables as $payable) {
                     ProcessPaymentJob::dispatch($payable)->onQueue('payments');

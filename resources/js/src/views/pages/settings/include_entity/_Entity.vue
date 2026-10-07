@@ -7,7 +7,6 @@
 <script>
 import axios from "@/axios.js"
 import apiConfig from "@/apiConfig.js"
-import { ref } from 'vue';
 
 import DTableList from '@/views/form-builder/DTableList.vue'
 
@@ -22,15 +21,9 @@ export default {
                 offset: 0,
                 dataGrid: "row",
                 actionButton: [
-                    // {
-                    //     icon: "DollarSignIcon",
-                    //     path: "/module/budget-arrangement/budget-ceiling/list",
-                    //     method: "View"
-                    // }
                 ]
             },
             dataHeaders: {
-                // header2: "parent_id",
                 header3: "code",
                 header4: "name_en",
                 header5: "name_kh",
@@ -57,12 +50,6 @@ export default {
                     required: true,
                     options: []
                 },
-                // {
-                //     name: "parent_id",
-                //     type: "select",
-                //     required: false,
-                //     options: []
-                // },
                 {
                     name: "name_en",
                     type: "text",
@@ -129,7 +116,6 @@ export default {
                         }
                         this.$vs.loading.close();
                     }).catch((error) => {
-                        // reject(error)
 this.$vs.notify({
                     title: 'Message',
                     text: 'msg.action_failed',

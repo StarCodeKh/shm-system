@@ -54,7 +54,7 @@ class AuditController extends Controller
      */
     public function create()
     {
-        
+
     }
 
     /**

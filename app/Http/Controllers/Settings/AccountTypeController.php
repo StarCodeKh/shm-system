@@ -24,7 +24,6 @@ class AccountTypeController extends Controller
 
     public function __construct()
     {
-        // $this->middleware('auth');
         $this->view_title = $this->path.'.entry_account_type_title';
         $this->db_table = new AccountType;
         $this->lang_path = $this->path;
@@ -73,7 +72,7 @@ class AccountTypeController extends Controller
 
     public function create()
     {
-        
+
     }
 
     public function store(Request $request)
@@ -106,7 +105,7 @@ class AccountTypeController extends Controller
     }
 
     public function show($id)
-    {   
+    {
         $data = array();
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW] == true){
             $query = $this->db_table::find($id);
@@ -195,7 +194,7 @@ class AccountTypeController extends Controller
                 $boolen = false;
                 $message = trans('common.error_msg');
             }
-            
+
         }else{
             $status = 500;
             $boolen = false;

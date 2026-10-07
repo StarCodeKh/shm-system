@@ -14,17 +14,12 @@
 
 <script>
 import axios from "@/axios.js";
-import { ref } from 'vue';
-import apiConfig from "@/apiConfig.js";
 
 export default {
     components: {
-        
+
     },
     props: {
-        // data: {
-        //     required: true,
-        // },
     },
     data() {
         return {
@@ -43,17 +38,15 @@ export default {
             this.modelName = dataTables.model_name;
         },
         selectedFile(event) {
-  	        this.file = event.target.files[0];
-  	    },
+            this.file = event.target.files[0];
+        },
         initUploadFile(){
             this.$vs.loading();
             let formData = new FormData();
             formData.append('file', this.file);
             for(var pair of formData.entries()) {
             }
-            // console.log('uploadTodos', formData);
             return new Promise((resolve, reject) => {
-                // axios.post("/api/v1/file_manager/upload", formData)
                 axios.post(this.api+"/import", formData)
                     .then((response) => {
                         if (response.data.message) {
@@ -91,11 +84,9 @@ export default {
                         this.$vs.loading.close();
                     })
             })
-            // this.$store.dispatch('uploadTodos', formData);
         },
     },
     created() {
-        // console.log("check data form objects", this.data);
     }
 }
 </script>

@@ -17,7 +17,7 @@ class MobileIncentiveController extends Controller
      */
     public function index(Request $request)
     {
-        $input = $request->all();        
+        $input = $request->all();
         $filter = array(
             "offset" => isset($input["offset"]) ? $input["offset"] : config_offset,
             "limit" => isset($input["limit"]) ? $input["limit"] : config_limit,
@@ -113,8 +113,6 @@ class MobileIncentiveController extends Controller
         $table = Incentive::find($id);
         $getIncentiveByBanks = Incentive::getIncentiveByBanks($id);
         $getIncentiveByEntities = Incentive::getIncentiveByEntities($id, 0);
-        // dd($this->num2khtext("1273800000", true));
-        // dd($getIncentiveByEntities);
         $incentiveByBanks = array();
         foreach($getIncentiveByBanks as $getIncentiveByBank){
             $incentiveByBanks[] = array(
@@ -162,14 +160,12 @@ class MobileIncentiveController extends Controller
                 "officers" => $officerData
             );
         }
-        // dd();
         $incentiveInfo = array(
             "id" => $table->id,
             "title" => $table->title,
             "khmer_date" => $table->khmer_date,
             "khmer_day" => $table->khmer_day,
             "khmer_year" => $this->convertToKhmerNumber(date("Y", strtotime($table["issue_date"]))),
-            //"khmer_day1" => $this->convertToKhmerDay(date("D", strtotime($table["issue_date"]))),
             "khmer_month" => $this->convertToKhmerMonth(date("m", strtotime($table["issue_date"]))),
 
             "khmer_current_year" => $this->convertToKhmerNumber(date("Y", strtotime($table["created_at"]))),
@@ -193,8 +189,7 @@ class MobileIncentiveController extends Controller
             "total_incentive" => number_format($table->total_incentive),
             "total_incentive_in_khmer" => $this->convertToKhmerNumber(number_format($table->total_incentive), 0),
             "total_incentive_in_word" => $this->num2khtext($table->total_incentive, true),
-            
-            // "total_tax_in_khmer" => $this->convertToKhmerNumber(number_format($table->total_tax), 0),
+
             "total_return_amount_in_khmer" => $this->convertToKhmerNumber(number_format($table->total_return_amount), 0),
             "total_incentive_after_tax_in_khmer" => $this->convertToKhmerNumber(number_format($table->total_incentive_after_tax), 0),
             "total_reminder_amount_in_khmer" => $this->convertToKhmerNumber(number_format($table->total_reminder_amount), 0),
@@ -239,7 +234,6 @@ class MobileIncentiveController extends Controller
                 "exchange_rate" => $this->convertToKhmerNumber($getIncentiveByBank["exchange_rate"])
             );
         }
-
 
         $entityData = array();
         $total_officer_entity = 0;
@@ -303,7 +297,6 @@ class MobileIncentiveController extends Controller
                 "incentive_after_tax" => $this->convertToKhmerNumber(number_format($officerRaw["incentive_after_tax"], 0)),
             );
         }
-       
 
         $data = array(
             "incentiveByBanks" => $incentiveByBanks,
@@ -376,15 +369,15 @@ class MobileIncentiveController extends Controller
 
     public function num2khtext($complete_char,$enableThousand){
         //function for split uft8 character
-        // function mb_str_split( $string ) { 
-        //     //Split at all position not after the start: ^ 
-        //     //and not before the end: $ 
-        //     return preg_split('/(?<!^)(?!$)/u', $string ); 
-        // }		
+        // function mb_str_split( $string ) {
+        //     //Split at all position not after the start: ^
+        //     //and not before the end: $
+        //     return preg_split('/(?<!^)(?!$)/u', $string );
+        // }
         //remove left zeros
-        $cleanStr = ltrim($complete_char, '0');	
+        $cleanStr = ltrim($complete_char, '0');
         //split number/string to array
-        $num_arr = mb_str_split($cleanStr);	
+        $num_arr = mb_str_split($cleanStr);
         $translated=''; $addThousand=false;
         //string array
         $khNUMTxt = array('','មួយ','ពីរ','បី','បួន','ប្រាំ');
@@ -414,12 +407,11 @@ class MobileIncentiveController extends Controller
         }
         //concatenate number level
         if($value>0 or ($pos==4 and $addThousand and $enableThousand) or $pos==7){
-        $translated .= $khNUMLev[$pos];			
+        $translated .= $khNUMLev[$pos];
         }
         //make addthousand to default value (false)
-        if($pos==4){$addThousand=false;}		
+        if($pos==4){$addThousand=false;}
         }
-        //return the complete number in text
         return $translated;
     }
     /**
@@ -444,7 +436,6 @@ class MobileIncentiveController extends Controller
     {
         $input = $request->all();
         $allowCalTax = $input["allow_cal_tax"];
-        // $input["modified_by"] = Auth::user()->id;
         $dateCreate = date("Y-m-d", strtotime($input["issue_date"]));
         $issueFromDate = date("Y-m-d", strtotime($input["issue_from_date"]));
         $issueToDate = date("Y-m-d", strtotime($input["issue_to_date"]));
@@ -458,7 +449,6 @@ class MobileIncentiveController extends Controller
                 $totalTax += $this->calTaxableSalary($officers[$kk]["incentive"], $allowCalTax);
             }
         }
-        // $input["issue_date"] = $dateCreate;
         $table = Incentive::Where('id', $id)->update(
             [
                 'title' => $input["title"],
@@ -504,16 +494,14 @@ class MobileIncentiveController extends Controller
                 [
                     "incentive_id" => $id,
                     "entity_id" => $i2Entities[$j]["id"]
-                ]  
+                ]
             );
         }
 
         DB::table("incentive_to_officer")->Where("incentive_id", $id)->update(["status" => 4]);
-        // $i2Officers = $input["officerEntities"];
         for($j = 0; $j < sizeof($i2Officers); $j++){
             $officers = $i2Officers[$j]["officers"];
             for($k = 0; $k < sizeof($officers); $k++){
-                // for($k = 0; $k < sizeof($i2Officers); $k++){
                 $bankAccOfficer = '';
                 if($officers[$k]["bank_account_no"] == null){
                     $bankAccOfficer = $officers[$k]["updated_bank_acc"];
@@ -532,23 +520,14 @@ class MobileIncentiveController extends Controller
                         "entity_id" => $officers[$k]["entity_id"],
                         "position" => $officers[$k]["position"],
                         "duty" => $officers[$k]["duty"],
-                        // "identity_card" => $officers[$k]["identity_card"],
-                        // "index" => $officers[$k]["index"],
-                        // "achievement" => $officers[$k]["achievement"],
-                        // "reference_id" => $officers[$k]["reference_id"],
                         "incentive" => $officers[$k]["incentive"],
                         "tax" => $this->calTaxableSalary($officers[$k]["incentive"], $allowCalTax),
-                        // "return_amount" => $officers[$k]["return_amount"],
                         "incentive_after_tax" => (floatval($officers[$k]["incentive"]) - $this->calTaxableSalary($officers[$k]["incentive"], $allowCalTax)),
-                        // "reminder_amount" => $officers[$k]["reminder_amount"],
-                        // "remark" => $officers[$k]["remark"],
                         "issue_from_date" => date("Y-m-d", strtotime($input["issue_from_date"])),
                         "issue_to_date" => date("Y-m-d", strtotime($input["issue_to_date"])),
-                        // "is_notify" => $officers[$k]["is_notify"],
                         "created_by" => Auth::user()->id,
-                    ]  
+                    ]
                 );
-                // }
             }
         }
 

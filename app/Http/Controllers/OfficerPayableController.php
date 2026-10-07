@@ -108,7 +108,7 @@ class OfficerPayableController extends Controller
      */
     public function create()
     {
-        
+
     }
 
      /**
@@ -153,7 +153,7 @@ class OfficerPayableController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {   
+    {
         $data = array();
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW] == true){
             $query = $this->db_table::find($id);
@@ -211,7 +211,7 @@ class OfficerPayableController extends Controller
             $dataFields = $this->dataForm($input);
             $table = $table=$this->db_table::find($id);
             $table->update($dataFields);
-        
+
             if($table){
                 if (in_array($table["status"], [$status_unpaid, $status_paid_amount, 16, 20, 21])) {
                     // Common values
@@ -277,10 +277,10 @@ class OfficerPayableController extends Controller
         );
         return response()->json($data, $status);
     }
-    
+
    public function insertOfficerPaymentHistory($id)
     {
-        $get_payable_info = $this->db_table::find($id);        
+        $get_payable_info = $this->db_table::find($id);
         $dataFields = $this->dataFormOfficerPayment($get_payable_info, $id);
         return $this->db_table_officer_payment::create($dataFields);
     }
@@ -290,7 +290,7 @@ class OfficerPayableController extends Controller
             $currency_exchange = "0.0002";
         }else {
             $currency_exchange = "4000";
-        } 
+        }
         return [
             'account_id'         => $get_payable_info->account_id,
             'officer_id'         => $get_payable_info->officer_id,
@@ -352,7 +352,7 @@ class OfficerPayableController extends Controller
                 $boolen = false;
                 $message = trans('common.error_msg');
             }
-            
+
         }else{
             $status = 500;
             $boolen = false;
@@ -401,7 +401,7 @@ class OfficerPayableController extends Controller
         $data = array(
                     "officerDetail" => $result["officerDetail"],
                     "payables" => $result["payables"],
-                    "paymentHistories" => $result["paymentHistories"], 
+                    "paymentHistories" => $result["paymentHistories"],
                     "success" => true
                     );
         return response()->json($data, $status);

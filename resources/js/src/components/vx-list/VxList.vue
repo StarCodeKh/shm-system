@@ -20,13 +20,13 @@ export default {
         },
     },
     computed: {
-      rtlSpecificIcon() {
-        let i = this.icon
-        if(this.$vs.rtl) {
-          i.includes("Left") ? i=i.replace("Left", "Right") : i.includes("Right") ? i=i.replace("Right", "Left") : null
+        rtlSpecificIcon() {
+            let i = this.icon
+            if(this.$vs.rtl) {
+                i.includes("Left") ? i=i.replace("Left", "Right") : i.includes("Right") ? i=i.replace("Right", "Left") : null
+            }
+            return i
         }
-        return i
-      }
     }
 }
 </script>

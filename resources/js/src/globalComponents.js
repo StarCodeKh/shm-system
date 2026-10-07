@@ -13,27 +13,26 @@ import DFormTabs from './views/form-builder/DFormTabs.vue'
 // v-select component
 import vSelect from 'vue-select'
 
-// <v-select> draws its clear (x) and open (v) buttons with the app's feather icons
 vSelect.props.components.default = () => ({
-  Deselect: {
-    render: () => h(FeatherIcon, { icon: 'XIcon', svgClasses: 'w-4 h-4 mt-1' }),
-  },
-  OpenIndicator: {
-    render: () => h(FeatherIcon, { icon: 'ChevronDownIcon', svgClasses: 'w-5 h-5' }),
-  },
+    Deselect: {
+        render: () => h(FeatherIcon, { icon: 'XIcon', svgClasses: 'w-4 h-4 mt-1' }),
+    },
+    OpenIndicator: {
+        render: () => h(FeatherIcon, { icon: 'ChevronDownIcon', svgClasses: 'w-5 h-5' }),
+    },
 })
 
 export default {
-  install(app) {
-    app.component(VxTooltip.name, VxTooltip)
-    app.component(VxCard.name, VxCard)
-    app.component(VxList.name, VxList)
-    app.component(VxBreadcrumb.name, VxBreadcrumb)
-    app.component(FeatherIcon.name, FeatherIcon)
-    app.component(DPagination.name, DPagination)
-    app.component(VxInputGroup.name, VxInputGroup)
-    app.component(DFilePicker.name, DFilePicker)
-    app.component(DFormTabs.name, DFormTabs)
-    app.component('v-select', vSelect)
-  },
+    install(app) {
+        app.component(VxTooltip.name, VxTooltip)
+        app.component(VxCard.name, VxCard)
+        app.component(VxList.name, VxList)
+        app.component(VxBreadcrumb.name, VxBreadcrumb)
+        app.component(FeatherIcon.name, FeatherIcon)
+        app.component(DPagination.name, DPagination)
+        app.component(VxInputGroup.name, VxInputGroup)
+        app.component(DFilePicker.name, DFilePicker)
+        app.component(DFormTabs.name, DFormTabs)
+        app.component('v-select', vSelect)
+    },
 }

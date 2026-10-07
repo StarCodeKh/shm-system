@@ -78,7 +78,7 @@ class EntityMemberController extends Controller
 
     public function create()
     {
-        
+
     }
 
     /**

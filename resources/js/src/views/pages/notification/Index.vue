@@ -7,7 +7,6 @@
 <script>
 import axios from "@/axios.js"
 import apiConfig from "@/apiConfig.js"
-import { ref } from 'vue';
 
 import DTableList from '@/views/form-builder/DTableList.vue'
 
@@ -23,12 +22,6 @@ export default {
                 dataGrid: "row",
                 popupFullscreen: true,
                 actionButton: [
-                    // {
-                    //     icon: "ListIcon",
-                    //     path: "/officer/activity",
-                    //     method: "PrivateLink",
-                    //     allow: true, 
-                    // },
                 ],
                 enableImport: true,
             },
@@ -80,7 +73,7 @@ export default {
                     .then((response) => {
                         if (response.data) {
                             this.data = response.data;
-                            this.dataHeaders = response.data.data_fields; 
+                            this.dataHeaders = response.data.data_fields;
                             this.formAttributes = response.data.form_attributes;
                         } else {
                             this.data = this.data;

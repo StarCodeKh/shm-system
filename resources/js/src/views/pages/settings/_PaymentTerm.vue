@@ -112,7 +112,6 @@ export default {
                         }
                         this.$vs.loading.close();
                     }).catch((error) => {
-                        // reject(error)
                         this.$vs.notify({
                             title: 'Message',
                             text: 'msg.action_failed',

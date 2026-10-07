@@ -1,4 +1,4 @@
-<?php 
+<?php
     header("Content-type: application/vnd.ms-excel");
     header("Content-Disposition: attachment;Filename=document_name.xls");
     echo "<html>";
@@ -68,7 +68,7 @@
                             <td></td>
                             <td></td>
                         </tr> ';
-                
+
                     foreach($incentiveByEntity["officers"] as $officer){
                         echo '<tr data="[object Object]">
                                 <td><center></center></td>

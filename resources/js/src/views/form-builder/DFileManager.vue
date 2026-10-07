@@ -52,7 +52,7 @@
                             <div v-if="formAttribute.type == 'hidden' && formAttribute.required" :class="styleClass" class="d-field" dclass="mt-4">
                                 <label>{{ $tField(formAttribute.name) }}</label>
                                 <vs-input type="number" :placeholder="$tField(formAttribute.name)"
-                                    v-model="form.attribute[formAttribute.name]" 
+                                    v-model="form.attribute[formAttribute.name]"
                                     :name="formAttribute.name"
                                     class="mt-2 w-full" />
                             </div>
@@ -95,19 +95,8 @@
                             </div>
 
                             <!-- Form Textarea -->
-                            <!-- <template v-if="formAttribute.type == 'textarea' && formAttribute.required" :class="styleClass"
-                                dclass="mt-4">
-                                <label>{{ $tField(formAttribute.name) }}</label>
-                                <vs-textarea label="Label in Textarea" v-model="form.attribute[formAttribute.name]"
-                                    class="mt-2 w-full" />
-                            </template> -->
 
                             <!-- Form Checkbox -->
-                            <!-- <template v-if="formAttribute.type == 'checkbox' && formAttribute.required" :class="styleClass"
-                                dclass="mt-4">
-                                <label>{{ $tField(formAttribute.name) }}</label>
-                                <vs-checkbox v-model="form.attribute[formAttribute.name]"> {{ $tField(formAttribute.name) }}</vs-checkbox>
-                            </template> -->
 
                             <!-- Form Date -->
                             <div v-if="formAttribute.type == 'date' && formAttribute.required" :class="styleClass" class="d-field" dclass="mt-4">
@@ -201,7 +190,6 @@
 import { can } from "@/acl/access.js";
 import { gridClass } from "@/formGrid.js";
 import axios from "@/axios.js";
-import { ref } from 'vue';
 import apiConfig from "@/apiConfig.js";
 
 const IMAGE_EXT = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp']
@@ -241,11 +229,6 @@ export default {
                 offset: 0,
                 dataGrid: "row",
                 actionButton: [
-                    // {
-                    //     icon: "DollarSignIcon",
-                    //     path: "/module/budget-arrangement/budget-ceiling/list",
-                    //     method: "View"
-                    // }
                 ]
             },
             dataHeaders: {
@@ -400,7 +383,6 @@ export default {
                         this.$vs.loading.close();
                     })
             })
-            // this.$store.dispatch('uploadTodos', formData);
         },
         getDataTable(_search_criteria) {
             this.$vs.loading();
@@ -436,14 +418,13 @@ export default {
                     .then((response) => {
                         if (response.data) {
                             this.dataObj = response.data;
-                            this.dataHeaders = response.data.data_fields; 
+                            this.dataHeaders = response.data.data_fields;
                             this.formAttributes = response.data.form_attributes;
                         } else {
                             this.dataObj = this.data;
                         }
                         this.$vs.loading.close();
                     }).catch((error) => {
-                        // reject(error)
                         this.$vs.loading.close();
                     })
             })
@@ -463,7 +444,7 @@ export default {
                 dataInfo: _search_fields.dataInfo
             }
             this.$emit('clicked', _search_params);
-            
+
             this.$vs.loading();
             let _search_criteria = {
                 sort: "id",
@@ -485,7 +466,6 @@ export default {
             return false;
         },
         calPaginNumber(n) {
-            // alert(n);
             let _newVal = 0;
             if (Number(n) === n && n % 1 === 0) {
                 _newVal = n;
@@ -526,23 +506,6 @@ export default {
                         }
 
                         this.data[_formAttribute].push();
-                        // response["data"].forEach(_formAttribute => {
-                        //     alert("testing");
-                        //     // let _d = {
-                        //     //     [_formAttribute["name"]]: this.form.attribute[_formAttribute["name"]]
-                        //     // }
-                        //     // this.data[_formAttribute].push(_d);
-                        // });
-                        // this.data[_formAttribute] = [
-                        //     {
-                        //         "label": "tet",
-                        //         "value": 1,
-                        //     },
-                        //     {
-                        //         "label": "tet2",
-                        //         "value": 3
-                        //     },
-                        // ];
                     }).catch((error) => {
                         reject(error)
                         this.$vs.notify({
@@ -565,13 +528,10 @@ export default {
                 "dataInfo": this.dataInfo
             };
             this.searchQuery(_search_fields);
-            // console.log("data Form", _params);
-            // this.$emit('searchQuery', _params);
         }
     },
     created() {
         this.styleClass = gridClass(this.rowDisplay);
-        // console.log("check data form objects", this.data);
     },
     watch: {
         current_page: function (val) {

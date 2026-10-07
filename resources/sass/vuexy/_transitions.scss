@@ -4,7 +4,7 @@
 // ///////////////////////////////////////////////
 .zoom-fade-enter-active,
 .zoom-fade-leave-active {
-  transition: transform .35s, opacity .28s ease-in-out;
+    transition: transform .35s, opacity .28s ease-in-out;
 }
 .zoom-fade-enter-from {
     transform: scale(0.97);
@@ -16,13 +16,12 @@
     opacity: 0;
 }
 
-
 // ///////////////////////////////////////////////
 // Fade Regular
 // ///////////////////////////////////////////////
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity .28s ease-in-out;
+    transition: opacity .28s ease-in-out;
 }
 
 .fade-enter-from,
@@ -30,16 +29,15 @@
     opacity: 0;
 }
 
-
 // ///////////////////////////////////////////////
 // Page Slide
 // ///////////////////////////////////////////////
 .slide-fade-enter-active, .slide-fade-leave-active {
-  transition: opacity .35s, transform .4s;
+    transition: opacity .35s, transform .4s;
 }
 .slide-fade-enter-from {
-  opacity: 0;
-  transform: translateX(-30%);
+    opacity: 0;
+    transform: translateX(-30%);
 }
 
 .slide-fade-leave-to{
@@ -47,18 +45,16 @@
     transform: translateX(30%);
 }
 
-
 // ///////////////////////////////////////////////
 // Zoom Out
 // ///////////////////////////////////////////////
 .zoom-out-enter-active, .zoom-out-leave-active {
-  transition: opacity .35s ease-in-out, transform .45s ease-out;
+    transition: opacity .35s ease-in-out, transform .45s ease-out;
 }
 .zoom-out-enter-from, .zoom-out-leave-to {
-  opacity: 0;
-  transform: scale(0);
+    opacity: 0;
+    transform: scale(0);
 }
-
 
 // ///////////////////////////////////////////////
 // Fade Bottom
@@ -66,11 +62,11 @@
 
 // Speed: 1x
 .fade-bottom-enter-active, .fade-bottom-leave-active {
-  transition: opacity .3s, transform .35s;
+    transition: opacity .3s, transform .35s;
 }
 .fade-bottom-enter-from {
-  opacity: 0;
-  transform: translateY(-8%);
+    opacity: 0;
+    transform: translateY(-8%);
 }
 
 .fade-bottom-leave-to{
@@ -80,11 +76,11 @@
 
 // Speed: 2x
 .fade-bottom-2x-enter-active, .fade-bottom-2x-leave-active {
-  transition: opacity .2s, transform .25s;
+    transition: opacity .2s, transform .25s;
 }
 .fade-bottom-2x-enter-from {
-  opacity: 0;
-  transform: translateY(-4%);
+    opacity: 0;
+    transform: translateY(-4%);
 }
 
 .fade-bottom-2x-leave-to{
@@ -92,18 +88,17 @@
     transform: translateY(4%);
 }
 
-
 // ///////////////////////////////////////////////
 // Fade Top
 // ///////////////////////////////////////////////
 
 // Speed: 1x
 .fade-top-enter-active, .fade-top-leave-active {
-  transition: opacity .3s, transform .35s;
+    transition: opacity .3s, transform .35s;
 }
 .fade-top-enter-from {
-  opacity: 0;
-  transform: translateY(8%);
+    opacity: 0;
+    transform: translateY(8%);
 }
 
 .fade-top-leave-to{
@@ -113,11 +108,11 @@
 
 // Speed: 2x
 .fade-top-2x-enter-active, .fade-top-2x-leave-active {
-  transition: opacity .2s, transform .25s;
+    transition: opacity .2s, transform .25s;
 }
 .fade-top-2x-enter-from {
-  opacity: 0;
-  transform: translateY(4%);
+    opacity: 0;
+    transform: translateY(4%);
 }
 
 .fade-top-2x-leave-to{
@@ -125,9 +120,7 @@
     transform: translateY(-4%);
 }
 
-
 ///////////////////////////////////////////////////////////
-// transition-group : list;
 ///////////////////////////////////////////////////////////
 .list-leave-active {
     position: absolute;
@@ -139,15 +132,13 @@
     transform: translateX(30px);
 }
 
-
 ///////////////////////////////////////////////////////////
-// transition-group : list-enter-up;
 ///////////////////////////////////////////////////////////
 .list-enter-up-leave-active {
-  transition: none !important;
+    transition: none !important;
 }
 
 .list-enter-up-enter-from {
-  opacity: 0;
-  transform: translateY(30px);
+    opacity: 0;
+    transform: translateY(30px);
 }

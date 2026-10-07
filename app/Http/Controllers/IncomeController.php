@@ -90,7 +90,7 @@ class IncomeController extends BaseController
      */
     public function create()
     {
-        
+
     }
 
     /**
@@ -135,7 +135,7 @@ class IncomeController extends BaseController
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {   
+    {
         $data = array();
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW] == true){
             $query = $this->db_table::find($id);
@@ -243,7 +243,7 @@ class IncomeController extends BaseController
                 $boolen = false;
                 $message = trans('common.error_msg');
             }
-            
+
         }else{
             $status = 500;
             $boolen = false;
@@ -307,12 +307,9 @@ class IncomeController extends BaseController
             "payment_method_id" => PaymentMethod::getSingleOpt(),
             "account_code" => Account::getAccountCodeList(),
             "status" => Status::getSingleOpt("STATUS")
-            // "officer_id" => isset($filter["data"]["officer_id"])?Officer::getSingleOptById($filter["data"]["officer_id"]):Officer::getSingleOpt(),
-            // "department_id" => Department::getSingleOpt(),
-            // "entity_id" => [],
         );
         $status = 200;
         return response()->json($data, $status);
     }
-    
+
 }

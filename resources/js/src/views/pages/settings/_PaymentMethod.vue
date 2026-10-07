@@ -104,14 +104,13 @@ export default {
                         if (response.data) {
                             this.data = response.data;
                             this.isVisible = response.data.is_display;
-                            this.dataHeaders = response.data.data_fields; 
+                            this.dataHeaders = response.data.data_fields;
                             this.formAttributes = response.data.form_attributes;
                         } else {
                             this.data = this.data;
                         }
                         this.$vs.loading.close();
                     }).catch((error) => {
-                        // reject(error)
 this.$vs.notify({
                     title: 'Message',
                     text: 'msg.action_failed',

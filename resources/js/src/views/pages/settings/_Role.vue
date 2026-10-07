@@ -24,7 +24,6 @@ export default {
                 offset: 0,
                 dataGrid: "row",
                 popupFullscreen: true,
-                // allowDel: false,
                 actionButton: [
                     {
                         icon: "LockIcon",
@@ -36,7 +35,6 @@ export default {
                 ]
             },
             dataHeaders: {
-                // header1: "entity",
                 header1: "name",
             },
             data: {
@@ -47,12 +45,6 @@ export default {
                 total: 3,
             },
             formAttributes: [
-                // {
-                //     name: "entity_id",
-                //     type: "select",
-                //     required: true,
-                //     options: []
-                // },
                 {
                     name: "name",
                     type: "text",

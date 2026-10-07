@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\OfficerIncentive;
-// use App\Exports\OfficerIncentiveExport;
 use App\Imports\OfficerIncentiveImport;
 use App\Models\Officer;
 use App\Models\Settings\Bank;
@@ -101,7 +100,7 @@ class OfficerIncentiveController extends Controller
      */
     public function create()
     {
-        
+
     }
 
      /**
@@ -146,7 +145,7 @@ class OfficerIncentiveController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {   
+    {
         $data = array();
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW] == true){
             $query = $this->db_table::find($id);
@@ -254,7 +253,7 @@ class OfficerIncentiveController extends Controller
                 $boolen = false;
                 $message = trans('common.error_msg');
             }
-            
+
         }else{
             $status = 500;
             $boolen = false;
@@ -285,10 +284,6 @@ class OfficerIncentiveController extends Controller
         $status = 200;
         return response()->json($data, $status);
     }
-
-    // public function export(Request $request){
-    //     return Excel::download(new OfficerIncentiveExport, $this->db_table->getTable().'.xlsx');
-    // }
 
     public function import(Request $request){
         $path = $request->file('file')->getRealPath();

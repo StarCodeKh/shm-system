@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App\Services;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\Fcm\FcmMessage;
@@ -16,7 +16,6 @@ class PushNotification extends Notification
 
     public function via($notifiable)
     {
-        // return ['fcm'];
         return [FcmChannel::class];
     }
 

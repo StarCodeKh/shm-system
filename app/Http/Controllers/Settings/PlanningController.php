@@ -71,64 +71,7 @@ class PlanningController extends Controller
             $data["message"] = trans('common.msg_no_permission_access');
             return response()->json($data, $status);
         }
-        
-        // $input = $request->all();
-        // $dataFields = $this->dataFields();
-        // $filter = array(
-        //     // "offset" => isset($input["offset"]) ? $input["offset"] : config_offset,
-        //     "limit" => isset($input["limit"]) ? $input["limit"] : config_limit,
-        //     "sort" => isset($input["sort"]) ? $input["sort"] : config_sort,
-        //     "order" => isset($input["order"]) ? $input["order"] : config_order
-        // );
-        // $query = $this->db_table::orderByFilter($filter);
-        // $whereClause = $query;
-        // $whereClause->offset(($input["page_number"] - 1) * $filter["limit"]);       
-        // $whereClause->limit($filter["limit"]);
-        // $whereClause->where("status", null)->orWhere("status", 0);
-        // if(isset($input["search_field"])){
-        //     for($i=0 ; $i < count($input["search_field"]); $i++){
-        //         $field = array_key_first($input["search_field"][$i]); //array('key1', 'key2', 'key3');
-        //         if (in_array($field, $dataFields)) {
-        //             $whereClause->orWhere($field, "Like","%".$input["search_field"][$i][$field]."%");
-        //         }
-        //     }
-        // }
-        
-        // $table = collect($whereClause->get());
-        // $years = array(
-        //     [
-        //         "label" => "2020",
-        //         "value" => "2020"
-        //     ],
-        //     [
-        //         "label" => "2021",
-        //         "value" => "2021"
-        //     ],
-        //     [
-        //         "label" => "2022",
-        //         "value" => "2022"
-        //     ],
-        //     [
-        //         "label" => "2023",
-        //         "value" => "2023"
-        //     ],
-        //     [
-        //         "label" => "2024",
-        //         "value" => "2024"
-        //     ],
-        //     [
-        //         "label" => "2025",
-        //         "value" => "2025"
-        //     ]
-        // );
-        // $data = array(
-        //     "data_fields" => $this->dataFields(),
-        //     "year" => $years,
-        //     "data" => $table,
-        //     "limit" => $filter["limit"],
-        //     "total" =>collect($whereClause->count())
-        // );
-        // return response()->json($data);
+
     }
 
     /**
@@ -138,7 +81,7 @@ class PlanningController extends Controller
      */
     public function create()
     {
-        
+
     }
 
     /**

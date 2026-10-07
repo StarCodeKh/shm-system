@@ -86,32 +86,24 @@ export default{
             type: Boolean
         },
         headerBackground: {
-          default: '',
-          type: String
+            default: '',
+            type: String
         },
-        // bodyBackground: {
-        //   default: '',
-        //   type: String
-        // },
-        // headerbackground: {
-        //   default: '',
-        //   type: String
-        // },
         cardBackground: {
-          default: '',
-          type: String
+            default: '',
+            type: String
         },
         contentColor: {
-          default: '',
-          type: String
+            default: '',
+            type: String
         },
         titleColor: {
-          default: '',
-          type: String
+            default: '',
+            type: String
         },
         subtitleColor: {
-          default: '#b8c2cc',
-          type: String
+            default: '#b8c2cc',
+            type: String
         }
     },
     data() {
@@ -139,50 +131,50 @@ export default{
             return obj
         },
         cardClasses() {
-          let str = ''
+            let str = ''
 
-          // Add bg class
-          if(_color.isColor(this.cardBackground)) {
-            str += ` bg-${this.cardBackground}`
-          }
+            // Add bg class
+            if(_color.isColor(this.cardBackground)) {
+                str += ` bg-${this.cardBackground}`
+            }
 
-          // add content color
-          if (_color.isColor(this.contentColor)){
-            str += ` text-${this.contentColor}`
-          }
+            // add content color
+            if (_color.isColor(this.contentColor)){
+                str += ` text-${this.contentColor}`
+            }
 
-          return str.trim()
+            return str.trim()
         },
         titleStyles() {
-          return {
-            color: _color.getColor(this.titleColor)
-          }
+            return {
+                color: _color.getColor(this.titleColor)
+            }
         },
         titleClasses() {
-          let str = ''
+            let str = ''
 
-          // add content color
-          if(_color.isColor(this.titleColor)) {
-            str += ` text-${this.titleColor}`
-          }
+            // add content color
+            if(_color.isColor(this.titleColor)) {
+                str += ` text-${this.titleColor}`
+            }
 
-          return str.trim()
+            return str.trim()
         },
         subtitleStyles() {
-          let obj = {}
-          if (!_color.isColor(this.subtitleColor)) obj.color = _color.getColor(this.subtitleColor)
+            let obj = {}
+            if (!_color.isColor(this.subtitleColor)) obj.color = _color.getColor(this.subtitleColor)
 
-          return obj
+            return obj
         },
         subtitleClasses() {
-          let str = ''
+            let str = ''
 
-          // add content color
-          if(_color.isColor(this.subtitleColor)) {
-            str += ` text-${this.subtitleColor}`
-          }
+            // add content color
+            if(_color.isColor(this.subtitleColor)) {
+                str += ` text-${this.subtitleColor}`
+            }
 
-          return str.trim()
+            return str.trim()
         },
     },
     methods: {

@@ -16,7 +16,6 @@
 <script>
     import axios from "@/axios.js";
     import apiConfig from "@/apiConfig.js";
-    import { ref } from 'vue';
     import DTableList from '@/views/form-builder/DTableList.vue';
     import DModalForm from '@/views/form-builder/DModalForm.vue';
     export default {
@@ -40,13 +39,6 @@
                             allow: true,
                             permission: "notify"
                         },
-                        // {
-                        //     icon: "DollarSignIcon",
-                        //     path: "/",
-                        //     method: "InitPayment",
-                        //     allow: true,
-                        //     permission: "notify"
-                        // },
                     ],
                     enableImport: true,
                     enableDownload: true,
@@ -127,7 +119,7 @@
                         .then((response) => {
                             if (response.data) {
                                 this.data = response.data;
-                                this.dataHeaders = response.data.data_fields; 
+                                this.dataHeaders = response.data.data_fields;
                                 this.formAttributes = response.data.form_attributes;
                             } else {
                                 this.data = this.data;
@@ -165,12 +157,9 @@
                 return false;
             },
             initImport(params){
-                // alert("testing");
             },
             initOpenForm(data) {
-                // alert("Push notification to user");
                 this.$refs.refModalForm.openNewForm(data);
-                // this.$refs.refOpenPrivatePopupForm.showForm(data);
             },
             initPayment(data){
                 this.$refs.refModalPaymentForm.openNewForm(data);

@@ -16,7 +16,6 @@ class EntityImport implements ToModel,WithHeadingRow
     */
     public function model(array $row): \Illuminate\Database\Eloquent\Model|array|null
     {
-        // dd($row);
         $queryCheck = Entity::where("id", (int)$row["id"])->first();
         if(!$queryCheck){
             Entity::insert([

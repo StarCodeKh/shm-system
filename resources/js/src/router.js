@@ -31,14 +31,6 @@ const router = createRouter({
                             rule: 'editor',
                         }
                     },
-                    // {
-                    //     path: '/dashboard',
-                    //     name: 'dashboard-ecommerce',
-                    //     component: () => import('./views/DashboardECommerce.vue'),
-                    //     meta: {
-                    //         rule: 'admin'
-                    //     }
-                    // },
                 // =============================================================================
                 // User
                 // =============================================================================
@@ -130,7 +122,7 @@ const router = createRouter({
                 // =============================================================================
                 // Report
                 // =============================================================================
-                {           
+                {
                     path: 'report',
                     name: 'Report',
                     component: () => import('@/views/pages/reports/Index.vue'),
@@ -145,34 +137,6 @@ const router = createRouter({
                     }
                 },
 
-                // {           
-                //     path: 'report/income',
-                //     name: 'ReportIncome',
-                //     component: () => import('@/views/pages/modules/budget-monitoring/income-implementing-result/Index.vue'),//import('@/views/pages/reports/income/Index.vue'),
-                //     meta: {
-                //         pageTitle: 'របាយការណ៍ចំណូល',
-                //         breadcrumb: [
-                //             { title: 'ទំព័រដើម', url: '/' },
-                //             { title: 'គ្រប់គ្រងរបាយការណ៍', url: '/report' },
-                //             { title: 'របាយការណ៍ចំណូល', active: true },
-                //         ],
-                //         rule: 'editor'
-                //     }
-                // }
-                // , {           
-                //         path: 'report/pip',
-                //         name: 'ReportPIP',
-                //         component: () => import('@/views/pages/reports/pip/Index.vue'),
-                //         meta: {
-                //             pageTitle: 'របាយការណ៍គម្រោងវិនិយោគ',
-                //             breadcrumb: [
-                //                 { title: 'ទំព័រដើម', url: '/' },
-                //                 { title: 'គ្រប់គ្រងរបាយការណ៍', url: '/report' },
-                //                 { title: 'របាយការណ៍គម្រោងវិនិយោគ', active: true },
-                //             ],
-                //             rule: 'editor'
-                //         }
-                //  },
                 {
                     path: '/nofication',
                     name: 'nofication',
@@ -218,34 +182,6 @@ const router = createRouter({
                         rule: 'editor'
                     },
                 },
-                // {
-                //     path: '/officer/form',
-                //     name: 'data-officer-form',
-                //     component: () => import('@/views/pages/officers/form/UserSettings.vue'),
-                //     meta: {
-                //         breadcrumb: [
-                //             { title: 'ទំព័រដើម', url: '/' },
-                //             { title: 'បញ្ជីសមាជិកបើកប្រាក់ឧបត្ថម្ភ', url: '/officer' },
-                //             { title: 'ទម្រង់បង្កើត', active: true },
-                //         ],
-                //         pageTitle: 'រាយនាមមន្ត្រី',
-                //         rule: 'editor'
-                //     },
-                // },
-                // {
-                //     path: '/officer/edit/:id',
-                //     name: 'data-officer-edit',
-                //     component: () => import('@/views/pages/officers/form/UserSettings.vue'),
-                //     meta: {
-                //         breadcrumb: [
-                //             { title: 'ទំព័រដើម', url: '/' },
-                //             { title: 'បញ្ជីសមាជិកបើកប្រាក់ឧបត្ថម្ភ', url: '/officer' },
-                //             { title: 'ពត៌មានលម្អិត', active: true },
-                //         ],
-                //         pageTitle: 'រាយនាមមន្ត្រី',
-                //         rule: 'editor'
-                //     },
-                // },
                 {
                     path: '/officer/activity/:id',
                     name: 'data-officer-activity',
@@ -263,7 +199,6 @@ const router = createRouter({
                 {
                     path: '/incentive',
                     name: 'data-incentive-list',
-                    // component: () => import('@/views/pages/incentives/data-list/list-view/DataListListView.vue'),
                     component: () => import('@/views/pages/officers/tabs/_TabIncentive.vue'),
                     meta: {
                         breadcrumb: [
@@ -278,7 +213,6 @@ const router = createRouter({
                 {
                     path: '/request',
                     name: 'data-request',
-                    // component: () => import('@/views/pages/incentives/data-list/list-view/DataListListView.vue'),
                     component: () => import('@/views/pages/officers/tabs/_TabRequest.vue'),
                     meta: {
                         breadcrumb: [
@@ -384,13 +318,13 @@ const router = createRouter({
                 // =============================================================================
                 // Records are added and edited in the side panel of the list
                 { path: '/setup/department/form', redirect: '/setup/department' },
-                
+
                 // Records are added and edited in the side panel of the list
                 { path: '/setup/circular/form', redirect: '/setup/circular' },
-                
+
                 // Records are added and edited in the side panel of the list
                 { path: '/setup/entity/form', redirect: '/setup/entity' },
-                
+
                 // Records are added and edited in the side panel of the list
                 { path: '/setup/role/form', redirect: '/setup/role' },
                 // Records are added and edited in the side panel of the list
@@ -447,7 +381,7 @@ const router = createRouter({
 
             ],
         },
-        
+
          // =============================================================================
         // FULL PAGE LAYOUTS
         // =============================================================================
@@ -514,13 +448,13 @@ const router = createRouter({
 })
 
 router.afterEach(() => {
-  // Remove initial loading
-  const appLoading = document.getElementById('loading-bg')
-    if (appLoading) {
-        // Fade out, then take it out of the page
-        appLoading.classList.add("is-hidden");
-        setTimeout(() => appLoading.remove(), 400);
-    }
+    // Remove initial loading
+    const appLoading = document.getElementById('loading-bg')
+        if (appLoading) {
+            // Fade out, then take it out of the page
+            appLoading.classList.add("is-hidden");
+            setTimeout(() => appLoading.remove(), 400);
+        }
 })
 
 router.beforeEach((to, from, next) => {

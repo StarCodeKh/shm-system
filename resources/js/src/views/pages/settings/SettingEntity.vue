@@ -1,6 +1,5 @@
 <template>
     <div class="mt-5">
-        <!-- <h6 class="mb-3"> {{ $t("setting_department") }} </h6> -->
         <vs-tabs position="top" alignment="center" class="mt-8">
 
             <vs-tab v-if="tab_secretary" icon-pack="feather" icon="icon-users" :label="$t('setting_secretary')">
@@ -19,13 +18,9 @@
                 <position></position>
             </vs-tab>
 
-            <!-- <vs-tab :label="$t('setting_entity_officer')">
-                <entity-officer></entity-officer>
-            </vs-tab> -->
         </vs-tabs>
     </div>
 </template>
-
 
 <script>
 import Department from '@/views/pages/settings/include_entity/_Department.vue';

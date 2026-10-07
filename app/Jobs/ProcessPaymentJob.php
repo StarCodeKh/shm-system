@@ -52,7 +52,7 @@ class ProcessPaymentJob implements ShouldQueue
         // Ensure the payable is still pending and not being processed by another job
         DB::transaction(function () {
             $payable = OfficerPayable::where('id', $this->payable->id)
-                                ->where('status', 15) // Check Unpaid Status 
+                                ->where('status', 15) // Check Unpaid Status
                                 ->lockForUpdate()
                                 ->first();
 
@@ -74,7 +74,6 @@ class ProcessPaymentJob implements ShouldQueue
                 DB::transaction(function () use ($payable, $transactionId) {
                     $payable->update([
                         'status' => 'paid', // Status = 19 means paid successfully
-                        // 'payment_gateway_id' => $transactionId,
                     ]);
 
                     OfficerPayment::create([
@@ -93,7 +92,6 @@ class ProcessPaymentJob implements ShouldQueue
                         'created_by' => $payable->created_by,
                         'modified_by' => $payable->modified_by,
                         'status' => 'paid', // Status = 19 means paid successfully
-                        // 'transaction_id' => $transactionId,
                     ]);
 
                     // Increment executed_num on the associated OfficerPaymentRecurring record
@@ -108,7 +106,6 @@ class ProcessPaymentJob implements ShouldQueue
                 DB::transaction(function () use ($payable, $transactionId) {
                     $payable->update([
                         'status' => 24, // Status = 24 means error status
-                        // 'payment_gateway_id' => $transactionId, // Store gateway ID even for failures
                     ]);
 
                     OfficerPayment::create([
@@ -127,7 +124,6 @@ class ProcessPaymentJob implements ShouldQueue
                         'modified_by' => $payable->modified_by,
                         'note' => 'Payment failed for ' . $payable->description,
                         'status' => 24, // Status = 24 means error status
-                        // 'transaction_id' => $transactionId,
                     ]);
                 });
 

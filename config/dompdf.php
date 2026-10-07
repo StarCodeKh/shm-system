@@ -148,7 +148,6 @@ return array(
          * If pdflib present in web server and auto or selected explicitely above,
          * a real license code must exist!
          */
-        //"DOMPDF_PDFLIB_LICENSE" => "your license key here",
 
         /**
          * html target media view which should be rendered into pdf.
@@ -279,6 +278,5 @@ return array(
          */
         "enable_html5_parser" => true,
     ),
-
 
 );

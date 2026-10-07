@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Laravel\Passport\Passport;
 use OTPService;
 use App\User;
-use App\Models\Mobile\OTP;
 use App\Models\Mobile\UserDevice;
 
 class AuthController extends Controller
@@ -25,11 +24,6 @@ class AuthController extends Controller
         if (!\CommonService::can('create_users')) {
             return response()->json(['success' => false, 'message' => __('common.msg_no_permission_access')], 403);
         }
-        // $request->validate([
-        //     'name' => 'required|string',
-        //     'email' => 'required|string|email|unique:users',
-        //     'password' => 'required|string|confirmed'
-        // ]);
         $user = new User([
             'fullname' => $request->fullname,
             'username' => $request->username,
@@ -67,17 +61,6 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // $request->validate([
-        //     'email' => 'required|string|email',
-        //     'password' => 'required|string',
-        //     'remember_me' => 'boolean'
-        // ]);
-    
-        // $validatedData = $request->validate([
-        //     'email' => 'required|string|email',
-        //     'password' => 'required|string',
-        //     'remember_me' => 'boolean'
-        // ]);
 
         $credentials = request(['email', 'password']);
         if(!Auth::attempt($credentials))
@@ -93,7 +76,7 @@ class AuthController extends Controller
                 $tokenResult->token->expires_at
             )->toDateTimeString(),
             'userData' => $request->user(),
-            
+
         ]);
     }
 
@@ -104,7 +87,6 @@ class AuthController extends Controller
                             'username' => $input["username"],
                             'password' => $input['password']
                         );
-        // $credentials = request(['username', 'password']);
         if(!Auth::attempt($credentials))
             return response()->json([
                 'message' => __('common.unauthorized')
@@ -179,7 +161,7 @@ class AuthController extends Controller
                 "data" => $data
             ]);
         }else{
-            $data = array(        
+            $data = array(
                 "success" => false,
                 "message" => __('common.otp_invalid')
             );
@@ -221,7 +203,7 @@ class AuthController extends Controller
                 "message" => __('common.account_exists')
             );
         }
-        
+
         return response()->json([
             "data" => $data
         ], $status);
@@ -231,8 +213,6 @@ class AuthController extends Controller
         $data = array();
         $userDevice = array(
             "user_id" => $userId,
-            // "telephone" => $request["telephone"],
-            // "optCode" => $request["optCode"],
             "device_type" => $request["device_type"],
             "device_token" => $request["device_token"]
         );
@@ -258,7 +238,7 @@ class AuthController extends Controller
                 "message" => __('common.account_exists')
             );
         }
-        
+
         return response()->json([
             "data" => $data
         ], $status);

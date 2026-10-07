@@ -66,9 +66,6 @@ class IncentiveController extends Controller
     {
         $input = $request->all();
         $allowCalTax = $input["allow_cal_tax"];
-        // $dateCreate = date("Y-m-d", strtotime($input["issue_date"]));
-        // $issueFromDate = date("Y-m-d", strtotime($input["issue_from_date"]));
-        // $issueToDate = date("Y-m-d", strtotime($input["issue_to_date"]));
         $numMonth = CommonService::GetNumberOfMonth($input["issue_from_date"], $input["issue_to_date"]);
         $dateCreate = date("Y-m-d", strtotime($input["issue_date"]));
         $issueFromDate = date("Y-m-d", strtotime($input["issue_from_date"]));
@@ -78,7 +75,6 @@ class IncentiveController extends Controller
         $totalTax = 0;
         $totalRemind = 0;
         $i2Officers = $input["officerEntities"];
-        // dd($officerEntities);
         for($jj = 0; $jj < sizeof($i2Officers); $jj++){
             $officers = $i2Officers[$jj]["officers"];
             for($kk = 0; $kk < sizeof($officers); $kk++){
@@ -135,16 +131,13 @@ class IncentiveController extends Controller
                 [
                     "incentive_id" => $insertGetId,
                     "entity_id" => $i2Entities[$j]["id"]
-                ]  
+                ]
             );
         }
 
-        // $i2Officers = $input["officerEntities"];
         for($j = 0; $j < sizeof($i2Officers); $j++){
             $officers = $i2Officers[$j]["officers"];
             for($k = 0; $k < sizeof($officers); $k++){
-                // for($k = 0; $k < sizeof($i2Officers); $k++){
-                // if(){
                     $bankAccOfficer = '';
                     if($officers[$k]["updated_bank_acc"] != null){
                         $bankAccOfficer = $officers[$k]["updated_bank_acc"];
@@ -175,21 +168,14 @@ class IncentiveController extends Controller
                             "entity_id" => $officers[$k]["entity_id"],
                             "position" => $officers[$k]["position"],
                             "duty" => $officers[$k]["duty"],
-                            // "identity_card" => $officers[$k]["identity_card"],
-                            // "index" => $officers[$k]["index"],
-                            // "achievement" => $officers[$k]["achievement"],
-                            // "reference_id" => $officers[$k]["reference_id"],
                             "incentive" => $totalOfficerIncentive,
                             "tax" => $taxByOfficer,
-                            // "return_amount" => $officers[$k]["return_amount"],
                             "incentive_after_tax" => (floatval(($officers[$k]["incentive"] * $numMonth)) - $this->calTaxableSalary(($officers[$k]["incentive"] * $numMonth), $allowCalTax)),
                             "reminder_amount" => $totalRemindByOfficer,
-                            // "remark" => $officers[$k]["remark"],
                             "issue_from_date" => date("Y-m-d", strtotime($input["issue_from_date"])),
                             "issue_to_date" => date("Y-m-d", strtotime($input["issue_to_date"])),
-                            // "is_notify" => $officers[$k]["is_notify"],
                             "created_by" => Auth::user()->id,
-                        ]  
+                        ]
                     );
 
                     if($officers[$k]["user_id"] != null){
@@ -206,7 +192,6 @@ class IncentiveController extends Controller
                             ]
                         );
                     }
-                // }
             }
         }
 
@@ -226,7 +211,6 @@ class IncentiveController extends Controller
         );
         return response()->json($data, $status);
     }
-
 
     public function calTaxableSalary($incentive, $allowCalTax){
         $taxableSalaries = TaxableSalary::get();
@@ -276,32 +260,8 @@ class IncentiveController extends Controller
      */
     public function show($id)
     {
-        // $incentive = 2000001;
-        // $taxToPay = 0;
-        // switch ($incentive) {
-        //     case ($incentive >= 0 && $incentive <= 1300000):
-        //         $taxToPay = ((floatval($incentive) / 100) * 0);
-        //     break;
-        //     case ($incentive >= 1300001 && $incentive <= 2000000):
-        //         $taxToPay = (((floatval($incentive) / 100) * 5) - 60000);
-        //     break;
-        //     case ($incentive >= 2000001 && $incentive <= 8500000):
-        //         ($taxToPay = ((floatval($incentive) / 100) * 10) - 160000);
-        //     break;
-        //     case ($incentive >= 8500001 && $incentive <= 12500000):
-        //         $taxToPay = (((floatval($incentive) / 100) * 15) - 585000);
-        //     break;
-        //     case ($incentive >= 12500001):
-        //         $taxToPay = (((floatval($incentive) / 100) * 20) - 1210000);
-        //     break;
-        //     // default:
-        //     //     # code...
-        //     //     break;
-        // }
 
-        // dd($taxToPay);
         $data = $this->getFormIncentive($id);
-        // $data = Incentive::getIncentiveData(32);
         return response()->json($data);
     }
 
@@ -309,8 +269,6 @@ class IncentiveController extends Controller
         $table = Incentive::find($id);
         $getIncentiveByBanks = Incentive::getIncentiveByBanks($id);
         $getIncentiveByEntities = Incentive::getIncentiveByEntities($id, 0);
-        // dd($this->num2khtext("1273800000", true));
-        // dd($getIncentiveByEntities);
         $incentiveByBanks = array();
         foreach($getIncentiveByBanks as $getIncentiveByBank){
             $incentiveByBanks[] = array(
@@ -367,7 +325,6 @@ class IncentiveController extends Controller
             "khmer_date" => $table->khmer_date,
             "khmer_day" => $table->khmer_day,
             "khmer_year" => $this->convertToKhmerNumber(date("Y", strtotime($table["issue_from_date"]))),
-            //"khmer_day1" => $this->convertToKhmerDay(date("D", strtotime($table["issue_date"]))),
             "count_month" => CommonService::GetNumberOfMonth($table["issue_from_date"], $table["issue_to_date"]),
             "khmer_month" => $this->convertToKhmerMonth(date("m", strtotime($table["issue_from_date"]))),
             "khmer_from_month" => $this->convertToKhmerMonth(date("m", strtotime($table["issue_from_date"] . " +1 days"))),
@@ -393,7 +350,7 @@ class IncentiveController extends Controller
             "total_incentive" => number_format($table->total_incentive),
             "total_incentive_in_khmer" => $this->convertToKhmerNumber(number_format($table->total_incentive), 0),
             "total_incentive_in_word" => $this->num2khtext($table->total_incentive, true),
-            
+
             "total_incentive_with_reminder_in_khmer" => $this->convertToKhmerNumber(number_format(($table->total_reminder + $table->total_incentive)), 0),
             "total_incentive_with_reminder_in_word" => $this->num2khtext($table->total_reminder + $table->total_incentive, true),
             "total_return_amount_in_khmer" => $this->convertToKhmerNumber(number_format($table->total_return_amount), 0),
@@ -442,7 +399,6 @@ class IncentiveController extends Controller
             $k++;
         }
 
-
         $entityData = array();
         $total_officer_entity = 0;
         $sum_incentive_after_tax = 0;
@@ -450,9 +406,9 @@ class IncentiveController extends Controller
         foreach($getIncentiveByEntities as $getIncentiveByEntity){
             $officerData = array();
             $total_officer_entity += count($getIncentiveByEntity["officers"]);
-            
+
             foreach($getIncentiveByEntity["officers"] as $officer){
-            
+
                 $officerData[] = array(
                     "no" => $this->convertToKhmerNumber($officer["no"]),
                     "identity_no" => $officer["identity_no"],
@@ -509,7 +465,7 @@ class IncentiveController extends Controller
                 "incentive_after_tax" => $this->convertToKhmerNumber(number_format($officerRaw["incentive_after_tax"], 0)),
             );
         }
-       
+
         $data = array(
             "incentiveByBanks" => $incentiveByBanks,
             "incentiveByEntities" => $entityData,
@@ -581,15 +537,15 @@ class IncentiveController extends Controller
 
     public function num2khtext($complete_char,$enableThousand){
         //function for split uft8 character
-        // function mb_str_split( $string ) { 
-        //     //Split at all position not after the start: ^ 
-        //     //and not before the end: $ 
-        //     return preg_split('/(?<!^)(?!$)/u', $string ); 
-        // }		
+        // function mb_str_split( $string ) {
+        //     //Split at all position not after the start: ^
+        //     //and not before the end: $
+        //     return preg_split('/(?<!^)(?!$)/u', $string );
+        // }
         //remove left zeros
-        $cleanStr = ltrim($complete_char, '0');	
+        $cleanStr = ltrim($complete_char, '0');
         //split number/string to array
-        $num_arr = mb_str_split($cleanStr);	
+        $num_arr = mb_str_split($cleanStr);
         $translated=''; $addThousand=false;
         //string array
         $khNUMTxt = array('','មួយ','ពីរ','បី','បួន','ប្រាំ');
@@ -619,12 +575,11 @@ class IncentiveController extends Controller
         }
         //concatenate number level
         if($value>0 or ($pos==4 and $addThousand and $enableThousand) or $pos==7){
-        $translated .= $khNUMLev[$pos];			
+        $translated .= $khNUMLev[$pos];
         }
         //make addthousand to default value (false)
-        if($pos==4){$addThousand=false;}		
+        if($pos==4){$addThousand=false;}
         }
-        //return the complete number in text
         return $translated;
     }
     /**
@@ -649,9 +604,7 @@ class IncentiveController extends Controller
     {
         $input = $request->all();
         $allowCalTax = $input["allow_cal_tax"];
-        // dd($input);
         $numMonth = CommonService::GetNumberOfMonth($input["issue_from_date"], $input["issue_to_date"]);
-        // $input["modified_by"] = Auth::user()->id;
         $dateCreate = date("Y-m-d", strtotime($input["issue_date"]));
         $issueFromDate = date("Y-m-d", strtotime($input["issue_from_date"]));
         $issueToDate = date("Y-m-d", strtotime($input["issue_to_date"]));
@@ -669,7 +622,6 @@ class IncentiveController extends Controller
                 }
             }
         }
-        // $input["issue_date"] = $dateCreate;
         $table = Incentive::Where('id', $id)->update(
             [
                 'title' => $input["title"],
@@ -717,29 +669,20 @@ class IncentiveController extends Controller
                 [
                     "incentive_id" => $id,
                     "entity_id" => $i2Entities[$j]["id"]
-                ]  
+                ]
             );
         }
 
         DB::table("incentive_to_officer")->Where("incentive_id", $id)->update(["status" => 4]);
-        // $i2Officers = $input["officerEntities"];
         for($j = 0; $j < sizeof($i2Officers); $j++){
             $officers = $i2Officers[$j]["officers"];
             for($k = 0; $k < sizeof($officers); $k++){
-                // for($k = 0; $k < sizeof($i2Officers); $k++){
                 $bankAccOfficer = '';
                 if($officers[$k]["updated_bank_acc"] != null){
                     $bankAccOfficer = $officers[$k]["updated_bank_acc"];
                 }else{
                     $bankAccOfficer = $officers[$k]["bank_account_no"];
                 }
-                // $taxByOfficer = 0;
-                // $incentiveAfterTaxByOfficer = 0;
-                // if($officers[$k]["incentive"] > 0){
-                //     $taxByOfficer = $this->calTaxableSalary(floatval($officers[$k]["incentive"] * $numMonth));
-                //     $incentiveAfterTaxByOfficer = (floatval($officers[$k]["incentive"] * $numMonth) - $this->calTaxableSalary(($officers[$k]["incentive"] * $numMonth)));
-                // }else{
-                // }
                 $totalOfficerIncentive = 0;
                 $taxByOfficer = 0;
                 $incentiveAfterTaxByOfficer = 0;
@@ -756,30 +699,22 @@ class IncentiveController extends Controller
                         "incentive_id" => $id,
                         "officer_id" => $officers[$k]["id"],
                         "bank_id" => $officers[$k]["bank_id"]?$officers[$k]["bank_id"]:0,
-                        "bank" => $officers[$k]["bank_name"],     
+                        "bank" => $officers[$k]["bank_name"],
                         "bank_account_no" => $bankAccOfficer,
                         "bank_code" => $officers[$k]["bank_code"],
                         "entity" => $officers[$k]["entity"],
                         "entity_id" => $officers[$k]["entity_id"],
                         "position" => $officers[$k]["position"],
                         "duty" => $officers[$k]["duty"],
-                        // "identity_card" => $officers[$k]["identity_card"],
-                        // "index" => $officers[$k]["index"],
-                        // "achievement" => $officers[$k]["achievement"],
-                        // "reference_id" => $officers[$k]["reference_id"],
                         "incentive" => $totalOfficerIncentive,
                         "tax" => $taxByOfficer,
-                        // "return_amount" => $officers[$k]["return_amount"],
                         "incentive_after_tax" => (floatval($totalOfficerIncentive * $numMonth) - floatval($taxByOfficer)),
                         "reminder_amount" => $totalRemindByOfficer,
-                        // "remark" => $officers[$k]["remark"],
                         "issue_from_date" => date("Y-m-d", strtotime($input["issue_from_date"])),
                         "issue_to_date" => date("Y-m-d", strtotime($input["issue_to_date"])),
-                        // "is_notify" => $officers[$k]["is_notify"],
                         "created_by" => Auth::user()->id,
-                    ]  
+                    ]
                 );
-                // }
             }
         }
 

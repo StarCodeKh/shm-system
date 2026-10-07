@@ -1,65 +1,65 @@
 /*=========================================================================================
-  File Name: _fonts.scss
-  Description: Every font the app uses, self-hosted (no Google Fonts / CDN).
-  Font files live in resources/assets/fonts and are copied to public/fonts by webpack.mix.js.
+    File Name: _fonts.scss
+    Description: Every font the app uses, self-hosted (no Google Fonts / CDN).
+    Font files live in resources/assets/fonts and are copied to public/fonts by webpack.mix.js.
 
-  Use the CSS variables below instead of font names, e.g. `font-family: var(--font-base);`.
-  To change a font, edit its variable here, or at runtime:
-    document.documentElement.style.setProperty('--font-base', "'Khmer OS Battambang', sans-serif")
+    Use the CSS variables below instead of font names, e.g. `font-family: var(--font-base);`.
+    To change a font, edit its variable here, or at runtime:
+        document.documentElement.style.setProperty('--font-base', "'Khmer OS Battambang', sans-serif")
 ==========================================================================================*/
 
 // Kantumruy Pro — main UI font. Variable fonts: one file covers weights 100–700.
 @font-face {
-  font-family: 'Kantumruy Pro';
-  src: url('/fonts/KantumruyPro.woff2') format('woff2');
-  font-weight: 100 700;
-  font-style: normal;
-  font-display: swap;
+    font-family: 'Kantumruy Pro';
+    src: url('/fonts/KantumruyPro.woff2') format('woff2');
+    font-weight: 100 700;
+    font-style: normal;
+    font-display: swap;
 }
 @font-face {
-  font-family: 'Kantumruy Pro';
-  src: url('/fonts/KantumruyPro-Italic.woff2') format('woff2');
-  font-weight: 100 700;
-  font-style: italic;
-  font-display: swap;
+    font-family: 'Kantumruy Pro';
+    src: url('/fonts/KantumruyPro-Italic.woff2') format('woff2');
+    font-weight: 100 700;
+    font-style: italic;
+    font-display: swap;
 }
 
 // Khmer OS Battambang — printed letters and documents.
 @font-face {
-  font-family: 'Khmer OS Battambang';
-  src: url('/fonts/KhmerOSBattambang.woff2') format('woff2');
-  font-display: swap;
+    font-family: 'Khmer OS Battambang';
+    src: url('/fonts/KhmerOSBattambang.woff2') format('woff2');
+    font-display: swap;
 }
 
 // Official MEF fonts — for letters that need them.
 @font-face {
-  font-family: 'Khmer MEF1';
-  src: url('/fonts/KhmerMEF1.woff2') format('woff2');
-  font-display: swap;
+    font-family: 'Khmer MEF1';
+    src: url('/fonts/KhmerMEF1.woff2') format('woff2');
+    font-display: swap;
 }
 @font-face {
-  font-family: 'Khmer MEF2';
-  src: url('/fonts/KhmerMEF2.woff2') format('woff2');
-  font-display: swap;
+    font-family: 'Khmer MEF2';
+    src: url('/fonts/KhmerMEF2.woff2') format('woff2');
+    font-display: swap;
 }
 @font-face {
-  font-family: 'FK1';
-  src: url('/fonts/FK1.woff2') format('woff2');
-  font-display: swap;
+    font-family: 'FK1';
+    src: url('/fonts/FK1.woff2') format('woff2');
+    font-display: swap;
 }
 @font-face {
-  font-family: 'FK2';
-  src: url('/fonts/FK2.woff2') format('woff2');
-  font-display: swap;
+    font-family: 'FK2';
+    src: url('/fonts/FK2.woff2') format('woff2');
+    font-display: swap;
 }
 
 :root {
-  --font-base: 'Kantumruy Pro', 'Khmer OS Battambang', sans-serif;
-  --font-heading: var(--font-base);
-  --font-document: 'Khmer OS Battambang', serif;
-  --font-mef1: 'Khmer MEF1', var(--font-document);
-  --font-mef2: 'Khmer MEF2', var(--font-document);
-  --font-fk1: 'FK1', var(--font-document);
-  --font-fk2: 'FK2', var(--font-document);
-  --font-mono: Menlo, Monaco, Consolas, 'Courier New', monospace;
+    --font-base: 'Kantumruy Pro', 'Khmer OS Battambang', sans-serif;
+    --font-heading: var(--font-base);
+    --font-document: 'Khmer OS Battambang', serif;
+    --font-mef1: 'Khmer MEF1', var(--font-document);
+    --font-mef2: 'Khmer MEF2', var(--font-document);
+    --font-fk1: 'FK1', var(--font-document);
+    --font-fk2: 'FK2', var(--font-document);
+    --font-mono: Menlo, Monaco, Consolas, 'Courier New', monospace;
 }

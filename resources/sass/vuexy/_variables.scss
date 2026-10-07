@@ -1,5 +1,4 @@
 
-
 /*========================================================
         SPACING
 =========================================================*/
@@ -7,8 +6,6 @@
 $spacer: 2.2rem;
 $spacer-sm: ($spacer / 2);
 $spacer-lg: ($spacer * 2);
-
-
 
 /*========================================================
         COLORS
@@ -23,16 +20,6 @@ $grey: #b8c2cc;
 $grey-light: #dae1e7;
 $white: #fff;
 $black: #22292f;
-
-// $primary: #28C76F;
-// $success: #28C76F;
-// $danger: #28C76F;
-// $warning: #28C76F;
-// $dark: #28C76F;
-// $grey: #28C76F;
-// $grey-light: #28C76F;
-// $white: #28C76F;
-// $black: #28C76F;
 
 /*========================================================
         TYPOGRAPHY
@@ -56,7 +43,6 @@ $h4-font-size:                $font-size-base * 1.32;
 $h5-font-size:                $font-size-base * 1.14;
 $h6-font-size:                $font-size-base;
 
-
 $line-height-base:        1.625rem !default;
 
 $headings-font-family:    var(--font-heading) !default;
@@ -75,13 +61,11 @@ $line-height-base:            1.45;
 $content-color: #626262;
 $theme-background: #ffffff;
 
-
 /*========================================================
         TYPOGRAPHY
 =========================================================*/
 
 $reduced-sidebar-width: 80px;
-
 
 /*========================================================
         DARK THEME
@@ -99,6 +83,5 @@ $theme-dark-bg: #10163a;
 $theme-dark-secondary-bg: #171e49;
 $theme-dark-text-color: #c2c6dc;
 $theme-dark-heading-color: #ebeefd;
-// $theme-dark-heading-color: #C9CAD2;
 $theme-dark-border-color: #414561;
 $theme-dark-shadow-color: #0C112E;

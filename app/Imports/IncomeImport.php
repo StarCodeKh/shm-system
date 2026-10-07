@@ -35,7 +35,7 @@ class IncomeImport implements ToModel,WithHeadingRow
                         # code...
                         $issue_date = $row["year"]."-".$month."-01";
                         break;
-                    
+
                     case '2':
                         $issue_date = $row["year"]."-".$month."-01";
                         # code...
@@ -84,43 +84,18 @@ class IncomeImport implements ToModel,WithHeadingRow
                         $issue_date = $row["year"]."-01-01";
                         break;
                 }
-                // Income::where("issue_date", $issue_date)->delete();
-                // DB::table("entity as e")->Select("e.name as entity","e.id")->where("code", $row["code"])->first();
                 Income::where("entity", $row["entity"])
                         ->where("entity_id", $entity_id)
-                        ->where("issue_date", $issue_date)->delete(); 
+                        ->where("issue_date", $issue_date)->delete();
                 Income::insert([
-                    // "account_group" => $row["account_group"],
-                    // "account_type" => $row["account_type"],
-                    // "account" => $row["account"],
                     "title" => "របាយការណ៍ចំណូលរង្វាន់លើកទឹកចិត្ត ១% របស់ ".$row["entity"]."",
-                    // "description" => $row["description"],
                     "issue_date" => $issue_date,
-                    // "category" => $row["category"],
-                    // "payment_method" => $row["payment_method"],
                     "amount" => (float)$row["month_".$i.""],
                     "exchange_rate" => '4000',//$row["exchange_rate"],
-                    // "reference" => $row["reference"],
                     "entity" => $row["entity"],
                     "entity_id" => $entity_id,
                     "currency" => "រៀល",
                 ]);
-                // return new Income([
-                //     // "account_group" => $row["account_group"],
-                //     // "account_type" => $row["account_type"],
-                //     // "account" => $row["account"],
-                //     "title" => "របាយការណ៍ចំណូលរង្វាន់លើកទឹកចិត្ត ១% របស់ក្រសួង ស្ថាប័ន ".$row["entity"]."",
-                //     // "description" => $row["description"],
-                //     // "issue_date" => $row["issue_date"],
-                //     // "category" => $row["category"],
-                //     // "payment_method" => $row["payment_method"],
-                //     "amount" => $row["month_".$i.""],
-                //     "exchange_rate" => '4000',//$row["exchange_rate"],
-                //     // "reference" => $row["reference"],
-                //     "entity" => $row["entity"],
-                //     "entity_id" => $entity_id,
-                //     "currency" => "រៀល",
-                // ]);
             }
         }
     }

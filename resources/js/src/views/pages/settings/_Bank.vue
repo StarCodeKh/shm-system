@@ -7,7 +7,6 @@
 <script>
 import axios from "@/axios.js";
 import apiConfig from "@/apiConfig.js";
-import { ref } from 'vue';
 import DTableList from '@/views/form-builder/DTableList.vue';
 
 export default {
@@ -105,7 +104,6 @@ export default {
                         this.isVisible = response.data.is_display;
                         this.$vs.loading.close();
                     }).catch((error) => {
-                        // reject(error)
                         this.$vs.notify({
                             title: 'Message',
                             text: 'msg.action_failed',
@@ -137,7 +135,6 @@ export default {
             return false;
         },
         initImport(params) {
-            // alert("testing");
         }
     },
     created() {

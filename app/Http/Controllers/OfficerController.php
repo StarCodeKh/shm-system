@@ -4,10 +4,8 @@
     use App\Exports\OfficerExport;
     use App\Imports\OfficerImport;
     use App\Models\Officer;
-    use App\Models\OfficerPayable;
     use App\Models\OfficerPaymentRecurring;
     use App\Models\TaxableSalary;
-    use App\Models\Settings\Entity;
     use App\Models\Settings\Department;
     use App\Models\Settings\Position;
     use App\Models\Settings\Title;
@@ -15,12 +13,10 @@
     use App\Models\Settings\Status;
     use App\Models\Settings\PaymentTerm;
     use App\Http\Controllers\BaseController;
-    use Illuminate\Database\Eloquent\Model;
     use Illuminate\Http\Request;
     use App\User;
     use DB;
     use Auth;
-    use DateTime;
     use CommonService;
     use Maatwebsite\Excel\Facades\Excel;
     use Validator;
@@ -61,7 +57,7 @@
          * @return \Illuminate\Http\Response
          */
         public function index(Request $request)
-        {            
+        {
             $data = array();
             if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_LIST]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_LIST] == true){
                 $input = $request->all();
@@ -161,27 +157,7 @@
             $data = array();
             if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_CREATE]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_CREATE] == true){
 
-                // $validator = Validator::make($request->all(), [
-                //     'email' => ['required', 'string', 'email:rfc,dns', 'max:255'], //'required|email',
-                //     'first_name' => 'required',
-                //     'last_name' => 'required',
-                //     'dob' => 'required',
-                // ]);
-                
-                // if ($validator->fails()) {
-                //     $status = 200;
-                //     $boolen = false;
-                //     $message = trans('common.required_field');
-                //     $data = array(
-                //         "success" => $boolen,
-                //         "message" => $message,
-                //         "data" => $validator->errors(),
-                //     );
-                //     return response()->json($data, $status);
-                // }
-                
                 $input = $request->all();
-                // dd($input);
                 $input[] = array("identity_member_no" => rand(100000000,9999999999));
                 $dataFields = $this->dataForm($input);
                 $data["data"] = $this->db_table::create($dataFields);
@@ -228,7 +204,7 @@
          * @return \Illuminate\Http\Response
          */
         public function show($id)
-        {   
+        {
             $data = array();
             $filter = [];
             if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW] == true){
@@ -346,7 +322,7 @@
                     $boolen = false;
                     $message = trans('common.error_msg');
                 }
-                
+
             }else{
                 $status = 500;
                 $boolen = false;
@@ -424,7 +400,7 @@
                 "success" => true,
                 "message" => $message
             );
-            return response()->json($data); 
+            return response()->json($data);
         }
 
         public function getOfficerGroupByEntities(Request $request){
@@ -490,7 +466,7 @@
 
         public function calTaxableSalary($incentive, $allowCalTax){
             $taxableSalaries = TaxableSalary::get();
-            $taxToPay = 0;        
+            $taxToPay = 0;
             if($allowCalTax == 'true'){
                 if($incentive > 0){
                     switch ($incentive) {

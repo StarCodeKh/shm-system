@@ -104,7 +104,7 @@ class OfficerDocumentController extends Controller
      */
     public function create()
     {
-        
+
     }
 
      /**
@@ -125,7 +125,7 @@ class OfficerDocumentController extends Controller
                 $table->update($dataFields);
                 // Status 3 mean this status has been approved so the notification will start notify to users
                 if($dataFields["status"] == 3){// Status approved
-                    $incentiveData = $dataFields;       
+                    $incentiveData = $dataFields;
                     unset($incentiveData['order_level']);
                     $incentiveData['ref_request_id'] = $table->id;
                     $incentiveData['code'] = $table->code;
@@ -154,7 +154,7 @@ class OfficerDocumentController extends Controller
                         $sendPushNotification = PushNotificationService::sendToMultipleDevices($deviceTokens, $title, $body, $data);
                     } // ####End Send Push Notification
                 }
-                
+
                 $status = 200;
                 $boolen = true;
                 $message = trans('common.msg_save_successfully');
@@ -162,7 +162,7 @@ class OfficerDocumentController extends Controller
                 $status = 500;
                 $boolen = false;
                 $message = trans('common.error_msg');
-            }       
+            }
         }else{
             $status = 500;
             $boolen = false;
@@ -183,7 +183,7 @@ class OfficerDocumentController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {   
+    {
         $data = array();
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW] == true){
             $query = $this->db_table::find($id);
@@ -242,7 +242,7 @@ class OfficerDocumentController extends Controller
             if($table){
                 // Status 3 mean this status has been approved so the notification will start notify to users
                 if($dataFields["status"] == 3){// Status approved
-                    $incentiveData = $dataFields;       
+                    $incentiveData = $dataFields;
                     unset($incentiveData['order_level']);
                     $incentiveData['ref_request_id'] = $table->id;
                     $incentiveData['code'] = $table->code;
@@ -322,7 +322,7 @@ class OfficerDocumentController extends Controller
                 $boolen = false;
                 $message = trans('common.error_msg');
             }
-            
+
         }else{
             $status = 500;
             $boolen = false;
@@ -338,16 +338,16 @@ class OfficerDocumentController extends Controller
     /** Make Validation */
     public function validateCheck($param) {
         $data = array();
-        $query = $this->db_table::where('code', $param['code'])->first();        
+        $query = $this->db_table::where('code', $param['code'])->first();
         if (!empty($query) ) {
             $status = 200;
             $data = array(
                 "success" => false,
                 "message" =>   $message = trans('common.msg_request_code_exist', ['code' => $param['code']]),
                 "data" => $data,
-            );            
+            );
             return response()->json($data, $status);
         }
     }
-    
+
 }

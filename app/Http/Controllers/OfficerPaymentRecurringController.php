@@ -85,7 +85,7 @@ class OfficerPaymentRecurringController extends Controller
      */
     public function create()
     {
-        
+
     }
 
      /**
@@ -130,7 +130,7 @@ class OfficerPaymentRecurringController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {   
+    {
         $data = array();
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW] == true){
             $query = $this->db_table::find($id);
@@ -224,7 +224,7 @@ class OfficerPaymentRecurringController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    
+
     public function destroy($id)
     {
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_DELETE]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_DELETE] == true){
@@ -239,7 +239,7 @@ class OfficerPaymentRecurringController extends Controller
                 $boolen = false;
                 $message = trans('common.error_msg');
             }
-            
+
         }else{
             $status = 500;
             $boolen = false;
@@ -255,8 +255,8 @@ class OfficerPaymentRecurringController extends Controller
     Public function executePayment(Request $request){
         $data = array();
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_EXECUTE_PAYMENT]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_EXECUTE_PAYMENT] == true){
-            $input = $request->all();            
-            $executePaymentRecurring = OfficerPaymentRecurring::executePayment($input);    
+            $input = $request->all();
+            $executePaymentRecurring = OfficerPaymentRecurring::executePayment($input);
             if($executePaymentRecurring){
                 $status = 200;
                 $boolen = true;
@@ -276,14 +276,13 @@ class OfficerPaymentRecurringController extends Controller
                 "message" => $message
             );
             return response()->json($data, $status);
-        }       
+        }
     }
 
     Public function executePayable(Request $request){
         $data = array();
-        // if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_EXECUTE_PAYMENT]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_EXECUTE_PAYMENT] == true){
-            $input = $request->all();            
-            $executePaymentRecurring = OfficerPaymentRecurring::executePayables($input);    
+            $input = $request->all();
+            $executePaymentRecurring = OfficerPaymentRecurring::executePayables($input);
             if($executePaymentRecurring){
                 $status = 200;
                 $boolen = true;
@@ -294,28 +293,16 @@ class OfficerPaymentRecurringController extends Controller
                 );
                 return response()->json($data, $status);
             }
-        // }else{
-        //     $status = 500;
-        //     $boolen = false;
-        //     $message = trans('common.msg_no_permission_access');
-        //     $data = array(
-        //         "success" => $boolen,
-        //         "message" => $message
-        //     );
-        //     return response()->json($data, $status);
-        // }       
     }
 
-
     /* Start Flow to generate payable process
-        1. 
-    
+        1.
 
     #End Process*/
     Public function executePayableOfficers(Request $request){
         $data = array();
-        $input = $request->all();            
-        $executePaymentRecurring = OfficerPaymentRecurring::executePayableOfficers($input);    
+        $input = $request->all();
+        $executePaymentRecurring = OfficerPaymentRecurring::executePayableOfficers($input);
         if($executePaymentRecurring){
             $status = 200;
             $boolen = true;

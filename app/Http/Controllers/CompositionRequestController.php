@@ -25,7 +25,7 @@ class CompositionRequestController extends Controller
         $this->dbTable = new CompositionRequest;
         $this->langPath = $this->path;
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -75,15 +75,13 @@ class CompositionRequestController extends Controller
         $table = CompositionRequest::create($input);
 
         for($i = 0; $i < sizeof($input["officerRequest"]); $i++){
-            // Officer::where("id", $input["officerRequest"][$i]["from_officer"]["id"])->update(["status" => 0]);
-            // Officer::where("id", $input["officerRequest"][$i]["to_officer"]["id"])->update(["status" => 1]);
             DB::table("incentive_composition_officer")->insert(
                 [
                     "incentive_composition_request_id" => $table->id,
                     "from_officer_id" => $input["officerRequest"][$i]["from_officer"]["id"],
                     "to_officer_id" => $input["officerRequest"][$i]["to_officer"]["id"],
                 ]
-            );  
+            );
         }
 
         if($table){
@@ -118,7 +116,7 @@ class CompositionRequestController extends Controller
                                         ->Join("incentive_officer as io2", "io2.id", "=", "ico.to_officer_id")
                                         ->Where("ico.incentive_composition_request_id", $id)
                                         ->get();
-        
+
         $compositionOfficers = array();
         foreach($incentiveCompositionOfficers as $compositionOfficerInfo){
             $infoFromOfficer = array(
@@ -188,21 +186,17 @@ class CompositionRequestController extends Controller
                     'request_from' => $input["request_from"],
                     'description' => $input["description"],
                     'letter_type' => $input["letter_type"],
-                    // 'status' => $input["status"],
                     'entity' => $input["entity"],
                     'entity_id' => $input["entity_id"],
                     'attach_file' => $input["attach_file"],
                     'request_date' => $input["request_date"],
                     'effective_date' => $input["effective_date"],
                     'modified_by' => Auth::user()->id,
-                    // 'is_approved'=>
-            ]    
+            ]
             );
 
         DB::table("incentive_composition_officer")->where("incentive_composition_request_id", $id)->update(["status" => 4]);
         for($i = 0; $i < sizeof($input["officerRequest"]); $i++){
-            // Officer::where("id", $input["officerRequest"][$i]["from_officer"]["id"])->update(["status" => 0]);
-            // Officer::where("id", $input["officerRequest"][$i]["to_officer"]["id"])->update(["status" => 1]);
             DB::table("incentive_composition_officer")->insert(
                 [
                     "incentive_composition_request_id" => $id,

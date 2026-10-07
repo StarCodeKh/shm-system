@@ -75,7 +75,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        
+
     }
 
     /**
@@ -120,7 +120,7 @@ class RoleController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {   
+    {
         $data = array();
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW] == true){
             $query = $this->db_table::find($id);
@@ -235,7 +235,7 @@ class RoleController extends Controller
                 $boolen = false;
                 $message = trans('common.error_msg');
             }
-            
+
         }else{
             $status = 500;
             $boolen = false;
@@ -248,7 +248,7 @@ class RoleController extends Controller
         return response()->json($data, $status);
     }
 
-    // Set Permission 
+    // Set Permission
     public function setPermission(Request $request){
         if (!CommonService::can('role_permissions')) {
             return response()->json(['success' => false, 'message' => trans('common.msg_no_permission_access')], 403);

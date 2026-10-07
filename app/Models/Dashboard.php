@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 use DB;
 class Dashboard extends Model implements Auditable
 {
-  use \OwenIt\Auditing\Auditable;
-  protected $table = 'account';
-  protected $primaryKey = 'id';
-  protected $fillable = [];
-  protected $guarded = [];
-  public $timestamps = true;
+    use \OwenIt\Auditing\Auditable;
+    protected $table = 'account';
+    protected $primaryKey = 'id';
+    protected $fillable = [];
+    protected $guarded = [];
+    public $timestamps = true;
 
-  public static function getOfficerGrowth()
-    {
-        $query = "
+    public static function getOfficerGrowth()
+        {
+            $query = "
             SELECT 
                 YEAR(register_date) AS year,
                 COUNT(*) AS total_officers,
@@ -32,25 +32,24 @@ class Dashboard extends Model implements Auditable
             ORDER BY YEAR(register_date)
         ";
 
-        return collect(DB::select($query))->map(function ($item) {
-            return [
-                'year' => (int) $item->year,
-                'total_officers' => (int) $item->total_officers,
-                'growth_rate' => (float) $item->growth_rate ?? null,
-            ];
-        });
-    }
-
-   
-    public static function getTotalExpenseKHR($start_date = null, $end_date = null)
-    {
-        // Auto default date handling
-        if (empty($start_date) || empty($end_date)) {
-            $year = date('Y');
-            $start_date = "$year-01-01";
-            $end_date   = "$year-12-31";
+            return collect(DB::select($query))->map(function ($item) {
+                return [
+                    'year' => (int) $item->year,
+                    'total_officers' => (int) $item->total_officers,
+                    'growth_rate' => (float) $item->growth_rate ?? null,
+                ];
+            });
         }
-        $result = DB::select("
+
+        public static function getTotalExpenseKHR($start_date = null, $end_date = null)
+        {
+            // Auto default date handling
+            if (empty($start_date) || empty($end_date)) {
+                $year = date('Y');
+                $start_date = "$year-01-01";
+                $end_date   = "$year-12-31";
+            }
+            $result = DB::select("
             SELECT 
                 SUM(CASE WHEN currency_id = 1 THEN amount ELSE 0 END) AS total_in_khr,
                 SUM(CASE WHEN currency_id = 2 THEN amount ELSE 0 END) AS total_in_usd
@@ -62,21 +61,20 @@ class Dashboard extends Model implements Auditable
                 WHERE issue_date BETWEEN ? AND ?
             ) AS total_expense_khr
         ", [
-            $start_date . ' 00:00:00',
-            $end_date   . ' 23:59:59',
-            $start_date . ' 00:00:00',
-            $end_date   . ' 23:59:59',
-        ]);
-        return $result[0] ?? (object)[
-            'total_in_khr' => 0,
-            'total_in_usd' => 0,
-        ];
-    }
+                $start_date . ' 00:00:00',
+                $end_date   . ' 23:59:59',
+                $start_date . ' 00:00:00',
+                $end_date   . ' 23:59:59',
+            ]);
+            return $result[0] ?? (object)[
+                'total_in_khr' => 0,
+                'total_in_usd' => 0,
+            ];
+        }
 
-
-    public static function getRequestInfo()
-    {
-        $result = DB::select("
+        public static function getRequestInfo()
+        {
+            $result = DB::select("
             SELECT 
             (
                 SELECT COUNT(*) FROM tbl_officer_request WHERE status = '11'
@@ -85,23 +83,21 @@ class Dashboard extends Model implements Auditable
             SELECT COUNT(*) FROM tbl_officer_request WHERE status = '3'
             ) AS completed_request
         ");
-        return $result[0] ?? (object)[
-            'pending_request' => 0,
-            'completed_request' => 0,
-        ];
-    }
-
-
-    
-    public static function getTotalIncomeKHR($start_date = null, $end_date = null)
-    {
-        // Auto default date handling
-        if (empty($start_date) || empty($end_date)) {
-            $year = date('Y');
-            $start_date = "$year-01-01";
-            $end_date   = "$year-12-31";
+            return $result[0] ?? (object)[
+                'pending_request' => 0,
+                'completed_request' => 0,
+            ];
         }
-        $result = DB::select("
+
+        public static function getTotalIncomeKHR($start_date = null, $end_date = null)
+        {
+            // Auto default date handling
+            if (empty($start_date) || empty($end_date)) {
+                $year = date('Y');
+                $start_date = "$year-01-01";
+                $end_date   = "$year-12-31";
+            }
+            $result = DB::select("
             SELECT 
                 SUM(CASE WHEN currency_id = 1 THEN amount ELSE 0 END) AS total_in_khr,
                 SUM(CASE WHEN currency_id = 2 THEN amount ELSE 0 END) AS total_in_usd
@@ -113,33 +109,30 @@ class Dashboard extends Model implements Auditable
                 WHERE issue_date BETWEEN ? AND ?
             ) AS total_income_khr
         ", [
-            $start_date . ' 00:00:00',
-            $end_date   . ' 23:59:59',
-            $start_date . ' 00:00:00',
-            $end_date   . ' 23:59:59',
-        ]);
+                $start_date . ' 00:00:00',
+                $end_date   . ' 23:59:59',
+                $start_date . ' 00:00:00',
+                $end_date   . ' 23:59:59',
+            ]);
 
+            return $result[0] ?? (object)[
+                'total_in_khr' => 0,
+                'total_in_usd' => 0,
+            ];
 
-        //return $result[0]->total_income_khr ?? 0;
-        return $result[0] ?? (object)[
-            'total_in_khr' => 0,
-            'total_in_usd' => 0,
-        ];
-
-        return $results[0] ?? null;
-    }
-
-
-    public static function getTotalRemainingBalanceKHR($start_date = null, $end_date = null)
-    {
-        // Auto default date handling
-        if (empty($start_date) || empty($end_date)) {
-            $year = date('Y');
-            $start_date = "$year-01-01";
-            $end_date   = "$year-12-31";
+            return $results[0] ?? null;
         }
 
-        $result = DB::select("
+        public static function getTotalRemainingBalanceKHR($start_date = null, $end_date = null)
+        {
+            // Auto default date handling
+            if (empty($start_date) || empty($end_date)) {
+                $year = date('Y');
+                $start_date = "$year-01-01";
+                $end_date   = "$year-12-31";
+            }
+
+            $result = DB::select("
             SELECT
                 COALESCE(A.khr,0) - COALESCE(B.khr,0) AS remaining_balance_khr,
                 COALESCE(A.usd,0) - COALESCE(B.usd,0) AS remaining_balance_usd
@@ -176,27 +169,24 @@ class Dashboard extends Model implements Auditable
                 ) AS expense_all
             ) AS B
         ", [
-            $start_date . ' 00:00:00', 
-            $end_date   . ' 23:59:59', 
-            $start_date . ' 00:00:00', 
-            $end_date   . ' 23:59:59', 
-            $start_date . ' 00:00:00', 
-            $end_date   . ' 23:59:59', 
-            $start_date . ' 00:00:00', 
-            $end_date   . ' 23:59:59'
-        ]);
-        // return $result[0]->remaining_balance_khr ?? 0;
-        return $result[0] ?? (object)[
-            'remaining_balance_khr' => 0,
-            'remaining_balance_usd' => 0,
-        ];
-    }
+                $start_date . ' 00:00:00',
+                $end_date   . ' 23:59:59',
+                $start_date . ' 00:00:00',
+                $end_date   . ' 23:59:59',
+                $start_date . ' 00:00:00',
+                $end_date   . ' 23:59:59',
+                $start_date . ' 00:00:00',
+                $end_date   . ' 23:59:59'
+            ]);
+            return $result[0] ?? (object)[
+                'remaining_balance_khr' => 0,
+                'remaining_balance_usd' => 0,
+            ];
+        }
 
-
-
-    public static function getTotalIncentiveByCategory()
-    {
-        $result = "
+        public static function getTotalIncentiveByCategory()
+        {
+            $result = "
             SELECT
                 B.id AS payment_type_id,
                 B.name_en AS payment_type_name,
@@ -224,18 +214,15 @@ class Dashboard extends Model implements Auditable
                 B.id
         ";
 
-         return collect(DB::select($result))->map(function ($item) {
-            return [
-                'payment_type_id' => (int) $item->payment_type_id,
-                'payment_type_name' => $item->payment_type_name,
-                'total_amount_khr' => (float) $item->total_amount_khr,
-                'total_amount_usd' => (float) $item->total_amount_usd,
-            ];
-        });
-    }
-
-
-
+                return collect(DB::select($result))->map(function ($item) {
+                    return [
+                        'payment_type_id' => (int) $item->payment_type_id,
+                        'payment_type_name' => $item->payment_type_name,
+                        'total_amount_khr' => (float) $item->total_amount_khr,
+                        'total_amount_usd' => (float) $item->total_amount_usd,
+                    ];
+            });
+        }
 
 /**
  * @param int|null $year The year to report on. Defaults to current year.
@@ -309,7 +296,6 @@ public static function getQuarterlyIncomeExpense($year = null, $quarter = null)
     return $results;
 }
 
-
     /**
      * @param int|null $year The year to report on. Defaults to current year.
      * @param int|null $quarter Specific quarter (1-4) to filter by, or null for all.
@@ -378,7 +364,6 @@ public static function getQuarterlyIncomeExpense($year = null, $quarter = null)
         return $results;
     }
 
-
 public static function getOfficerPaymentSummary()
 {
     $sql = "
@@ -420,7 +405,6 @@ public static function getOfficerPaymentSummary()
 
     // Execute SQL with an empty array, as this query has no parameters.
     $results = DB::select($sql, []);
-    // DB::select returns an array of objects, but this query returns a single summary row.
     return $results[0] ?? (object)[
         'total_officers' => 0,
         'officers_paid' => 0,
@@ -432,8 +416,6 @@ public static function getOfficerPaymentSummary()
         'percent_paid' => 0
     ];
 }
-
-
 
     /**
      * Income and expense per month for the date range, split by currency.
@@ -566,8 +548,6 @@ public static function getOfficerPaymentSummaryFilterByDate($start_date = null, 
     return $results[0] ?? null;
 }
 
-
-
 public static function getTotalOfficer()
 {
     $sql = "
@@ -591,7 +571,6 @@ public static function getTotalOfficer()
         'totalFemales' => 0
     ];
 }
-
 
 public static function getUserDetail($userID = null)
 {
@@ -651,8 +630,6 @@ public static function getUserDetail($userID = null)
         return $result->total ?? 0;
     }
 
-
-
 public static function getIncomeListing($limit = 10, $offset = 0)
 {
     $limit  = (int) $limit;
@@ -697,8 +674,6 @@ public static function countIncome()
     $result = DB::selectOne($sql);
     return $result->total ?? 0;
 }
-
-
 
 public static function getExpenseListing($limit = 10, $offset = 0)
 {
@@ -745,8 +720,6 @@ public static function countExpenses()
     return $result->total ?? 0;
 }
 
-
-
 public static function getOfficerPaymentListing($limit = 10, $offset = 0)
 {
     $limit  = (int) $limit;
@@ -792,8 +765,6 @@ public static function countOfficerPayments()
     $result = DB::selectOne($sql);
     return $result->total ?? 0;
 }
-
-
 
 public static function getOfficerIncentiveListing($limit = 10, $offset = 0)
 {
@@ -843,7 +814,6 @@ public static function countOfficerIncentives()
     return $result->total ?? 0;
 }
 
-
 public static function getOfficerRequestSummary()
 {
     $sql = "
@@ -870,7 +840,6 @@ public static function getOfficerRequestSummary()
         ];
     });
 }
-
 
 public static function getOfficerRequestListing($limit = 10, $offset = 0)
 {

@@ -1,4 +1,4 @@
-<?php 
+<?php
     header("Content-type: application/vnd.ms-excel");
     header("Content-Disposition: attachment;Filename=document_name.xls");
     echo "<html>";
@@ -41,7 +41,7 @@
                             <td></td>
                     </tr>';
                 }
-                
+
             echo    '<tr style="background-color: rgb(179, 230, 255);">
                     <td colspan="2"><span class="font-mef2"><center>សរុបរួម</center></span></td> <td><center><b style="text-decoration: underline;">'.$incentiveInfo["data"]["general"]["total_officer"].'</b></center></td> 
                     <td><span class="pull-right font-mef2" style="text-decoration: underline;">'.$incentiveInfo["data"]["general"]["total_incentive_with_reminder_in_khmer"].'</span></td> 

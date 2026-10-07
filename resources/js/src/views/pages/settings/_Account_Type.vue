@@ -109,7 +109,6 @@ export default {
                         this.isVisible = response.data.is_display;
                         this.$vs.loading.close();
                     }).catch((error) => {
-                        // reject(error)
 this.$vs.notify({
                     title: 'Message',
                     text: 'msg.action_failed',

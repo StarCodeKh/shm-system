@@ -13,7 +13,6 @@ use Auth;
 use CommonService;
 use Maatwebsite\Excel\Facades\Excel;
 
-
 class ExpenseController extends BaseController
 {
     /**
@@ -97,7 +96,7 @@ class ExpenseController extends BaseController
      */
     public function create()
     {
-        
+
     }
 
     /**
@@ -142,7 +141,7 @@ class ExpenseController extends BaseController
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {   
+    {
         $data = array();
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW] == true){
             $query = $this->db_table::find($id);
@@ -250,7 +249,7 @@ class ExpenseController extends BaseController
                 $boolen = false;
                 $message = trans('common.error_msg');
             }
-            
+
         }else{
             $status = 500;
             $boolen = false;
@@ -310,9 +309,6 @@ class ExpenseController extends BaseController
             "payment_method_id" => PaymentMethod::getSingleOpt(),
             "account_code" => Account::getAccountCodeList(),
             "status" => Status::getSingleOpt("STATUS")
-            // "officer_id" => isset($filter["data"]["officer_id"])?Officer::getSingleOptById($filter["data"]["officer_id"]):Officer::getSingleOpt(),
-            // "department_id" => Department::getSingleOpt(),
-            // "entity_id" => [],
         );
         $status = 200;
         return response()->json($data, $status);

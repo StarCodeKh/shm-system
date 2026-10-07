@@ -9,7 +9,6 @@ import axios from "@/axios.js";
 import apiConfig from "@/apiConfig.js";
 import DTableList from '@/views/form-builder/DTableList.vue';
 
-// Columns (data_fields) and form fields (form_attributes) come from the API: User::dataFields() / User::formAttributes()
 export default {
     components: {
         DTableList,

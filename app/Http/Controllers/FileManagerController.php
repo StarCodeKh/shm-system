@@ -4,19 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\FileManager;
 
-
-
-
-
-
 // PB
 // BM = Budget Monitoring
-
 
 use App\Imports\OfficerImport;
 use App\Imports\IncomeImport;
 
-// use Excel;
 use Maatwebsite\Excel\Facades\Excel;
 use File;
 
@@ -104,7 +97,7 @@ class FileManagerController extends Controller
      */
     public function create()
     {
-        
+
     }
 
     /**
@@ -149,7 +142,7 @@ class FileManagerController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {   
+    {
         $data = array();
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW] == true){
             $query = $this->db_table::find($id);
@@ -256,7 +249,7 @@ class FileManagerController extends Controller
                 $boolen = false;
                 $message = trans('common.error_msg');
             }
-            
+
         }else{
             $status = 500;
             $boolen = false;
@@ -280,7 +273,7 @@ class FileManagerController extends Controller
         }
     }
 
-    // 
+    //
 
     public function fileIncomeUploadService(Request $request){
         if ($denied = $this->guardSpreadsheetImport($request, 'create_income')) return $denied;

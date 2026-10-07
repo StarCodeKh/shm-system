@@ -98,7 +98,7 @@ export default {
                     "type": "text",
                     "required": true
                 },
-                
+
                 {
                     "name": "nssf_card_no",
                     "type": "text",
@@ -236,7 +236,6 @@ export default {
                         if (response.data) {
                             this.data = response.data;
                             this.dataHeaders = response.data.data_fields;
-                            // this.formAttributes = response.data.form_attributes;                            
                         } else {
                             this.data = this.data;
                         }

@@ -32,7 +32,6 @@ return [
 
     'exposed_headers' => [],
 
-    //'max_age' => false,
     'max_age' => 0,
 
     // The API signs in with Bearer tokens, not cookies, so cross-site credentials are not needed

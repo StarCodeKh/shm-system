@@ -43,13 +43,6 @@ class Kernel extends ConsoleKernel
                 ->everyMinute()
                 ->withoutOverlapping();
 
-        // $schedule->command('notifications:send-daily')
-        //     ->everyMinute()
-        //     ->appendOutputTo(storage_path('logs/schedule-test.log'));
-
-        // $schedule->command('command:recurring-payment')
-        //     ->everyMinute()
-        //     ->appendOutputTo(storage_path('logs/schedule-test.log'));
     }
 
     /**

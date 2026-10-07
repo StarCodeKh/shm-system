@@ -7,7 +7,6 @@
 <script>
     import axios from "@/axios.js";
     import apiConfig from "@/apiConfig.js";
-    import { ref } from 'vue';
     import DTableList from '@/views/form-builder/DTableList.vue';
 
     export default {
@@ -21,11 +20,6 @@
                     offset: 0,
                     dataGrid: "row",
                     actionButton: [
-                        // {
-                        //     icon: "DollarSignIcon",
-                        //     path: "/module/budget-arrangement/budget-ceiling/list",
-                        //     method: "View"
-                        // }
                     ],
                     enableImport: true,
                     enableDownload: true
@@ -41,32 +35,7 @@
                     limit: 10,
                     total: 3,
                 },
-                // formAttributes: [
-                //     {
-                //         name: "request_title",
-                //         type: "text",
-                //         required: true
-                //     },
-                //     {
-                //         name: "request_from",
-                //         type: "text",
-                //         required: false
-                //     },
-                //     {
-                //         name: "letter_type",
-                //         type: "text",
-                //         required: false
-                //     },
-                // ],
                 formAttributes: [
-                    // {
-                    //     name: "entity_id",
-                    //     type: "select",
-                    //     required: true,
-                    //     hasFormData: true,
-                    //     filterObj: "entity",
-                    //     // options: [],
-                    // },
                     {
                         name: "officer_id",
                         type: "select",
@@ -86,35 +55,13 @@
                         name: "role",
                         type: "select",
                         required: true,
-                        // hasFormData: true,
-                        // filterObj: "role",
-                        // api: apiConfig._apiMemberByEntity,
-                        // options: [],
                     },
-                    // {
-                    //     name: "entity_member_id",
-                    //     type: "select",
-                    //     required: true,
-                    //     options: [],
-                    // },
-                    // {
-                    //     name: "title",
-                    //     type: "select",
-                    //     required: true,
-                    //     options: []
-                    // },
                     {
                         name: "gender",
                         type: "select",
                         required: false,
                         options: []
                     },
-                    // {
-                    //     name: "position",
-                    //     type: "select",
-                    //     required: true,
-                    //     options: []
-                    // },
                     {
                         name: "email",
                         type: "text",
@@ -156,11 +103,6 @@
                         type: "checkbox",
                         required: true,
                     },
-                    // {
-                    //     name: "role",
-                    //     type: "hidden",
-                    //     required: true
-                    // },
                 ],
                 rowDisplay: "2grid", //1grid, 2grid, 3grid, 4grid
                 dataFields: [],
@@ -205,8 +147,7 @@
                     .then((response) => {
                         if (response.data) {
                             this.data = response.data;
-                            this.dataHeaders = response.data.data_fields; 
-                            // this.formAttributes = response.data.form_attributes;
+                            this.dataHeaders = response.data.data_fields;
                         } else {
                             this.data = this.data;
                         }

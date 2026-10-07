@@ -9,12 +9,12 @@
 }
 
 .theme-dark {
-  .quill-editor{
-    .ql-snow {
-      &.ql-toolbar,
-      &.ql-container {
-        border-color: $theme-dark-border-color;
-      }
+    .quill-editor{
+        .ql-snow {
+            &.ql-toolbar,
+            &.ql-container {
+                border-color: $theme-dark-border-color;
+            }
+        }
     }
-  }
 }

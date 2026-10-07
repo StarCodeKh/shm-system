@@ -34,11 +34,8 @@
                 </div>
 
                 <!-- Form Input Number -->
-                <!-- <div v-if="formAttribute.type == 'hidden' && formAttribute.required" :class="styleClass" class="d-field" dclass="mt-4"> -->
-                <!-- <label>{{ fieldLabel(formAttribute.name) }} -- {{ data[formAttribute.name] }}</label> -->
                 <input v-if="formAttribute.type == 'hidden'" type="hidden"
                     v-model="form.attribute[formAttribute.name]" :name="formAttribute.name" />
-                <!-- </div> -->
 
                 <!-- Form Input Text -->
                 <div v-if="formAttribute.type == 'password'" :class="styleClass" class="d-field" dclass="mt-4">
@@ -262,8 +259,6 @@
                                         <!-- {{fieldLabel(childformAttribute.name) }}--></vs-checkbox>
                                 </span>
                                 <span v-else>
-                                    <!-- <vs-checkbox :key="index" v-model="form.attribute[childformAttribute.name]"> {{fieldLabel(childformAttribute.name)}}</vs-checkbox> -->
-                                    <!-- <vs-checkbox :key="index" v-model="form.attribute[rowf.value]" v-for="(rowf, index) in childformAttribute.attributes"> {{ $t(rowf.name)}}</vs-checkbox> -->
                                     <vs-checkbox :key="index" v-model="form.attribute[childformAttribute.name]"
                                         v-for="(rowf, index) in childformAttribute.attributes"> {{ $t(rowf.name)
                                         }}</vs-checkbox>
@@ -308,10 +303,8 @@
 
                 <!-- Form Grid -->
                 <div v-if="formAttribute.type == 'grid'" class="mt-4 vx-col lg:w-1/1 w-full">
-                    <!-- <vs-alert icon="warning" active="true" color="primary" class="mt-5"> -->
                     <div style="background-color:#253358; color: #ffffff; padding: 5px;"><span>{{ fieldLabel(formAttribute.name)
                     }}</span></div>
-                    <!-- </vs-alert> -->
                 </div>
 
                 <!-- Form Grid -->
@@ -322,15 +315,6 @@
                         @browse="initOpenFileManager(formAttribute.name)"
                         @view="initViewFile"
                         @clear="form.attribute[formAttribute.name] = ''" />
-                    <!-- <span v-if="formAttribute.required">
-                        <vs-input v-validate="'required'" v-model="form.attribute[formAttribute.name]"
-                            :placeholder="fieldLabel(formAttribute.name)" :name="formAttribute.name" class="mt-1 w-full" />
-                        <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
-                            requiredMessage(formAttribute.name)
-                        }}</span>
-                    </span>
-                    <vs-input v-else v-validate="''" :placeholder="fieldLabel(formAttribute.name)"
-                        v-model="form.attribute[formAttribute.name]" :name="formAttribute.name" class="mt-1 w-full" /> -->
                 </div>
 
             </template>
@@ -540,13 +524,7 @@ export default {
             };
             this.form.attribute[_formAttribute] = null;
             this.data[_formAttribute] = [];
-        
-            // this.data[_formAttribute].push([
-            //     {
-            //         "label": "sdf",
-            //         "value": "1"
-            //     }
-            // ]);
+
             return new Promise((resolve, reject) => {
                 axios.post(_apiRequest, _data)
                     .then((response) => {
@@ -558,18 +536,13 @@ export default {
                             color: 'primary',
                             position: 'top-right'
                         });
-                        
+
                         switch (_formAttribute) {
                             case "amount":
                                 this.form.attribute["amount"] = response["data"]["data"];
                             break;
                             default:
                                 for (let i = 0; i < response["data"]["data"].length; i++) {
-                                    // let _d = {
-                                    //     "label": response["data"]["data"][i]["label"],
-                                    //     "value": response["data"]["data"][i]["value"],
-                                    // }
-                                    // this.data[_formAttribute].push(_d);
                                     this.data[_formAttribute].push(response["data"]["data"][i]);
                                 }
                             break;
@@ -595,7 +568,6 @@ export default {
                 param: this.form.attribute[_formName]
             };
             this.form.attribute[_formAttribute] = this.form.attribute[_formName]["label"];
-            // this.data[_formAttribute] = [];
         },
         emitValue(e) {
             let value = e.target.value
@@ -606,12 +578,10 @@ export default {
         },
         // Just test to create dynamic data table on form
         onChangeElement(e, form_name) {
-            // this.form.attribute[form_name] = "";
             this.$emit('clicked', e)
-            // this.$refs.refInitPushDataTable.initPushDataTable(form_name);
         },
         showNewForm(data) {
-            // Show Form 
+            // Show Form
             this.form.attribute = [];
             this.formAttributes.forEach(_formAttribute => {
                 if (_formAttribute["hasDefault"]) {
@@ -627,17 +597,10 @@ export default {
                 this.form.attribute[_formAttribute["name"]] = "";
                 if (_formAttribute["type"] == "select") {
                     this.form.attribute[_formAttribute["name"]] = obj[_formAttribute["name"]];
-                    // this.form.attribute[_formAttribute["name"]] = "";
                 }
                 if (_formAttribute["name"] == obj.field) {
                     this.form.attribute[_formAttribute["name"]] = obj[_formAttribute["name"]];
                 }
-                // if (_formAttribute["type"] == "select") {
-                //     this.form.attribute[_formAttribute["name"]] = "";
-                // }
-                // if (_formAttribute["name"] == obj.field) {
-                //     this.form.attribute[obj.field] = obj.id;
-                // }
             });
         },
         // This function use when you want to edit or show data detail as in popup form
@@ -645,7 +608,7 @@ export default {
             this.formAttributes.forEach(_formAttribute => {
                 this.form.attribute[_formAttribute["name"]] = data[_formAttribute["name"]];
                 if (_formAttribute["type"] == "select") {
-                    // Customize on Data Selection 
+                    // Customize on Data Selection
                     switch (_formAttribute["name"]) {
                         case "officer_id":
                             this.form.attribute[_formAttribute["name"]] = {
@@ -704,7 +667,6 @@ export default {
                             this.form.attribute[_formAttribute["name"]] = data[_formAttribute["name"]];
                             break;
                     }
-                    // alert(_formAttribute["name"]);
                 }else if (_formAttribute["type"] == "hidden") {
                     this.form.attribute[_formAttribute["name"]] = data[_formAttribute["name"]];
                 } else if (_formAttribute["type"] == "file") {
@@ -735,7 +697,6 @@ export default {
                 }
             });
             this.tidyLoadedValues();
-            // this.$emit('clickForm', "e") // Temporary Close Command
         },
         // Values from the database shown the way a person would type them:
         // a link id of 0 means "none" (placeholder instead of "0"), and decimals drop
@@ -807,7 +768,6 @@ export default {
                 this.$vs.loading.close()
             }
         },
-        // Server answers carry a message string, or Laravel validation errors as { field: [messages] }
         serverMessage(data) {
             const message = data && (data.errors || data.message)
             if (!message) return ''
@@ -821,7 +781,6 @@ export default {
     mounted() {
     },
     created() {
-        // this.form.attribute["budget_template_id"] = 11;
     },
     watch: {
         // Dropdowns the page sent no choices for get them from the shared lookup
@@ -848,96 +807,96 @@ export default {
 <style lang="scss">
 // ---------------------------------------------------------------- Standard form layout
 .d-form {
-  // Field rows, quick-add button and control sizes are shared app-wide: see .d-form in resources/sass/custom.scss
+    // Field rows, quick-add button and control sizes are shared app-wide: see .d-form in resources/sass/custom.scss
 
-  // Sticky footer
-  &__footer {
-    position: sticky;
-    bottom: -1px;
-    z-index: 5;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin: 28px -24px -16px;
-    padding: 14px 24px;
-    background: #fff;
-    border-top: 1px solid #eceef4;
-  }
-
-  &__hint {
-    font-size: .8rem;
-    color: #8a8ca5;
-
-    span {
-      color: rgb(var(--vs-danger));
-    }
-  }
-
-  &__buttons {
-    display: flex;
-    gap: 10px;
-    margin-left: auto;
-  }
-
-  &__btn:disabled {
-    opacity: .7;
-    cursor: progress;
-  }
-
-  &__spin svg {
-    animation: d-form-spin .8s linear infinite;
-  }
-
-  &__btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    height: var(--btn-height);
-    min-width: 100px;
-    padding: 0 var(--btn-padding-x);
-    font-family: inherit;
-    font-size: var(--btn-font-size);
-    font-weight: var(--btn-font-weight);
-    color: #5e6078;
-    border: 1px solid #e3e5ee;
-    border-radius: var(--btn-radius);
-    background: #fff;
-    cursor: pointer;
-
-    .feather-icon {
-      display: flex;
+    // Sticky footer
+    &__footer {
+        position: sticky;
+        bottom: -1px;
+        z-index: 5;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 28px -24px -16px;
+        padding: 14px 24px;
+        background: #fff;
+        border-top: 1px solid #eceef4;
     }
 
-    &:hover {
-      background: #f6f7fb;
+    &__hint {
+        font-size: .8rem;
+        color: #8a8ca5;
+
+        span {
+            color: rgb(var(--vs-danger));
+        }
     }
 
-    &--primary {
-      color: #fff;
-      border-color: rgb(var(--vs-primary));
-      background: rgb(var(--vs-primary));
-      box-shadow: 0 6px 14px -6px rgba(var(--vs-primary), .7);
-
-      &:hover {
-        background: rgb(var(--vs-primary));
-        filter: brightness(.95);
-      }
+    &__buttons {
+        display: flex;
+        gap: 10px;
+        margin-left: auto;
     }
-  }
+
+    &__btn:disabled {
+        opacity: .7;
+        cursor: progress;
+    }
+
+    &__spin svg {
+        animation: d-form-spin .8s linear infinite;
+    }
+
+    &__btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: var(--btn-height);
+        min-width: 100px;
+        padding: 0 var(--btn-padding-x);
+        font-family: inherit;
+        font-size: var(--btn-font-size);
+        font-weight: var(--btn-font-weight);
+        color: #5e6078;
+        border: 1px solid #e3e5ee;
+        border-radius: var(--btn-radius);
+        background: #fff;
+        cursor: pointer;
+
+        .feather-icon {
+            display: flex;
+        }
+
+        &:hover {
+            background: #f6f7fb;
+        }
+
+        &--primary {
+            color: #fff;
+            border-color: rgb(var(--vs-primary));
+            background: rgb(var(--vs-primary));
+            box-shadow: 0 6px 14px -6px rgba(var(--vs-primary), .7);
+
+            &:hover {
+                background: rgb(var(--vs-primary));
+                filter: brightness(.95);
+            }
+        }
+    }
 }
 
 // Popup frame and sizes (.d-modal--sm/md/lg/xl) are shared app-wide: see "POPUPS" in resources/sass/custom.scss
 
 .theme-dark {
-  .d-form .d-field > label { color: #c2c6dc; }
-  .d-form__footer { background: #262c49; border-color: #414561; }
-  .d-form__btn:not(.d-form__btn--primary) { background: #262c49; border-color: #414561; color: #c2c6dc; }
+    .d-form .d-field > label { color: #c2c6dc; }
+    .d-form__footer { background: #262c49; border-color: #414561; }
+    .d-form__btn:not(.d-form__btn--primary) { background: #262c49; border-color: #414561; color: #c2c6dc; }
 }
 
 @keyframes d-form-spin {
-  to { transform: rotate(360deg); }
+    to { transform: rotate(360deg); }
 }
 </style>

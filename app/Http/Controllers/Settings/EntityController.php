@@ -66,7 +66,6 @@ class EntityController extends Controller
                 "model_name" => $this->db_table->getTable(),
                 "data_fields" => $this->dataFields(),
                 "status" => Status::getSingleOpt("STATUS"),
-                // "parent_id" => Entity::getSingleOpt(),
                 "department_id" => Department::getSingleOpt()
             );
             $status = 200;
@@ -203,7 +202,7 @@ class EntityController extends Controller
                 $boolen = false;
                 $message = trans('common.error_msg');
             }
-            
+
         }else{
             $status = 500;
             $boolen = false;

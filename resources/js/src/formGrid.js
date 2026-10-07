@@ -5,14 +5,14 @@
 export const STANDARD_GRID = 'vx-col w-full md:w-1/2 lg:w-1/3 mt-4'
 
 export function gridClass(rowDisplay) {
-  if (rowDisplay === '1grid') return 'vx-col w-full mt-4'
-  if (rowDisplay === '2col') return 'vx-col w-full md:w-1/2 mt-4'
-  if (rowDisplay === 'full-grid') return 'vx-col w-full'
-  return STANDARD_GRID
+    if (rowDisplay === '1grid') return 'vx-col w-full mt-4'
+    if (rowDisplay === '2col') return 'vx-col w-full md:w-1/2 mt-4'
+    if (rowDisplay === 'full-grid') return 'vx-col w-full'
+    return STANDARD_GRID
 }
 
 // Number of columns a form actually uses (popup sizing)
 export function gridColumns(rowDisplay) {
-  if (rowDisplay === '2col') return 2
-  return rowDisplay === '1grid' || rowDisplay === 'full-grid' ? 1 : 3
+    if (rowDisplay === '2col') return 2
+    return rowDisplay === '1grid' || rowDisplay === 'full-grid' ? 1 : 3
 }

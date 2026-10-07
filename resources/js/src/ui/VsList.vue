@@ -4,6 +4,6 @@
 
 <script>
 export default {
-  name: 'VsList',
+    name: 'VsList',
 }
 </script>

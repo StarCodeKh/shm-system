@@ -9,7 +9,6 @@
             position: absolute !important;
             right: 8px;
             top: 12px;
-            // top: 30%;
             transition: all .2s ease-out;
             transform: rotate(0deg);
             display: inline-block;
@@ -48,14 +47,14 @@
     }
     &.vs-sidebar-group-open,
     &.vs-sidebar-group-active {
-      > .group-header {
-        background: #f6f6f6;
-        border-radius: 6px;
-      }
+        > .group-header {
+            background: #f6f6f6;
+            border-radius: 6px;
+        }
 
-      > ul {
-        padding-left: 0 !important;
-      }
+        > ul {
+            padding-left: 0 !important;
+        }
     }
     &.vs-sidebar-group-open {
         >.group-header {

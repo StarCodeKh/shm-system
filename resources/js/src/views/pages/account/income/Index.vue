@@ -7,7 +7,6 @@
 <script>
 import axios from "@/axios.js"
 import apiConfig from "@/apiConfig.js"
-import { ref } from 'vue';
 import DTableList from '@/views/form-builder/DTableList.vue'
 
     export default {
@@ -22,12 +21,6 @@ import DTableList from '@/views/form-builder/DTableList.vue'
                 dataGrid: "row",
                 popupFullscreen: true,
                 actionButton: [
-                    // {
-                    //     icon: "ListIcon",
-                    //     path: "/officer/activity",
-                    //     method: "PrivateLink",
-                    //     allow: true, 
-                    // },
                 ],
                 enableImport: true,
                 enableDownload: true
@@ -155,8 +148,7 @@ import DTableList from '@/views/form-builder/DTableList.vue'
                     .then((response) => {
                         if (response.data) {
                             this.data = response.data;
-                            this.dataHeaders = response.data.data_fields; 
-                            // this.formAttributes = response.data.form_attributes;
+                            this.dataHeaders = response.data.data_fields;
                         } else {
                             this.data = this.data;
                         }

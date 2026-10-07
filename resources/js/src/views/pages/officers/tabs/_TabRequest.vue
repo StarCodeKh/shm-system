@@ -20,11 +20,6 @@
                     offset: 0,
                     dataGrid: "row",
                     actionButton: [
-                        // {
-                        //     icon: "DollarSignIcon",
-                        //     path: "/module/budget-arrangement/budget-ceiling/list",
-                        //     method: "View"
-                        // }
                     ],
                     enableImport: true,
                     enableDownload: true,
@@ -175,20 +170,12 @@
                     .then((response) => {
                         if (response.data) {
                             this.data = response.data;
-                            this.dataHeaders = response.data.data_fields; 
-                            // this.formAttributes = response.data.form_attributes;
+                            this.dataHeaders = response.data.data_fields;
                         } else {
                             this.data = this.data;
                         }
                         this.$vs.loading.close();
                     }).catch((error) => {
-                        // this.$vs.notify({
-                        //     title: 'Message',
-                        //     text: 'msg.action_failed',
-                        //     iconPack: 'feather',
-                        //     icon: 'icon-check-circle',
-                        //     color: 'danger'
-                        // })
                         this.$vs.loading.close();
                     })
                 })
@@ -213,7 +200,6 @@
                 return false;
             },
             initImport(params){
-                // alert("testing");
             }
         },
         created() {

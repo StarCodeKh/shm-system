@@ -3,8 +3,6 @@
         <vs-popup v-if="dataAttributes.popupFullscreen" class="d-modal" :class="sizeClass" classContent="popup-example" :title="popupTitle"
             v-model:active="showModalForm">
             <!-- Modal Indicator Sub Program-->
-            <!-- <modal-indicator-sub-program v-if="dataAttributes.hasIndicatorSubPro" :dataInfo="dataInfo"
-                ref="refInitRequest"></modal-indicator-sub-program> -->
 
             <span v-if="!dataAttributes.hideFormData">
                 <d-form @clickForm="initTableData" @cancel="showModalForm = false" ref="refModalForm" :data="data" :dataInfo="dataInfo"
@@ -15,7 +13,7 @@
             <!-- <d-indicator v-if="dataAttributes.hasIndicatorSubPro" :dataInfo="dataInfo"
                 :dataAttributes="dataAttributes"></d-indicator> -->
         </vs-popup>
-        
+
         <vs-popup v-else class="d-modal" :class="sizeClass" classContent="popup-example" :title="popupTitle" v-model:active="showModalForm">
             <d-form @clickForm="initTableData" @cancel="showModalForm = false" ref="refModalForm" :data="data" :dataInfo="dataInfo"
                 :parentDataInfo="parentDataInfo" :formAttributes="formAttributes" :api="api" :submitLabel="submitLabel" :submitIcon="submitIcon"
@@ -24,19 +22,12 @@
                 :dataAttributes="dataAttributes"></d-indicator> -->
 
             <!-- Modal Indicator Sub Program-->
-            <!-- <modal-indicator-sub-program v-if="dataAttributes.hasIndicatorSubPro" :dataInfo="dataInfo"
-                ref="refInitRequest"></modal-indicator-sub-program> -->
         </vs-popup>
     </div>
 </template>
 
 <script>
-import { ref } from 'vue';
-import apiConfig from "@/apiConfig.js"
 import DForm from '@/views/form-builder/DForm.vue'
-// import DIndicator from '@/views/form-builder/DIndicator.vue';
-// import ModalIndicatorSubProgram from '@/views/modules/program-management/indicator/_modal_indicator_subprogram.vue';
-// Vue.use("DForm", DForm);
 
 export default {
     components: {
@@ -121,7 +112,6 @@ export default {
             this.showModalForm = true;
             this.dataInfo = data;
             this.$refs.refModalForm.showDataForm(data);
-            // this.$refs.refInitRequest.showRequestData(data);
         },
         initTableData(flag) {
             let _search_params = {
@@ -134,7 +124,6 @@ export default {
         }
     },
     created() {
-        // console.log("check data form objects", this.data);
     }
 }
 </script>

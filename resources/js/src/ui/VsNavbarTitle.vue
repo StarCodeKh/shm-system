@@ -4,6 +4,6 @@
 
 <script>
 export default {
-  name: 'VsNavbarTitle',
+    name: 'VsNavbarTitle',
 }
 </script>

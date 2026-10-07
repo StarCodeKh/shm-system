@@ -4,7 +4,7 @@ import actions from './moduleAuthActions.js'
 import getters from './moduleAuthGetters.js'
 
 export default {
-	namespaced: true,
+    namespaced: true,
     state: state,
     mutations: mutations,
     actions: actions,

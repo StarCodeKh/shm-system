@@ -2,57 +2,57 @@
 
 .vuesax-app-is-rtl {
 
-  /////////////////////////////////////////////////////////
-  // EXTENSION - PERFECT SCROLLBAR
-  /////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////
+    // EXTENSION - PERFECT SCROLLBAR
+    /////////////////////////////////////////////////////////
 
-  .ps-container:not(.enable-rtl-x-scroll) {
-    .ps__scrollbar-x-rail {
-      display: none !important;
+    .ps-container:not(.enable-rtl-x-scroll) {
+        .ps__scrollbar-x-rail {
+            display: none !important;
+        }
     }
-  }
 
-  .ag-pinned-left-cols-container {
-    margin-right: 5px;
-  }
-
-
-  /////////////////////////////////////////////////////////
-  // VUESAX FRAMEWORK
-  /////////////////////////////////////////////////////////
-
-  .vs-dropdown-menu.rightx {
-    .vs-dropdown--menu--after {
-      right: unset !important;
-      left: 30px !important;
+    .ag-pinned-left-cols-container {
+        margin-right: 5px;
     }
-  }
 
-  .vs-loading {
-    > * {
-      top: 0;
+
+    /////////////////////////////////////////////////////////
+    // VUESAX FRAMEWORK
+    /////////////////////////////////////////////////////////
+
+    .vs-dropdown-menu.rightx {
+        .vs-dropdown--menu--after {
+            right: unset !important;
+            left: 30px !important;
+        }
     }
-  }
 
-
-  /////////////////////////////////////////////////////////
-  // EXTENSTION - DATETIME PICKER
-  /////////////////////////////////////////////////////////
-
-  .flatpickr-prev-month,
-  .flatpickr-next-month {
-    transform: rotateY(180deg);
-  }
-
-
-  /////////////////////////////////////////////////////////
-  // EXTENSTION - CAROUSEL
-  /////////////////////////////////////////////////////////
-  .swiper-container-cube.swiper-container-rtl {
-    .swiper-slide {
-      transform-origin: 100% 0 !important;
+    .vs-loading {
+        > * {
+            top: 0;
+        }
     }
-  }
+
+
+    /////////////////////////////////////////////////////////
+    // EXTENSTION - DATETIME PICKER
+    /////////////////////////////////////////////////////////
+
+    .flatpickr-prev-month,
+    .flatpickr-next-month {
+        transform: rotateY(180deg);
+    }
+
+
+    /////////////////////////////////////////////////////////
+    // EXTENSTION - CAROUSEL
+    /////////////////////////////////////////////////////////
+    .swiper-container-cube.swiper-container-rtl {
+        .swiper-slide {
+            transform-origin: 100% 0 !important;
+        }
+    }
 }
 
 /*! rtl:end:ignore */

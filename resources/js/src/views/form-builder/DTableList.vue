@@ -4,34 +4,34 @@
         <div class="vx-row" v-if="dataAttributes.enableDashboardOfficer">
             <div class="vx-col w-full md:w-1/3 lg:w-1/3 xl:w-1/3">
                 <statistics-card-line
-                  hideChart
-                  class="mb-base"
-                  icon="UsersIcon"
-                  icon-right
-                  :statistic="dataTables.total"
-                  :statisticTitle="$t('stat_members_total')" />
+                    hideChart
+                    class="mb-base"
+                    icon="UsersIcon"
+                    icon-right
+                    :statistic="dataTables.total"
+                    :statisticTitle="$t('stat_members_total')" />
             </div>
 
             <div class="vx-col w-full md:w-1/3 lg:w-1/3 xl:w-1/3">
                 <statistics-card-line
-                  hideChart
-                  class="mb-base"
-                  icon="UserIcon"
-                  icon-right
-                  :statistic="summary.male"
-                  :statisticTitle="$t('stat_male_total')"
-                  color="primary" />
+                    hideChart
+                    class="mb-base"
+                    icon="UserIcon"
+                    icon-right
+                    :statistic="summary.male"
+                    :statisticTitle="$t('stat_male_total')"
+                    color="primary" />
             </div>
-            
+
             <div class="vx-col w-full md:w-1/3 lg:w-1/3 xl:w-1/3">
                 <statistics-card-line
-                  hideChart
-                  class="mb-base"
-                  icon="UserIcon"
-                  icon-right
-                  :statistic="summary.female"
-                  :statisticTitle="$t('stat_female_total')"
-                  color="primary" />
+                    hideChart
+                    class="mb-base"
+                    icon="UserIcon"
+                    icon-right
+                    :statistic="summary.female"
+                    :statisticTitle="$t('stat_female_total')"
+                    color="primary" />
             </div>
         </div>
         <!-- Customize Request Dashboard -->
@@ -39,80 +39,80 @@
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
                 <statistics-card-line
-                  hideChart
-                  class="mb-base"
-                  icon="CheckCircleIcon"
-                  icon-right
-                  :statistic="summary.approved"
-                  :statisticTitle="$t('stat_approved')"
-                  color="success" />
+                    hideChart
+                    class="mb-base"
+                    icon="CheckCircleIcon"
+                    icon-right
+                    :statistic="summary.approved"
+                    :statisticTitle="$t('stat_approved')"
+                    color="success" />
             </div>
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
                 <statistics-card-line
-                  hideChart
-                  class="mb-base"
-                  icon="EyeIcon"
-                  icon-right
-                  :statistic="summary.in_review"
-                  :statisticTitle="$t('stat_reviewing')"
-                  color="warning" />
+                    hideChart
+                    class="mb-base"
+                    icon="EyeIcon"
+                    icon-right
+                    :statistic="summary.in_review"
+                    :statisticTitle="$t('stat_reviewing')"
+                    color="warning" />
             </div>
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
                 <statistics-card-line
-                  hideChart
-                  class="mb-base"
-                  icon="LoaderIcon"
-                  icon-right
-                   :statistic="summary.in_progress"
-                  :statisticTitle="$t('stat_processing')"
-                  color="primary" />
+                    hideChart
+                    class="mb-base"
+                    icon="LoaderIcon"
+                    icon-right
+                        :statistic="summary.in_progress"
+                    :statisticTitle="$t('stat_processing')"
+                    color="primary" />
             </div>
 
             <!-- <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
                 <statistics-card-line
-                  hideChart
-                  class="mb-base"
-                  icon="CpuIcon"
-                  icon-right
-                  statistic="17"
-                  :statisticTitle="$t('stat_pending')" />
+                    hideChart
+                    class="mb-base"
+                    icon="CpuIcon"
+                    icon-right
+                    statistic="17"
+                    :statisticTitle="$t('stat_pending')" />
             </div> -->
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
                 <statistics-card-line
-                  hideChart
-                  class="mb-base"
-                  icon="XCircleIcon"
-                  icon-right
-                  :statistic="summary.rejected"
-                  :statisticTitle="$t('stat_rejected')"
-                  color="danger" />
+                    hideChart
+                    class="mb-base"
+                    icon="XCircleIcon"
+                    icon-right
+                    :statistic="summary.rejected"
+                    :statisticTitle="$t('stat_rejected')"
+                    color="danger" />
             </div>
         </div>
         <!-- Customize Incentive Dashboard -->
         <div class="vx-row" v-if="dataAttributes.enableDashboardIncentive">
             <div class="vx-col w-full md:w-1/3 lg:w-1/3 xl:w-1/3">
                 <statistics-card-line
-                  hideChart
-                  class="mb-base"
-                  icon="FileTextIcon"
-                  icon-right
-                  :statistic="dataTables.total"
-                  :statisticTitle="$t('stat_total_records')"
-                  color="navy" />
+                    hideChart
+                    class="mb-base"
+                    icon="FileTextIcon"
+                    icon-right
+                    :statistic="dataTables.total"
+                    :statisticTitle="$t('stat_total_records')"
+                    color="navy" />
             </div>
 
             <div class="vx-col w-full md:w-1/3 lg:w-1/3 xl:w-1/3">
                 <statistics-card-line
-                  hideChart
-                  class="mb-base"
-                  icon="DollarSignIcon"
-                  icon-right
-                  :statistic="dataTables.total_amount"
-                  :statisticTitle="$t('stat_incentive_paid_riel')"
-                  color="success" />
+                    hideChart
+                    class="mb-base"
+                    icon="DollarSignIcon"
+                    icon-right
+                    :statistic="dataTables.total_amount"
+                    :statisticTitle="$t('stat_incentive_paid_riel')"
+                    color="success" />
             </div>
         </div>
         <!-- Customize Account Payable Dashboard -->
@@ -120,35 +120,35 @@
 
             <div class="vx-col w-full md:w-1/3 lg:w-1/3 xl:w-1/3">
                 <small><statistics-card-line
-                  hideChart
-                  class="mb-base"
-                  icon="FileTextIcon"
-                  icon-right
-                  :statistic="dataTables.total"
-                  :statisticTitle="$t('stat_total_records')"
-                  color="navy" /></small>
+                    hideChart
+                    class="mb-base"
+                    icon="FileTextIcon"
+                    icon-right
+                    :statistic="dataTables.total"
+                    :statisticTitle="$t('stat_total_records')"
+                    color="navy" /></small>
             </div>
 
             <div class="vx-col w-full md:w-1/3 lg:w-1/3 xl:w-1/3">
                 <small><statistics-card-line
-                  hideChart
-                  class="mb-base"
-                  icon="CheckCircleIcon"
-                  icon-right
-                  :statistic="summary.total_paid_khr"
-                  :statisticTitle="$t('stat_paid_riel')"
-                  color="success" /></small>
+                    hideChart
+                    class="mb-base"
+                    icon="CheckCircleIcon"
+                    icon-right
+                    :statistic="summary.total_paid_khr"
+                    :statisticTitle="$t('stat_paid_riel')"
+                    color="success" /></small>
             </div>
 
             <div class="vx-col w-full md:w-1/3 lg:w-1/3 xl:w-1/3">
                 <small><statistics-card-line
-                  hideChart
-                  class="mb-base"
-                  icon="AlertCircleIcon"
-                  icon-right
-                  :statistic="summary.total_unpaid_khr"
-                  :statisticTitle="$t('stat_unpaid_riel')"
-                  color="warning" /></small>
+                    hideChart
+                    class="mb-base"
+                    icon="AlertCircleIcon"
+                    icon-right
+                    :statistic="summary.total_unpaid_khr"
+                    :statisticTitle="$t('stat_unpaid_riel')"
+                    color="warning" /></small>
             </div>
 
         </div>
@@ -156,51 +156,51 @@
         <div class="vx-row" v-if="dataAttributes.enablePaymentHistory">
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
                 <statistics-card-line
-                  hideChart
-                  class="mb-base"
-                  icon="FileTextIcon"
-                  icon-right
-                  :statistic="dataTables.total"
-                  :statisticTitle="$t('stat_total_records')"
-                  color="navy" />
+                    hideChart
+                    class="mb-base"
+                    icon="FileTextIcon"
+                    icon-right
+                    :statistic="dataTables.total"
+                    :statisticTitle="$t('stat_total_records')"
+                    color="navy" />
             </div>
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
                 <statistics-card-line
-                  hideChart
-                  class="mb-base"
-                  icon="CheckCircleIcon"
-                  icon-right
-                  :statistic="summary.paid"
-                  :statisticTitle="$t('stat_paid')"
-                  color="success" />
+                    hideChart
+                    class="mb-base"
+                    icon="CheckCircleIcon"
+                    icon-right
+                    :statistic="summary.paid"
+                    :statisticTitle="$t('stat_paid')"
+                    color="success" />
             </div>
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
                 <statistics-card-line
-                  hideChart
-                  class="mb-base"
-                  icon="SlashIcon"
-                  icon-right
-                  :statistic="summary.void"
-                  :statisticTitle="$t('stat_void')"
-                  color="dark" />
+                    hideChart
+                    class="mb-base"
+                    icon="SlashIcon"
+                    icon-right
+                    :statistic="summary.void"
+                    :statisticTitle="$t('stat_void')"
+                    color="dark" />
             </div>
 
             <div class="vx-col w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4">
                 <statistics-card-line
-                  hideChart
-                  class="mb-base"
-                  icon="ShieldIcon"
-                  icon-right
-                  :statistic="summary.exceptional"
-                  :statisticTitle="$t('stat_exempt')"
-                  color="warning" />
+                    hideChart
+                    class="mb-base"
+                    icon="ShieldIcon"
+                    icon-right
+                    :statistic="summary.exceptional"
+                    :statisticTitle="$t('stat_exempt')"
+                    color="warning" />
             </div>
 
         </div>
         <!-- #End Customize Dashboard Information -->
-        
+
         <DModalForm @clicked="initTableData" ref="refModalForm" :data="dataTables" :api="api"
             :formAttributes="formAttributes" :parentDataInfo="activeRow || dataInfo" :rowDisplay="rowDisplay"
             :dataAttributes="dataAttributes" :title="$t(title)" />
@@ -315,13 +315,6 @@
                                 </template>
                                 <template v-else>
                                     {{ customField(tr, header) }}
-                                    <!-- <template v-if="header == 'status'">
-                                        <template v-if="tr[header]!=null && tr[header]['title'] != undefined">{{ tr[header]["title"] }} </template>
-                                        <template v-else>{{ tr[header] }} </template>
-                                    </template>
-                                    <template v-else>
-                                        {{ tr[header] }}    
-                                    </template> -->
                                 </template>
                             </vs-td>
                             <vs-td class="dt-actions-cell">
@@ -366,7 +359,6 @@
                 <template #default="{data}">
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
                         <vs-tr :state="dataAttributes.backgroundColor">
-                            <!-- <td :colspan="Object.keys(ptr.children[0]).length">{{ ptr.name_kh }}</td> -->
                             <td :colspan="Object.keys(dataHeaders).length + 1">
                                 {{ ptr.code }}-{{ ptr.name_kh }}
                                 <feather-icon style="cursor: pointer;" @click="openPrivateForm(ptr)"
@@ -377,7 +369,7 @@
                             </td>
                             <td>
                                 <center><feather-icon style="cursor: pointer;" @click="openFormByParent(ptr)"
-                                        icon="PlusIcon" svgClasses="w-5 h-5 hover:text-primary stroke-current" />
+                                    icon="PlusIcon" svgClasses="w-5 h-5 hover:text-primary stroke-current" />
                                 </center>
                             </td>
                         </vs-tr>
@@ -418,14 +410,10 @@
                                             svgClasses="mr-2 w-5 h-5 hover:text-primary stroke-current"
                                             @click.stop="initAction(rowBtnAction, tr, 'Edit')" />
                                     </center>
-                                    <!-- <feather-icon style="cursor: pointer;" :key="sindex" icon="DollarSignIcon"
-                                    svgClasses="mr-2 w-5 h-5 hover:text-primary stroke-current"
-                                    @click.stop="initAction(rowBtnAction, tr, 'PrivateForm')" /> -->
                                 </template>
 
                             </vs-td>
                         </vs-tr>
-                        <!-- </template> -->
                     </tbody>
                 </template>
             </vs-table>
@@ -446,15 +434,15 @@
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
-                       >
-                        <vs-td :key="j" v-for="(header, j) in dataTables.dataHeaders" :colspan="colspan(header)"
-                            :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
+                        >
+                            <vs-td :key="j" v-for="(header, j) in dataTables.dataHeaders" :colspan="colspan(header)"
+                                :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataSubHeaders"
-                       >
-                        <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
+                        >
+                            <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
+                                :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
                     </vs-tr>
 
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
@@ -517,11 +505,6 @@
                                                 svgClasses="w-5 h-5 hover:text-primary stroke-current"
                                                 @click.stop="initEdit(row3)" />
                                         </template>
-                                        <!-- <template v-if="dataAttributes.actionButton">
-                                        <feather-icon style="cursor: pointer;" v-for="rowBtnAction in dataAttributes.actionButton"
-                                            :key="rowBtnAction.indextr" :icon="rowBtnAction.icon"
-                                            svgClasses="mr-2 w-5 h-5 hover:text-primary stroke-current" @click.stop="viewUrl(rowBtnAction)" />
-                                    </template> -->
                                     </td>
                                 </vs-tr>
 
@@ -553,8 +536,8 @@
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
-                       >
-                        <vs-td :key="j" v-for="(sheader, j) in dataTables.dataHeaders">{{ sheader }}</vs-td>
+                        >
+                            <vs-td :key="j" v-for="(sheader, j) in dataTables.dataHeaders">{{ sheader }}</vs-td>
                     </vs-tr>
 
                     <vs-tr v-if="dataTables.dataSubHeaders">
@@ -574,50 +557,42 @@
                         <template v-for="(row, index) in ptr.children"><template v-if="ptr.children">
 
                             <vs-tr class="dt-row-group">
-                                <!-- <td></td> -->
                                 <td>{{ row.name }}</td>
                                 <td>{{ row.entity }}</td>
                                 <td>{{ row.entity_member }}</td>
                                 <td>
-                                    <!-- <center><feather-icon style="cursor: pointer;" @click="openForm" icon="PlusIcon"
-                                        svgClasses="w-5 h-5 hover:text-primary stroke-current" /></center> -->
                                 </td>
                             </vs-tr>
 
                             <template v-for="row in row.children"><template v-if="row.children">
 
                                 <vs-tr class="dt-row-level">
-                                    <!-- <td></td> -->
                                     <td>{{ row.name }}</td>
                                     <td>{{ row.entity }}</td>
                                     <td>{{ row.entity_member }}</td>
                                     <td>
-                                        <!-- <center><feather-icon style="cursor: pointer;" @click="openForm" icon="PlusIcon"
-                                            svgClasses="w-5 h-5 hover:text-primary stroke-current" /></center> -->
                                     </td>
                                 </vs-tr>
 
                                 <template v-for="row in row.children"><template v-if="row.children">
                                     <vs-tr class="dt-row-highlight">
-                                        <!-- <td></td> -->
                                         <td>
                                             {{ row.name }}
                                             <center><feather-icon style="cursor: pointer;" @click="openForm"
-                                                    icon="PlusIcon"
-                                                    svgClasses="w-5 h-5 hover:text-primary stroke-current" /></center>
+                                                icon="PlusIcon"
+                                                svgClasses="w-5 h-5 hover:text-primary stroke-current" /></center>
                                         </td>
                                         <td>{{ row.entity }}</td>
                                         <td>{{ row.entity_member }}</td>
                                         <td>
                                             <center><feather-icon style="cursor: pointer;" @click="openForm"
-                                                    icon="PlusIcon"
-                                                    svgClasses="w-5 h-5 hover:text-primary stroke-current" /></center>
+                                                icon="PlusIcon"
+                                                svgClasses="w-5 h-5 hover:text-primary stroke-current" /></center>
                                         </td>
                                     </vs-tr>
 
                                     <template v-for="row in row.children">
                                         <vs-tr>
-                                            <!-- <td></td> -->
                                             <td>{{ row.name }}</td>
                                             <td>{{ row.entity }}</td>
                                             <td>{{ row.entity_member }}</td>
@@ -627,11 +602,6 @@
 
                                 </template></template>
 
-                                <!-- <vs-tr :key="index" v-for="(row2, index) in row3.data">
-                                <td>{{ row2.name }}</td>
-                                <td :key="index3" v-for="(row, index3) in row2.values">{{ row }}</td>
-                                <td></td>
-                            </vs-tr> -->
                             </template></template>
                         </template></template>
 
@@ -657,15 +627,15 @@
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataHeader.dataHeaders"
-                       >
-                        <vs-td :key="j" v-for="(header, j) in dataTables.dataHeader.dataHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
+                        >
+                            <vs-td :key="j" v-for="(header, j) in dataTables.dataHeader.dataHeaders"
+                                :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataHeader.dataSubHeaders"
-                       >
-                        <vs-td :key="k" v-for="(header, k) in dataTables.dataHeader.dataSubHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
+                        >
+                            <vs-td :key="k" v-for="(header, k) in dataTables.dataHeader.dataSubHeaders"
+                                :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
                     </vs-tr>
 
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
@@ -721,7 +691,7 @@
                                     <td>{{ }}</td>
                                     <td>
                                         <center><feather-icon style="cursor: pointer;" @click="openForm" icon="PlusIcon"
-                                                svgClasses="w-5 h-5 hover:text-primary stroke-current" /></center>
+                                            svgClasses="w-5 h-5 hover:text-primary stroke-current" /></center>
                                     </td>
                                 </vs-tr>
 
@@ -755,8 +725,8 @@
                                         <td>{{ }}</td>
                                         <td>
                                             <center><feather-icon style="cursor: pointer;" @click="openForm"
-                                                    icon="PlusIcon"
-                                                    svgClasses="w-5 h-5 hover:text-primary stroke-current" /></center>
+                                                icon="PlusIcon"
+                                                svgClasses="w-5 h-5 hover:text-primary stroke-current" /></center>
                                         </td>
                                     </vs-tr>
 
@@ -773,8 +743,8 @@
                                             <td>{{ }}</td>
                                             <td>
                                                 <center><feather-icon style="cursor: pointer;" @click="openForm"
-                                                        icon="PlusIcon"
-                                                        svgClasses="w-5 h-5 hover:text-primary stroke-current" />
+                                                    icon="PlusIcon"
+                                                    svgClasses="w-5 h-5 hover:text-primary stroke-current" />
                                                 </center>
                                             </td>
                                         </vs-tr>
@@ -805,24 +775,24 @@
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
-                       >
-                        <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
+                        >
+                            <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
+                                :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataSubHeaders"
-                       >
-                        <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
+                        >
+                            <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
+                                :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
                     </vs-tr>
 
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
 
                         <vs-tr class="dt-row-muted" :key="cindex" v-for="(cusField, cindex) in dataTables.group_fields"
-                           >
-                            <td :key="scindex" v-for="(scfield, scindex) in ptr[cusField]">
-                                <center>{{ scfield }}</center>
-                            </td>
+                            >
+                                <td :key="scindex" v-for="(scfield, scindex) in ptr[cusField]">
+                                    <center>{{ scfield }}</center>
+                                </td>
                         </vs-tr>
 
                         <template v-for="parent in ptr.children">
@@ -867,25 +837,19 @@
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
-                       >
-                        <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
+                        >
+                            <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
+                                :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataSubHeaders"
-                       >
-                        <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
+                        >
+                            <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
+                                :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
                     </vs-tr>
 
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
 
-                        <!-- <vs-tr class="dt-row-muted" :key="cindex" v-for="(  cusField, cindex  ) in   dataTables.group_fields  "
-                           >
-                            <td :key="scindex" v-for="(  scfield, scindex  ) in   ptr[cusField]  ">
-                                <center>{{ scfield }}</center>
-                            </td>
-                        </vs-tr> -->
                         <vs-tr class="dt-row-muted" :key="pindextr">
                             <td colspan="6">{{ ptr.entity.name }}</td>
                         </vs-tr>
@@ -932,27 +896,26 @@
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
-                       >
-                        <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
+                        >
+                            <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
+                                :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataSubHeaders"
-                       >
-                        <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
+                        >
+                            <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
+                                :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
                     </vs-tr>
 
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
 
                         <vs-tr class="text-danger" :key="cindex" v-for="(cusField, cindex) in dataTables.group_fields"
-                           >
-                            <td :key="scindex" v-for="(scfield, scindex) in ptr[cusField]">
-                                <center>{{ scfield }}</center>
-                            </td>
+                            >
+                                <td :key="scindex" v-for="(scfield, scindex) in ptr[cusField]">
+                                    <center>{{ scfield }}</center>
+                                </td>
                         </vs-tr>
 
-                        <!-- <template v-for="ctr in ptr"> -->
                         <vs-tr class="dt-row-group">
                             <vs-td colspan="3"></vs-td>
                             <vs-td>{{ ptr.entity }}</vs-td>
@@ -1006,11 +969,6 @@
                             <vs-td>{{ ptr.remark }}</vs-td>
                         </vs-tr>
                         <template v-for="ctr in ptr.children">
-                            <!-- <vs-tr>
-                                <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
-                                    <center>{{ parent[dataField] }} </center>
-                                </vs-td>
-                            </vs-tr> -->
                             <vs-tr class="dt-row-group" style="display: none;">
                                 <vs-td colspan="4">{{ ctr.department }}</vs-td>
                                 <vs-td>{{ ctr.finance_law }}</vs-td>
@@ -1116,26 +1074,11 @@
                                     <vs-td>{{ cctr.costing_plan_semester4.impl_est.s4_est_imp_nov }}</vs-td>
                                     <vs-td>{{ cctr.costing_plan_semester4.impl_est.s4_est_imp_dec }}</vs-td>
 
-
                                     <!-- ផ្សេងៗ -->
                                     <vs-td>{{ cctr.remark }}</vs-td>
                                 </vs-tr>
                             </template>
-                            <!-- <template v-for="child in parent.children" :key="sindex">
-                                <vs-tr>
-                                    <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
-                                        <center>{{ child[dataField] }} </center>
-                                    </vs-td>
-                                </vs-tr>
-
-                                <vs-tr v-for="(schild, sindex) in child.children">
-                                    <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
-                                        <center>{{ schild[dataField] }} </center>
-                                    </vs-td>
-                                </vs-tr>
-                            </template> -->
                         </template>
-                        <!-- </template> -->
                     </tbody>
                 </template>
             </vs-table>
@@ -1158,29 +1101,28 @@
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
-                       >
-                        <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)">
-                            <center>{{ $planText(header.label) }}</center>
-                        </vs-td>
+                        >
+                            <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
+                                :colspan="colspan(header)" :rowspan="rowspan(header)">
+                                <center>{{ $planText(header.label) }}</center>
+                            </vs-td>
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataSubHeaders"
-                       >
-                        <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
+                        >
+                            <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
+                                :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
                     </vs-tr>
 
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
 
                         <vs-tr class="text-danger" :key="cindex" v-for="(cusField, cindex) in dataTables.group_fields"
-                           >
-                            <td :key="scindex" v-for="(scfield, scindex) in ptr[cusField]">
-                                <center>{{ scfield }}</center>
-                            </td>
+                            >
+                                <td :key="scindex" v-for="(scfield, scindex) in ptr[cusField]">
+                                    <center>{{ scfield }}</center>
+                                </td>
                         </vs-tr>
 
-                        <!-- <template v-for="ctr in ptr"> -->
                         <vs-tr class="dt-th-strong">
                             <vs-td colspan="4">{{ ptr.entity }}</vs-td>
                             <vs-td>{{ ptr.finance_law }}</vs-td>
@@ -1233,11 +1175,6 @@
                             <vs-td>{{ ptr.remark }}</vs-td>
                         </vs-tr>
                         <template v-for="ctr in ptr.children">
-                            <!-- <vs-tr>
-                                <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
-                                    <center>{{ parent[dataField] }} </center>
-                                </vs-td>
-                            </vs-tr> -->
                             <vs-tr class="dt-row-group">
                                 <vs-td colspan="4">{{ ctr.department }}</vs-td>
                                 <vs-td>{{ ctr.finance_law }}</vs-td>
@@ -1347,21 +1284,7 @@
                                     <vs-td>{{ cctr.remark }}</vs-td>
                                 </vs-tr>
                             </template>
-                            <!-- <template v-for="child in parent.children" :key="sindex">
-                                <vs-tr>
-                                    <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
-                                        <center>{{ child[dataField] }} </center>
-                                    </vs-td>
-                                </vs-tr>
-
-                                <vs-tr v-for="(schild, sindex) in child.children">
-                                    <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
-                                        <center>{{ schild[dataField] }} </center>
-                                    </vs-td>
-                                </vs-tr>
-                            </template> -->
                         </template>
-                        <!-- </template> -->
                     </tbody>
                 </template>
             </vs-table>
@@ -1382,17 +1305,17 @@
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
-                       >
-                        <vs-td :key="j" v-for="(header, j) in dataTables.dataHeaders" :colspan="colspan(header)"
-                            :rowspan="rowspan(header)">{{ $t($planText(header.label)) }} </vs-td>
+                        >
+                            <vs-td :key="j" v-for="(header, j) in dataTables.dataHeaders" :colspan="colspan(header)"
+                                :rowspan="rowspan(header)">{{ $t($planText(header.label)) }} </vs-td>
                     </vs-tr>
 
                     <vs-tr class="dt-th-muted" v-if="dataTables.dataSubHeaders"
-                       >
-                        <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)">
-                            <center><small>{{ $t($planText(header.label)) }}</small></center>
-                        </vs-td>
+                        >
+                            <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
+                                :colspan="colspan(header)" :rowspan="rowspan(header)">
+                                <center><small>{{ $t($planText(header.label)) }}</small></center>
+                            </vs-td>
                     </vs-tr>
 
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
@@ -1414,14 +1337,14 @@
                             <template v-for="row in row.children" :key="index">
                                 <vs-tr :state="'warning'">
                                     <td>{{ row.name }} <feather-icon style="cursor: pointer;"
-                                            @click.stop="initAction(rowBtnAction, row, 'Edit')" icon="PlusIcon"
-                                            svgClasses="w-5 h-5 hover:text-primary stroke-current" />
+                                        @click.stop="initAction(rowBtnAction, row, 'Edit')" icon="PlusIcon"
+                                        svgClasses="w-5 h-5 hover:text-primary stroke-current" />
                                     </td>
                                     <td :key="index1" v-for="(row, index1) in row.values">{{ row }} </td>
                                     <td>
                                         <center><feather-icon style="cursor: pointer;"
-                                                @click.stop="initAction(rowBtnAction, row, 'Edit')" icon="PlusIcon"
-                                                svgClasses="w-5 h-5 hover:text-primary stroke-current" />
+                                            @click.stop="initAction(rowBtnAction, row, 'Edit')" icon="PlusIcon"
+                                            svgClasses="w-5 h-5 hover:text-primary stroke-current" />
                                         </center>
                                     </td>
                                 </vs-tr>
@@ -1442,29 +1365,24 @@
                                                     svgClasses="mr-2 w-5 h-5 hover:text-primary stroke-current"
                                                     @click.stop="initAction(rowBtnAction, row3, rowBtnAction.method)" />
                                             </template>
-                                            <!-- <feather-icon style="cursor: pointer;" icon="EditIcon"
-                            svgClasses="w-5 h-5 hover:text-primary stroke-current" @click.stop="initEdit(tr)" /> -->
-                                        </td>
-                                        <td :key="index4" v-for="(row, index4) in row3.values">{{ row }}</td>
-                                        <td>
-                                            <!-- <center><feather-icon style="cursor: pointer;" icon="EditIcon"
-                                                svgClasses="w-5 h-5 hover:text-primary stroke-current"
-                                                @click.stop="initEdit(row3)" /></center> -->
-                                            <template v-if="dataAttributes.actionButton">
-                                                <feather-icon style="cursor: pointer;"
-                                                    v-for="rowBtnAction in dataAttributes.actionButton"
-                                                    :key="rowBtnAction.indextr" :icon="rowBtnAction.icon"
-                                                    svgClasses="mr-2 w-5 h-5 hover:text-primary stroke-current"
-                                                    @click.stop="viewUrl(rowBtnAction)" />
-                                            </template>
-                                        </td>
-                                    </vs-tr>
+                                </td>
+                                <td :key="index4" v-for="(row, index4) in row3.values">{{ row }}</td>
+                                <td>
+                                    <template v-if="dataAttributes.actionButton">
+                                        <feather-icon style="cursor: pointer;"
+                                            v-for="rowBtnAction in dataAttributes.actionButton"
+                                            :key="rowBtnAction.indextr" :icon="rowBtnAction.icon"
+                                            svgClasses="mr-2 w-5 h-5 hover:text-primary stroke-current"
+                                            @click.stop="viewUrl(rowBtnAction)" />
+                                    </template>
+                                </td>
+                                </vs-tr>
 
-                                    <vs-tr v-for="(row4, index) in row3.data">
-                                        <td>{{ row4.name }}</td>
-                                        <td :key="index3" v-for="(row, index3) in row4.values">{{ row }}</td>
-                                        <td></td>
-                                    </vs-tr>
+                                <vs-tr v-for="(row4, index) in row3.data">
+                                    <td>{{ row4.name }}</td>
+                                    <td :key="index3" v-for="(row, index3) in row4.values">{{ row }}</td>
+                                    <td></td>
+                                </vs-tr>
                                 </template>
                             </template>
                         </template>
@@ -1490,24 +1408,24 @@
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
-                       >
-                        <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
+                        >
+                            <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
+                                :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataSubHeaders"
-                       >
-                        <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
+                        >
+                            <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
+                                :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
                     </vs-tr>
 
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
 
                         <vs-tr class="dt-row-muted" :key="cindex" v-for="(cusField, cindex) in dataTables.group_fields"
-                           >
-                            <td :key="scindex" v-for="(scfield, scindex) in ptr[cusField]">
-                                <center>{{ scfield }}</center>
-                            </td>
+                            >
+                                <td :key="scindex" v-for="(scfield, scindex) in ptr[cusField]">
+                                    <center>{{ scfield }}</center>
+                                </td>
                         </vs-tr>
 
                         <template v-for="parent in ptr.children">
@@ -1515,9 +1433,6 @@
                                 <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                     {{ parent[dataField] }}
                                     <template v-if="dataField == 'desc'">
-                                        <!-- <feather-icon style="cursor: pointer;" :key="sindex" icon="PlusIcon"
-                                        svgClasses="mr-2 w-5 h-5 hover:text-primary stroke-current"
-                                        @click="openPrivateForm('')" /> -->
                                     </template>
                                 </vs-td>
                                 <vs-td>
@@ -1598,8 +1513,6 @@
             </vs-table>
 
             <!-- Table 12 -->
-            <!-- <vs-table v-if="dataTables.data && dataAttributes.tableStyle == 12" :max-items="dataTables.limit" :data="dataTables"
-            style="overflow: scroll"> -->
             <vs-table :noDataText="$t('dt_empty')" v-if="dataTables.data && dataAttributes.tableStyle == 12" :max-items="dataTables.limit"
                 :data="dataTables.data">
                 <template #default="{data}">
@@ -1616,30 +1529,23 @@
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataHeaders"
-                       >
-                        <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
+                        >
+                            <vs-td :style="style(header)" :key="j" v-for="(header, j) in dataTables.dataHeaders"
+                                :colspan="colspan(header)" :rowspan="rowspan(header)">{{ $planText(header.label) }} </vs-td>
                     </vs-tr>
 
                     <vs-tr class="dt-th-strong" v-if="dataTables.dataSubHeaders"
-                       >
-                        <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
-                            :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
+                        >
+                            <vs-td :key="k" v-for="(header, k) in dataTables.dataSubHeaders"
+                                :colspan="colspan(header)" :rowspan="rowspan(header)"><small>{{ $planText(header.label) }}</small></vs-td>
                     </vs-tr>
                     <tbody :key="pindextr" v-for="(ptr, pindextr) in data">
                         <vs-tr class="dt-row-muted" :key="cindex" v-for="(cusField, cindex) in dataTables.group_fields"
-                           >
-                            <td :key="scindex" v-for="(scfield, scindex) in ptr[cusField]">
-                                <center>{{ scfield }}</center>
-                            </td>
+                            >
+                                <td :key="scindex" v-for="(scfield, scindex) in ptr[cusField]">
+                                    <center>{{ scfield }}</center>
+                                </td>
                         </vs-tr>
-                        <!-- <template v-for="(l2, l2index) in ptr"> -->
-                        <!-- dataTables.dataFillables | json }} -->
-                        <!-- <vs-tr style="background-color: rgb(255, 234, 43);">
-                        <vs-td>
-                            {{ pindextr }} --- {{ ptr["name"] }}
-                        </vs-td>
-                    </vs-tr> -->
                         <vs-tr class="dt-row-level">
                             <vs-td :key="sindex" v-for="(dataField, sindex) in dataTables.dataFillables">
                                 {{ ptr[dataField] }}
@@ -1687,11 +1593,6 @@
                                                 svgClasses="mr-2 w-5 h-5 hover:text-primary stroke-current"
                                                 @click.stop="initAction(rowBtnAction, schild2, 'PrivateForm')" />
                                         </template>
-                                        <!-- <template v-if="dataField == 'name'">
-                                            <feather-icon style="cursor: pointer;" :key="sindex" icon="PlusIcon"
-                                                svgClasses="mr-2 w-5 h-5 hover:text-primary stroke-current"
-                                                @click.stop="initAction(rowBtnAction, child, 'Edit')" />
-                                        </template> -->
                                     </vs-td>
                                     <vs-td>
                                         <feather-icon style="cursor: pointer;" :key="sindex" icon="PlusIcon"
@@ -1707,10 +1608,6 @@
                                             {{ schild3[dataField] }}
                                             <template v-if="dataField == 'name'">
                                                 <!-- ###### Level Task ########-->
-                                                <!-- <feather-icon style="cursor: pointer;" :key="sindex"
-                                                    icon="DollarSignIcon"
-                                                    svgClasses="mr-2 w-5 h-5 hover:text-primary stroke-current"
-                                                    @click.stop="initAction(rowBtnAction, schild3, 'PrivateForm')" /> -->
                                             </template>
                                         </vs-td>
                                         <vs-td>
@@ -1727,8 +1624,6 @@
                             </template>
                         </template>
 
-                        <!-- </template> -->
-
                     </tbody>
                 </template>
             </vs-table>
@@ -1737,9 +1632,6 @@
         <div class="dt-footer">
             <span class="dt-footer__info">{{ $t('dt_showing', pageRange) }}</span>
             <d-pagination :total="calPaginNumber(dataTables.total / dataTables.limit)" v-model="current_page" />
-            <!-- <p class="mb-3">Current Page: {{ current_page }}</p>
-            <vs-button @click="current_page++">Increment</vs-button>
-            <vs-button class="ml-4 mb-4" @click="current_page--">Decrement</vs-button> -->
         </div>
     </vx-card>
 </template>
@@ -1749,12 +1641,9 @@ import vSelect from 'vue-select'
 import axios from "@/axios.js";
 import DSearch from '@/views/form-builder/DSearch.vue';
 import DModalForm from '@/views/form-builder/DModalForm.vue';
-// import DForm from '@/views/form-builder/DForm.vue'
 import DHeadingWizard from '@/views/form-builder/DHeadingWizard.vue';
 import DFileManager from '@/views/form-builder/DFileManager.vue';
-import { ref } from 'vue';
 import DFileUploader from '@/views/form-builder/DFileUploader.vue';
-// import DModalForm from "./DModalForm.vue";
 import StatisticsCardLine from '@/components/statistics-cards/StatisticsCardLine.vue'
 export default {
     props: {
@@ -1788,14 +1677,7 @@ export default {
             currentx: 0,
             current_page: 1,
             dataId: 0,
-            // Remove Data Info Obj just for testing
-            // dataInfo: {
-            //     indicator: {
-            //         data: {
 
-            //         }
-            //     }
-            // },
             enableToggleForm: true,
             dataElements: [],
             isHidden: true,
@@ -2001,9 +1883,6 @@ export default {
                     data: _params,
                     method: 'POST',
                     responseType: 'blob', // Important: binary data
-                    // headers: {
-                    // 'Authorization': 'Bearer ' + localStorage.getItem('token') // if using tokens
-                    // }
                 })
                     .then((response) => {
                         const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -2022,7 +1901,6 @@ export default {
 
                         this.$vs.loading.close();
                     }).catch((error) => {
-                        // reject(error)
                         this.$vs.notify({
                             title: 'Message',
                             text: 'msg.action_failed',
@@ -2051,7 +1929,6 @@ export default {
             this.$refs.refModalForm.openNewFormByParent(obj);
         },
         calPaginNumber(n) {
-            // alert(n);
             let _newVal = 0;
             if (Number(n) === n && n % 1 === 0) {
                 _newVal = n;
@@ -2126,7 +2003,6 @@ export default {
                             position: 'top-right'
                         })
                         this.$emit('clicked', _search_params);
-                        // this.$router.push('/account/expense').catch(() => { })
                     }).catch((error) => {
                         reject(error)
                         this.$vs.notify({
@@ -2206,7 +2082,6 @@ export default {
                             this.$vs.loading.close();
                         });
                 });
-                // this.$refs.refModalForm.initForm(data);
             }
             // Place your customization action button
             if (method == "InitPayment") {
@@ -2232,12 +2107,6 @@ export default {
         },
         formatJson(filterVal, jsonData) {
             return jsonData.map(v => filterVal.map(j => {
-                // Add col name which needs to be translated
-                // if (j === 'timestamp') {
-                //   return parseTime(v[j])
-                // } else {
-                //   return v[j]
-                // }
 
                 return v[j]
             }))
@@ -2352,7 +2221,6 @@ th {
 
 th {
     text-align: center !important;
-    /* display: inline; */
 }
 
 th.rotate {

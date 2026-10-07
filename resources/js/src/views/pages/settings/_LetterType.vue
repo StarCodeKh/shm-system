@@ -96,7 +96,7 @@ export default {
             return new Promise(() => {
                 axios.post(this.api + "/search", _params)
                     .then((response) => {
-                        
+
                         if (response.data) {
                             this.data = response.data;
                         } else {

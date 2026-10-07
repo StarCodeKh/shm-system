@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\User;
 use Database\Seeders\ConfigSeeder;
 use Database\Seeders\OfficerLookupSeeder;
+use Database\Seeders\PassportClientSeeder;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -40,7 +41,6 @@ class TransferLegacyDatabase extends Command
     private const NUMERIC_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'decimal', 'float', 'double'];
     private const DATE_TYPES = ['date', 'datetime', 'timestamp'];
 
-    // Tables and columns renamed by the standard migrations: new name => old name
     private const RENAMED_TABLES = [
         'incentive_to_stakeholder' => 'incentive_to_stackholder',
     ];
@@ -134,7 +134,7 @@ class TransferLegacyDatabase extends Command
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
 
         $this->assignRoles($source);
-        foreach ([ConfigSeeder::class, OfficerLookupSeeder::class] as $seeder) {
+        foreach ([ConfigSeeder::class, OfficerLookupSeeder::class, PassportClientSeeder::class] as $seeder) {
             $this->callSilent('db:seed', ['--class' => $seeder, '--force' => true]);
         }
 

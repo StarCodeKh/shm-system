@@ -4,13 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Notification;
 use App\Models\NotificationType;
-// use PushNotificationService;
 use App\Notifications\DailyReminderNotification;
 use Illuminate\Http\Request;
 use App\User;
 use Auth;
 use CommonService;
-// use App\Services\NotificationService;
 use App\Services\PushNotificationService;
 use App\Models\Settings\Status;
 class NotificationController extends Controller
@@ -88,7 +86,7 @@ class NotificationController extends Controller
      */
     public function create()
     {
-        
+
     }
 
     /**
@@ -133,7 +131,7 @@ class NotificationController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {   
+    {
         $data = array();
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_SHOW] == true){
             $query = $this->db_table::find($id);
@@ -265,25 +263,10 @@ class NotificationController extends Controller
         $sendPushNotification = PushNotificationService::sendToDevice($request);
         $data = array();
         if($sendPushNotification){
-            // $queryUserDevices = UserDevice::GroupBy("user_id")->get();
             $users = User::where('receive_daily_notifications', 1)->get(); // Optional condition
             foreach ($users as $user) {
-                // dd($user->notify(new DailyReminderNotification()));
                 $user->notify(new DailyReminderNotification());
             }
-            // foreach($queryUserDevices as $userDevice){
-                // ########## Record All Users Notification
-                // NotificationUser::create([
-                //     "user_id" => $userDevice->user_id,
-                //     "officer_id" => "",
-                //     "title" => $request["title"],
-                //     "description" => $request["body"],
-                //     "status" => 1,
-                //     "push_count" => 1,
-                //     "notification_type" => $request["notification_type"],
-                //     "created_at" => date("Y-m-d H:i:s")
-                // ]);
-            // }
             $data = array(
                 "success" => true,
                 "message" => __('common.notification_sent')

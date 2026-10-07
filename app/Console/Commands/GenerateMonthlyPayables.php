@@ -34,11 +34,6 @@ class GenerateMonthlyPayables extends Command
                     $expectedDueDate = $schedule->getNextDueDate($targetMonth, $schedule->officer_id);
                     // If the expected due date falls within the target month and a payable isn't already pending/paid
                     if ($expectedDueDate->month === $targetMonth->month && $expectedDueDate->year === $targetMonth->year) {
-                        // Check if a payable already exists for this schedule and month
-                        // $existingPayable = OfficerPayable::where('officer_id', $schedule->officer_id)
-                        //                         // ->where('due_date', '>=', $targetMonth->startOfMonth())
-                        //                         ->where('due_date', '<=', $targetMonth->endOfMonth())
-                        //                         ->exists();
                         $existingPayable = OfficerPayable::where('officer_id', $schedule->officer_id)
                                                 ->whereYear('due_date', $targetMonth->year)
                                                 ->whereMonth('due_date', $targetMonth->month)

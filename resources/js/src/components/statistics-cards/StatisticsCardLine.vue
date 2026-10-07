@@ -2,9 +2,9 @@
     <vx-card class="overflow-hidden">
         <template #no-body><div>
             <div class="p-6" :class="{
-              'flex justify-between flex-row-reverse items-center': iconRight,
-              'text-center': !iconRight && hideChart,
-              'pb-0': !hideChart
+                'flex justify-between flex-row-reverse items-center': iconRight,
+                'text-center': !iconRight && hideChart,
+                'pb-0': !hideChart
             }">
                 <div class="header-card">
                     <div class="A"><feather-icon :icon="icon" class="stat-card-line__icon p-3 inline-flex rounded-full" :class="['stat-card-line__icon--' + color, {'mb-4': !iconRight}]" :style="{ '--tone': toneVar }"></feather-icon></div>
@@ -15,28 +15,20 @@
                         />
                     </div>
                 </div>
-                
+
                 <div class="truncate stat-card-line__body">
                     <h2 class="mb-1 font-bold">{{ displayStatistic }}</h2>
                     <span>{{ statisticTitle }}</span>
                 </div>
-            
+
             </div>
 
-            <!-- <div class="line-area-chart" v-if="!hideChart">
-                <vue-apex-charts ref="apexChart" :type="type" height=100 width='100%' :options="chartOptions" :series="chartData" />
-            </div> -->
-            
-            <!-- <div id="chart">
-                <apexchart type="line" height="350" :options="chartOptions" :series="series"></apexchart>
-            </div> -->
         </div></template>
     </vx-card>
 </template>
 
 <script>
 import VueApexCharts from 'vue3-apexcharts'
-import ApexCharts from 'apexcharts'
 import chartConfigs from "./chartConfigs.js"
 import _color from '@assets/utils/color.js'
 import CurrencyDropDown from "../../layouts/components/navbar/components/CurrencyDropDown.vue"
@@ -55,7 +47,6 @@ export default{
             type: String,
         },
         chartData: {
-            // type: String,
             type: Array,
             required: true
         },
@@ -64,7 +55,7 @@ export default{
             default: 'primary',
         },
         colorTo: {
-          type: String
+            type: String
         },
         chartType: {
             type: String,
@@ -79,8 +70,8 @@ export default{
             default: false
         },
         hideChart: {
-          type: Boolean,
-          default: false,
+            type: Boolean,
+            default: false,
         },
         currency: {
             type: String,
@@ -92,9 +83,9 @@ export default{
         },
     },
     data() {
-      return {
-        chartOptions: "null"
-      }
+        return {
+            chartOptions: "null"
+        }
     },
     watch: {
         themePrimaryColor() {
@@ -124,21 +115,21 @@ export default{
     methods: {
         getHex(color) {
             if(_color.isColor(color)) {
-              let rgb  = window.getComputedStyle(document.documentElement).getPropertyValue(`--vs-${color}`);
-              rgb = rgb.split(",");
-              return "#" + ((1 << 24) + (Number(rgb[0]) << 16) + (Number(rgb[1]) << 8) + Number(rgb[2])).toString(16).slice(1);
+                let rgb  = window.getComputedStyle(document.documentElement).getPropertyValue(`--vs-${color}`);
+                rgb = rgb.split(",");
+                return "#" + ((1 << 24) + (Number(rgb[0]) << 16) + (Number(rgb[1]) << 8) + Number(rgb[2])).toString(16).slice(1);
             }
             return color
         },
         gradientToColor(color) {
-          let gradientToColors = {
-            "primary": "#A9A2F6",
-            "success": "#55DD92",
-            "warning": "#ffc085",
-            "danger": "#F97794"
-          }
+            let gradientToColors = {
+                "primary": "#A9A2F6",
+                "success": "#55DD92",
+                "warning": "#ffc085",
+                "danger": "#F97794"
+            }
 
-          return gradientToColors[color] ? gradientToColors[color] : gradientToColors["primary"]
+            return gradientToColors[color] ? gradientToColors[color] : gradientToColors["primary"]
         }
     },
     components: {
@@ -161,11 +152,11 @@ export default{
             }
         }
         else if(this.type == "line") {
-          // Assign chart options
-          this.chartOptions = JSON.parse(JSON.stringify(chartConfigs.lineChartOptions))
+            // Assign chart options
+            this.chartOptions = JSON.parse(JSON.stringify(chartConfigs.lineChartOptions))
 
-          this.chartOptions.fill.gradient.gradientToColors = [this.gradientToColor(this.colorTo || this.color)]
-          this.chartOptions.colors = [this.getHex(this.color)]
+            this.chartOptions.fill.gradient.gradientToColors = [this.gradientToColor(this.colorTo || this.color)]
+            this.chartOptions.colors = [this.getHex(this.color)]
         }
     }
 }
