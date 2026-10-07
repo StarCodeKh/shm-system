@@ -11,7 +11,7 @@
                     <div class="form-grid">
 
                         <div class="form-group">
-                            <label>{{ $t('of_photo') }} <span class="badge">{{ $t('form_optional') }}</span></label>
+                            <label>{{ $t('of_photo') }}</label>
                             <d-file-picker name="photo" :value="officer.photo || ''"
                                 @browse="initOpenFileManager('photo')"
                                 @clear="officer.photo = null; iconThumnail = null" />
@@ -21,8 +21,8 @@
                             <label>{{ $t('first_name') }} <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-user"></i>
-                                <!-- <input type="text" ​name="first_name" :placeholder="$t('first_name')" v-model="officer.first_name" v-validate="'required'"> -->
-                                <vs-input v-validate="'required'" v-model="officer.first_name" :placeholder="$t('first_name')" :name="'first_name'" class="mt-1 w-full" />
+                                <!-- <input type="text" ​name="first_name" :placeholder="$tHint('first_name')" v-model="officer.first_name" v-validate="'required'"> -->
+                                <vs-input v-validate="'required'" v-model="officer.first_name" :placeholder="$tHint('first_name')" :name="'first_name'" class="mt-1 w-full" />
                                 <span class="text-danger text-sm" v-show="errors.has('first_name')">{{ $tRequired('first_name')
                                 }}</span>
                             </div>
@@ -32,8 +32,8 @@
                             <label>{{ $t('last_name') }} <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-user"></i>
-                                <!-- <input type="text" :placeholder="$t('last_name')" v-model="officer.last_name" required> -->
-                                 <vs-input v-validate="'required'" v-model="officer.last_name" :placeholder="$t('last_name')" :name="'last_name'" class="mt-1 w-full" />
+                                <!-- <input type="text" :placeholder="$tHint('last_name')" v-model="officer.last_name" required> -->
+                                 <vs-input v-validate="'required'" v-model="officer.last_name" :placeholder="$tHint('last_name')" :name="'last_name'" class="mt-1 w-full" />
                                 <span class="text-danger text-sm" v-show="errors.has('last_name')">{{ $tRequired('last_name')
                                 }}</span>
                             </div>
@@ -43,8 +43,8 @@
                             <label>{{ $t('latin') }} <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-user"></i>
-                                <!-- <input type="text" :placeholder="$t('latin')" v-model="officer.latin" required> -->
-                                 <vs-input v-validate="'required'" v-model="officer.latin" :placeholder="$t('latin')" :name="'latin'" class="mt-1 w-full" />
+                                <!-- <input type="text" :placeholder="$tHint('latin')" v-model="officer.latin" required> -->
+                                 <vs-input v-validate="'required'" v-model="officer.latin" :placeholder="$tHint('latin')" :name="'latin'" class="mt-1 w-full" />
                                 <span class="text-danger text-sm" v-show="errors.has('latin')">{{ $tRequired('latin')
                                 }}</span>
                             </div>
@@ -52,7 +52,7 @@
 
                         <div class="form-group">
                             <label>{{ $t('gender') }} <span class="required"></span></label>
-                            <v-select
+                            <v-select :placeholder="$tHint('gender', 'select')"
                                     v-validate="'required'" v-model="officer.gender"
                                     name="gender" :options="translated(genders)"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
@@ -69,7 +69,7 @@
                         <div class="form-group">
                             <label>{{ $t('of_dob') }} <span class="required"></span></label>
                             <!-- <input type="date" v-model="officer.dob" required> -->
-                             <flat-pickr v-validate="'required'" name="dob"
+                             <flat-pickr :placeholder="$tHint('of_dob', 'date')" v-validate="'required'" name="dob"
                                 v-model="officer.dob" class="mt-1 w-full" />
                             <span class="text-danger text-sm" v-show="errors.has('dob')">{{ $tRequired('dob')
                             }}</span>
@@ -79,14 +79,14 @@
                             <label>{{ $t('of_identity_no') }}</label>
                             <div class="input-icon">
                                 <i class="fas fa-id-card"></i>
-                                <vs-input v-model="officer.identity_no" :placeholder="$t('identity_no')" :name="'identity_no'" class="mt-1 w-full" />
+                                <vs-input v-model="officer.identity_no" :placeholder="$tHint('of_identity_no')" :name="'identity_no'" class="mt-1 w-full" />
                                 <!-- <input type="text" placeholder="បញ្ចូលលេខអត្តសញ្ញាណប័ណ្ណ" v-model="officer.identity_no" required> -->
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label>{{ $t('of_nationality') }}</label>
-                            <vs-input v-model="officer.nationality" :placeholder="$t('nationality')" :name="'nationality'" class="mt-1 w-full" />
+                            <vs-input v-model="officer.nationality" :placeholder="$tHint('of_nationality')" :name="'nationality'" class="mt-1 w-full" />
                             <!-- <input type="text" placeholder="សញ្ជាតិ" v-model="officer.nationality" required> -->
                             <!-- <select required>
                                 <option value="">ជ្រើសរើសសញ្ជាតិ</option>
@@ -108,7 +108,7 @@
 
                         <div class="form-group">
                             <label>{{ $t('of_married_status') }}</label>
-                            <v-select v-model="officer.married_status"
+                            <v-select :placeholder="$tHint('of_married_status', 'select')" v-model="officer.married_status"
                                     name="married_status" :options="translated(marriedStatus)"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                         </div>
@@ -146,7 +146,7 @@
                             <label>{{ $t('of_department') }} <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-envelope"></i>
-                                <v-select
+                                <v-select :placeholder="$tHint('of_department', 'select')"
                                     v-on:input="onInitChange($event, '', '', apiEntityByDept)"
                                     v-validate="'required'" v-model="officer.department_id"
                                     name="department_id" :options="departments"
@@ -162,7 +162,7 @@
                             <label>{{ $t('of_entity') }} <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-phone"></i>
-                                <v-select
+                                <v-select :placeholder="$tHint('of_entity', 'select')"
                                     v-validate="'required'" v-model="officer.entity_id"
                                     name="entity_id" :options="entities"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
@@ -172,10 +172,10 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>{{ $t('of_title') }}</label>
+                            <label>{{ $t('of_title') }} <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-phone"></i>
-                                <v-select
+                                <v-select :placeholder="$tHint('of_title', 'select')"
                                     v-validate="'required'" v-model="officer.title"
                                     name="title" :options="titles"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
@@ -186,10 +186,10 @@
                         </div>
 
                         <div class="form-group">
-                            <label>{{ $t('of_duty') }}</label>
+                            <label>{{ $t('of_duty') }} <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-envelope"></i>
-                                <v-select
+                                <v-select :placeholder="$tHint('of_duty', 'select')"
                                     v-validate="'required'" v-model="officer.position"
                                     name="position" :options="positions"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
@@ -210,7 +210,7 @@
                             <label>{{ $t('of_phone') }} <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-phone"></i>
-                                <vs-input v-validate="'required'" v-model="officer.telephone_1" :placeholder="$t('telephone_1')" :name="'telephone_1'" class="mt-1 w-full" />
+                                <vs-input v-validate="'required'" v-model="officer.telephone_1" :placeholder="$tHint('of_phone')" :name="'telephone_1'" class="mt-1 w-full" />
                                 <span class="text-danger text-sm" v-show="errors.has('telephone_1')">{{ $tRequired('telephone_1')
                                 }}</span>
                                 <!-- <input type="tel" placeholder="012 xxx xxx" v-model="officer.telephone_1" required> -->
@@ -221,42 +221,42 @@
                             <label>{{ $t('of_email') }}</label>
                             <div class="input-icon">
                                 <i class="fas fa-envelope"></i>
-                                <vs-input v-model="officer.email" :placeholder="$t('email')" :name="'email'" class="mt-1 w-full" />
+                                <vs-input v-model="officer.email" :placeholder="$tHint('of_email')" :name="'email'" class="mt-1 w-full" />
                                 <!-- <input type="email" placeholder="example@email.com" v-model="officer.email"> -->
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label>Facebook</label>
+                            <label>{{ $t('social_media_fb') }}</label>
                             <div class="input-icon">
                                 <i class="fab fa-facebook"></i>
                                 <!-- <input type="text" placeholder="Facebook Profile" v-model="officer.social_media_fb"> -->
-                                <vs-input v-model="officer.social_media_fb" :placeholder="$t('social_media_fb')" :name="'social_media_fb'" class="mt-1 w-full" />
+                                <vs-input v-model="officer.social_media_fb" :placeholder="$tHint('social_media_fb')" :name="'social_media_fb'" class="mt-1 w-full" />
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label>Telegram</label>
+                            <label>{{ $t('social_media_telegram') }}</label>
                             <div class="input-icon">
                                 <i class="fab fa-telegram"></i>
                                 <!-- <input type="text" placeholder="Telegram Username" v-model="officer.social_media_telegram"> -->
-                                 <vs-input v-model="officer.social_media_telegram" :placeholder="$t('social_media_telegram')" :name="'social_media_telegram'" class="mt-1 w-full" />
+                                 <vs-input v-model="officer.social_media_telegram" :placeholder="$tHint('social_media_telegram')" :name="'social_media_telegram'" class="mt-1 w-full" />
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label>WhatsApp</label>
+                            <label>{{ $t('social_media_whatsapp') }}</label>
                             <div class="input-icon">
                                 <i class="fab fa-whatsapp"></i>
                                 <!-- <input type="tel" placeholder="WhatsApp Number" v-model="officer.social_media_whatsapp"> -->
-                                <vs-input v-model="officer.social_media_whatsapp" :placeholder="$t('social_media_whatsapp')" :name="'social_media_whatsapp'" class="mt-1 w-full" />
+                                <vs-input v-model="officer.social_media_whatsapp" :placeholder="$tHint('social_media_whatsapp')" :name="'social_media_whatsapp'" class="mt-1 w-full" />
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label>{{ $t('of_social') }}</label>
                             <!-- <input type="text" placeholder="បញ្ចូលបណ្តាញសង្គមផ្សេង" v-model="officer.social_media_alt"> -->
-                            <vs-input v-model="officer.social_media_alt" :placeholder="$t('social_media_alt')" :name="'social_media_alt'" class="mt-1 w-full" />
+                            <vs-input v-model="officer.social_media_alt" :placeholder="$tHint('of_social')" :name="'social_media_alt'" class="mt-1 w-full" />
                         </div>
                     </div>
                 </div>
@@ -266,13 +266,13 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label>{{ $t('of_emergency_person') }}</label>
-                            <vs-input v-model="officer.emergency_person" :placeholder="$t('emergency_person')" :name="'emergency_person'" class="mt-1 w-full" />
+                            <vs-input v-model="officer.emergency_person" :placeholder="$tHint('of_emergency_person')" :name="'emergency_person'" class="mt-1 w-full" />
                             <!-- <input type="text" placeholder="ឈ្មោះអ្នកទំនាក់ទំនង" v-model="officer.emergency_person"> -->
                         </div>
 
                         <div class="form-group">
                             <label>{{ $t('of_emergency_relative') }}</label>
-                            <v-select v-model="officer.emergency_relative"
+                            <v-select :placeholder="$tHint('of_emergency_relative', 'select')" v-model="officer.emergency_relative"
                                     name="emergencyRelatives" :options="translated(emergencyRelatives)"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                         </div>
@@ -280,7 +280,7 @@
                         <div class="form-group">
                             <label>{{ $t('of_emergency_phone') }}</label>
                             <!-- <input type="tel" placeholder="012 xxx xxx" v-model="officer.telephone_2"> -->
-                            <vs-input v-model="officer.telephone_2" :placeholder="$t('telephone_2')" :name="'telephone_2'" class="mt-1 w-full" />
+                            <vs-input v-model="officer.telephone_2" :placeholder="$tHint('of_emergency_phone')" :name="'telephone_2'" class="mt-1 w-full" />
                         </div>
                     </div>
                 </div>
@@ -291,7 +291,7 @@
                         <div class="form-group full-width">
                             <label>{{ $t('of_remark') }}</label>
                             <!-- <textarea placeholder="បញ្ចូលព័ត៌មានបន្ថែម..." rows="3" v-model="officer.remark"></textarea> -->
-                             <vs-textarea v-model="officer.remark" :placeholder="$t('remark')" :name="'remark'" class="mt-1 w-full" />
+                             <vs-textarea v-model="officer.remark" :placeholder="$tHint('of_remark')" :name="'remark'" class="mt-1 w-full" />
                         </div>
 
                         <!-- <div class="form-group full-width">
@@ -311,14 +311,14 @@
                         <div class="form-group">
                             <label>{{ $t('of_register_date') }} <span class="required"></span></label>
                             <!-- <input type="date" v-model="officer.dob" required> -->
-                                <flat-pickr v-validate="'required'" name="register_date"
+                                <flat-pickr :placeholder="$tHint('of_register_date', 'date')" v-validate="'required'" name="register_date"
                                 v-model="officer.register_date" class="mt-1 w-full" />
                             <span class="text-danger text-sm" v-show="errors.has('register_date')">{{ $tRequired('register_date')
                             }}</span>
                         </div>
                         <div class="form-group">
                             <label>{{ $t('of_nssf') }} <span class="required"></span></label>
-                            <v-select
+                            <v-select :placeholder="$tHint('of_nssf', 'select')"
                                     v-validate="'required'" v-model="officer.is_nssf_member"
                                     name="is_nssf_member" :options="nssfs"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
@@ -329,7 +329,7 @@
 
                         <div class="form-group">
                             <label>{{ $t('of_status') }} <span class="required"></span></label>
-                            <v-select
+                            <v-select :placeholder="$tHint('of_status', 'select')"
                                     v-validate="'required'" v-model="officer.status"
                                     name="status" :options="statuses"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />

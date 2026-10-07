@@ -1,6 +1,7 @@
 // kh, en
 export default {
 	kh: {
+		hint_of_nssf: "ជ្រើសរើស មាន ឬ គ្មាន", // the label is a question: "Select <question>" reads wrong
 		// Columns of the other tables: budget modules (mef_*), incentives, customers, menus
 		planning_id: "ឆ្នាំរៀបចំផែនការ",
 		key: "កូនសោ",
@@ -1458,6 +1459,7 @@ export default {
 		due_date: "ថ្ងៃត្រូវបង់"
 	},
 	en: {
+		hint_of_nssf: "Select yes or no", // the label is a question: "Select <question>" reads wrong
 		// Columns of the other tables: budget modules (mef_*), incentives, customers, menus
 		planning_id: "Planning Year",
 		key: "Key",

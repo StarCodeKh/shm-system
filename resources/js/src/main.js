@@ -6,6 +6,15 @@ import Vuesax from 'vuesax'
 
 Vue.use(Vuesax)
 
+// <vs-input> hides its placeholder only for a "truthy" value, so a number field holding 0 showed "00"
+// (grey placeholder 0 + the value 0). Only an empty field shows the placeholder.
+Object.defineProperty(Vue.component('VsInput').prototype, 'isValue', {
+  configurable: true,
+  get() {
+    return this.labelPlaceholder ? true : (this.value === undefined || this.value === null || this.value === '')
+  },
+})
+
 // axios
 import axios from "./axios.js"
 Vue.prototype.$http = axios

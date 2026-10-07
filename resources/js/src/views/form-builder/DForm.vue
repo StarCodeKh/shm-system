@@ -355,7 +355,7 @@
 <script>
 import { gridClass } from "@/formGrid.js";
 import axios from "@/axios.js";
-import { fieldLabel } from "@/i18n/i18n.js";
+import { fieldLabel, fieldHint } from "@/i18n/i18n.js";
 
 // Dropdown choices fetched by field name (GET /api/v1/lookup/{field}), shared by every form for the session.
 // Used only when the page didn't send a list for that field; fields without a lookup resolve to null.
@@ -746,15 +746,7 @@ export default {
         // Placeholder: the field's own "hint_<name>" text when translated, otherwise a hint by kind.
         // Never the label again (it's already shown above the field).
         fieldHint(attribute, kind = 'text') {
-            const name = attribute && attribute.name
-            if (this.$te('hint_' + name)) return this.$t('hint_' + name)
-            if (kind === 'number') return '0'
-            if (kind === 'password') return '••••••••'
-            if (kind === 'date') return this.$t('form_pick_date')
-            const label = this.fieldLabel(name)
-            // "Enter member name" reads better than "Enter Member name"; acronyms (NSSF) keep their case
-            const field = /^[A-Z][a-z]/.test(label) ? label.charAt(0).toLowerCase() + label.slice(1) : label
-            return this.$t(kind === 'select' ? 'form_select_field' : 'form_enter_field', { field })
+            return fieldHint(attribute && attribute.name, kind) // shared with every screen ($tHint): see i18n.js
         },
         requiredMessage(name) {
             const key = 'required_' + name

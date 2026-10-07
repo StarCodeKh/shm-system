@@ -59,6 +59,19 @@ export function fieldLabel(name) {
     || String(name).replace(/_id$/, '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
 }
 
+// Placeholder for a field: its own "hint_<field>" text, else the standard one by kind
+// ("Enter <label>", "Select <label>", "Pick a date"). Never the label again: it is already above the field.
+export function fieldHint(name, kind = 'text') {
+  if (name && i18n.te('hint_' + name)) return i18n.t('hint_' + name)
+  if (kind === 'number') return '0'
+  if (kind === 'password') return '••••••••'
+  if (kind === 'date') return i18n.t('form_pick_date')
+  const label = fieldLabel(name)
+  // "Enter member name" reads better than "Enter Member name"; acronyms (NSSF) keep their case
+  const field = /^[A-Z][a-z]/.test(label) ? label.charAt(0).toLowerCase() + label.slice(1) : label
+  return i18n.t(kind === 'select' ? 'form_select_field' : 'form_enter_field', { field })
+}
+
 // "Required" message for a field: its own required_<field> text, or the standard one
 export function requiredMessage(name) {
   const key = 'required_' + name
@@ -150,6 +163,7 @@ export function installPhraseTranslation(VueCtor) {
   }
   VueCtor.prototype.$tField = fieldLabel
   VueCtor.prototype.$tRequired = requiredMessage
+  VueCtor.prototype.$tHint = fieldHint
   VueCtor.mixin({
     beforeCreate() {
       const vs = this.$vs
