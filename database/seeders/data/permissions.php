@@ -295,4 +295,13 @@ return array (
         4 => 'update_letter_type',
         5 => 'delete_letter_type',
     ),
+    'menu' =>
+    array (
+        0 => 'list_menu',
+        1 => 'create_menu',
+        2 => 'show_menu',
+        3 => 'edit_menu',
+        4 => 'update_menu',
+        5 => 'delete_menu',
+    ),
 );

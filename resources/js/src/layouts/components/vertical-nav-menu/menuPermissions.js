@@ -3,6 +3,8 @@ import apiConfig from "@/apiConfig.js"
 
 // Same key the login page and settings pages already use.
 const STORAGE_KEY = "role_menus"
+// The last sidebar menu received, drawn straight away on the next page load (then refreshed)
+const MENU_KEY = "sidebar_menu"
 
 // Permissions saved at login: { list_officer: true, ... }, or null if unknown.
 export function storedPermissions() {
@@ -22,22 +24,26 @@ export async function fetchPermissions() {
     return permissions
 }
 
-// Keep only the items the user may open. Groups and sections left empty are removed.
-// `permissions === null` (not loaded yet) shows everything; the API still enforces access.
-export function filterMenu(items, permissions) {
-    // '*' is Super Admin: every item
-    const allowed = (item) => !item.permission || permissions === null || Boolean(permissions['*'] || permissions[item.permission])
+// The sidebar menu cached from the last visit ([] when none)
+export function storedMenu() {
+    try {
+        return JSON.parse(localStorage.getItem(MENU_KEY)) || []
+    } catch (e) {
+        return []
+    }
+}
 
-    return items.reduce((list, item) => {
-        if (item.header) {
-            const children = filterMenu(item.items || [], permissions)
-            if (children.length) list.push({ ...item, items: children })
-        } else if (item.submenu) {
-            const children = filterMenu(item.submenu, permissions)
-            if (children.length) list.push({ ...item, submenu: children })
-        } else if (allowed(item)) {
-            list.push(item)
-        }
-        return list
-    }, [])
+// The sidebar menu from Administration › Menus, already limited by the server to what this user may open.
+// Items without a translation key show their name.
+export async function fetchMenu() {
+    const response = await axios.get(apiConfig._apiMenuTree)
+    const label = item => ({
+        ...item,
+        i18n: item.i18n || item.header || item.name,
+        ...(item.items ? { items: item.items.map(label) } : {}),
+        ...(item.submenu ? { submenu: item.submenu.map(label) } : {}),
+    })
+    const menu = (response.data.data || []).map(label)
+    try { localStorage.setItem(MENU_KEY, JSON.stringify(menu)) } catch (e) { /* storage unavailable */ }
+    return menu
 }

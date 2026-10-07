@@ -2,7 +2,6 @@
     <div class="layout--main" :class="[layoutTypeClass, navbarClasses, footerClasses, {'no-scroll': isAppPage}]">
 
         <v-nav-menu
-            :navMenuItems = "navMenuItems"
             title         = "SHM-System"
             parent        = ".layout--main" />
 
@@ -59,7 +58,6 @@
 
 
 <script>
-import navMenuItems        from "@/layouts/components/vertical-nav-menu/navMenuItems.js"
 import TheNavbarVertical   from '@/layouts/components/navbar/TheNavbarVertical.vue'
 import TheFooter           from '@/layouts/components/TheFooter.vue'
 import themeConfig         from '@/../themeConfig.js'
@@ -77,7 +75,6 @@ export default {
             isNavbarDark      : false,
             navbarColor       : themeConfig.navbarColor || '#fff',
             navbarType        : themeConfig.navbarType  || 'floating',
-            navMenuItems      : navMenuItems,
             routerTransition  : themeConfig.routerTransition || 'none',
             routeTitle        : this.$route.meta.pageTitle,
         }

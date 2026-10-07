@@ -207,8 +207,7 @@ import flatPickr from "vue-flatpickr-component"
 import "flatpickr/dist/flatpickr.css"
 import axios from "@/axios.js"
 import router from "@/router"
-import navMenuItems from "@/layouts/components/vertical-nav-menu/navMenuItems.js"
-import { storedPermissions, filterMenu } from "@/layouts/components/vertical-nav-menu/menuPermissions.js"
+import { hasMenuUrl } from "@/layouts/components/vertical-nav-menu/menuActive.js"
 
 const MONTHS = {
     kh: ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"],
@@ -251,20 +250,13 @@ export default {
             currency: "KHR",
             dateRange: [`${year}-01-01`, `${year}-12-31`],
             dateConfig: { mode: "range", dateFormat: "Y-m-d", allowInput: true },
-            permissions: storedPermissions(),
         }
     },
     computed: {
-        // Target path per item, or null when the user may not open it
+        // Target path per item, or null when the page is not in the user's menu
         links() {
-            const visible = new Set()
-            const collect = items => items.forEach(item => {
-                if (item.url) visible.add(item.url)
-                collect(item.items || item.submenu || [])
-            })
-            collect(filterMenu(navMenuItems, this.permissions))
             return Object.keys(TARGETS).reduce((links, key) => {
-                links[key] = visible.has(TARGETS[key]) ? TARGETS[key] : null
+                links[key] = hasMenuUrl(TARGETS[key]) ? TARGETS[key] : null
                 return links
             }, {})
         },

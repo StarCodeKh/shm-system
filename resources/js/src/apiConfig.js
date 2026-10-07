@@ -57,4 +57,6 @@ export default {
     // Report
     // Role Menu
     _apiRoleMenu: "/api/v1/role_menu/permission/index",
+    _apiMenu: "/api/v1/menu",
+    _apiMenuTree: "/api/v1/menu/tree",
 }

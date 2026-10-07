@@ -97,6 +97,20 @@ const router = createRouter({
                     },
                 },
                 {
+                    path: '/menu',
+                    name: 'app-menu',
+                    component: () => import('@/views/pages/settings/_Menu.vue'),
+                    meta: {
+                        breadcrumb: [
+                            { title: 'ទំព័រដើម', url: '/' },
+                            { title: 'អ្នកប្រើប្រាស់' },
+                            { title: 'ម៉ឺនុយ', active: true },
+                        ],
+                        pageTitle: 'ម៉ឺនុយ',
+                        rule: 'editor'
+                    },
+                },
+                {
                     path: '/role/form/:roleId',
                     name: 'data-role-form',
                     component: () => import('@/views/pages/roles/RoleForm.vue'),

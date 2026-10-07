@@ -102,12 +102,12 @@
 
 <script>
 import VuePerfectScrollbar from '@/components/PerfectScrollbar.vue'
-import { containsActive } from './menuActive'
+import { containsActive, setMenu } from './menuActive'
 import VNavMenuGroup from './VerticalNavMenuGroup.vue'
 import VNavMenuItem from './VerticalNavMenuItem.vue'
 
 import Logo from "../Logo.vue"
-import { storedPermissions, fetchPermissions, filterMenu } from './menuPermissions.js'
+import { fetchPermissions, storedMenu, fetchMenu } from './menuPermissions.js'
 import { SIDEBAR_COLLAPSED_KEY } from "@/store/state.js"
 
 export default {
@@ -123,7 +123,6 @@ export default {
         openGroupHover:   { type: Boolean, default: false },
         parent:           { type: String },
         reduceNotRebound: { type: Boolean, default: true },
-        navMenuItems:     { type: Array,   required: true },
         title:            { type: String },
     },
     data: () => ({
@@ -137,15 +136,15 @@ export default {
             swipeEasing       : true
         },
         showShadowBottom    : false,
-        permissions         : storedPermissions(), // what the user may see, refreshed in created()
+        menu                : storedMenu(), // the user's menu from Administration › Menus (cached, refreshed in created())
     }),
     computed: {
         isGroupActive() {
             return (item) => containsActive(item, this.$route.path)
         },
-        // Visible items for this user, with each section header followed by its items.
+        // The user's menu (the server leaves out what they may not open), each section header followed by its items.
         menuItemsUpdated() {
-            return filterMenu(this.navMenuItems, this.permissions)
+            return this.menu
                 .reduce((list, item) => item.header ? list.concat(item, item.items) : list.concat(item), [])
         },
         isVerticalNavMenuActive: {
@@ -178,9 +177,15 @@ export default {
         windowWidth()  { this.setVerticalNavMenuWidth() }
     },
     beforeUnmount() {
+        window.removeEventListener('menu-changed', this.loadMenu)
         clearTimeout(this.hoverTimer)
     },
     methods: {
+        loadMenu() {
+            fetchMenu()
+                .then(menu => { this.menu = menu; setMenu(menu) })
+                .catch(() => {})
+        },
         onSwipeLeft() {
             if (this.isVerticalNavMenuActive && this.showCloseButton) this.isVerticalNavMenuActive = false
         },
@@ -281,10 +286,12 @@ export default {
         },
     },
     created() {
-        // Refresh permissions so the menu matches the user's current role.
-        fetchPermissions()
-            .then(permissions => { this.permissions = permissions })
-            .catch(() => {})
+        setMenu(this.menu)
+        this.loadMenu()
+        // Keep the permissions used by screens (buttons, tabs) in step with the user's current role.
+        fetchPermissions().catch(() => {})
+        // Administration › Menus changed something: show it without a reload
+        window.addEventListener('menu-changed', this.loadMenu)
     },
     mounted() {
         this.setVerticalNavMenuWidth()

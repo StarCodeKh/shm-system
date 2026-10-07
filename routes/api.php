@@ -33,6 +33,7 @@ use App\Http\Controllers\Settings\DepartmentController;
 use App\Http\Controllers\Settings\EntityController;
 use App\Http\Controllers\Settings\EntityMemberController;
 use App\Http\Controllers\Settings\LetterTypeController;
+use App\Http\Controllers\Settings\MenuController;
 use App\Http\Controllers\Settings\PaymentMethodController;
 use App\Http\Controllers\Settings\PaymentTermController;
 use App\Http\Controllers\Settings\PaymentTypeController;
@@ -198,6 +199,11 @@ Route::prefix('v1')->middleware(['auth:api', 'global_site', 'cors', 'module_perm
 
     // Role menu
     Route::post('role_menu/permission/index', [RoleMenuController::class, 'index']);
+
+    // Sidebar menu (tree) and Administration › Menus
+    Route::get('menu/tree', [MenuController::class, 'tree']);
+    Route::post('menu/search', [MenuController::class, 'index']);
+    Route::apiResource('menu', MenuController::class);
 
     // Settings
     Route::prefix('setting')->group(function () {

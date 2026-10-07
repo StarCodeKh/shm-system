@@ -8,7 +8,7 @@
         /account/income/form -> /account/income
 ==========================================================================================*/
 
-import navMenuItems from './navMenuItems.js'
+import { ref } from 'vue'
 
 // Routes that render a menu entry under a different path
 const ALIASES = { '/': '/dashboard' }
@@ -20,13 +20,23 @@ const collectUrls = items => items.reduce((urls, item) => {
     return urls.concat(collectUrls(children(item)))
 }, [])
 
-const MENU_URLS = collectUrls(navMenuItems)
+// URLs of the menu the sidebar shows (set by VerticalNavMenu when the menu loads)
+const menuUrls = ref([])
+
+export function setMenu(items) {
+    menuUrls.value = collectUrls(items)
+}
+
+// True when the user's menu has this page (e.g. the dashboard only links to pages the user can open)
+export function hasMenuUrl(url) {
+    return menuUrls.value.includes(url)
+}
 
 export function activeMenuUrl(path) {
     const normalized = (path || '/').replace(/\/+$/, '') || '/'
     const target = ALIASES[normalized] || normalized
     let best = null
-    MENU_URLS.forEach(url => {
+    menuUrls.value.forEach(url => {
         const matches = target === url || target.startsWith(url + '/')
         if (matches && (!best || url.length > best.length)) best = url
     })

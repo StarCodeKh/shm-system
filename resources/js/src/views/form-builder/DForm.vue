@@ -584,7 +584,9 @@ export default {
             // Show Form
             this.form.attribute = [];
             this.formAttributes.forEach(_formAttribute => {
-                if (_formAttribute["hasDefault"]) {
+                if ('default' in _formAttribute) {
+                    this.form.attribute[_formAttribute.name] = _formAttribute.default; // starting value, e.g. "active" on
+                } else if (_formAttribute["hasDefault"]) {
                     this.form.attribute[_formAttribute["name"]] = _formAttribute["defaultOptions"]["value"];
                 } else if (_formAttribute["type"] == "hidden") {
                     this.form.attribute[_formAttribute["name"]] = data["id"];

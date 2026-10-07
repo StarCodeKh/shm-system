@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\User;
 use Database\Seeders\ConfigSeeder;
+use Database\Seeders\MenuSeeder;
 use Database\Seeders\OfficerLookupSeeder;
 use Database\Seeders\PassportClientSeeder;
 use Database\Seeders\RolePermissionSeeder;
@@ -134,7 +135,7 @@ class TransferLegacyDatabase extends Command
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
 
         $this->assignRoles($source);
-        foreach ([ConfigSeeder::class, OfficerLookupSeeder::class, PassportClientSeeder::class] as $seeder) {
+        foreach ([ConfigSeeder::class, OfficerLookupSeeder::class, PassportClientSeeder::class, MenuSeeder::class] as $seeder) {
             $this->callSilent('db:seed', ['--class' => $seeder, '--force' => true]);
         }
 
