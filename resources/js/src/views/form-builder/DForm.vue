@@ -12,7 +12,7 @@
         </template>
 
         <!-- "+ Add" next to a dropdown: the same standard form, for the table that dropdown lists -->
-        <vs-popup style="z-index: 5200000;" class="d-modal" classContent="popup-example"
+        <vs-popup ref="quickAddPopup" style="z-index: 5200000;" class="d-modal" classContent="popup-example"
             :title="quickAdd ? $t('form_quick_add', { field: fieldLabel(quickAdd.field) }) : ''"
             :active.sync="quickAddOpen">
             <d-form v-if="quickAdd && quickAdd.fields" :key="quickAdd.key" :data="quickAdd.data" :dataInfo="{}"
@@ -355,6 +355,7 @@
 <script>
 import { gridClass } from "@/formGrid.js";
 import axios from "@/axios.js";
+import { fieldLabel } from "@/i18n/i18n.js";
 
 // Dropdown choices fetched by field name (GET /api/v1/lookup/{field}), shared by every form for the session.
 // Used only when the page didn't send a list for that field; fields without a lookup resolve to null.
@@ -509,6 +510,10 @@ export default {
             }
             // Its own dropdowns start from this form's lists; missing ones come from the shared lookup
             this.quickAdd = { field, api: source.api, fields, data: { ...(this.data || {}) }, key: Date.now() } // a blank form each time
+            // Vuesax puts every popup first in <body> when it is created, and equal z-index stacks by page order:
+            // a popup opened from inside another one (3rd level and up) would sit behind it. The one opening goes last.
+            const popup = this.$refs.quickAddPopup && this.$refs.quickAddPopup.$refs.con
+            if (popup && popup.parentNode === document.body) document.body.appendChild(popup)
             this.quickAddOpen = true
         },
         // A new choice was saved: reload the dropdown's list, pick the new choice, close the popup
@@ -734,12 +739,9 @@ export default {
             this.$validator.validateAll().then(result => {
             });
         },
-        // Translated label, or a readable fallback for keys without a translation (parent_code -> Parent code)
+        // Translated label, borrowing a related field's translation, else a readable name (see i18n.js)
         fieldLabel(name) {
-            if (!name) return ''
-            if (this.$te(name)) return this.$t(name)
-            const text = String(name).replace(/_id$/, '').replace(/_/g, ' ').trim()
-            return text.charAt(0).toUpperCase() + text.slice(1)
+            return fieldLabel(name) // shared with every screen ($tField): see i18n.js
         },
         // Placeholder: the field's own "hint_<name>" text when translated, otherwise a hint by kind.
         // Never the label again (it's already shown above the field).
@@ -820,6 +822,12 @@ export default {
         formAttributes: {
             immediate: true,
             handler(attributes) {
+                // Fields with a starting value (e.g. "active" on) start there on a new form
+                (attributes || []).forEach(field => {
+                    if (field && 'default' in field && this.form.attribute[field.name] === undefined) {
+                        this.$set(this.form.attribute, field.name, field.default)
+                    }
+                });
                 (attributes || []).filter(field => field && field.type === 'select').forEach(({ name }) => {
                     if (!this.data || Array.isArray(this.data[name])) return
                     lookupChoices(name, this.$i18n.locale).then(choices => {

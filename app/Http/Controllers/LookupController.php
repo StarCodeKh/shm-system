@@ -104,17 +104,43 @@ class LookupController extends Controller
         }
 
         $skip = ['id', 'status', 'deleted', 'deleted_at', 'created_by', 'modified_by', 'updated_by', 'created_at', 'updated_at'];
+        $columns = collect(DB::select('show columns from '.DB::getTablePrefix().$table))
+            ->reject(fn ($column) => in_array(strtolower($column->Field), $skip));
+        // The column a choice is shown by: always asked for, so a new choice never has an empty label
+        $labelColumn = collect(['name_kh', 'name_en', 'name', 'title_kh', 'title_en', 'title'])
+            ->first(fn ($name) => $columns->contains('Field', $name));
+
         $fields = [];
-        foreach (DB::select('show columns from '.DB::getTablePrefix().$table) as $column) {
+        foreach ($columns as $column) {
+            $name = $column->Field;
             $type = CommonService::convertDataTypeWay1($column);
-            if (in_array(strtolower($column->Field), $skip) || $type === 'hidden') continue;
-            $fields[] = [
-                'name' => $column->Field,
+            if (preg_match('/^(is|has)_/', $name)) $type = 'checkbox';
+            // Names and codes are one line, even when the column is a long text type
+            elseif (preg_match('/^(name|title|code|abbreviation)(_kh|_en)?$/', $name)) $type = 'text';
+            if ($type === 'hidden') continue;
+            $field = [
+                'name' => $name,
                 'type' => $type,
-                // Required when the database can't fill it in itself
-                'required' => $column->Null === 'NO' && $column->Default === null && $column->Extra === '',
+                // Required when the database can't fill it in itself, and always for the label column
+                'required' => $name === $labelColumn
+                    || ($column->Null === 'NO' && $column->Default === null && $column->Extra === '' && $type !== 'checkbox'),
             ];
+            if ($type === 'checkbox') {
+                // Yes/no starts at the column's default; "active" starts on, so the new choice can be used
+                $field['default'] = $column->Default !== null ? (bool) $column->Default : $name === 'is_active';
+            }
+            $fields[] = $field;
         }
+
+        // Same order on every add form: names, code, choices, other inputs, numbers, yes/no, long text
+        $rank = function ($field) {
+            $order = ['name_kh', 'name_en', 'name', 'title_kh', 'title_en', 'title', 'code', 'abbreviation'];
+            $at = array_search($field['name'], $order);
+            if ($at !== false) return $at;
+            if ($field['name'] === 'order_level') return 60;
+            return ['select' => 20, 'text' => 30, 'date' => 30, 'number' => 40, 'checkbox' => 70, 'textarea' => 80, 'file' => 90][$field['type']] ?? 50;
+        };
+        usort($fields, fn ($a, $b) => $rank($a) <=> $rank($b)); // stable: ties keep the table's order
 
         return response()->json($fields);
     }

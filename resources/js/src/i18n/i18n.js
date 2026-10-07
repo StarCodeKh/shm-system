@@ -36,11 +36,27 @@ export function translatePhrase(text) {
   return (entry && entry[i18n.locale]) || text
 }
 
-// Form field label: its translation, or a readable fallback ("account_group_id" -> "Account Group")
+// Form field label in the current language. A field without its own translation borrows a related one:
+//   bank_id -> bank, bank -> bank_id, is_active -> active, title_kh -> title + " (ខ្មែរ)".
+// Only when nothing matches: a readable name from the field itself ("account_group_id" -> "Account Group").
+const LANGUAGE_SUFFIX = { kh: { kh: 'ខ្មែរ', en: 'អង់គ្លេស' }, en: { kh: 'Khmer', en: 'English' } }
+function translatedLabel(name) {
+  if (i18n.te(name)) return i18n.t(name)
+  let match
+  if ((match = /^(.+)_id$/.exec(name)) && i18n.te(match[1])) return i18n.t(match[1])
+  if (i18n.te(name + '_id')) return i18n.t(name + '_id')
+  if ((match = /^(?:is|has)_(.+)$/.exec(name))) return translatedLabel(match[1])
+  if ((match = /^(.+)_(kh|en)$/.exec(name))) {
+    const base = translatedLabel(match[1])
+    const suffix = (LANGUAGE_SUFFIX[i18n.locale] || LANGUAGE_SUFFIX.en)[match[2]]
+    return base && `${base} (${suffix})`
+  }
+  return ''
+}
 export function fieldLabel(name) {
   if (!name) return ''
-  if (i18n.te(name)) return i18n.t(name)
-  return String(name).replace(/_id$/, '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+  return translatedLabel(String(name))
+    || String(name).replace(/_id$/, '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
 }
 
 // "Required" message for a field: its own required_<field> text, or the standard one
