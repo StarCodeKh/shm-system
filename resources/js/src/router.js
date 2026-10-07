@@ -12,6 +12,9 @@ const router = createRouter({
             // =============================================================================
             path: '',
             component: () => import('./layouts/main/Main.vue'),
+            // '/' matches this layout route itself (not a child), so the home redirect lives here.
+            // As a child '/' route it never matched and the layout showed an empty page.
+            redirect: '/dashboard',
             meta: { authRequired: true },
             children: [
                 // Components
@@ -19,10 +22,6 @@ const router = createRouter({
             // =============================================================================
             // Theme Routes
             // =============================================================================
-                    {
-                        path: '/',
-                        redirect: '/dashboard'
-                    },
                     {
                         path: '/dashboard',
                         name: 'dashboard',

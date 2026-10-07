@@ -56,7 +56,8 @@ export default {
   },
   created() {
     const has = side => this.position.split('-').includes(side)
-    if (has('top')) this.cords.top = '0px'
+    // Top corners start below the fixed navbar (it sets --navbar-bottom), so a toast never covers the profile / theme buttons
+    if (has('top')) this.cords.top = has('center') ? '0px' : 'var(--navbar-bottom, 0px)'
     if (has('bottom')) this.cords.bottom = '0px'
     if (has('right')) this.cords.right = '0px'
     if (has('left')) this.cords.left = '0px'
