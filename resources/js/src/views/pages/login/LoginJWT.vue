@@ -6,7 +6,7 @@
                 <span class="login-alert__icon"><feather-icon :icon="alertIcon" svgClasses="h-4 w-4" /></span>
                 <div class="login-alert__body">
                     <p class="login-alert__title">{{ $t(alert.title) }}</p>
-                    <p class="login-alert__text">{{ $t(alert.text) }}</p>
+                    <p class="login-alert__text">{{ $t(alert.text, { seconds: waitSeconds }) }}</p>
                 </div>
                 <button type="button" class="login-alert__close" @click="alert = null">
                     <feather-icon icon="XIcon" svgClasses="h-3 w-3" />
@@ -44,22 +44,22 @@
             <vs-checkbox v-model="checkbox_remember_me" class="login-remember">{{ $t('remember_me') }}</vs-checkbox>
         </div>
 
-        <button type="submit" class="login-submit" :disabled="!validateForm || loading">
+        <button type="submit" class="login-submit" :disabled="!validateForm || loading || waitSeconds > 0">
             <span v-if="loading" class="login-submit__spinner"></span>
-            <span>{{ loading ? $t('login_signing_in') : $t('login') }}</span>
+            <span>{{ loading ? $t('login_signing_in') : waitSeconds > 0 ? $t('login_wait_seconds', { seconds: waitSeconds }) : $t('login') }}</span>
         </button>
     </form>
 </template>
 
 <script>
-import axios from "@/axios.js";
+import axios, { retryAfterSeconds } from "@/axios.js";
 
 // i18n keys for each failure kind shown in the inline alert
 const ALERTS = {
     credentials: { type: 'danger', title: 'login_err_title_credentials', text: 'login_err_credentials' },
     network: { type: 'danger', title: 'login_err_title_network', text: 'login_err_network' },
     server: { type: 'danger', title: 'login_err_title_server', text: 'login_err_server' },
-    throttle: { type: 'warning', title: 'login_err_title_throttle', text: 'login_err_throttle' },
+    throttle: { type: 'warning', title: 'login_err_title_throttle', text: 'login_err_throttle_wait' },
 }
 
 export default {
@@ -72,6 +72,10 @@ export default {
             showPassword: false,
             loading: false,
             alert: null,
+            // After too many attempts: when sign-in opens again, and a clock for the countdown
+            waitUntil: 0,
+            now: Date.now(),
+            ticker: null,
             api: "/api/v1/role_menu/permission/index",
         }
     },
@@ -79,14 +83,20 @@ export default {
         validateForm() {
             return !this.errors.any() && this.email != '' && this.password != '';
         },
+        waitSeconds() {
+            return Math.max(0, Math.ceil((this.waitUntil - this.now) / 1000))
+        },
         alertIcon() {
             return this.alert && this.alert.type === 'warning' ? 'AlertTriangleIcon' : 'AlertCircleIcon'
         },
     },
     watch: {
-        // Hide the alert once the user starts correcting their input
-        email() { this.alert = null },
-        password() { this.alert = null },
+        // Hide the alert once the user starts correcting their input (the wait alert stays until it ends)
+        email() { if (!this.waitSeconds) this.alert = null },
+        password() { if (!this.waitSeconds) this.alert = null },
+    },
+    beforeUnmount() {
+        clearInterval(this.ticker)
     },
     methods: {
         // Translated replacement for vee-validate's English-only messages
@@ -119,8 +129,20 @@ export default {
             // The store rejects with a plain object when the API returns no user
             return ALERTS.credentials
         },
+        // Count down the wait after too many attempts; sign-in opens again at zero
+        startWait(error) {
+            this.waitUntil = Date.now() + retryAfterSeconds(error) * 1000
+            this.now = Date.now()
+            clearInterval(this.ticker)
+            this.ticker = setInterval(() => {
+                this.now = Date.now()
+                if (this.waitSeconds > 0) return
+                clearInterval(this.ticker)
+                if (this.alert === ALERTS.throttle) this.alert = null
+            }, 250)
+        },
         loginJWT() {
-            if (!this.validateForm || this.loading) return
+            if (!this.validateForm || this.loading || this.waitSeconds) return
 
             this.alert = null
             this.loading = true
@@ -152,6 +174,7 @@ export default {
                 }).catch((error) => {
                     this.loading = false
                     this.alert = this.alertFor(error)
+                    if (this.alert === ALERTS.throttle) this.startWait(error)
                 })
         },
         retireveRoleMenu() {

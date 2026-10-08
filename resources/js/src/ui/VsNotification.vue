@@ -6,11 +6,13 @@
             class="vs-component vs-notifications"
             :class="['vs-noti-' + position, 'vs-noti-' + color, { activeNoti: active }]"
             :style="stylex"
-            @click="clickNoti">
+            @click="clickNoti"
+            @mouseenter="pause"
+            @mouseleave="resume">
             <div class="content-noti">
                 <div class="con-text-noti">
                     <h3 v-html="title" />
-                    <p v-html="text" />
+                    <p v-html="shownText" />
                 </div>
                 <vs-icon v-if="icon" class="vs-icon-noti" :icon="icon" :icon-pack="iconPack" />
             </div>
@@ -36,11 +38,17 @@ export default {
         fixed: { default: false },
         fullWidth: { default: false },
         click: { type: Function, default: null },
+        // Time (ms) a wait ends: the text's {seconds} counts down to it and the toast closes then
+        countdownUntil: { type: Number, default: null },
     },
     data() {
-        return { active: true, widthx: 0, cords: { top: null, left: null, right: null, bottom: null } }
+        return { active: true, widthx: 0, cords: { top: null, left: null, right: null, bottom: null }, timer: null, remaining: 0, startedAt: 0, now: Date.now(), ticker: null }
     },
     computed: {
+        shownText() {
+            if (!this.countdownUntil || typeof this.text !== 'string') return this.text
+            return this.text.replace('{seconds}', Math.max(0, Math.ceil((this.countdownUntil - this.now) / 1000)))
+        },
         fillingStyle() {
             return {
                 left: this.cords.left ? '-100px' : null,
@@ -67,9 +75,34 @@ export default {
     },
     mounted() {
         setTimeout(() => { if (this.$refs.noti) this.widthx = this.$refs.noti.clientWidth }, 0)
-        if (!this.fixed) setTimeout(() => { this.active = false }, this.time)
+        this.remaining = this.time
+        if (this.countdownUntil) {
+            // Open for the whole wait, whatever the mouse does
+            this.ticker = setInterval(() => {
+                this.now = Date.now()
+                if (this.now >= this.countdownUntil) this.active = false
+            }, 250)
+            return
+        }
+        this.resume()
+    },
+    beforeUnmount() {
+        clearTimeout(this.timer)
+        clearInterval(this.ticker)
     },
     methods: {
+        // The toast stays open while the mouse is on it, then finishes its remaining time
+        pause() {
+            if (this.fixed || !this.timer) return
+            clearTimeout(this.timer)
+            this.timer = null
+            this.remaining -= Date.now() - this.startedAt
+        },
+        resume() {
+            if (this.fixed || this.countdownUntil || this.timer || !this.active) return
+            this.startedAt = Date.now()
+            this.timer = setTimeout(() => { this.active = false }, Math.max(this.remaining, 1500))
+        },
         clickNoti() {
             this.active = false
             if (this.click) this.click()

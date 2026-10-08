@@ -139,7 +139,7 @@
 <script>
 import { can } from "@/acl/access.js";
 import { gridClass } from "@/formGrid.js";
-import axios from "@/axios.js";
+import axios, { errorMessage } from "@/axios.js";
 import apiConfig from "@/apiConfig.js";
 
 const IMAGE_EXT = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'bmp']
@@ -293,12 +293,9 @@ export default {
                 })
                 .catch(error => this.$vs.notify({ text: this.errorText(error), color: 'danger' }))
         },
-        // Server message: plain text, or validation errors { field: [messages] }
+        // Why the request failed, in the user's language (see errorMessage in axios.js)
         errorText(error) {
-            const data = error && error.response && error.response.data
-            const message = data && (data.errors || data.message)
-            if (message && typeof message === 'object') return Object.values(message).flat().join(' ')
-            return message || 'msg.action_failed'
+            return errorMessage(error)
         },
         onPick(event) {
             const file = event.target.files[0]

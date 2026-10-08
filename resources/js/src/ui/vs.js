@@ -12,6 +12,7 @@ import VsLoading from './VsLoading.vue'
 import VsNotification from './VsNotification.vue'
 import VsDialog from './VsDialog.vue'
 import { translateNotify, translateDialog } from '@/i18n/i18n'
+import { recentErrorReason } from '@/axios'
 
 let appContext = null
 
@@ -96,7 +97,30 @@ loading.close = function close(elx) {
 const REPEAT_WINDOW = 2500
 const recentToasts = {}
 
+// Refreshing or leaving the page cancels the requests still loading, and each screen's
+// .catch() then shows "action failed": no toasts once the page has started to unload
+let unloading = false
+window.addEventListener('beforeunload', () => { unloading = true })
+window.addEventListener('pageshow', () => { unloading = false }) // back to this page from the back/forward cache
+
+// General failure texts that screens show from .catch(): replaced by the real reason
+// when a request has just failed (see recentErrorReason in axios.js)
+const GENERAL_FAILURES = ['msg.action_failed', 'msg.load_failed', 'msg.save_failed', 'msg.update_failed']
+let countdownUntil = 0 // end of the "too many requests" toast's countdown
+
 function notify(parameters) {
+    if (unloading) return
+    // A request has just failed: a general failure text, or any error toast right after
+    // "too many requests" (which then counts down), shows the real reason
+    const reason = parameters && recentErrorReason()
+    if (reason && (GENERAL_FAILURES.includes(parameters.text) || (reason.until && parameters.color === 'danger'))) {
+        parameters = { ...parameters, text: reason.text, countdownUntil: reason.until }
+    }
+    // Many requests refused at once: one countdown toast, not one per request
+    if (parameters && parameters.countdownUntil) {
+        if (countdownUntil > Date.now()) return
+        countdownUntil = parameters.countdownUntil
+    }
     const options = translateNotify(parameters)
     if (!options || typeof options !== 'object') return
     const key = [options.color, options.title, options.text].join('|')

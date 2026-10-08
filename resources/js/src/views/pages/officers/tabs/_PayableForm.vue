@@ -338,7 +338,7 @@ export default {
                                 }else{
                                     this.$vs.notify({
                                         title: 'Message',
-                                        text: 'msg.check_criteria',
+                                        text: response.data.message || 'msg.check_criteria',
                                         iconPack: 'feather',
                                         icon: 'icon-check-circle',
                                         color: 'danger',

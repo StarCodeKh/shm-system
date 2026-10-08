@@ -1,4 +1,4 @@
-import axios from "@/axios.js";
+import axios, { errorMessage } from "@/axios.js";
 import i18n from "@/i18n/i18n";
 
 const defaultError = () => i18n.global.t("report_error");
@@ -40,8 +40,7 @@ export function fetchReportPage(type, filters = [], page = 1, limit = 25) {
                 return response.data;
             })
             .catch((error) => {
-                const data = error.response && error.response.data;
-                throw (data && data.message) || defaultError();
+                throw errorMessage(error, defaultError());
             })
             .finally(() => pending.delete(key));
         pending.set(key, request);
@@ -69,17 +68,8 @@ export async function fetchReport(type, filters = [], download = false) {
             filename: match ? match[1] : `${type}-report.pdf`,
         };
     } catch (error) {
-        // Error bodies arrive as a Blob because of responseType: "blob".
-        let message = defaultError();
-        const data = error.response && error.response.data;
-        if (data instanceof Blob) {
-            try {
-                message = JSON.parse(await data.text()).message || message;
-            } catch (e) {
-                // keep the default message
-            }
-        }
-        throw message;
+        // The reason is read from the error body even for a blob download (see axios.js)
+        throw errorMessage(error, defaultError());
     }
 }
 
@@ -101,16 +91,8 @@ export async function downloadReportExcel(type, filters = []) {
         const match = (response.headers["content-disposition"] || "").match(/filename="?([^";]+)"?/);
         saveBlob(new Blob([response.data], { type: response.headers["content-type"] }), match ? match[1] : `${type}-report.xlsx`);
     } catch (error) {
-        let message = defaultError();
-        const data = error.response && error.response.data;
-        if (data instanceof Blob) {
-            try {
-                message = JSON.parse(await data.text()).message || message;
-            } catch (e) {
-                // keep the default message
-            }
-        }
-        throw message;
+        // The reason is read from the error body even for a blob download (see axios.js)
+        throw errorMessage(error, defaultError());
     }
 }
 

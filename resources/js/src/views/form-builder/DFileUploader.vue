@@ -178,7 +178,7 @@
 </template>
 
 <script>
-import axios from "@/axios.js";
+import axios, { errorMessage } from "@/axios.js";
 
 // Import: pick a file → the server checks every row (POST /api/v1/import/preview, nothing saved) →
 // review new / changed / unchanged / wrong rows, fix cells or remove rows in place (checked again on the server) →
@@ -573,13 +573,12 @@ export default {
                 link.remove()
                 URL.revokeObjectURL(url)
             } catch (error) {
-                this.$vs.notify({ text: this.$t("report_error"), color: "danger" })
+                this.$vs.notify({ text: this.message(error), color: "danger" })
             }
         },
+        // Why the request failed, in the user's language (see errorMessage in axios.js)
         message(error) {
-            const data = error && error.response && error.response.data
-            if (data && data.errors) return Object.values(data.errors).flat().join(" ")
-            return (data && typeof data.message === "string" && data.message) || this.$t("report_error")
+            return errorMessage(error, this.$t("report_error"))
         },
         // Column title in the user's language when the app knows the field, else its name
         label(name) {
