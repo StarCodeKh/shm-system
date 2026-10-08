@@ -3793,3 +3793,13 @@ label.vs-select--label {
         }
     }
 }
+
+/* --- Dropdowns: "no options" in the current language (vue-select's own text is fixed English; i18n.js sets the text) --- */
+.vs__no-options {
+    font-size: 0;
+
+    &::after {
+        content: var(--vs-no-options, "No matching options");
+        font-size: 14px;
+    }
+}

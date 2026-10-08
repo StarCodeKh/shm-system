@@ -29,95 +29,24 @@
                 </button>
             </div>
 
-            <template v-if="!isHidden">
-                <div class="d-fm__filter d-form">
-                    <div class="vx-row">
-                        <template v-for="(formAttribute, i) in formAttributes">
-                            <!-- Form Input Text -->
-                            <div v-if="formAttribute.type == 'text' && formAttribute.required" :class="styleClass" class="d-field" dclass="mt-4">
-                                <label>{{ $tField(formAttribute.name) }}</label>
-                                <vs-input :placeholder="$tField(formAttribute.name)" v-model="form.attribute[formAttribute.name]"
-                                    :name="formAttribute.name" class="mt-2 w-full" />
-                            </div>
-
-                            <!-- Form Input Number -->
-                            <div v-if="formAttribute.type == 'number' && formAttribute.required" :class="styleClass" class="d-field" dclass="mt-4">
-                                <label>{{ $tField(formAttribute.name) }}</label>
-                                <vs-input type="number" :placeholder="$tField(formAttribute.name)"
-                                    v-model="form.attribute[formAttribute.name]" :name="formAttribute.name"
-                                    class="mt-2 w-full" />
-                            </div>
-
-                            <!-- Form Input Number -->
-                            <div v-if="formAttribute.type == 'hidden' && formAttribute.required" :class="styleClass" class="d-field" dclass="mt-4">
-                                <label>{{ $tField(formAttribute.name) }}</label>
-                                <vs-input type="number" :placeholder="$tField(formAttribute.name)"
-                                    v-model="form.attribute[formAttribute.name]"
-                                    :name="formAttribute.name"
-                                    class="mt-2 w-full" />
-                            </div>
-
-                            <!-- Form Select -->
-                            <div v-if="formAttribute.type == 'select' && formAttribute.required" :class="styleClass" class="d-field" dclass="mt-4">
-                                <label class="mb-2">{{ $tField(formAttribute.name) }} <span v-if="formAttribute.required">*</span></label>
-                                <span v-if="formAttribute.required">
-                                    <template v-if="formAttribute.hasFilter">
-                                        <v-select
-                                            v-on:input="onInitChange($event, formAttribute.filterObj, formAttribute.name, formAttribute.api)"
-                                            v-validate="''" v-model="form.attribute[formAttribute.name]" :name="formAttribute.name"
-                                            :options="data[formAttribute.name]" :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
-                                        <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
-                                            $tRequired(formAttribute.name)
-                                        }}</span>
-                                    </template>
-                                    <template v-else>
-                                        <v-select v-validate="''" v-model="form.attribute[formAttribute.name]"
-                                            :name="formAttribute.name" :options="data[formAttribute.name]"
-                                            :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
-                                        <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
-                                            $tRequired(formAttribute.name)
-                                        }}</span>
-                                    </template>
-                                </span>
-                                <span v-else>
-                                    <template v-if="formAttribute.hasFilter">
-                                        <v-select v-validate="''"
-                                            v-on:input="onInitChange($event, formAttribute.filterObj, formAttribute.name, formAttribute.api)"
-                                            v-model="form.attribute[formAttribute.name]" :name="formAttribute.name"
-                                            :options="data[formAttribute.name]" :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
-                                    </template>
-                                    <template v-else>
-                                        <v-select v-validate="''" v-model="form.attribute[formAttribute.name]"
-                                            :name="formAttribute.name" :options="data[formAttribute.name]"
-                                            :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
-                                    </template>
-                                </span>
-                            </div>
-
-                            <!-- Form Textarea -->
-
-                            <!-- Form Checkbox -->
-
-                            <!-- Form Date -->
-                            <div v-if="formAttribute.type == 'date' && formAttribute.required" :class="styleClass" class="d-field" dclass="mt-4">
-                                <label class="mb-2">{{ $tField(formAttribute.name) }}</label>
-                                <span v-if="formAttribute.required">
-                                    <flat-pickr v-validate="'required'" :name="formAttribute.name"
-                                        v-model="form.attribute[formAttribute.name]" class="mt-1 w-full" />
-                                    <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{ $tRequired(formAttribute.name)
-                                    }}</span>
-                                </span>
-                            </div>
-                        </template>
-                    </div>
-                    <div class="d-fm__filter-actions">
-                        <vs-button type="filled" icon-pack="feather" icon="icon-search" @click.prevent="initSearch">{{ $t("btn_search") }}</vs-button>
+            <!-- Search panel: the fields the API lists for searching (name, type), options from the API too -->
+            <div v-if="!isHidden" class="d-fm__filter d-form">
+                <div class="vx-row">
+                    <div v-for="field in filterFields" :key="field.name" :class="styleClass" class="d-field">
+                        <label>{{ $tField(field.name) }}</label>
+                        <v-select v-if="field.type === 'select'" v-model="form.attribute[field.name]" :name="field.name"
+                            :options="(dataObj && dataObj[field.name]) || []" :placeholder="$tHint(field.name, 'select')"
+                            :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
+                        <flat-pickr v-else-if="field.type === 'date'" v-model="form.attribute[field.name]" :name="field.name"
+                            class="mt-2 w-full" />
+                        <vs-input v-else v-model="form.attribute[field.name]" :name="field.name" :placeholder="$tHint(field.name)"
+                            class="mt-2 w-full" @keyup.enter="initSearch" />
                     </div>
                 </div>
-                <!-- <d-search v-if="!dataAttributes.hideSearchBar" @searchQuery="searchQuery" @clicked="initTableData"
-                :data="data" :api="api" :formAttributes="formAttributes" :rowDisplay="'4grid'"
-                :dataInfo="dataInfo"></d-search> -->
-            </template>
+                <div class="d-fm__filter-actions">
+                    <vs-button type="filled" icon-pack="feather" icon="icon-search" @click.prevent="initSearch">{{ $t("btn_search") }}</vs-button>
+                </div>
+            </div>
             <!-- File list -->
             <div class="d-fm__list">
                 <table v-if="rows.length" class="d-fm__table">
@@ -132,7 +61,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(tr, indextr) in rows" :key="tr.id || indextr" @click="initPassData(tr)">
+                        <tr v-for="(tr, indextr) in rows" :key="tr.id || indextr" :class="{ 'is-editing': editingId === tr.id }"
+                            @click="editingId !== tr.id && initPassData(tr)">
                             <td class="d-fm__col-no">{{ calPageIncreaseNumber(dataObj.limit, indextr) }}</td>
                             <td>
                                 <div class="d-fm__file">
@@ -144,9 +74,18 @@
                                             {{ fileType(tr) || 'file' }}
                                         </span>
                                     </a>
-                                    <div class="d-fm__file-text">
+                                    <!-- Editing: name and caption in place (Enter saves, Esc cancels) -->
+                                    <div v-if="editingId === tr.id" class="d-fm__edit" @click.stop>
+                                        <input v-model.trim="editForm.file_name" class="d-fm__edit-input" type="text" maxlength="255"
+                                            :placeholder="$tField('file_name')" :aria-label="$tField('file_name')"
+                                            @keydown.enter.prevent="saveEdit(tr)" @keydown.esc.prevent="cancelEdit">
+                                        <input v-model.trim="editForm.caption" class="d-fm__edit-input is-small" type="text" maxlength="1000"
+                                            :placeholder="$tField('caption')" :aria-label="$tField('caption')"
+                                            @keydown.enter.prevent="saveEdit(tr)" @keydown.esc.prevent="cancelEdit">
+                                    </div>
+                                    <div v-else class="d-fm__file-text">
                                         <span class="d-fm__name" :title="fileName(tr)">{{ fileName(tr) }}</span>
-                                        <span class="d-fm__path" :title="tr.path">{{ tr.path }}</span>
+                                        <span class="d-fm__path" :title="tr.caption || tr.path">{{ tr.caption || tr.path }}</span>
                                     </div>
                                 </div>
                             </td>
@@ -156,14 +95,28 @@
                             <td class="d-fm__col-date">{{ shortDate(tr.created_at) }}</td>
                             <td class="d-fm__col-date">{{ shortDate(tr.updated_at) }}</td>
                             <td class="d-fm__col-action">
-                                <button type="button" class="d-fm__select" @click.stop="initPassData(tr)">
-                                    <feather-icon icon="CheckIcon" svgClasses="h-4 w-4" />
-                                    <span>{{ $t('fm_select') }}</span>
-                                </button>
-                                <button v-if="allowDel" type="button" class="d-fm__icon-btn is-danger"
-                                    @click.stop="initDel(tr.id)">
-                                    <feather-icon icon="TrashIcon" svgClasses="h-4 w-4" />
-                                </button>
+                                <template v-if="editingId === tr.id">
+                                    <button type="button" class="d-fm__select" :disabled="savingEdit || !editForm.file_name" @click.stop="saveEdit(tr)">
+                                        <feather-icon icon="CheckIcon" svgClasses="h-4 w-4" />
+                                        <span>{{ $t('btn_save') }}</span>
+                                    </button>
+                                    <button type="button" class="d-fm__icon-btn" :title="$t('btn_cancel')" @click.stop="cancelEdit">
+                                        <feather-icon icon="XIcon" svgClasses="h-4 w-4" />
+                                    </button>
+                                </template>
+                                <template v-else>
+                                    <button type="button" class="d-fm__select" @click.stop="initPassData(tr)">
+                                        <feather-icon icon="CheckIcon" svgClasses="h-4 w-4" />
+                                        <span>{{ $t('fm_select') }}</span>
+                                    </button>
+                                    <!-- Shown by the user's permissions (sent with the list) -->
+                                    <button v-if="can('update')" type="button" class="d-fm__icon-btn" :title="$t('dt_edit')" @click.stop="startEdit(tr)">
+                                        <feather-icon icon="Edit2Icon" svgClasses="h-4 w-4" />
+                                    </button>
+                                    <button v-if="can('delete')" type="button" class="d-fm__icon-btn is-danger" :title="$t('dt_delete')" @click.stop="confirmDelete(tr)">
+                                        <feather-icon icon="TrashIcon" svgClasses="h-4 w-4" />
+                                    </button>
+                                </template>
                             </td>
                         </tr>
                     </tbody>
@@ -179,9 +132,6 @@
             <div v-if="calPaginNumber(dataObj.total / dataObj.limit) > 1" class="d-fm__pager">
                 <d-pagination :total="calPaginNumber(dataObj.total / dataObj.limit)" v-model="current_page" />
             </div>
-             <!-- <d-table-list @clicked="initTableData" :api="api" ref="refInitPage" :allowDel="true" :title="title" :dataInfo="dataInfo"
-        :dataAttributes="dataAttributes" :dataHeaders="dataHeaders" :dataTables="data" :formAttributes="formAttributes"
-        :rowDisplay="rowDisplay"></d-table-list> -->
         </vs-popup>
     </div>
 </template>
@@ -222,7 +172,9 @@ export default {
             file: null,
             title: "File Manager",
             api: apiConfig._apiFileManager,
-            allowDel: false,
+            editingId: null,                           // row being renamed
+            editForm: { file_name: '', caption: '' },
+            savingEdit: false,
             dataAttributes: {
                 tableStyle: 1,
                 page_number: 1,
@@ -276,6 +228,7 @@ export default {
             },
             rowDisplay: "2grid", //1grid, 2grid, 3grid, 4grid
             dataFields: [],
+            searchAttributes: [], // search panel fields from the API
             dataInfo: {},
             props: "",
         }
@@ -283,6 +236,10 @@ export default {
     components: {
     },
     computed: {
+        // Search panel fields (older APIs without search_attributes: the required form fields)
+        filterFields() {
+            return this.searchAttributes.length ? this.searchAttributes : this.formAttributes.filter(field => field && field.required)
+        },
         canUpload() {
             return can('file_manager_upload')
         },
@@ -291,6 +248,58 @@ export default {
         },
     },
     methods: {
+        // "update_file_manager" etc. from the permissions the list response carries
+        can(action) {
+            const permissions = (this.dataObj && this.dataObj.permissions) || {}
+            const model = (this.dataObj && this.dataObj.model_name) || 'file_manager'
+            return Boolean(permissions['*'] || permissions[action + '_' + model])
+        },
+        startEdit(row) {
+            this.editingId = row.id
+            this.editForm = { file_name: row.file_name || this.fileName(row), caption: row.caption || '' }
+            this.$nextTick(() => { const input = document.querySelector('.d-fm__edit-input'); if (input) input.focus() })
+        },
+        cancelEdit() {
+            this.editingId = null
+        },
+        saveEdit(row) {
+            if (this.savingEdit || !this.editForm.file_name) return
+            this.savingEdit = true
+            axios.put(this.api + '/' + row.id, { file_name: this.editForm.file_name, caption: this.editForm.caption || null })
+                .then(({ data }) => {
+                    Object.assign(row, data.data || this.editForm)
+                    this.editingId = null
+                    this.$vs.notify({ text: data.message, color: 'success' })
+                })
+                .catch(error => this.$vs.notify({ text: this.errorText(error), color: 'danger' }))
+                .finally(() => { this.savingEdit = false })
+        },
+        confirmDelete(row) {
+            this.$vs.dialog({
+                type: 'confirm',
+                color: 'danger',
+                title: this.$t('dt_delete_title'),
+                text: this.$t('fm_delete_text', { name: this.fileName(row) }),
+                acceptText: this.$t('dt_delete'),
+                cancelText: this.$t('dt_cancel'),
+                accept: () => this.deleteFile(row),
+            })
+        },
+        deleteFile(row) {
+            axios.delete(this.api + '/' + row.id)
+                .then(({ data }) => {
+                    this.$vs.notify({ text: data.message, color: 'success' })
+                    this.getData() // reloads the list and the type counts
+                })
+                .catch(error => this.$vs.notify({ text: this.errorText(error), color: 'danger' }))
+        },
+        // Server message: plain text, or validation errors { field: [messages] }
+        errorText(error) {
+            const data = error && error.response && error.response.data
+            const message = data && (data.errors || data.message)
+            if (message && typeof message === 'object') return Object.values(message).flat().join(' ')
+            return message || 'msg.action_failed'
+        },
         onPick(event) {
             const file = event.target.files[0]
             event.target.value = ''
@@ -317,7 +326,8 @@ export default {
         },
         fileName(row) {
             const clean = (row.path || '').split(/[?#]/)[0]
-            return row.name || decodeURIComponent(clean.split('/').pop() || clean)
+            // The name it was uploaded with (file_name); the stored file name otherwise
+            return row.file_name || row.name || decodeURIComponent(clean.split('/').pop() || clean)
         },
         typeColor(row) {
             const type = this.fileType(row)
@@ -388,9 +398,8 @@ export default {
             this.$vs.loading();
             let _params = {};
             if (_search_criteria.search_field) {
-                let _formAttribute = this.formAttributes;
                 this.dataFields = [];
-                this.formAttributes.forEach(_formAttribute => {
+                this.filterFields.forEach(_formAttribute => {
                     if (_search_criteria.search_field[_formAttribute["name"]]) {
                         let _d = {
                             [_formAttribute["name"]]: _search_criteria.search_field[_formAttribute["name"]]
@@ -420,8 +429,7 @@ export default {
                             this.dataObj = response.data;
                             this.dataHeaders = response.data.data_fields;
                             this.formAttributes = response.data.form_attributes;
-                        } else {
-                            this.dataObj = this.data;
+                            this.searchAttributes = response.data.search_attributes || [];
                         }
                         this.$vs.loading.close();
                     }).catch((error) => {
@@ -443,7 +451,7 @@ export default {
                 searchFields: _search_fields.formAttribute,
                 dataInfo: _search_fields.dataInfo
             }
-            this.$emit('clicked', _search_params);
+            // (no event: "clicked" means a file was picked; the search runs here)
 
             this.$vs.loading();
             let _search_criteria = {
@@ -485,7 +493,7 @@ export default {
                 param: this.form.attribute[_formName]
             };
             this.form.attribute[_formAttribute] = null;
-            this.data[_formAttribute] = [];
+            this.dataObj[_formAttribute] = [];
             return new Promise((resolve, reject) => {
                 axios.post(_apiRequest, _data)
                     .then((response) => {
@@ -502,10 +510,10 @@ export default {
                                 "label": response["data"]["data"][i]["label"],
                                 "value": response["data"]["data"][i]["value"],
                             }
-                            this.data[_formAttribute].push(_d);
+                            this.dataObj[_formAttribute].push(_d);
                         }
 
-                        this.data[_formAttribute].push();
+                        this.dataObj[_formAttribute].push();
                     }).catch((error) => {
                         reject(error)
                         this.$vs.notify({
@@ -867,6 +875,43 @@ input.d-fm__input {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Renaming a file in place */
+.d-fm__edit {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.d-fm__edit-input {
+    width: 100%;
+    height: 34px;
+    padding: 0 10px;
+    font: inherit;
+    font-size: 14px;
+    color: #2b2d42;
+    background: #fff;
+    border: 1px solid var(--input-border, #d8dce6);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+
+    &.is-small {
+        height: 30px;
+        font-size: 13px;
+    }
+
+    &:focus {
+        border-color: rgb(var(--vs-primary));
+        box-shadow: 0 0 0 3px rgba(var(--vs-primary), .15);
+    }
+}
+
+.d-fm__table tr.is-editing {
+    background: rgba(var(--vs-primary), .04);
 }
 
 .d-fm__table td:nth-child(2) {

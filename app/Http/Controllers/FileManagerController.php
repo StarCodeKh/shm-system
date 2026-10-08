@@ -77,6 +77,8 @@ class FileManagerController extends Controller
                 "model_name" => $this->db_table->getTable(),
                 "data_fields" => $this->db_table::dataFields(),
                 "form_attributes" => $this->db_table::formAttributes(),
+                "search_attributes" => $this->db_table::searchAttributes(),
+                "type" => $this->db_table::typeOptions(),
             );
             $status = 200;
             $boolen = true;
@@ -182,42 +184,24 @@ class FileManagerController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    // Only the label and caption can change; the stored file, its path and type stay as uploaded
     public function update(Request $request, $id)
     {
-        $data = array();
-        if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_UPDATE]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_UPDATE] == true){
-            $input = $request->all();
-            $dataFields = $this->dataForm($input);
-            $table = $table=$this->db_table::find($id);
-            $table->update($dataFields);
-            if($table){
-                $data = $this->db_table::findOrFail($id);
-                $status = 200;
-                $boolen = true;
-                $message = trans('common.msg_update_successfully');
-            }else{
-                $status = 500;
-                $boolen = false;
-                $message = trans('common.error_msg');
-            }
-        }else{
-            $status = 500;
-            $boolen = false;
-            $message = trans('common.msg_no_permission_access');
+        if (!CommonService::can($this->PERMISSION_ACTION_UPDATE)) {
+            return response()->json(['success' => false, 'message' => trans('common.msg_no_permission_access')], 403);
         }
-        $data = array(
-            "success" => $boolen,
-            "message" => $message,
-            "data" => $data
-        );
-        return response()->json($data, $status);
+        $file = FileManager::query()->whereNotDeleted()->find($id);
+        if (!$file) {
+            return response()->json(['success' => false, 'message' => trans('common.error_msg')], 404);
+        }
+        $input = $request->all();
+        $input = array_is_list($input) ? array_merge([], ...array_filter($input, 'is_array')) : $input;
+        $fields = validator($input, [
+            'file_name' => ['required', 'string', 'max:255'],
+            'caption' => ['nullable', 'string', 'max:1000'],
+        ])->validate();
+        $file->update($fields + ['modified_by' => Auth::id()]);
+        return response()->json(['success' => true, 'message' => trans('common.msg_update_successfully'), 'data' => $file->fresh()]);
     }
 
     public function dataForm($input){
@@ -229,37 +213,18 @@ class FileManagerController extends Controller
         return $dataFields;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    // Hidden from the file manager (status 4, like other lists); the stored file stays, as records may still link to it
     public function destroy($id)
     {
-        if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_DELETE]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_DELETE] == true){
-            $table=$this->db_table::find($id);
-            $table->update(["status" => 4]);
-            if($table){
-                $status = 200;
-                $boolen = true;
-                $message = trans('common.msg_delete_successfully');
-            }else{
-                $status = 500;
-                $boolen = false;
-                $message = trans('common.error_msg');
-            }
-
-        }else{
-            $status = 500;
-            $boolen = false;
-            $message = trans('common.msg_no_permission_access');
+        if (!CommonService::can($this->PERMISSION_ACTION_DELETE)) {
+            return response()->json(['success' => false, 'message' => trans('common.msg_no_permission_access')], 403);
         }
-        $data = array(
-            "success" => $boolen,
-            "message" => $message
-        );
-        return response()->json($data, $status);
+        $file = FileManager::query()->whereNotDeleted()->find($id);
+        if (!$file) {
+            return response()->json(['success' => false, 'message' => trans('common.error_msg')], 404);
+        }
+        $file->update(['status' => 4, 'modified_by' => Auth::id()]);
+        return response()->json(['success' => true, 'message' => trans('common.msg_delete_successfully')]);
     }
 
     public function fileUploadService(Request $request){
@@ -297,43 +262,42 @@ class FileManagerController extends Controller
             'file' => 'required|file|max:20480|mimes:'.implode(',', self::UPLOAD_EXTENSIONS),
         ]);
         $file = $request->file('file');
-        $date_create = date('d-M-Y/');
-        $destinationPath = 'images/uploads/'.$date_create; // upload path
-        // The server picks the name: random, with the (validated) extension in lower case. The original
-        // name is kept only as the label shown in the file manager.
+        // The server picks the name: readable stem + random part, with the (validated) extension in lower case.
+        // The original name is kept only as the label shown in the file manager.
         $extension = strtolower($file->getClientOriginalExtension());
         if (!in_array($extension, self::UPLOAD_EXTENSIONS, true)) {
             $extension = $file->guessExtension();
         }
         $originalName = Str::limit(preg_replace('/[^\pL\pN\s._()-]+/u', '', $file->getClientOriginalName()), 180, '');
         $stem = Str::limit(Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)), 60, '');
-        $fileName = ($stem !== '' ? $stem.'-' : '').Str::random(10).'.'.$extension;
-        $file->move($destinationPath, $fileName); // uploading file to given path
-        switch ($extension) {
-            case 'pdf':
-                $imageUrl = '/images/attach.png';
-                break;
-            case 'doc':
-                $imageUrl = '/images/attach.png';
-                break;
-            case 'docx':
-                $imageUrl = '/images/attach.png';
-                break;
-            case 'xlsx':
-                $imageUrl = '/images/attach.png';
-                break;
-            default:
-                $imageUrl = '/'.$destinationPath.$fileName;
-                break;
-        }
-        $createImage = FileManager::create([
-            "image" => $imageUrl,
-            "file_name" => $originalName ?: $fileName,
-            "path" => $imageUrl,
+        $size = $file->getSize();
+
+        // Stored on the "public" disk (storage/app/public/uploads/YYYY/MM), served at /storage/... through the
+        // public/storage link (php artisan storage:link): uploads stay apart from the app's own files.
+        $stored = $file->storeAs('uploads/'.date('Y/m'), ($stem !== '' ? $stem.'-' : '').Str::random(10).'.'.$extension, 'public');
+        $path = '/storage/'.$stored;
+
+        $record = FileManager::create([
+            "image" => self::thumbnail($extension, $path), // what the file manager shows
+            "file_name" => $originalName ?: basename($stored),
+            "path" => $path,                               // the file itself, for every type
             "type" => $extension,
-            "extention" => $extension
+            "extention" => $extension,
+            "size" => $size,
+            "created_by" => Auth::id(),
         ]);
-        $imageUrl = '/'.$destinationPath.$fileName;
-        return response()->json(['success'=>true,'message'=>__('common.file_uploaded'),'data'=>['image_url'=>$imageUrl,'extension'=>$extension]], 200);
+        return response()->json(['success'=>true,'message'=>__('common.file_uploaded'),'data'=>['image_url'=>$path,'extension'=>$extension,'file'=>$record]], 200);
+    }
+
+    // Images show themselves; other files show their type icon
+    private static function thumbnail(string $extension, string $path): string
+    {
+        return match ($extension) {
+            'jpg', 'jpeg', 'png', 'gif', 'webp' => $path,
+            'pdf' => '/images/file-icons/pdf.png',
+            'doc', 'docx' => '/images/file-icons/doc.png',
+            'xls', 'xlsx', 'csv' => '/images/file-icons/xls.png',
+            default => '/images/attach.png',
+        };
     }
 }

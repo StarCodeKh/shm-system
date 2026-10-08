@@ -115,6 +115,12 @@
                 $type = "file";
             }elseif($case->Field=='request_title'){
                 $type = "text";
+            }elseif(preg_match('/^(name|title)_(en|kh)$|^(fullname|latin|first_name|last_name|file_name|document_name|notifiable_type)$/', $case->Field)){
+                // Names and titles are typed in, whatever the column type (VARCHAR or TEXT)
+                $type = "text";
+            }elseif(str_starts_with(strtolower($case->Type), 'tinyint(1)') || (str_starts_with($case->Field, 'is_') && $case->Field !== 'is_nssf_member')){
+                // Yes / no flags (MySQL reports boolean columns as tinyint(1))
+                $type = "checkbox";
             }else{
                 switch ($case->Type) {
                     case 'bigint':

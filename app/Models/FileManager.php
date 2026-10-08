@@ -61,6 +61,22 @@ class FileManager extends Model implements Auditable
         return $data;
     }
 
+    // Filter fields of the file picker (Search panel): name and type
+    public static function searchAttributes(){
+        return [
+            ["name" => "file_name", "type" => "text"],
+            ["name" => "type", "type" => "select"],
+        ];
+    }
+
+    // Type choices: the types of the stored files, with how many there are, e.g. "PDF (3)"
+    public static function typeOptions(){
+        return FileManager::query()->whereNotDeleted()->whereNotNull('type')
+            ->select('type', DB::raw('count(*) as total'))->groupBy('type')->orderBy('type')->get()
+            ->map(fn ($row) => ["label" => strtoupper($row->type)." (".$row->total.")", "value" => $row->type])
+            ->values()->all();
+    }
+
     public static function checkQuery($filter){
         $query = FileManager::orderByFilter($filter);
         $whereClause = $query;
@@ -73,10 +89,11 @@ class FileManager extends Model implements Auditable
                 for($i=0 ; $i < count($filter["search_field"]); $i++){
                     $field = array_key_first($filter["search_field"][$i]);
                     if (array_key_exists($field, $dataFields)) {
-                        if(isset($filter["search_field"][$i][$field]["value"])){
-                            $whereClause->Where($field, 'Like', '%'.$filter["search_field"][$i][$field]["value"].'%');
-                        }else{
-                            $whereClause->Where($field, 'Like', '%'.$filter["search_field"][$i][$field].'%');
+                        $value = $filter["search_field"][$i][$field]["value"] ?? $filter["search_field"][$i][$field];
+                        if ($field === 'type') {
+                            $whereClause->where('type', $value); // exact: "doc" must not match "docx"
+                        } else {
+                            $whereClause->Where($field, 'Like', '%'.$value.'%');
                         }
                     }
                 }

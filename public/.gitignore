@@ -1,2 +1,4 @@
 /fonts
-/images
+# The app's own images are versioned; only files people upload are not
+/images/uploads/
+/images/profile/user-uploads/
