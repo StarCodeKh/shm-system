@@ -33,6 +33,8 @@ import chartConfigs from "./chartConfigs.js"
 import _color from '@assets/utils/color.js'
 import CurrencyDropDown from "../../layouts/components/navbar/components/CurrencyDropDown.vue"
 
+const KHMER_DIGITS = '០១២៣៤៥៦៧៨៩'
+
 export default{
     props: {
         icon: {
@@ -97,16 +99,18 @@ export default{
         toneVar() {
             return this.color === 'navy' ? 'var(--brand-navy)' : `var(--vs-${this.color})`
         },
-        // Counts arrive as plain numbers: group thousands and use Khmer digits in Khmer, like the
-        // amounts the server already formats. Formatted text (e.g. "៦១៥,០០០") is shown as it is.
+        // Plain numbers get thousands grouping. Digits follow the current language both ways, also in text
+        // the server formatted (e.g. "៦១៥,០០០"), so the card changes with a language switch.
         displayStatistic() {
             const value = this.statistic
-            if (value === null || value === undefined || value === '') return '0'
-            if (typeof value === 'number' || /^-?\d+(\.\d+)?$/.test(String(value))) {
-                const text = Number(value).toLocaleString('en-US')
-                return this.$i18n.locale === 'en' ? text : text.replace(/\d/g, d => '០១២៣៤៥៦៧៨៩'[d])
-            }
-            return value
+            const khmer = this.$i18n.locale !== 'en'
+            if (value === null || value === undefined || value === '') return khmer ? '០' : '0'
+            const text = typeof value === 'number' || /^-?\d+(\.\d+)?$/.test(String(value))
+                ? Number(value).toLocaleString('en-US')
+                : String(value)
+            return khmer
+                ? text.replace(/\d/g, d => KHMER_DIGITS[d])
+                : text.replace(/[\u17E0-\u17E9]/g, d => String(d.charCodeAt(0) - 0x17E0))
         },
         themePrimaryColor() {
             return this.$store.state.themePrimaryColor;

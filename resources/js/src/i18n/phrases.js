@@ -47,6 +47,7 @@ export default {
 
     // Users & access
     'អ្នកប្រើប្រាស់': { en: 'Users' },
+    'ម៉ឺនុយ': { en: 'Menu' },
     'រាយនាមអ្នកប្រើប្រាស់': { en: 'User List' },
     'ទិន្នន័យអ្នកប្រើប្រាស់': { en: 'User Details' },
     'សិទ្ធិ': { en: 'Roles' },

@@ -23,10 +23,15 @@ document.documentElement.setAttribute('lang', t.locale === 'kh' ? 'km' : t.local
 
 export default i18n
 
-// Called after the language changes (e.g. validation messages re-word themselves)
+// Called after the language changes (e.g. validation messages re-word themselves, lists reload their
+// server-made labels). Returns a function that stops listening: call it when the component goes away.
 const localeListeners = []
 export function onLocaleChange(listener) {
     localeListeners.push(listener)
+    return () => {
+        const i = localeListeners.indexOf(listener)
+        if (i >= 0) localeListeners.splice(i, 1)
+    }
 }
 
 // vue-select prints "Sorry, no matching options." as fixed English text: it is hidden by CSS (custom.scss)

@@ -52,7 +52,7 @@ class PaymentTerm extends Model implements Auditable
         $data = array();
         foreach($query as $row){
             $data[] = array(
-                "label" => $row->name_kh . " (" .$row->value. "លើក)",
+                "label" => CommonService::localName($row)." (".__('common.times', ['n' => $row->value]).")",
                 "value" => $row->name_en,
             );
         }

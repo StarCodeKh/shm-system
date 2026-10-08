@@ -5,7 +5,7 @@ import flatpickr from 'flatpickr'
 import { english } from 'flatpickr/dist/l10n/default'
 import flatPickr from 'vue-flatpickr-component'
 import 'flatpickr/dist/flatpickr.css'
-import i18n from '@/i18n/i18n'
+import i18n, { onLocaleChange } from '@/i18n/i18n'
 
 const khmer = {
     weekdays: {
@@ -56,10 +56,17 @@ function footerButton(className, text, onClick) {
     return button
 }
 
+// Pickers on screen, so a language switch can re-label them without a reload
+const pickers = new Set()
+
 function shmDatePicker() {
     return fp => ({
         locale: isKhmer() ? khmer : english,
+        onDestroy() {
+            pickers.delete(fp)
+        },
         onReady() {
+            pickers.add(fp)
             const calendar = fp.calendarContainer
             if (!calendar || calendar.querySelector('.shm-datepicker-footer')) return
             calendar.classList.add('shm-datepicker')
@@ -83,6 +90,26 @@ function shmDatePicker() {
         },
     })
 }
+
+// Language switched: month / day names, the range separator in the shown value, the footer buttons
+// and the placeholder (Vue updates it on the hidden input; the visible alt input only copied it once)
+onLocaleChange(() => {
+    const labels = LABELS[isKhmer() ? 'kh' : 'en']
+    pickers.forEach(fp => {
+        fp.set('locale', isKhmer() ? khmer : english)
+        fp.setDate(fp.selectedDates, false)
+        fp.redraw()
+        const calendar = fp.calendarContainer
+        const today = calendar && calendar.querySelector('.shm-datepicker-today')
+        const clear = calendar && calendar.querySelector('.shm-datepicker-clear')
+        if (today) today.textContent = labels.today
+        if (clear) clear.textContent = labels.clear
+    })
+    // after Vue has re-rendered the placeholders
+    setTimeout(() => pickers.forEach(fp => {
+        if (fp.altInput) fp.altInput.placeholder = fp.input.placeholder
+    }), 0)
+})
 
 flatpickr.setDefaults({
     dateFormat: 'Y-m-d',

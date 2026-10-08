@@ -1639,6 +1639,7 @@
 <script>
 import vSelect from 'vue-select'
 import axios from "@/axios.js";
+import { onLocaleChange } from "@/i18n/i18n.js";
 import DSearch from '@/views/form-builder/DSearch.vue';
 import DModalForm from '@/views/form-builder/DModalForm.vue';
 import DHeadingWizard from '@/views/form-builder/DHeadingWizard.vue';
@@ -1676,6 +1677,7 @@ export default {
             titleStr: "",
             currentx: 0,
             current_page: 1,
+            lastSearchFields: [], // the search on screen, kept when the list reloads for a language switch
             dataId: 0,
 
             enableToggleForm: true,
@@ -1943,6 +1945,7 @@ export default {
             return _result;
         },
         initTableData(_search_fields) {
+            this.lastSearchFields = []
             let _search_params = {
                 pageNum: this.current_page,
                 searchFields: [],
@@ -1951,6 +1954,7 @@ export default {
             this.$emit('clicked', _search_params);
         },
         searchQuery(_search_fields) {
+            this.lastSearchFields = _search_fields.formAttribute || []
             let _search_params = {
                 pageNum: this.current_page,
                 searchFields: _search_fields.formAttribute,
@@ -2181,6 +2185,13 @@ export default {
     },
     created() {
         this.$vs.loading.close();
+        // Rows and dropdown lists carry labels the server made in the old language: reload the same page and search
+        this.offLocaleChange = onLocaleChange(() => {
+            this.$emit('clicked', { pageNum: this.current_page, searchFields: this.lastSearchFields, dataInfo: this.dataInfo })
+        })
+    },
+    beforeUnmount() {
+        if (this.offLocaleChange) this.offLocaleChange()
     },
     watch: {
         current_page: function (val) {

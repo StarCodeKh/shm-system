@@ -78,4 +78,5 @@ return [
     'lookup_no_form'           => 'New items can\'t be added here.',
     'menu_has_children' => 'Move or delete the items inside it first.',
     'menu_bad_parent' => 'A section is top level; a group can only be in a section; a link cannot be inside another link.',
+    'times'                    => ':n times',
 ];

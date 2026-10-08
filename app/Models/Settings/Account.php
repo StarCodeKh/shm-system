@@ -2,6 +2,7 @@
 
 namespace App\Models\Settings;
 use Illuminate\Database\Eloquent\Model;
+use CommonService;
 
 class Account extends Model
 {
@@ -33,7 +34,7 @@ class Account extends Model
         $result = collect($whereClause->get());
         foreach ($result as $row) {
             $data[] = array(
-                "label" => $row->code . "-" . (config_language == "en" ? $row->en : $row->name_kh),
+                "label" => $row->code . "-" . CommonService::localName($row),
                 "value" => $row->id,
             );
         }
@@ -45,7 +46,7 @@ class Account extends Model
         $data = array();
         foreach($query as $row){
             $data[] = array(
-                "label" => $row->name_kh,
+                "label" => CommonService::localName($row),
                 "value" => $row->id,
             );
         }
@@ -113,7 +114,7 @@ class Account extends Model
         $result = collect($whereClause->get());
         foreach ($result as $row) {
             $data[] = array(
-                "label" => $row->code . "-" . (config_language == "en" ? $row->en : $row->name_kh),
+                "label" => $row->code . "-" . CommonService::localName($row),
                 "value" => $row->id,
             );
         }

@@ -335,8 +335,8 @@
             $data = array();
             foreach($query as $row){
                 $data[] = array(
-                    "label" => (config_language == "en")?$row->name_en:$row->name_kh,
-                    "value" => (config_language == "en")?$row->name_en:$row->name_kh,
+                    "label" => self::localName($row),
+                    "value" => $row->name_kh ?: $row->name_en, // saved on records: stays the same in every language
                 );
             }
             return $data;
@@ -632,13 +632,20 @@
                 return $whereClause;
             }
 
+            // Name in the request's language (X-Locale, see SetLocale): name_en in English, else name_kh; the other one when empty
+            public static function localName($row, string $field = 'name'): string{
+                $kh = data_get($row, $field.'_kh');
+                $en = data_get($row, $field.'_en');
+                return (string) (app()->getLocale() === 'en' ? ($en ?: $kh) : ($kh ?: $en));
+            }
+
             public static function optVals($db_table, $filter, $flag){
                 $data = array();
                 $whereClause = Common::queryTable($db_table, $filter, $flag); // Flag == 1 mean if query result limit by qty
                 $queryResult = collect($whereClause->get());
                 foreach($queryResult as $row){
                     $data[] = array(
-                        "label" => (config_language=="en")?$row->name_en:$row->name_kh,
+                        "label" => self::localName($row),
                         "value" => $row->id,
                     );
                 }

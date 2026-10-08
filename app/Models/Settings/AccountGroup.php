@@ -3,6 +3,7 @@
 namespace App\Models\Settings;
 
 use Illuminate\Database\Eloquent\Model;
+use CommonService;
 
 class AccountGroup extends Model
 {
@@ -31,7 +32,7 @@ class AccountGroup extends Model
         $data = array();
         foreach ($query as $row) {
             $data[] = array(
-                "label" => $row->code . "-" . (config_language == "en" ? $row->name_en : $row->name_kh),
+                "label" => $row->code . "-" . CommonService::localName($row),
                 "value" => $row->id,
             );
         }

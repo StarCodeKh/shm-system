@@ -337,7 +337,7 @@
 <script>
 import { gridClass } from "@/formGrid.js";
 import axios from "@/axios.js";
-import { fieldLabel, fieldHint, requiredMessage } from "@/i18n/i18n.js";
+import { fieldLabel, fieldHint, requiredMessage, onLocaleChange } from "@/i18n/i18n.js";
 
 // Dropdown choices fetched by field name (GET /api/v1/lookup/{field}), shared by every form for the session.
 // Used only when the page didn't send a list for that field; fields without a lookup resolve to null.
@@ -783,6 +783,28 @@ export default {
             if (typeof message === 'object') return Object.values(message).flat().join(' ')
             return String(message)
         },
+        // A chosen { label, value } keeps the label it was picked with: take the one from the current list
+        relabelChosen() {
+            const attribute = this.form && this.form.attribute
+            if (!attribute || !this.data) return
+            Object.keys(attribute).forEach(name => {
+                const choices = this.data[name]
+                if (!Array.isArray(choices)) return
+                const relabel = picked => {
+                    if (!picked || typeof picked !== 'object' || !('value' in picked)) return picked
+                    const match = choices.find(o => o && o.value === picked.value)
+                    return match && match.label !== picked.label ? match : picked
+                }
+                const value = attribute[name]
+                if (Array.isArray(value)) {
+                    const next = value.map(relabel)
+                    if (next.some((v, i) => v !== value[i])) attribute[name] = next
+                } else {
+                    const next = relabel(value)
+                    if (next !== value) attribute[name] = next
+                }
+            })
+        },
         notify(text, color) {
             this.$vs.notify({ title: 'Message', text, iconPack: 'feather', icon: color === 'danger' ? 'icon-alert-circle' : 'icon-check-circle', color, position: 'top-right' })
         }
@@ -790,8 +812,25 @@ export default {
     mounted() {
     },
     created() {
+        // Language switched: lists from the shared lookup come again in the new language
+        this.offLocaleChange = onLocaleChange(locale => {
+            (this.lookupFields || []).forEach(name => {
+                lookupChoices(name, locale).then(choices => {
+                    if (!choices || !this.data) return
+                    this.data[name] = choices
+                    this.relabelChosen()
+                })
+            })
+        })
+    },
+    beforeUnmount() {
+        if (this.offLocaleChange) this.offLocaleChange()
     },
     watch: {
+        // The page sent new choice lists (e.g. reloaded in another language)
+        data() {
+            this.relabelChosen()
+        },
         // Dropdowns the page sent no choices for get them from the shared lookup
         formAttributes: {
             immediate: true,
@@ -804,6 +843,7 @@ export default {
                 });
                 (attributes || []).filter(field => field && field.type === 'select').forEach(({ name }) => {
                     if (!this.data || Array.isArray(this.data[name])) return
+                    this.lookupFields = [...new Set([...(this.lookupFields || []), name])]
                     lookupChoices(name, this.$i18n.locale).then(choices => {
                         if (choices && this.data && !Array.isArray(this.data[name])) this.data[name] = choices
                     })

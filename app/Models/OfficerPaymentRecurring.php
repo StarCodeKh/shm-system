@@ -117,7 +117,7 @@ class OfficerPaymentRecurring extends Model implements Auditable
         $data = array();
         foreach($query as $row){
             $data[] = array(
-                "label" => $row->name_kh,
+                "label" => CommonService::localName($row),
                 "value" => $row->id,
             );
         }

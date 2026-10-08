@@ -7,7 +7,7 @@
         <DModalForm @clicked="initTableData" ref="refModalPaymentForm" :data="data" :api="apiNotification"
             :formAttributes="formNotifyAttributes" :parentDataInfo="dataInfo" :rowDisplay="rowDisplay"
             :dataAttributes="dataAttributes" :title="$t(title_payment)" />
-        <d-table-list @clicked="initTableData" :api="api" ref="refInitPage" :allowDel="true" :title="title" :dataInfo="dataInfo"
+        <d-table-list @clicked="initTableData" :api="api" ref="refInitPage" :allowDel="true" :title="$t(title)" :dataInfo="dataInfo"
             :dataAttributes="dataAttributes" :dataHeaders="dataHeaders" :dataTables="data" :formAttributes="formAttributes"
             :rowDisplay="rowDisplay" @initImport="initImport" @clickPrivateForm="initOpenForm" @clickNotify="initNotify" @clickPayment="initPayment"></d-table-list>
     </div>
@@ -21,9 +21,9 @@
     export default {
         data() {
             return {
-                title: this.$t('repay'),
-                title_notify: this.$t('notify'),
-                title_payment: this.$t('payment'),
+                title: 'repay', // i18n key: translated in the template, so it follows a language switch
+                title_notify: 'notify',
+                title_payment: 'payment',
                 api: apiConfig._apiOfficerPayable,
                 apiNotification: apiConfig._apiSendNotification,
                 dataAttributes: {

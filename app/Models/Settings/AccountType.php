@@ -71,7 +71,7 @@ class AccountType extends Model implements Auditable, FromCollection, WithHeadin
         $data = array();
         foreach ($query as $row) {
             $data[] = array(
-                "label" => $row->name_kh,
+                "label" => CommonService::localName($row),
                 "value" => $row->id,
             );
         }

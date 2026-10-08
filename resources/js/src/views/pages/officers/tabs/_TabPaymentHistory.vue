@@ -1,5 +1,5 @@
 <template>
-    <d-table-list @clicked="initTableData" :api="api" ref="refInitPage" :allowDel="true" :title="title" :dataInfo="dataInfo"
+    <d-table-list @clicked="initTableData" :api="api" ref="refInitPage" :allowDel="true" :title="$t(title)" :dataInfo="dataInfo"
         :dataAttributes="dataAttributes" :dataHeaders="dataHeaders" :dataTables="data" :formAttributes="formAttributes"
         :rowDisplay="rowDisplay" @initImport="initImport"></d-table-list>
 </template>
@@ -12,7 +12,7 @@
     export default {
         data() {
             return {
-                title: this.$t('payment_history'),
+                title: 'payment_history', // i18n key: translated in the template, so it follows a language switch
                 api: apiConfig._apiOfficerPayment,
                 dataAttributes: {
                     tableStyle: 1,

@@ -3,6 +3,7 @@
 namespace App\Models\Settings;
 
 use Illuminate\Database\Eloquent\Model;
+use CommonService;
 
 class AccountTypeGroup extends Model
 {
@@ -27,7 +28,7 @@ class AccountTypeGroup extends Model
         $results = collect($whereClause->get());
         foreach ($results as $row) {
             $data[] = array(
-                "label" => $row->name_kh,
+                "label" => CommonService::localName($row),
                 "value" => $row->id,
             );
         }

@@ -3,6 +3,7 @@
 namespace App\Models\Settings;
 
 use Illuminate\Support\Facades\DB;
+use CommonService;
 use Illuminate\Database\Eloquent\Model;
 
 class Audit extends Model
@@ -50,7 +51,7 @@ class Audit extends Model
         $data = array();
         foreach ($query as $row) {
             $data[] = array(
-                "label" => $row->name_kh,
+                "label" => CommonService::localName($row),
                 "value" => $row->name_kh,
             );
         }
