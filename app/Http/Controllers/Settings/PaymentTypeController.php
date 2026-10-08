@@ -10,7 +10,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
 use CommonService;
-use Maatwebsite\Excel\Facades\Excel;
 
 class PaymentTypeController extends Controller
 {
@@ -204,13 +203,7 @@ class PaymentTypeController extends Controller
     }
 
     public function import(Request $request){
-        $path = $request->file('file')->getRealPath();
-        $rows = Excel::import(new PaymentTypeImport, $path);
-        if($rows){
-            return response()->json(['success'=>true,'message'=>__('common.file_uploaded')], 200);
-        }else{
-            return response()->json(['success'=>false,'message'=>__('common.file_upload_failed')], 500);
-        }
+        return CommonService::importSpreadsheet(new PaymentTypeImport, $request);
     }
 
     public function getAmountByPaymentType(Request $request){

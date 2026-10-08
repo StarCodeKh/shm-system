@@ -326,6 +326,7 @@ Route::post('letter_type/search', [LetterTypeController::class, 'index']);
 
     // Import: check a file before importing it, and an empty template with the right headings
     Route::post('import/preview', [ImportController::class, 'preview']);
+    Route::post('import/file', [ImportController::class, 'file']);
     Route::get('import/template', [ImportController::class, 'template']);
 
     // Print button of list pages: the rows on screen as the standard PDF document

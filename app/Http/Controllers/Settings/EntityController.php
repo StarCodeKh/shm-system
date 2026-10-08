@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use Auth;
 use DB;
 use CommonService;
-use Maatwebsite\Excel\Facades\Excel;
 class EntityController extends Controller
 {
     protected $db_table;
@@ -218,13 +217,7 @@ class EntityController extends Controller
     }
 
     public function import(Request $request){
-        $path = $request->file('file')->getRealPath();
-        $rows = Excel::import(new EntityImport, $path);
-        if($rows){
-            return response()->json(['success'=>true,'message'=>__('common.file_uploaded')], 200);
-        }else{
-            return response()->json(['success'=>false,'message'=>__('common.file_upload_failed')], 500);
-        }
+        return CommonService::importSpreadsheet(new EntityImport, $request);
     }
 
     public function getOptionByDept(Request $request){

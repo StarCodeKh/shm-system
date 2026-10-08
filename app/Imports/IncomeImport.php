@@ -99,5 +99,6 @@ class IncomeImport implements ToModel,WithHeadingRow
                 ]);
             }
         }
+        return null; // the row is saved above, nothing for Laravel Excel to save
     }
 }

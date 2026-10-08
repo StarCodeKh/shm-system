@@ -1,6 +1,6 @@
 <template>
     <div class="p4">
-        <d-form @clickForm="initTableData" ref="refModalForm" :data="data" :dataInfo="dataInfo"
+        <d-form @saved="data => $emit('saved', data)" ref="refModalForm" :data="data" :dataInfo="dataInfo"
                     :parentDataInfo="parentDataInfo" :formAttributes="formAttributes" :api="api"
                     :rowDisplay="rowDisplay"/>
     </div>
@@ -11,6 +11,8 @@
     import apiConfig from "@/apiConfig.js";
     import DForm from '@/views/form-builder/DForm.vue'
     export default {
+        // "saved": the officer was saved here, so the profile card can show the new values
+        emits: ['saved'],
         data() {
             return {
                 title: "setting_bank",

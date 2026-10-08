@@ -92,6 +92,13 @@ class LookupController extends Controller
         return array_key_exists($field, (new static)->lookups());
     }
 
+    /** A field's choice list, or null when it has none (the import preview checks values against it) */
+    public static function choices(string $field): ?array
+    {
+        $lookup = (new static)->lookups()[$field] ?? null;
+        return $lookup ? $lookup() : null;
+    }
+
     public function show(string $field)
     {
         $lookup = $this->lookups()[$field] ?? null;

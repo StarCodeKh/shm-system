@@ -16,7 +16,6 @@ use App\Models\Settings\Entity;
 use Illuminate\Http\Request;
 use Auth;
 use CommonService;
-use Maatwebsite\Excel\Facades\Excel;
 class OfficerIncentiveController extends Controller
 {
     /**
@@ -286,12 +285,6 @@ class OfficerIncentiveController extends Controller
     }
 
     public function import(Request $request){
-        $path = $request->file('file')->getRealPath();
-        $rows = Excel::import(new OfficerIncentiveImport, $path);
-        if($rows){
-            return response()->json(['success'=>true,'message'=>__('common.file_uploaded')], 200);
-        }else{
-            return response()->json(['success'=>false,'message'=>__('common.file_upload_failed')], 500);
-        }
+        return CommonService::importSpreadsheet(new OfficerIncentiveImport, $request);
     }
 }

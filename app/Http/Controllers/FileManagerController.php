@@ -10,7 +10,6 @@ use App\Models\FileManager;
 use App\Imports\OfficerImport;
 use App\Imports\IncomeImport;
 
-use Maatwebsite\Excel\Facades\Excel;
 use File;
 
 use Illuminate\Http\Request;
@@ -230,26 +229,14 @@ class FileManagerController extends Controller
 
     public function fileUploadService(Request $request){
         if ($denied = $this->guardSpreadsheetImport($request, 'import_officer')) return $denied;
-        $path = $request->file('file')->getRealPath();
-        $rows = Excel::import(new OfficerImport, $path);
-        if($rows){
-            return response()->json(['success'=>true,'message'=>__('common.file_uploaded')], 200);
-        }else{
-            return response()->json(['success'=>false,'message'=>__('common.file_upload_failed')], 500);
-        }
+        return CommonService::importSpreadsheet(new OfficerImport, $request);
     }
 
     //
 
     public function fileIncomeUploadService(Request $request){
         if ($denied = $this->guardSpreadsheetImport($request, 'create_income')) return $denied;
-        $path = $request->file('file')->getRealPath();
-        $rows = Excel::import(new IncomeImport, $path);
-        if($rows){
-            return response()->json(['success'=>true,'message'=>__('common.file_uploaded')], 200);
-        }else{
-            return response()->json(['success'=>false,'message'=>__('common.file_upload_failed')], 500);
-        }
+        return CommonService::importSpreadsheet(new IncomeImport, $request);
     }
 
     // PB

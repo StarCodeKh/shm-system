@@ -17,7 +17,6 @@
     use DB;
     use Auth;
     use CommonService;
-    use Maatwebsite\Excel\Facades\Excel;
     use Validator;
     class OfficerController extends BaseController
     {
@@ -335,13 +334,7 @@
         }
 
         public function import(Request $request){
-            $path = $request->file('file')->getRealPath();
-            $rows = Excel::import(new OfficerImport, $path);
-            if($rows){
-                return response()->json(['success'=>true,'message'=>__('common.file_uploaded')], 200);
-            }else{
-                return response()->json(['success'=>false,'message'=>__('common.file_upload_failed')], 500);
-            }
+            return CommonService::importSpreadsheet(new OfficerImport, $request);
         }
 
         // Creates or updates the mobile login of one member. Needs the member "update" permission, and only

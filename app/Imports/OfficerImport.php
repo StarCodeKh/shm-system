@@ -22,11 +22,13 @@ class OfficerImport implements ToModel,WithHeadingRow,Auditable
     */
     public function model(array $row): \Illuminate\Database\Eloquent\Model|array|null
     {
-        $queryCheck = Officer::where("id", (int)$row["id"])->first();
+        $queryCheck = Officer::where("id", (int)($row["id"] ?? null))->first();
         $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new Officer)->getTable());
         $str = "";
         $arr = array();
         for($i=0; $i < count($data["tables"]); $i++){
+            // A column not in the file is left alone: an update keeps its value, a new row gets the table's default
+            if (!array_key_exists($data["tables"][$i]->Field, $row)) continue;
             $field = $data["tables"][$i]->Field;
             $value = $row[$field] ?? null;
             if(isset($data["tables"][$i]->Field)){
@@ -53,16 +55,40 @@ class OfficerImport implements ToModel,WithHeadingRow,Auditable
             }
         }
 
-        $checkOfficerPaymentRecurring = OfficerPaymentRecurring::where("officer_id", $row["id"])->first();
+        // The officer first: the payment schedule below needs its id (a new officer's id is known only once saved)
+        if(!$queryCheck){
+            $pushArray = array_merge(array(["created_by" => Auth::user()->id]));
+            $arraySingle = array_merge($arr, $pushArray);
+            $result = call_user_func_array('array_merge', $arraySingle);
+            $dataFields = $result;
+            $officerId = !empty($dataFields["id"]) ? (int) $dataFields["id"] : null;
+            if ($officerId) {
+                Officer::insert($dataFields);
+            } else {
+                unset($dataFields["id"]);
+                $officerId = Officer::insertGetId($dataFields);
+            }
+        }else{
+            $pushArray = array_merge(array(["modified_by" => Auth::user()->id]));
+            $arraySingle = array_merge($arr, $pushArray);
+            $result = call_user_func_array('array_merge', $arraySingle);
+            $dataFields = $result;
+            $officerId = $queryCheck->id;
+            $queryCheck->update($dataFields);
+        }
+
+        // Every officer has a yearly payment schedule, starting on the register date
+        $checkOfficerPaymentRecurring = OfficerPaymentRecurring::where("officer_id", $officerId)->first();
         if(!$checkOfficerPaymentRecurring){
+            $registerDate = $dataFields["register_date"] ?? null;
             $checkExist = OfficerPaymentRecurring::create(
                 [
-                    "officer_id" => $row["id"],
+                    "officer_id" => $officerId,
                     "payment_term" => "Yearly",
                     "recurring_amount" => 60000,
                     "currency_id" => Currency::idOf(Currency::KHR),
                     "executed_num" => 1,
-                    "schedule_start_date" => Carbon::instance(Date::excelToDateTimeObject($row["register_date"])),
+                    "schedule_start_date" => $registerDate ? Carbon::parse($registerDate) : Carbon::today(),
                     "schedule_end_date" => "2100-01-01",
                     "remark" => "",
                     "status" => Status::ACTIVE,
@@ -70,19 +96,6 @@ class OfficerImport implements ToModel,WithHeadingRow,Auditable
                 ]
             );
         }
-
-        if(!$queryCheck){
-            $pushArray = array_merge(array(["created_by" => Auth::user()->id]));
-            $arraySingle = array_merge($arr, $pushArray);
-            $result = call_user_func_array('array_merge', $arraySingle);
-            $dataFields = $result;
-            Officer::insert($dataFields);
-        }else{
-            $pushArray = array_merge(array(["modified_by" => Auth::user()->id]));
-            $arraySingle = array_merge($arr, $pushArray);
-            $result = call_user_func_array('array_merge', $arraySingle);
-            $dataFields = $result;
-            Officer::find((int)$row["id"])->update($dataFields);
-        }
+        return null; // the row is saved above, nothing for Laravel Excel to save
     }
 }

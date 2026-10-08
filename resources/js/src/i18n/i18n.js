@@ -11,11 +11,21 @@ const savedLocale = (() => {
 
 // Legacy mode keeps the Options API: $t / $te in templates and this.$i18n.locale in components.
 // Outside components use i18n.global (i18n.global.locale, i18n.global.t(...)).
+// "officer_document" → "Officer document": the last resort for a key no language has
+function keyAsWords(key) {
+    return key.replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase())
+}
+
 const i18n = createI18n({
     legacy: true,
     locale: i18nData[savedLocale] ? savedLocale : 'kh', // set default locale
     messages: i18nData,
     warnHtmlMessage: false, // a few labels carry <small>/<br>, rendered with v-html
+    // A text missing in one language shows in English rather than as its key ...
+    fallbackLocale: 'en',
+    silentFallbackWarn: true,
+    // ... and a key with no text at all reads as words ("officer_document" → "Officer document"), never as the raw key
+    postTranslation: (text, key) => (text === key && /^[a-z][a-z0-9]*(_[a-z0-9]+)+$/.test(key) ? keyAsWords(key) : text),
 })
 const t = i18n.global
 

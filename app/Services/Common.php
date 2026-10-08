@@ -583,6 +583,25 @@
             }
 
             /**
+             * Import the uploaded spreadsheet (request "file") with a Laravel Excel import class: one answer for every list.
+             * The upload itself is passed, not its temp path, so the reader follows the file's extension (.xlsx, .xls, .csv).
+             * Laravel Excel runs the import in one database transaction: when a row fails, nothing is saved.
+             */
+            public static function importSpreadsheet($import, $request){
+                $file = $request->file('file');
+                if (!$file || !$file->isValid()) {
+                    return response()->json(['success' => false, 'message' => trans('common.file_upload_failed')], 422);
+                }
+                try {
+                    \Maatwebsite\Excel\Facades\Excel::import($import, $file);
+                } catch (\Throwable $e) {
+                    report($e); // the details go to the log, the user gets a plain message
+                    return response()->json(['success' => false, 'message' => trans('import.failed')], 422);
+                }
+                return response()->json(['success' => true, 'message' => trans('common.file_uploaded')]);
+            }
+
+            /**
              * List filter from request input. Column names, sort direction and paging come from the
              * client and end up in SQL, so only plain column names are accepted, secrets can never be
              * searched (a LIKE on password would leak hashes one character at a time), and page size is capped.

@@ -19,11 +19,13 @@ class OfficerPayableImport implements ToModel,WithHeadingRow,Auditable
     */
     public function model(array $row): \Illuminate\Database\Eloquent\Model|array|null
     {
-        $queryCheck = OfficerPayable::where("id", (int)$row["id"])->first();
+        $queryCheck = OfficerPayable::where("id", (int)($row["id"] ?? null))->first();
         $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new OfficerPayable)->getTable());
         $str = "";
         $arr = array();
         for($i=0; $i < count($data["tables"]); $i++){
+            // A column not in the file is left alone: an update keeps its value, a new row gets the table's default
+            if (!array_key_exists($data["tables"][$i]->Field, $row)) continue;
             $field = $data["tables"][$i]->Field;
             $value = $row[$field] ?? null;
             if(isset($data["tables"][$i]->Field)){
@@ -63,7 +65,8 @@ class OfficerPayableImport implements ToModel,WithHeadingRow,Auditable
             $arraySingle = array_merge($arr, $pushArray);
             $result = call_user_func_array('array_merge', $arraySingle);
             $dataFields = $result;
-            OfficerPayable::find((int)$row["id"])->update($dataFields);
+            OfficerPayable::find((int)($row["id"] ?? null))->update($dataFields);
         }
+        return null; // the row is saved above, nothing for Laravel Excel to save
     }
 }

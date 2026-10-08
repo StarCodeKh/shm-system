@@ -17,7 +17,6 @@ use Illuminate\Http\Request;
 use Auth;
 use CommonService;
 use App\Services\PushNotificationService;
-use Maatwebsite\Excel\Facades\Excel;
 
 class OfficerPayableController extends Controller
 {
@@ -384,13 +383,7 @@ class OfficerPayableController extends Controller
     }
 
     public function import(Request $request){
-        $path = $request->file('file')->getRealPath();
-        $rows = Excel::import(new OfficerPayableImport, $path);
-        if($rows){
-            return response()->json(['success'=>true,'message'=>__('common.file_uploaded')], 200);
-        }else{
-            return response()->json(['success'=>false,'message'=>__('common.file_upload_failed')], 500);
-        }
+        return CommonService::importSpreadsheet(new OfficerPayableImport, $request);
     }
 
     public function getPayableInfoByOfficer(Request $request){

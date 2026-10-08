@@ -43,5 +43,6 @@ class EntityImport implements ToModel,WithHeadingRow
                 "created_by"=>Auth::user()->id
             ]);
         }
+        return null; // the row is saved above, nothing for Laravel Excel to save
     }
 }
