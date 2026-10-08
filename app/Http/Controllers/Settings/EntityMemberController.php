@@ -57,7 +57,7 @@ class EntityMemberController extends Controller
             "data_fields" => $this->dataFields(),
             "data" => $this->db_table::getMemberByEntity($filter),
             "entity_id" => $entities,
-            "limit" => setting('config_limit'),
+            "limit" => $filter["limit"],
             "total" => $this->db_table::getCount($filter)
         );
         return response()->json($data);

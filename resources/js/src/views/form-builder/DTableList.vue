@@ -1631,7 +1631,11 @@
 
         <div class="dt-footer">
             <span class="dt-footer__info">{{ $t('dt_showing', pageRange) }}</span>
-            <d-pagination :total="calPaginNumber(dataTables.total / dataTables.limit)" v-model="current_page" />
+            <div class="dt-footer__pager">
+                <v-select v-model="pageSize" :options="pageSizeOptions" :reduce="option => option.value"
+                    :clearable="false" :searchable="false" class="dt-footer__size is-compact" :title="$t('dt_per_page')" />
+                <d-pagination :total="calPaginNumber(dataTables.total / dataTables.limit)" v-model="current_page" />
+            </div>
         </div>
     </vx-card>
 </template>
@@ -1677,6 +1681,8 @@ export default {
             titleStr: "",
             currentx: 0,
             current_page: 1,
+            page_size: null, // rows per page picked in the footer: a number or 'all'; null = the server's standard size
+            standard_size: 0, // the server's standard page size (Settings › General › Limit)
             lastSearchFields: [], // the search on screen, kept when the list reloads for a language switch
             dataId: 0,
 
@@ -1788,6 +1794,28 @@ export default {
             const from = total ? (this.current_page - 1) * limit + 1 : 0
             const to = Math.min(this.current_page * limit, total)
             return { from: this.formatCount(from), to: this.formatCount(to), total: this.formatCount(total) }
+        },
+        // Rows per page: the common sizes, the site's standard size, and "All"
+        pageSizeOptions() {
+            const sizes = [10, 20, 50, 100]
+            if (this.standard_size && !sizes.includes(this.standard_size)) sizes.push(this.standard_size)
+            return sizes.sort((a, b) => a - b)
+                .map(n => ({ label: this.formatCount(n), value: n }))
+                .concat({ label: this.$t('dt_all'), value: 'all' })
+        },
+        pageSize: {
+            get() {
+                return this.page_size || this.standard_size || Number(this.dataTables.limit) || 10
+            },
+            // A new size starts again from page 1
+            set(size) {
+                this.page_size = size
+                if (this.current_page !== 1) {
+                    this.current_page = 1 // the page watcher reloads
+                } else {
+                    this.$emit('clicked', { pageNum: 1, limit: size, searchFields: this.lastSearchFields, dataInfo: this.dataInfo })
+                }
+            },
         },
     },
     methods: {
@@ -1974,6 +2002,7 @@ export default {
             this.lastSearchFields = []
             let _search_params = {
                 pageNum: this.current_page,
+                limit: this.page_size || undefined,
                 searchFields: [],
                 dataInfo: _search_fields.dataInfo
             }
@@ -1983,6 +2012,7 @@ export default {
             this.lastSearchFields = _search_fields.formAttribute || []
             let _search_params = {
                 pageNum: this.current_page,
+                limit: this.page_size || undefined,
                 searchFields: _search_fields.formAttribute,
                 dataInfo: _search_fields.dataInfo
             }
@@ -2018,6 +2048,7 @@ export default {
             let id = this.dataId;
             let _search_params = {
                 pageNum: this.current_page,
+                limit: this.page_size || undefined,
                 searchFields: [],
                 dataInfo: this.dataInfo
             }
@@ -2213,16 +2244,24 @@ export default {
         this.$vs.loading.close();
         // Rows and dropdown lists carry labels the server made in the old language: reload the same page and search
         this.offLocaleChange = onLocaleChange(() => {
-            this.$emit('clicked', { pageNum: this.current_page, searchFields: this.lastSearchFields, dataInfo: this.dataInfo })
+            this.$emit('clicked', { pageNum: this.current_page, limit: this.page_size || undefined, searchFields: this.lastSearchFields, dataInfo: this.dataInfo })
         })
     },
     beforeUnmount() {
         if (this.offLocaleChange) this.offLocaleChange()
     },
     watch: {
+        // Until a size is picked the server answers with its standard size: remember it as an option
+        'dataTables.limit': {
+            immediate: true,
+            handler(limit) {
+                if (!this.page_size && Number(limit) > 0) this.standard_size = Number(limit)
+            },
+        },
         current_page: function (val) {
             let _search_params = {
                 pageNum: this.current_page,
+                limit: this.page_size || undefined,
                 searchFields: [],
                 dataInfo: this.dataInfo
             }
@@ -2233,6 +2272,30 @@ export default {
 </script>
 
 <style>
+.dt-footer__pager {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    margin-inline-start: auto;
+}
+
+.dt-footer__size {
+    flex: 0 0 auto;
+    min-width: 84px;
+}
+
+@media (max-width: 640px) {
+    .dt-footer__pager {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .dt-footer__pager .d-pagination {
+        flex: 1 1 auto;
+    }
+}
+
 @media print {
     .no-print {
         display: none;

@@ -50,7 +50,7 @@ class AccountTypeGroupController extends Controller
             "form_attributes" => FormSchema::fields($this->db_table->getTable()),
             "permissions" => CommonService::permission($this->db_table),
             "model_name" => $this->db_table->getTable(),
-            "limit" => setting('config_limit'),
+            "limit" => $filter["limit"],
             "total" => $this->db_table::getCount($filter)
         );
         return response()->json($data);

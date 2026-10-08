@@ -532,6 +532,8 @@ export default {
         dt_edit: 'កែប្រែ',
         dt_delete: 'លុប',
         dt_showing: 'បង្ហាញ {from}–{to} ក្នុងចំណោម {total}',
+        dt_per_page: 'ជួរក្នុងមួយទំព័រ',
+        dt_all: 'ទាំងអស់',
         // File picker
         upload_choose: 'ជ្រើសរើសឯកសារ',
         upload_hint_image: 'JPG ឬ PNG',
@@ -2150,6 +2152,8 @@ export default {
         dt_edit: 'Edit',
         dt_delete: 'Delete',
         dt_showing: 'Showing {from}–{to} of {total}',
+        dt_per_page: 'Rows per page',
+        dt_all: 'All',
         // File picker
         upload_choose: 'Choose a file',
         upload_hint_image: 'JPG or PNG',

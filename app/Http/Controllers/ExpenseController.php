@@ -62,7 +62,7 @@ class ExpenseController extends BaseController
             $filter = CommonService::getFilter($input);
             $data = array(
                 "data" => $this->db_table::getData($filter),
-                "limit" => setting('config_limit'),
+                "limit" => $filter["limit"],
                 "total" => $this->db_table::getTotal($filter),
                 "permissions" => CommonService::permission($this->db_table),
                 "role_permissions" => CommonService::getPermissionsViaRoles(),

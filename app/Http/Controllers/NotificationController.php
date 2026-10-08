@@ -57,7 +57,7 @@ class NotificationController extends Controller
             $data = array(
                 "data" => $this->db_table::getData($filter),
                 "data_fields" => $this->db_table::dataFields(),
-                "limit" => setting('config_limit'),
+                "limit" => $filter["limit"],
                 "total" => $this->db_table::getTotal($filter),
                 "permissions" => CommonService::permission($this->db_table),
                 "role_permissions" => CommonService::getPermissionsViaRoles(),

@@ -598,10 +598,12 @@
                 }
                 $sort = isset($obj["sort"]) && is_string($obj["sort"]) && preg_match('/^[a-z][a-z0-9_.]*$/i', $obj["sort"]) ? $obj["sort"] : setting('config_sort');
                 $order = isset($obj["order"]) && in_array(strtolower((string) $obj["order"]), ['asc', 'desc'], true) ? $obj["order"] : setting('config_order');
-                $limit = isset($obj["limit"]) ? (int) $obj["limit"] : setting('config_limit');
+                // Page size: a number (up to 1000) or "all" (every row, up to 5000)
+                $limit = $obj["limit"] ?? null;
+                $limit = $limit === 'all' ? 5000 : max(1, min((int) ($limit ?: setting('config_limit')), 1000));
                 $filter = array(
                     "data" => $obj,
-                    "limit" => max(1, min((int) ($limit ?: setting('config_limit')), 1000)),
+                    "limit" => $limit,
                     "sort" => $sort,
                     "order" => $order,
                     "page_number" => max(1, (int) ($obj["page_number"] ?? 1)),

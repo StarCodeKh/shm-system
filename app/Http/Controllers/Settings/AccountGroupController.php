@@ -60,7 +60,7 @@ class AccountGroupController extends Controller
                 "account_type_id" => $accountTypes,
                 "permissions" => CommonService::permission($this->db_table),
                 "role_permissions" => CommonService::getPermissionsViaRoles(),
-                "limit" => setting('config_limit'),
+                "limit" => $filter["limit"],
                 "total" => $this->db_table::getCount($filter)
             );
             $status = 200;

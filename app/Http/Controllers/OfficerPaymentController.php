@@ -57,7 +57,7 @@ class OfficerPaymentController extends Controller
             $dataList = $this->db_table::getData($filter);
             $data = array(
                 "data" => $dataList,
-                "limit" => setting('config_limit'),
+                "limit" => $filter["limit"],
                 "total" => $this->db_table::getTotal($filter),
                 "summary" => array(
                     "paid"        => $dataList->where('status', Status::PAID)->count(),

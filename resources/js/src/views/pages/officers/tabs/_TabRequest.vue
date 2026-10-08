@@ -153,6 +153,7 @@
                         sort: _search_criteria.sort,
                         order: _search_criteria.order,
                         page_number: _search_criteria.page_number,
+                        limit: _search_criteria.limit,
                         search_field: this.dataFields,
                         officer_id: this.$route.params.id,
                     };
@@ -161,6 +162,7 @@
                         sort: _search_criteria.sort,
                         order: _search_criteria.order,
                         page_number: _search_criteria.page_number,
+                        limit: _search_criteria.limit,
                         officer_id: this.$route.params.id,
                     };
                 }
@@ -194,6 +196,7 @@
                     sort: "id",
                     order: "",
                     page_number: searchQuery.pageNum,
+                    limit: searchQuery.limit,
                     search_field: searchQuery.searchFields
                 }
                 this.getDataTable(_search_criteria);

@@ -45,8 +45,8 @@ export default {
         }
     },
     methods: {
-        getDataTable({ page_number, search_field }) {
-            const params = { sort: "id", order: "", page_number };
+        getDataTable({ page_number, search_field, limit }) {
+            const params = { sort: "id", order: "", page_number, limit };
             // Search only by fields the form knows, as [{ field: value }, ...]
             if (search_field) {
                 params.search_field = this.formAttributes
@@ -68,7 +68,7 @@ export default {
         },
         initTableData(searchQuery) {
             this.$vs.loading();
-            this.getDataTable({ page_number: searchQuery.pageNum, search_field: searchQuery.searchFields });
+            this.getDataTable({ page_number: searchQuery.pageNum, search_field: searchQuery.searchFields, limit: searchQuery.limit });
         }
     },
     created() {

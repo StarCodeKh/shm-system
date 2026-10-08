@@ -58,6 +58,7 @@ export default {
                     sort: _search_criteria.sort,
                     order: _search_criteria.order,
                     page_number: _search_criteria.page_number,
+                    limit: _search_criteria.limit,
                     search_field: this.dataFields,
                 };
             } else {
@@ -65,6 +66,7 @@ export default {
                     sort: _search_criteria.sort,
                     order: _search_criteria.order,
                     page_number: _search_criteria.page_number,
+                    limit: _search_criteria.limit,
                 };
             }
 
@@ -105,6 +107,7 @@ export default {
                 sort: "id",
                 order: "asc",
                 page_number: searchQuery.pageNum,
+                limit: searchQuery.limit,
                 search_field: searchQuery.searchFields
             }
             this.getDataTable(_search_criteria);

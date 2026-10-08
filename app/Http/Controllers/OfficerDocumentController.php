@@ -62,7 +62,7 @@ class OfficerDocumentController extends Controller
             $dataList = $this->db_table::getData($filter);
             $data = array(
                 "data" => $dataList,
-                "limit" => setting('config_limit'),
+                "limit" => $filter["limit"],
                 "total" => $this->db_table::getTotal($filter),
                 "summary" => array(
                     "in_review" => $dataList->where('status', 1)->count(),

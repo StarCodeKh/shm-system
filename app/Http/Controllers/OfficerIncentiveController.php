@@ -61,7 +61,7 @@ class OfficerIncentiveController extends Controller
             $dataList = $this->db_table::getData($filter);
             $data = array(
                 "data" => $dataList,
-                "limit" => setting('config_limit'),
+                "limit" => $filter["limit"],
                 "total" => $this->db_table::getTotal($filter),
                 "total_amount" => $this->convertToKhmerNumber(
                         CommonService::formatDoubleNum(collect($dataList)->sum('amount'))

@@ -74,7 +74,7 @@ class OfficerPayableController extends Controller
                         CommonService::formatDoubleNum(collect($dataList->where('status', Status::UNPAID))->sum('amount'))
                     )
                 ),
-                "limit" => setting('config_limit'),
+                "limit" => $filter["limit"],
                 "total" => $this->db_table::getTotal($filter),
                 "permissions" => CommonService::permission($this->db_table),
                 "role_permissions" => CommonService::getPermissionsViaRoles(),

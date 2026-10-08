@@ -38,7 +38,7 @@ class CompositionRequestController extends Controller
         $filter = CommonService::getFilter($input);
         $data = array(
             "data" => $this->dbTable::getData($filter),
-            "limit" => setting('config_limit'),
+            "limit" => $filter["limit"],
             "total" => $this->dbTable::getTotal($filter),
             "data_fields" => $this->dbTable::dataFields(),
         );

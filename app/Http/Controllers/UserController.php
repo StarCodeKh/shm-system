@@ -69,7 +69,7 @@ class UserController extends Controller
                 "status" => Status::getSingleOpt("STATUS"),
                 "form_attributes" => User::formAttributes(),
                 "data_fields" => User::dataFields(),
-                "limit" => setting('config_limit'),
+                "limit" => $filter["limit"],
                 "total" => User::getTotal($filter)
             );
             $status = 200;
@@ -366,7 +366,7 @@ class UserController extends Controller
         $table = UserDevice::getData($filter);
         $data = array(
             "data" => $table,
-            "limit" => setting('config_limit'),
+            "limit" => $filter["limit"],
             "total" => UserDevice::getTotal($filter),
             "permissions" => CommonService::permission($this->db_table),
             "role_permissions" => CommonService::getPermissionsViaRoles(),

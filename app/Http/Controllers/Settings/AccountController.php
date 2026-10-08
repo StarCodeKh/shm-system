@@ -59,7 +59,7 @@ class AccountController extends Controller
             $data = array(
                 "data" => $this->db_table::getAccounts($filter),
                 "form_attributes" => FormSchema::fields($this->db_table->getTable()),
-                "limit" => setting('config_limit'),
+                "limit" => $filter["limit"],
                 "total" => $this->db_table::getCount($filter),
                 "permissions" => CommonService::permission($this->db_table),
                 "role_permissions" => CommonService::getPermissionsViaRoles(),
