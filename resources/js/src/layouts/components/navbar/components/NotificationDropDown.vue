@@ -10,6 +10,10 @@
             <div class="nav-notify-menu__header">
                 <h4>{{ $t('nav_notifications') }}</h4>
                 <span v-if="countNot" class="nav-notify-menu__count">{{ $t('nav_new', { n: countNot }) }}</span>
+                <button v-if="countNot" type="button" class="nav-notify-menu__read-all" @click.stop="readAll">
+                    <feather-icon icon="CheckCircleIcon" svgClasses="h-4 w-4" />
+                    <span>{{ $t('nav_mark_all_read') }}</span>
+                </button>
             </div>
 
             <VuePerfectScrollbar v-if="unreadNotifications.length" ref="mainSidebarPs" class="nav-notify-menu__list"
@@ -19,9 +23,10 @@
                         <span class="nav-notify-item__icon">
                             <feather-icon icon="BellIcon" svgClasses="h-4 w-4" />
                         </span>
+                        <span class="nav-notify-item__dot" :aria-label="$t('nav_unread')"></span>
                         <div class="nav-notify-item__body">
-                            <p class="nav-notify-item__title">{{ ntf.data && ntf.data.title }}</p>
-                            <p class="nav-notify-item__text">{{ ntf.data && ntf.data.message }}</p>
+                            <p class="nav-notify-item__title">{{ (ntf.data && ntf.data.title) || ntf.subject }}</p>
+                            <p class="nav-notify-item__text">{{ (ntf.data && ntf.data.message) || ntf.message }}</p>
                             <p class="nav-notify-item__time">{{ elapsedTime(ntf.created_at) }}</p>
                         </div>
                     </li>
@@ -81,11 +86,21 @@
                         // Background refresh: keep the last known list rather than toasting every minute
                     })
             },
+            // Opening a notification marks it read (the badge goes down), then follows its link
             openNotification(ntf) {
+                axios.post(apiConfig._apiReadNotification, { notification_id: ntf.id })
+                    .then(({ data }) => { this.countNot = data.unread_count ?? Math.max(0, this.countNot - 1) })
+                    .catch(() => {})
+                this.unreadNotifications = this.unreadNotifications.filter(n => n.id !== ntf.id)
                 const url = ntf.data && ntf.data.action_url
                 // Only follow in-app paths; absolute URLs from older notifications fall back to the list
                 if (url && url.startsWith('/')) this.$router.push(url).catch(() => { })
                 else this.initViewNotification()
+            },
+            readAll() {
+                axios.post(apiConfig._apiReadAllNotifications)
+                    .then(() => { this.unreadNotifications = []; this.countNot = 0 })
+                    .catch(() => this.$vs.notify({ text: 'msg.action_failed', color: 'danger' }))
             },
             initViewNotification(){
                 this.$router.push("/nofication").catch(() => { });
@@ -149,7 +164,7 @@
     &__header {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        gap: 8px;
         padding: 14px 16px;
         border-bottom: 1px solid #eef0f5;
 
@@ -166,6 +181,36 @@
         border-radius: 999px;
         color: rgb(var(--vs-primary));
         background: rgba(var(--vs-primary), .12);
+    }
+
+    // Pushed to the right of the title and count
+    &__read-all {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-left: auto;
+        padding: 4px 8px;
+        font: inherit;
+        font-size: .8rem;
+        font-weight: 600;
+        color: rgb(var(--vs-primary));
+        background: none;
+        border: 0;
+        border-radius: 8px;
+        cursor: pointer;
+
+        &:hover {
+            background: rgba(var(--vs-primary), .08);
+        }
+
+        &:focus-visible {
+            outline: 2px solid rgb(var(--vs-primary));
+            outline-offset: 2px;
+        }
+
+        .feather-icon {
+            display: flex;
+        }
     }
 
     &__list {
@@ -229,6 +274,17 @@
 
     &:hover {
         background: #f8f9fb;
+    }
+
+    // Unread marker at the end of the row
+    &__dot {
+        order: 1;
+        flex-shrink: 0;
+        align-self: center;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgb(var(--vs-primary));
     }
 
     &__icon {

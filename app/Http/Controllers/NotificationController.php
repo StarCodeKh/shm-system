@@ -280,21 +280,29 @@ class NotificationController extends Controller
         return response()->json($data);
     }
 
+    // Bell menu: how many are unread, and the latest 20 of them
     public static function getUnreadNotifications(){
+        $user = auth()->user();
         return response()->json([
-            'unread_count' => auth()->user()->unreadNotifications->count(),
-            'unread_notifications' => auth()->user()->unreadNotifications
+            'unread_count' => $user->unreadNotifications()->count(),
+            'unread_notifications' => $user->unreadNotifications()->latest()->limit(20)->get(),
         ]);
     }
 
+    // One of the user's own notifications is read (opened from the bell menu)
     public static function readNotification(Request $request){
-        $input = $request->all();
-        $user = Auth::user();
-        $user->unreadNotifications()->where("id", $input["notification_id"])->update(['read_at' => now()]);
-        $data = array(
-            "success" => true,
-            "message" => __('common.notification_read')
-        );
-        return response()->json($data);
+        $input = $request->validate(['notification_id' => ['required', 'integer']]);
+        Auth::user()->unreadNotifications()->where('id', $input['notification_id'])->update(['read_at' => now()]);
+        return response()->json([
+            'success' => true,
+            'message' => __('common.notification_read'),
+            'unread_count' => Auth::user()->unreadNotifications()->count(),
+        ]);
+    }
+
+    // All of the user's notifications are read
+    public static function readAllNotifications(){
+        Auth::user()->unreadNotifications()->update(['read_at' => now()]);
+        return response()->json(['success' => true, 'message' => __('common.notification_read'), 'unread_count' => 0]);
     }
 }

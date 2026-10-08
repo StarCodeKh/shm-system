@@ -15,7 +15,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        // notify() rows fit tbl_notifications (auto-increment id, subject / message)
+        $this->app->bind(\Illuminate\Notifications\Channels\DatabaseChannel::class, \App\Channels\DatabaseChannel::class);
     }
 
     /**

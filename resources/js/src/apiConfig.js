@@ -4,6 +4,8 @@ export default {
     // Program Management
     // Notification
     _apiUnreadNotification: "/api/v1/nofication/unreadnotification",
+    _apiReadNotification: "/api/v1/notification/read",
+    _apiReadAllNotifications: "/api/v1/notification/read_all",
     _apiNotification: "/api/v1/notification",
     _apiSendNotification: "/api/v1/send_notification",
     // Accounting Management'

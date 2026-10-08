@@ -288,6 +288,8 @@ Route::post('letter_type/search', [LetterTypeController::class, 'index']);
 
     // Notification
     Route::get('nofication/unreadnotification', [NotificationController::class, 'getUnreadNotifications']);
+    Route::post('notification/read', [NotificationController::class, 'readNotification']);
+    Route::post('notification/read_all', [NotificationController::class, 'readAllNotifications']);
     Route::post('notification/search', [NotificationController::class, 'index']);
     Route::post('send_notification', [NotificationController::class, 'sendNotification']);
     Route::apiResource('notification', NotificationController::class);

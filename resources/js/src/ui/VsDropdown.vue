@@ -1,15 +1,15 @@
 <template>
-    <button
+    <!-- A plain wrapper: the trigger inside (a <button>) is the control, so buttons are never nested -->
+    <div
         ref="dropdown"
         v-bind="$attrs"
-        type="button"
         class="vs-con-dropdown parent-dropdown"
         @click="onClick"
         @contextmenu="onContextmenu"
         @mouseover="onHover('over', $event)"
         @mouseout="onHover('out', $event)">
         <slot />
-    </button>
+    </div>
 </template>
 
 <script>
@@ -36,6 +36,9 @@ export default {
         vsDropdownVisible(visible) {
             this.changePositionMenu()
             this.$emit(visible ? 'focus' : 'blur')
+            // Esc closes an open menu
+            if (visible) document.addEventListener('keydown', this.onKeydown)
+            else document.removeEventListener('keydown', this.onKeydown)
         },
     },
     mounted() {
@@ -43,6 +46,7 @@ export default {
     },
     beforeUnmount() {
         document.removeEventListener('click', this.clickOutside)
+        document.removeEventListener('keydown', this.onKeydown)
     },
     methods: {
         setVisible(visible) {
@@ -50,6 +54,9 @@ export default {
         },
         close() {
             this.vsDropdownVisible = false
+        },
+        onKeydown(evt) {
+            if (evt.key === 'Escape') this.close()
         },
         clickOutside(evt) {
             if (!(this.vsTriggerClick || this.vsCustomContent) || !this.vsDropdownVisible) return
@@ -93,7 +100,9 @@ export default {
                 })
             } else {
                 menu.notHeight = false
-                menu.topx = trigger.getBoundingClientRect().top + trigger.clientHeight + scrollTop - 5
+                // Menus in the top bar open just below the bar instead of over it
+                const bar = trigger.closest('.vx-navbar')
+                menu.topx = (bar ? bar.getBoundingClientRect().bottom + 8 : trigger.getBoundingClientRect().top + trigger.clientHeight - 5) + scrollTop
             }
             // Line the menu up with the trigger's right edge (left edge with vs-drop-right), keep it 8px inside
             // the screen, and point the arrow at the middle of the trigger. leftx is the menu's right edge
