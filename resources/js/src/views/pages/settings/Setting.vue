@@ -13,8 +13,11 @@
                 </div>
             </div>
 
-            <nav class="setting-nav__list">
-                <button v-for="(tab, i) in visibleTabs" :key="tab.key" type="button" class="setting-nav__item"
+            <nav ref="navList" class="setting-nav__list" role="tablist" aria-orientation="vertical" @keydown="onNavKey">
+                <!-- One highlight shared by all items: it slides to the active one and takes its color -->
+                <span class="setting-nav__indicator" :class="{ 'is-ready': indicator.ready }" :style="indicatorStyle" aria-hidden="true" />
+                <button v-for="(tab, i) in visibleTabs" :key="tab.key" :ref="el => setItemRef(tab.key, el)" type="button"
+                    class="setting-nav__item" role="tab" :aria-selected="tab.key === activeKey" :tabindex="tab.key === activeKey ? 0 : -1"
                     :class="{ 'is-active': tab.key === activeKey }" :style="{ '--tile': tab.color, '--delay': (i * 40) + 'ms' }"
                     @click="select(tab.key)" @mouseenter="preload(tab)" @focus="preload(tab)">
                     <span class="setting-tile">
@@ -90,12 +93,54 @@ export default {
             tab_back_up: true,
             tab_notification: true,
             tab_autdit: true,
+            // Position and size of the sliding highlight (px, relative to the list)
+            indicator: { x: 0, y: 0, w: 0, h: 0, ready: false },
         }
+    },
+    watch: {
+        activeKey() {
+            this.$nextTick(() => this.moveIndicator(true))
+        },
+        // Fewer or more tabs (permissions loaded later) shift the items
+        visibleTabs() {
+            this.$nextTick(this.moveIndicator)
+        },
+        // Titles change width with the language (matters in the horizontal mobile strip)
+        '$i18n.locale'() {
+            this.$nextTick(this.moveIndicator)
+        },
     },
     methods: {
         select(key) {
             if (key === this.activeKey) return
             this.$router.replace({ query: { ...this.$route.query, tab: key } }).catch(() => {})
+        },
+        setItemRef(key, el) {
+            if (el) this.itemEls[key] = el
+            else delete this.itemEls[key]
+        },
+        // Put the highlight over the active item. The first placement is instant (no slide in from the corner).
+        moveIndicator(reveal = false) {
+            const el = this.itemEls[this.activeKey]
+            if (!el) return
+            this.indicator = { ...this.indicator, x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight }
+            if (!this.indicator.ready) requestAnimationFrame(() => { this.indicator.ready = true })
+            // After a selection, keep the active item in view when the strip / list scrolls (mobile, many tabs)
+            if (reveal === true) el.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' })
+        },
+        // Arrow keys / Home / End move between tabs, as in any tab list
+        onNavKey(event) {
+            const keys = this.visibleTabs.map(tab => tab.key)
+            const index = keys.indexOf(this.activeKey)
+            const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[event.key]
+            let next = null
+            if (step) next = keys[(index + step + keys.length) % keys.length]
+            else if (event.key === 'Home') next = keys[0]
+            else if (event.key === 'End') next = keys[keys.length - 1]
+            if (!next) return
+            event.preventDefault()
+            this.select(next)
+            this.$nextTick(() => this.itemEls[next] && this.itemEls[next].focus())
         },
         preload(tab) {
             SECTIONS[tab.component]().catch(() => {})
@@ -134,13 +179,32 @@ export default {
         },
         activeTab() {
             return this.visibleTabs.find(tab => tab.key === this.activeKey)
-        }
+        },
+        indicatorStyle() {
+            const { x, y, w, h } = this.indicator
+            return {
+                '--tile': this.activeTab ? this.activeTab.color : null,
+                width: w + 'px',
+                height: h + 'px',
+                transform: `translate3d(${x}px, ${y}px, 0)`,
+                opacity: w ? 1 : 0,
+            }
+        },
     },
     created() {
         this.opened = {} // sections already shown once (not reactive)
+        this.itemEls = {} // nav buttons by tab key (not reactive)
     },
     mounted() {
         if (this.activeKey) this.opened[this.activeKey] = true
+        this.$nextTick(this.moveIndicator)
+        // Item sizes change with the window (vertical list ⇄ horizontal strip) and with fonts loading
+        this.resizeObserver = new ResizeObserver(() => this.moveIndicator())
+        this.resizeObserver.observe(this.$refs.navList)
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this.moveIndicator())
+    },
+    beforeUnmount() {
+        if (this.resizeObserver) this.resizeObserver.disconnect()
     },
 }
 </script>
@@ -232,11 +296,12 @@ export default {
         border-radius: 12px;
         background: transparent;
         cursor: pointer;
+        z-index: 1; // above the sliding highlight
         animation: setting-item-in .35s ease backwards;
         animation-delay: var(--delay);
         transition: background var(--tab-tap) ease, box-shadow var(--tab-tap) ease;
 
-        &:hover {
+        &:hover:not(.is-active) {
             background: #fff;
             box-shadow: 0 4px 14px -8px rgba(23, 23, 74, .25);
 
@@ -245,14 +310,18 @@ export default {
             }
         }
 
-        // Active: soft tint of the section color with a thin matching outline
-        &.is-active {
-            background: rgba(var(--tile), .09);
-            box-shadow: inset 0 0 0 1px rgba(var(--tile), .2);
+        &:focus-visible {
+            outline: 2px solid rgba(var(--tile), .5);
+            outline-offset: 2px;
+        }
 
+        // Active: the highlight underneath gives the tint; the icon fills with the section color and pops
+        &.is-active {
             .setting-tile {
                 color: #fff;
                 background: rgb(var(--tile));
+                box-shadow: 0 6px 14px -6px rgba(var(--tile), .8);
+                animation: setting-tile-pop .45s cubic-bezier(.34, 1.56, .64, 1);
             }
 
             .setting-nav__title {
@@ -265,6 +334,39 @@ export default {
                 transform: translateX(0);
                 color: rgb(var(--tile));
             }
+        }
+    }
+
+    // Sliding highlight: soft tint of the section color, thin outline, accent bar on the left
+    &__indicator {
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-radius: 12px;
+        pointer-events: none;
+        background: rgba(var(--tile), .09);
+        box-shadow: inset 0 0 0 1px rgba(var(--tile), .2), 0 6px 16px -10px rgba(var(--tile), .6);
+
+        &::before {
+            content: "";
+            position: absolute;
+            top: 22%;
+            bottom: 22%;
+            left: 0;
+            width: 3px;
+            border-radius: 0 3px 3px 0;
+            background: rgb(var(--tile));
+        }
+
+        // Instant on first placement, then glides (slight overshoot) and fades its color between sections
+        &.is-ready {
+            transition:
+                transform .42s cubic-bezier(.22, 1.2, .36, 1),
+                width .42s cubic-bezier(.22, 1.2, .36, 1),
+                height .42s cubic-bezier(.22, 1.2, .36, 1),
+                background-color .3s ease,
+                box-shadow .3s ease,
+                opacity .2s ease;
         }
     }
 
@@ -377,6 +479,12 @@ export default {
     to { opacity: 1; transform: none; }
 }
 
+@keyframes setting-tile-pop {
+    0% { transform: scale(.82); }
+    60% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+
 // ---------------------------------------------------------------- Small screens: nav becomes a scrollable strip
 @media (max-width: 900px) {
     .setting-page {
@@ -394,7 +502,7 @@ export default {
         }
 
         &__list {
-            position: static;
+            position: relative; // the highlight scrolls with the strip
             flex-direction: row;
             gap: 8px;
             max-height: none;
@@ -432,11 +540,19 @@ export default {
 
             &.is-active {
                 border-color: rgba(var(--tile), .4);
-                background: rgba(var(--tile), .1);
+                background: transparent;
 
                 .setting-nav__title {
                     color: rgb(var(--tile));
                 }
+            }
+        }
+
+        &__indicator {
+            border-radius: 999px;
+
+            &::before {
+                display: none;
             }
         }
 
@@ -457,8 +573,13 @@ export default {
 
 @media (prefers-reduced-motion: reduce) {
     .setting-nav__item,
+    .setting-nav__item.is-active .setting-tile,
     .setting-swap-enter-active {
         animation: none;
+    }
+
+    .setting-nav__indicator.is-ready {
+        transition: none;
     }
 }
 
@@ -469,10 +590,11 @@ export default {
     .setting-nav__header h3,
     .setting-nav__item.is-active .setting-nav__title { color: #fff; }
     .setting-nav__title { color: #c2c6dc; }
-    .setting-nav__item:hover { background: #262c49; }
+    .setting-nav__item:hover:not(.is-active) { background: #262c49; }
     @media (max-width: 900px) {
         .setting-nav { background: #10163a; }
         .setting-nav__item { background: #10163a; border-color: #414561; }
+        .setting-nav__item.is-active { background: transparent; }
     }
     .setting-content { background: #1b2142; }
     .setting-content__head { border-color: #414561; }
