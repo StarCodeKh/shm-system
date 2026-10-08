@@ -51,7 +51,7 @@ export default {
             }
         },
         stylex() {
-            return { ...this.cords, color: this.colorText, width: this.fullWidth ? 'calc(100% - 14px)' : '', maxWidth: this.fullWidth ? 'none' : '350px' }
+            return { ...this.cords, color: this.colorText, width: this.fullWidth ? 'calc(100% - 14px)' : '', maxWidth: this.fullWidth ? 'none' : '' }
         },
     },
     created() {
@@ -59,8 +59,9 @@ export default {
         // Top corners start below the fixed navbar (it sets --navbar-bottom), so a toast never covers the profile / theme buttons
         if (has('top')) this.cords.top = has('center') ? '0px' : 'var(--navbar-bottom, 0px)'
         if (has('bottom')) this.cords.bottom = '0px'
-        if (has('right')) this.cords.right = '0px'
-        if (has('left')) this.cords.left = '0px'
+        // Side corners line up with the navbar card's edge (--navbar-left / --navbar-right)
+        if (has('right')) this.cords.right = 'var(--navbar-right, 16px)'
+        if (has('left')) this.cords.left = 'var(--navbar-left, 16px)'
         if (has('center')) this.cords.left = '50%'
         setTimeout(() => this.stack(), 0)
     },

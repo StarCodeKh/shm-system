@@ -675,6 +675,7 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
     width: 360px;
     max-width: calc(100vw - 32px);
     min-width: 0;
+    margin: 0; // Vuesax adds 5px side margins; the toast sits flush with the navbar edge instead
     padding: 12px 14px 12px 12px;
     border-radius: 12px;
     background: #fff !important;

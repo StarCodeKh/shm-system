@@ -103,15 +103,21 @@ export default {
     mounted() {
         // Keep greeting and date current if the tab stays open
         this.clock = setInterval(() => { this.now = new Date() }, 60 * 1000)
-        // Tell top-right toasts where the navbar ends so they open below it (see VsNotification.vue)
-        const setBottom = () => document.documentElement.style.setProperty('--navbar-bottom', `${Math.round(this.$refs.wrapper.querySelector('.vx-navbar').getBoundingClientRect().bottom)}px`)
-        this.navbarObserver = new ResizeObserver(setBottom)
+        // Tell toasts where the navbar card sits so they open below it and line up with its edges (see VsNotification.vue)
+        const setEdges = () => {
+            const rect = this.$refs.wrapper.querySelector('.vx-navbar').getBoundingClientRect()
+            const style = document.documentElement.style
+            style.setProperty('--navbar-bottom', `${Math.round(rect.bottom)}px`)
+            style.setProperty('--navbar-left', `${Math.round(rect.left)}px`)
+            style.setProperty('--navbar-right', `${Math.round(document.documentElement.clientWidth - rect.right)}px`)
+        }
+        this.navbarObserver = new ResizeObserver(setEdges)
         this.navbarObserver.observe(this.$refs.wrapper)
     },
     beforeUnmount() {
         clearInterval(this.clock)
         this.navbarObserver.disconnect()
-        document.documentElement.style.removeProperty('--navbar-bottom')
+        ;['--navbar-bottom', '--navbar-left', '--navbar-right'].forEach(name => document.documentElement.style.removeProperty(name))
     },
     methods: {
         showSidebar() {
