@@ -119,7 +119,6 @@ Route::prefix('v1')->middleware(['auth:api', 'global_site', 'cors', 'module_perm
     // Officer
     Route::prefix('officer')->group(function () {
         Route::post('import', [OfficerController::class, 'import']);
-        Route::post('export', [OfficerController::class, 'export']);
 
         // Payment recurring
         Route::post('execute_payment_recurring', [OfficerPaymentRecurringController::class, 'executePayment']);
@@ -174,19 +173,16 @@ Route::prefix('v1')->middleware(['auth:api', 'global_site', 'cors', 'module_perm
     // Chart of account
     Route::post('account/chart_account/search', [COAController::class, 'index']);
     Route::post('account/chart_account/import', [COAController::class, 'import']);
-    Route::post('account/chart_account/export', [COAController::class, 'export']);
     Route::apiResource('account/chart_account', COAController::class);
 
     // Expense
     Route::get('expense/get_field', [ExpenseController::class, 'getField']);
     Route::post('expense/search', [ExpenseController::class, 'index']);
-    Route::post('expense/export', [ExpenseController::class, 'export']);
     Route::apiResource('expense', ExpenseController::class);
 
     // Income
     Route::get('income/get_field', [IncomeController::class, 'getField']);
     Route::post('income/search', [IncomeController::class, 'index']);
-    Route::post('income/export', [IncomeController::class, 'export']);
     Route::apiResource('income', IncomeController::class);
 
     // Incentive
@@ -212,7 +208,6 @@ Route::prefix('v1')->middleware(['auth:api', 'global_site', 'cors', 'module_perm
 Route::post('account_type_group/search', [AccountTypeGroupController::class, 'index']);
         Route::apiResource('account_type_group', AccountTypeGroupController::class);
 
-        Route::get('account_type/export', [AccountTypeController::class, 'export']);
         Route::post('account_type/search', [AccountTypeController::class, 'index']);
         Route::apiResource('account_type', AccountTypeController::class);
 
@@ -221,12 +216,10 @@ Route::post('account_type_group/search', [AccountTypeGroupController::class, 'in
 
         Route::post('account/get_account_by_group', [AccountController::class, 'getAccountByGroup']);
         Route::post('account/get_sub_account', [AccountController::class, 'getSubAccount']);
-        Route::match(['get', 'post'], 'account/export', [AccountController::class, 'export']);
         Route::post('account/search', [AccountController::class, 'index']);
         Route::apiResource('account', AccountController::class);
 
         Route::post('department/import', [DepartmentController::class, 'import']);
-        Route::post('department/export', [DepartmentController::class, 'export']);
         Route::post('department/search', [DepartmentController::class, 'index']);
         Route::apiResource('department', DepartmentController::class);
 
@@ -278,7 +271,6 @@ Route::post('letter_type/search', [LetterTypeController::class, 'index']);
 
         Route::post('payment_type/get_amount_payment_type', [PaymentTypeController::class, 'getAmountByPaymentType']);
         Route::post('payment_type/import', [PaymentTypeController::class, 'import']);
-        Route::post('payment_type/export', [PaymentTypeController::class, 'export']);
         Route::post('payment_type/search', [PaymentTypeController::class, 'index']);
         Route::apiResource('payment_type', PaymentTypeController::class);
     });
@@ -319,11 +311,13 @@ Route::post('letter_type/search', [LetterTypeController::class, 'index']);
         // PDF reports: officers, income, expense, officer_incentive, officers_payment, ...
         Route::get('types', 'types');
         Route::post('{type}/data', 'preview')->where('type', '[a-z_]+');
+        Route::post('{type}/excel', 'excel')->where('type', '[a-z_]+');
         Route::post('{type}', 'generate')->where('type', '[a-z_]+');
     });
 
     // Print button of list pages: the rows on screen as the standard PDF document
     Route::post('print', [PrintController::class, 'table']);
+    Route::post('print/excel', [PrintController::class, 'excel']);
 
     // File manager
     Route::post('file_manager/search', [FileManagerController::class, 'index']);

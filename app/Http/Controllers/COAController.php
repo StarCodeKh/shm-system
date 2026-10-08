@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Exports\AccountExport;
 use App\Imports\AccountImport;
 use App\Models\coa;
 use App\Models\Settings\AccountType;
@@ -255,10 +254,6 @@ class COAController extends Controller
             "message" => $message
         );
         return response()->json($data, $status);
-    }
-
-     public function export(Request $request){
-        return Excel::download(new AccountExport, $this->db_table->getTable().'.xlsx');
     }
 
     public function import(Request $request){

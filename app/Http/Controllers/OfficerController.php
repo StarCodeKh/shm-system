@@ -1,7 +1,6 @@
 <?php
 
     namespace App\Http\Controllers;
-    use App\Exports\OfficerExport;
     use App\Imports\OfficerImport;
     use App\Models\Officer;
     use App\Models\OfficerPaymentRecurring;
@@ -333,10 +332,6 @@
                 "message" => $message
             );
             return response()->json($data, $status);
-        }
-
-        public function export(Request $request){
-            return Excel::download(new OfficerExport, $this->db_table->getTable().'.xlsx');
         }
 
         public function import(Request $request){

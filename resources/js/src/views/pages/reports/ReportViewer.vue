@@ -29,6 +29,11 @@
                         :class="{ 'report-spin': pdfBusy === 'view' }" />
                     <span>{{ $t('report_print') }}</span>
                 </button>
+                <button type="button" class="dt-btn" :disabled="!!pdfBusy" @click="downloadExcel">
+                    <feather-icon :icon="pdfBusy === 'excel' ? 'LoaderIcon' : 'GridIcon'" svgClasses="h-4 w-4"
+                        :class="{ 'report-spin': pdfBusy === 'excel' }" />
+                    <span>{{ $t('report_download_excel') }}</span>
+                </button>
                 <button type="button" class="dt-btn dt-btn--primary" :disabled="!!pdfBusy" @click="downloadPdf">
                     <feather-icon :icon="pdfBusy === 'download' ? 'LoaderIcon' : 'DownloadIcon'" svgClasses="h-4 w-4"
                         :class="{ 'report-spin': pdfBusy === 'download' }" />
@@ -111,7 +116,7 @@
 import axios from "@/axios.js";
 import vSelect from "vue-select";
 import DSearch from "@/views/form-builder/DSearch.vue";
-import { cachedReportPage, fetchReport, fetchReportPage, fetchReportTypes, prefetchReportPage, saveBlob } from "./reportApi.js";
+import { cachedReportPage, downloadReportExcel, fetchReport, fetchReportPage, fetchReportTypes, prefetchReportPage, saveBlob } from "./reportApi.js";
 
 export default {
     components: {
@@ -232,6 +237,15 @@ export default {
             try {
                 const { blob, filename } = await fetchReport(this.reportType, this.filters, true);
                 saveBlob(blob, filename);
+            } catch (message) {
+                this.notifyError(message);
+            }
+            this.pdfBusy = null;
+        },
+        async downloadExcel() {
+            this.pdfBusy = "excel";
+            try {
+                await downloadReportExcel(this.reportType, this.filters);
             } catch (message) {
                 this.notifyError(message);
             }

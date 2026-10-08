@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 use App\Models\Income;
-use App\Exports\IncomeExport;
 use App\Models\Settings\Currency;
 use App\Models\Settings\Department;
 use App\Models\Settings\Entity;
@@ -12,7 +11,6 @@ use App\Models\Settings\Status;
 use Illuminate\Http\Request;
 use Auth;
 use CommonService;
-use Maatwebsite\Excel\Facades\Excel;
 
 class IncomeController extends BaseController
 {
@@ -254,10 +252,6 @@ class IncomeController extends BaseController
             "message" => $message
         );
         return response()->json($data, $status);
-    }
-
-    public function export(Request $request){
-        return Excel::download(new IncomeExport, $this->db_table->getTable().'.xlsx');
     }
 
     public function insertIncome(Request $request)

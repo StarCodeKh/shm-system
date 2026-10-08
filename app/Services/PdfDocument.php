@@ -41,6 +41,8 @@ class PdfDocument
         $data['signatures'] = collect(config('report.signature.roles', []))
             ->map(fn ($role) => trans('report.signatures.'.$role))->values()->all();
 
+        $data['type'] = self::typography(count($data['columns']));
+
         $html = View::make('reports.table', $data)->render();
 
         // Large reports produce a big HTML string; mPDF needs more regex, memory and time to lay it out.
@@ -55,6 +57,7 @@ class PdfDocument
             'title' => $data['title'],
             'color' => $data['color'],
             'organization' => $data['organization'],
+            'type' => $data['type'],
         ])->render());
 
         // mPDF's Khmer shaper emits harmless warnings on some malformed text; don't let them abort the document.
@@ -65,6 +68,28 @@ class PdfDocument
         } finally {
             restore_error_handler();
         }
+    }
+
+    /**
+     * Text sizes for a table with $columns columns, from config report.typography:
+     * table text (th, td) shrinks for wide tables; $scale enlarges everything (Excel).
+     * Also 'table' = the shrink factor, for cell padding.
+     */
+    public static function typography(int $columns, float $scale = 1.0): array
+    {
+        $config = config('report.typography');
+        $factor = 1.0;
+        foreach ($config['table_scale'] as $max => $value) {
+            if ($columns <= $max) { $factor = $value; break; }
+        }
+        $sizes = [];
+        foreach ($config['sizes'] as $role => $size) {
+            $size *= (in_array($role, ['th', 'td'], true) ? $factor : 1) * $scale;
+            // PDF takes tenths of a point; Excel only shows half points
+            $sizes[$role] = $scale == 1.0 ? round($size, 1) : round($size * 2) / 2;
+        }
+        $sizes['table'] = $factor;
+        return $sizes;
     }
 
     /** Organisation name, logo, footer and contact line from the system settings (configuration table) */

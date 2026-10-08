@@ -1,14 +1,12 @@
 <?php
 
 namespace App\Http\Controllers\Settings;
-use App\Exports\AccountTypeExport;
 use App\Services\FormSchema;
 use App\Models\Settings\AccountType;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
 use CommonService;
-use Maatwebsite\Excel\Facades\Excel;
 class AccountTypeController extends Controller
 {
     protected $PERMISSION_ACTION_LIST;
@@ -206,9 +204,5 @@ class AccountTypeController extends Controller
             "message" => $message
         );
         return response()->json($data, $status);
-    }
-
-    public function export(){
-        return Excel::download(new AccountTypeExport, $this->db_table->getTable().'.xlsx');
     }
 }

@@ -20,32 +20,32 @@
         $headingWeight = $heading === 'moul' ? 'normal' : 'bold';
     @endphp
     <style>
-        body { font-family: {{ config('pdf.default_font') }}; font-size: 8.5pt; color: #2c2e45; }
+        body { font-family: {{ config('pdf.default_font') }}; font-size: {{ $type['body'] }}pt; color: #2c2e45; }
         table { border-collapse: collapse; }
         td { vertical-align: top; }
 
         /* Letterhead: national motto centred, organisation block on the left */
-        .kingdom { font-family: {{ $heading }}; font-weight: {{ $headingWeight }}; font-size: 11pt; color: #1f2140; text-align: center; }
-        .motto { font-family: {{ $heading }}; font-weight: {{ $headingWeight }}; font-size: 9.5pt; color: #1f2140; text-align: center; }
-        .org-name { font-family: {{ $heading }}; font-weight: {{ $headingWeight }}; font-size: 9pt; color: #1f2140; text-align: center; line-height: 1.5; }
-        .org-system { font-size: 7.8pt; color: #8a8ca5; text-align: center; }
+        .kingdom { font-family: {{ $heading }}; font-weight: {{ $headingWeight }}; font-size: {{ $type['kingdom'] }}pt; color: #1f2140; text-align: center; }
+        .motto { font-family: {{ $heading }}; font-weight: {{ $headingWeight }}; font-size: {{ $type['motto'] }}pt; color: #1f2140; text-align: center; }
+        .org-name { font-family: {{ $heading }}; font-weight: {{ $headingWeight }}; font-size: {{ $type['org'] }}pt; color: #1f2140; text-align: center; line-height: 1.5; }
+        .org-system { font-size: {{ $type['system'] }}pt; color: #8a8ca5; text-align: center; }
 
         /* Title */
-        .title { font-family: {{ $heading }}; font-weight: {{ $headingWeight }}; font-size: 14pt; color: {{ $color }}; text-align: center; }
-        .subtitle { font-size: 8.5pt; color: #8a8ca5; text-align: center; }
+        .title { font-family: {{ $heading }}; font-weight: {{ $headingWeight }}; font-size: {{ $type['title'] }}pt; color: {{ $color }}; text-align: center; }
+        .subtitle { font-size: {{ $type['subtitle'] }}pt; color: #8a8ca5; text-align: center; }
 
         /* Info bar */
         .info td { background-color: #f6f7fb; padding: 2.4mm 4mm; vertical-align: middle; }
-        .info .label { font-size: 7pt; color: #8a8ca5; }
-        .info .value { font-size: 8.5pt; font-weight: bold; color: #2c2e45; }
+        .info .label { font-size: {{ $type['info_label'] }}pt; color: #8a8ca5; }
+        .info .value { font-size: {{ $type['info_value'] }}pt; font-weight: bold; color: #2c2e45; }
 
         /* Data table */
         table.data { width: 100%; margin-top: 4mm; }
         table.data th {
-            background-color: {{ $color }}; color: #ffffff; font-size: 7.8pt; font-weight: bold;
-            padding: 2.8mm 2.2mm; text-align: left; vertical-align: middle;
+            background-color: {{ $color }}; color: #ffffff; font-size: {{ $type['th'] }}pt; font-weight: bold;
+            padding: {{ round(2.8 * $type['table'], 2) }}mm {{ round(2.2 * $type['table'], 2) }}mm; text-align: left; vertical-align: middle;
         }
-        table.data td { padding: 2.1mm 2.2mm; font-size: 8pt; color: #3f4157; vertical-align: middle; }
+        table.data td { padding: {{ round(2.1 * $type['table'], 2) }}mm {{ round(2.2 * $type['table'], 2) }}mm; font-size: {{ $type['td'] }}pt; color: #3f4157; vertical-align: middle; }
         table.data tr.alt td { background-color: {{ $softer }}; }
         table.data .no { width: 9mm; text-align: center; color: #8a8ca5; }
         table.data th.no { color: #ffffff; }
@@ -58,7 +58,7 @@
         }
 
         .note {
-            margin-top: 4mm; padding: 2.5mm 4mm; font-size: 7.8pt; color: #9a5b0a;
+            margin-top: 4mm; padding: 2.5mm 4mm; font-size: {{ $type['note'] }}pt; color: #9a5b0a;
             background-color: #fff6e6; border-left: 1mm solid #ff9f43;
         }
     </style>
@@ -147,7 +147,7 @@
                 <span class="label">{{ trans('report.filters') }}</span><br/>
                 @if(!empty($filters))
                     @foreach($filters as $label => $value)
-                        <span style="font-size: 7.8pt; color: #6b6d7a;">{{ $label }}:</span>
+                        <span style="font-size: {{ $type['info_label'] }}pt; color: #6b6d7a;">{{ $label }}:</span>
                         <span class="value">{{ $value }}</span>@if(!$loop->last)<span style="color: #c4c6d0;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>@endif
                     @endforeach
                 @else
@@ -168,8 +168,8 @@
                             <tr>
                                 <td width="1.2mm" style="background-color: {{ $color }}; padding: 0;"></td>
                                 <td style="padding: 2.6mm 4mm 3mm;">
-                                    <span style="font-size: 7.5pt; color: #6b6d7a;">{{ $label }}</span><br/>
-                                    <span style="font-size: 15pt; font-weight: bold; color: #1f2140;">{{ is_numeric($value) ? number_format($value) : $value }}</span>
+                                    <span style="font-size: {{ $type['summary_label'] }}pt; color: #6b6d7a;">{{ $label }}</span><br/>
+                                    <span style="font-size: {{ $type['summary_value'] }}pt; font-weight: bold; color: #1f2140;">{{ is_numeric($value) ? number_format($value) : $value }}</span>
                                 </td>
                             </tr>
                         </table>
@@ -211,8 +211,8 @@
             @empty
                 <tr>
                     <td colspan="{{ count($columns) + 1 }}" style="background-color: {{ $softer }}; padding: 10mm 0; text-align: center;">
-                        <span style="font-size: 10pt; font-weight: bold; color: #4b4d68;">{{ trans('report.no_data') }}</span><br/>
-                        <span style="font-size: 8pt; color: #8a8ca5;">{{ trans('report.no_data_hint') }}</span>
+                        <span style="font-size: {{ $type['empty'] }}pt; font-weight: bold; color: #4b4d68;">{{ trans('report.no_data') }}</span><br/>
+                        <span style="font-size: {{ $type['empty_hint'] }}pt; color: #8a8ca5;">{{ trans('report.no_data_hint') }}</span>
                     </td>
                 </tr>
             @endforelse
@@ -244,7 +244,7 @@
         <table width="100%" style="margin-top: 8mm; page-break-inside: avoid;" autosize="1">
             <tr>
                 @foreach($signatures as $role)
-                    <td width="{{ round(100 / count($signatures), 2) }}%" style="text-align: center; font-size: 8pt; color: #6b6d7a;">
+                    <td width="{{ round(100 / count($signatures), 2) }}%" style="text-align: center; font-size: {{ $type['date_line'] }}pt; color: #6b6d7a;">
                         {{ $loop->last ? $dateLine : '' }}
                     </td>
                 @endforeach
@@ -252,7 +252,7 @@
             <tr>
                 @foreach($signatures as $role)
                     <td style="text-align: center; padding-top: 1mm;">
-                        <span style="font-family: {{ $heading }}; font-weight: {{ $headingWeight }}; font-size: 9pt; color: #1f2140;">{{ $role }}</span>
+                        <span style="font-family: {{ $heading }}; font-weight: {{ $headingWeight }}; font-size: {{ $type['signature'] }}pt; color: #1f2140;">{{ $role }}</span>
                     </td>
                 @endforeach
             </tr>

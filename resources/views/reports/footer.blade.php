@@ -5,7 +5,7 @@
     $contact = implode('   ·   ', array_filter([$organization['phone'] ?? '', $organization['email'] ?? '']));
     $line = 'padding: 0 0 0.9mm; line-height: 1.35;';
 @endphp
-<table width="100%" style="font-family: {{ config('pdf.default_font') }}; font-size: 6.8pt; color: #8a90a0; border-collapse: collapse;">
+<table width="100%" style="font-family: {{ config('pdf.default_font') }}; font-size: {{ $type['footer'] ?? 6.8 }}pt; color: #8a90a0; border-collapse: collapse;">
     <tr>
         <td colspan="2" style="height: 0.35mm; padding: 0; background-color: {{ $color }};"></td>
     </tr>

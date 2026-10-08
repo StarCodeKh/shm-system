@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ExcelDocument;
 use App\Services\PdfDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Str;
 
 /**
- * Print button of the list pages: the rows the user is looking at (already filtered and labelled
- * by the list) laid out as the system's standard document, the same one the PDF reports use.
+ * Print and Excel buttons of the list pages: the rows the user is looking at (already filtered and
+ * labelled by the list) laid out as the system's standard document, the same one the reports use.
  */
 class PrintController extends Controller
 {
@@ -17,7 +19,28 @@ class PrintController extends Controller
         $this->middleware('auth');
     }
 
+    /** PDF, opened in the browser */
     public function table(Request $request)
+    {
+        $data = $this->document($request);
+
+        return response(PdfDocument::render($data), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="'.$this->filename($data['title']).'.pdf"');
+    }
+
+    /** Excel workbook, downloaded */
+    public function excel(Request $request)
+    {
+        $data = $this->document($request);
+
+        return response(ExcelDocument::render($data), 200)
+            ->header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            ->header('Content-Disposition', 'attachment; filename="'.$this->filename($data['title']).'.xlsx"');
+    }
+
+    /** The validated document: title, columns, rows (plain text, listed columns only), filters, total */
+    protected function document(Request $request): array
     {
         $locale = $request->header('X-Locale', 'kh');
         App::setLocale(in_array($locale, ['kh', 'en'], true) ? $locale : 'kh');
@@ -39,7 +62,6 @@ class PrintController extends Controller
             'total' => 'nullable|integer|min:0',
         ]);
 
-        // Keep only the listed columns, as plain text
         $keys = array_column($input['columns'], 'key');
         $rows = array_map(function ($row) use ($keys) {
             $clean = [];
@@ -51,7 +73,7 @@ class PrintController extends Controller
         }, $input['rows']);
 
         $total = $input['total'] ?? count($rows);
-        $pdf = PdfDocument::render([
+        return [
             'title' => $input['title'],
             'description' => $input['description'] ?? '',
             'color' => $input['color'] ?? config('report.default_color'),
@@ -65,10 +87,12 @@ class PrintController extends Controller
             'summary' => [trans('report.total') => $total],
             'filters' => array_filter($input['filters'] ?? [], fn ($text) => $text !== null && $text !== ''),
             'truncated' => $total > count($rows),
-        ]);
+        ];
+    }
 
-        return response($pdf, 200)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'inline; filename="print-'.date('Y-m-d').'.pdf"');
+    /** ASCII file name from the title (Khmer titles fall back to "list"), with the date */
+    protected function filename(string $title): string
+    {
+        return (Str::slug($title) ?: 'list').'-'.date('Y-m-d');
     }
 }

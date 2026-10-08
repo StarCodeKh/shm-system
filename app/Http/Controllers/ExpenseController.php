@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 use App\Models\Expense;
-use App\Exports\ExpenseExport;
 use App\Models\Settings\Currency;
 use App\Models\Settings\Entity;
 use App\Models\Settings\PaymentMethod;
@@ -11,7 +10,6 @@ use App\Models\Settings\Status;
 use Illuminate\Http\Request;
 use Auth;
 use CommonService;
-use Maatwebsite\Excel\Facades\Excel;
 
 class ExpenseController extends BaseController
 {
@@ -260,10 +258,6 @@ class ExpenseController extends BaseController
             "message" => $message
         );
         return response()->json($data, $status);
-    }
-
-    public function export(Request $request){
-        return Excel::download(new ExpenseExport, $this->db_table->getTable().'.xlsx');
     }
 
     public function insertExpense(Request $request)

@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Settings;
-use App\Exports\AccountExport;
 use App\Services\FormSchema;
 use App\Http\Controllers\Controller;
 use App\Models\Settings\Account;
@@ -11,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Auth;
 use CommonService;
-use Maatwebsite\Excel\Facades\Excel;
 class AccountController extends Controller
 {
     protected $db_table;
@@ -231,19 +229,5 @@ class AccountController extends Controller
             "message" => $message
         );
         return response()->json($data, $status);
-    }
-
-    public function export(){
-        return Excel::download(new AccountExport, $this->db_table->getTable().'.xlsx');
-    }
-
-    public function import(){
-        $path = $request->file('file')->getRealPath();
-        $rows = Excel::import(new AccountExport, $path);
-        if($rows){
-            return response()->json(['success'=>true,'message'=>__('common.file_uploaded')], 200);
-        }else{
-            return response()->json(['success'=>false,'message'=>__('common.file_upload_failed')], 500);
-        }
     }
 }

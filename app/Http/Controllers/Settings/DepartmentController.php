@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Settings;
 use App\Imports\DepartmentImport;
 use App\Services\FormSchema;
-use App\Exports\DepartmentExport;
 use App\Http\Controllers\Controller;
 use App\Models\Settings\Department;
 use App\Models\Settings\Status;
@@ -240,10 +239,6 @@ class DepartmentController extends Controller
             "message" => $message
         );
         return response()->json($data, $status);
-    }
-
-    public function export(Request $request){
-        return Excel::download(new DepartmentExport, $this->db_table->getTable().'.xlsx');
     }
 
     public function import(Request $request){

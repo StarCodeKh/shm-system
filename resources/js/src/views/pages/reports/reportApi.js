@@ -94,6 +94,26 @@ export function saveBlob(blob, filename) {
     URL.revokeObjectURL(url);
 }
 
+// Download a report as an Excel workbook (same content and layout as the PDF)
+export async function downloadReportExcel(type, filters = []) {
+    try {
+        const response = await axios.post(`/api/v1/report/${type}/excel`, { data: filters }, { responseType: "blob" });
+        const match = (response.headers["content-disposition"] || "").match(/filename="?([^";]+)"?/);
+        saveBlob(new Blob([response.data], { type: response.headers["content-type"] }), match ? match[1] : `${type}-report.xlsx`);
+    } catch (error) {
+        let message = defaultError();
+        const data = error.response && error.response.data;
+        if (data instanceof Blob) {
+            try {
+                message = JSON.parse(await data.text()).message || message;
+            } catch (e) {
+                // keep the default message
+            }
+        }
+        throw message;
+    }
+}
+
 export async function downloadReport(type, filters = []) {
     const { blob, filename } = await fetchReport(type, filters, true);
     saveBlob(blob, filename);

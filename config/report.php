@@ -41,6 +41,42 @@ return [
     // Fallback logo when the settings have none
     'default_logo' => 'images/logo.png',
 
+    // Text sizes (pt) of the printed documents, one place for all of them.
+    // PDF uses them as they are; Excel (read on screen) multiplies them by excel_scale.
+    'typography' => [
+        'sizes' => [
+            'body' => 8.5,
+            'kingdom' => 11,         // ព្រះរាជាណាចក្រកម្ពុជា
+            'motto' => 9.5,          // ជាតិ សាសនា ព្រះមហាក្សត្រ
+            'org' => 9,              // organisation name
+            'system' => 7.8,         // system name under it
+            'title' => 14,
+            'subtitle' => 8.5,
+            'info_label' => 7,       // info bar: "printed by", ...
+            'info_value' => 8.5,
+            'summary_label' => 7.5,
+            'summary_value' => 15,
+            'th' => 7.8,             // table header
+            'td' => 8,               // table cells and totals
+            'empty' => 10,
+            'empty_hint' => 8,
+            'note' => 7.8,
+            'date_line' => 8,
+            'signature' => 9,
+            'footer' => 6.8,
+        ],
+        // Wide tables get smaller table text (th / td) and tighter cells so the columns fit:
+        // up to N columns => factor. Letterhead, title and footer keep their size.
+        'table_scale' => [6 => 1.0, 9 => 0.94, 12 => 0.86, 16 => 0.78, 1000 => 0.7],
+        'excel_scale' => 1.2,
+    ],
+
+    // Excel font. Arial is a system font on Windows and Mac (and mapped in LibreOffice / Google Sheets), so
+    // Latin text and numbers look the same in Excel, Numbers and file previews; Khmer letters are drawn by the
+    // system's own Khmer font (Khmer UI on Windows, Khmer Sangam MN on Mac). Calibri exists only inside Office
+    // on a Mac, and 'Khmer OS Battambang' only where it is installed: elsewhere both fall back to a serif font.
+    'excel_font' => env('REPORT_EXCEL_FONT', 'Arial'),
+
     // PDF letterhead: the national motto above the organisation, as on official documents
     'national_header' => true,
 

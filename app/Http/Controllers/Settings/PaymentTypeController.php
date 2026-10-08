@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Settings;
-use App\Exports\PaymentTypeExport;
 use App\Services\FormSchema;
 use App\Imports\PaymentTypeImport;
 use App\Models\Settings\PaymentType;
@@ -202,10 +201,6 @@ class PaymentTypeController extends Controller
             "message" => $message
         );
         return response()->json($data, $status);
-    }
-
-    public function export(Request $request){
-        return Excel::download(new PaymentTypeExport, $this->db_table->getTable().'.xlsx');
     }
 
     public function import(Request $request){

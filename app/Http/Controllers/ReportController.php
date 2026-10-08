@@ -14,6 +14,7 @@ use App\Models\Settings\Entity;
 use App\Models\IncentiveToOfficer;
 use App\Models\Income;
 use App\Models\Expense;
+use App\Services\ExcelDocument;
 use App\Services\PdfDocument;
 use DB;
 use CommonService;
@@ -187,29 +188,7 @@ class ReportController extends Controller
         if (!$this->allowed($report)) {
             return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
         }
-        $maxRows = (int) config('report.max_rows');
-        $filter = [
-            'sort' => 'id',
-            'order' => 'asc',
-            'page_number' => 1,
-            'limit' => $maxRows,
-            'search_field' => $request->input('data') ?: null,
-        ];
-
-        $rows = $report['rows']($filter);
-        $summary = $this->summaryTiles($type, $report, $filter, count($rows));
-
-        $columns = $this->columns($report['fields'](), $rows);
-        $data = [
-            'title' => $this->text($type, 'title'),
-            'description' => $this->text($type, 'description'),
-            'color' => $report['color'],
-            'columns' => $columns,
-            'rows' => $rows,
-            'summary' => $summary,
-            'filters' => $this->filterLabels($request->input('data') ?: []),
-            'truncated' => count($rows) >= $maxRows,
-        ];
+        $data = $this->document($request, $type, $report);
 
         // Building the PDF is the slow part (Khmer text shaping in mPDF), so keep each result for a few minutes.
         // The key is the report's content and who prints it, so any change builds a fresh PDF.
@@ -222,6 +201,48 @@ class ReportController extends Controller
         return response($pdf, 200)
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', $disposition.'; filename="'.$filename.'"');
+    }
+
+    /**
+     * Download one report as an Excel workbook (same content and layout as the PDF).
+     */
+    public function excel(Request $request, string $type)
+    {
+        $this->useRequestLocale($request);
+        $report = $this->reports()[$type] ?? abort(404);
+        if (!$this->allowed($report)) {
+            return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
+        }
+        $xlsx = ExcelDocument::render($this->document($request, $type, $report));
+
+        return response($xlsx, 200)
+            ->header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            ->header('Content-Disposition', 'attachment; filename="'.$type.'-report-'.date('Y-m-d').'.xlsx"');
+    }
+
+    /** One report's document for PdfDocument / ExcelDocument: every matching row (up to max_rows) */
+    protected function document(Request $request, string $type, array $report): array
+    {
+        $maxRows = (int) config('report.max_rows');
+        $filter = [
+            'sort' => 'id',
+            'order' => 'asc',
+            'page_number' => 1,
+            'limit' => $maxRows,
+            'search_field' => $request->input('data') ?: null,
+        ];
+        $rows = $report['rows']($filter);
+
+        return [
+            'title' => $this->text($type, 'title'),
+            'description' => $this->text($type, 'description'),
+            'color' => $report['color'],
+            'columns' => $this->columns($report['fields'](), $rows),
+            'rows' => $rows,
+            'summary' => $this->summaryTiles($type, $report, $filter, count($rows)),
+            'filters' => $this->filterLabels($request->input('data') ?: []),
+            'truncated' => count($rows) >= $maxRows,
+        ];
     }
 
     /**
