@@ -47,7 +47,7 @@ class OfficerPaymentRecurring extends Model implements Auditable
        */
         public function isActiveForMonth(Carbon $month): bool
         {
-            return $this->status == 13 // mean status active
+            return $this->status == Status::ACTIVE // mean status active
                 && $this->schedule_start_date->lessThanOrEqualTo($month->endOfMonth())
                 && ($this->schedule_end_date === null || $this->schedule_end_date->greaterThanOrEqualTo($month->startOfMonth()));
         }
@@ -187,7 +187,7 @@ class OfficerPaymentRecurring extends Model implements Auditable
             $input["payment_date"] = date("Y").'-'.$month.'-01';
             $queryCheck = OfficerPayable::where("officer_id", $input["officer_id"])
                 ->where("payment_date", $input["payment_date"])
-                ->whereNotIn("status", [4])
+                ->whereNotIn("status", [Status::DELETED])
                 ->first();
             if(!$queryCheck){
                 OfficerPayable::create($input);
@@ -210,7 +210,7 @@ class OfficerPaymentRecurring extends Model implements Auditable
                 "currency_id" => $paymentTerm->currency_id,
                 "payment_term" => $paymentTerm->name_en,
                 "payment_date" => date("Y-m-d"),
-                "status" => 15,
+                "status" => Status::UNPAID,
                 "remark" => "",
             );
             OfficerPayable::create($data);
@@ -221,7 +221,7 @@ class OfficerPaymentRecurring extends Model implements Auditable
     // Use this to execute payable
     // Step to Execute Payable By Running from Schedules
     public static function executePayableOfficers(){
-        $query = Officer::where("status", 13)->get();
+        $query = Officer::where("status", Status::ACTIVE)->get();
 
     }
 
@@ -232,7 +232,7 @@ class OfficerPaymentRecurring extends Model implements Auditable
             ->Join("officer_payment_recurring as pr", "f.id", "=", "pr.officer_id")
             ->groupBy("pr.officer_id")
             ->orderBy("pr.id", "desc")
-            ->where("pr.status", 13)
+            ->where("pr.status", Status::ACTIVE)
             ->whereNotIn("f.status", [26,27,14,20,4])
             ->get();
         $data = [];
@@ -251,7 +251,7 @@ class OfficerPaymentRecurring extends Model implements Auditable
                     "currency_id" => $excecutePayable->currency_id,
                     "payment_term" => $excecutePayable->payment_term,
                     "payment_date" => date("Y-m-d"),
-                    "status" => 15, // status=15 means unpaid
+                    "status" => Status::UNPAID, // status=15 means unpaid
                     "remark" => "",
                     "attach" => "",
                     "created_by" => Auth::user()->id,

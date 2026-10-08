@@ -6,6 +6,7 @@ use App\Jobs\ProcessPaymentJob;
 use App\Models\OfficerPayable;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
+use App\Models\Settings\Status;
 
 class DispatchPendingPayments extends Command
 {
@@ -20,7 +21,7 @@ class DispatchPendingPayments extends Command
         $this->info('Dispatching pending payments for: ' . $targetMonth->format('Y-m'));
 
         $count = 0;
-        OfficerPayable::where('status', 15) // Status pending = 15
+        OfficerPayable::where('status', Status::UNPAID) // Status pending = 15
             ->chunkById(500, function ($payables) use (&$count) {
                 foreach ($payables as $payable) {
                     ProcessPaymentJob::dispatch($payable)->onQueue('payments');

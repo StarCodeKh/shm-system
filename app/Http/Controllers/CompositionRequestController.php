@@ -7,6 +7,7 @@ use App\Models\CompositionRequest;
 use DB;
 use Auth;
 use CommonService;
+use App\Models\Settings\Status;
 
 class CompositionRequestController extends Controller
 {
@@ -37,7 +38,7 @@ class CompositionRequestController extends Controller
         $filter = CommonService::getFilter($input);
         $data = array(
             "data" => $this->dbTable::getData($filter),
-            "limit" => config_limit,
+            "limit" => setting('config_limit'),
             "total" => $this->dbTable::getTotal($filter),
             "data_fields" => $this->dbTable::dataFields(),
         );
@@ -195,7 +196,7 @@ class CompositionRequestController extends Controller
             ]
             );
 
-        DB::table("incentive_composition_officer")->where("incentive_composition_request_id", $id)->update(["status" => 4]);
+        DB::table("incentive_composition_officer")->where("incentive_composition_request_id", $id)->update(["status" => Status::DELETED]);
         for($i = 0; $i < sizeof($input["officerRequest"]); $i++){
             DB::table("incentive_composition_officer")->insert(
                 [
@@ -230,8 +231,8 @@ class CompositionRequestController extends Controller
      */
     public function destroy($id)
     {
-        $table = CompositionRequest::where('id', $id)->update(["status" => 4]);
-        DB::table("incentive_composition_officer")->where("incentive_composition_request_id", $id)->update(["status" => 4]);
+        $table = CompositionRequest::where('id', $id)->update(["status" => Status::DELETED]);
+        DB::table("incentive_composition_officer")->where("incentive_composition_request_id", $id)->update(["status" => Status::DELETED]);
         if($table){
             $status = 200;
             $boolen = true;

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
 use CommonService;
+use App\Models\Settings\Status;
 class RoleController extends Controller
 {
     protected $PERMISSION_ACTION_LIST;
@@ -48,7 +49,7 @@ class RoleController extends Controller
             $filter = CommonService::getFilter($input);
             $data = array(
                 "data" => $this->db_table::getData($filter),
-                "limit" => config_limit,
+                "limit" => setting('config_limit'),
                 "total" => $this->db_table::getTotal($filter),
                 "permissions" => CommonService::permission($this->db_table),
                 "role_permissions" => CommonService::getPermissionsViaRoles(),
@@ -225,7 +226,7 @@ class RoleController extends Controller
             if (CommonService::isSuperAdminRole($table)) {
                 return response()->json(['success' => false, 'message' => trans('common.msg_super_admin_locked')], 422);
             }
-            $table->update(["status" => 4]);
+            $table->update(["status" => Status::DELETED]);
             if($table){
                 $status = 200;
                 $boolen = true;

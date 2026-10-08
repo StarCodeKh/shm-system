@@ -3,6 +3,7 @@
     namespace App\Services;
     use DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\Settings\Status;
     use Kreait\Firebase\Messaging\CloudMessage;
     use Kreait\Firebase\Messaging\Notification;
     use App\User;
@@ -56,7 +57,7 @@ use Illuminate\Support\Facades\Log;
             $queryUserDevices = DB::table("users as u")
                 ->select("u.id", "ud.device_token")
                 ->Join("user_device as ud", "ud.user_id", "=", "u.id")
-                ->where("u.status", 13)
+                ->where("u.status", Status::ACTIVE)
                 ->where("receive_all_notification", 1)
                 ->get();
             $deviceTokens = [];

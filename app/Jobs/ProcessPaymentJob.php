@@ -12,6 +12,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Models\Settings\Status;
 
 // Assuming you have a PaymentGateway service/facade
 // use App\Services\PaymentGateway;
@@ -52,7 +53,7 @@ class ProcessPaymentJob implements ShouldQueue
         // Ensure the payable is still pending and not being processed by another job
         DB::transaction(function () {
             $payable = OfficerPayable::where('id', $this->payable->id)
-                                ->where('status', 15) // Check Unpaid Status
+                                ->where('status', Status::UNPAID) // Check Unpaid Status
                                 ->lockForUpdate()
                                 ->first();
 
@@ -61,7 +62,7 @@ class ProcessPaymentJob implements ShouldQueue
                 return; // Already processed or status changed
             }
 
-            $payable->update(['status' => 15]); // Status = 15 not yet paid
+            $payable->update(['status' => Status::UNPAID]); // Status = 15 not yet paid
         });
 
         try {

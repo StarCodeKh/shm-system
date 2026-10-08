@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Settings\Audit;
 use Illuminate\Http\Request;
 use CommonService;
+use App\Models\Settings\Status;
 class AuditController extends Controller
 {
     /**
@@ -36,7 +37,7 @@ class AuditController extends Controller
         $filter = CommonService::getFilter($input);
         $data = array(
             "data" => $this->dbTable::getData($filter),
-            "limit" => config_limit,
+            "limit" => setting('config_limit'),
             "total" => $this->dbTable::getTotal($filter),
             "data_fields" => $this->dbTable::dataFields(),
             // Record types for the filter (only on the first page load)
@@ -178,7 +179,7 @@ class AuditController extends Controller
     public function destroy($id)
     {
         $table=$this->dbTable::find($id);
-        $table->update(["status" => 4]);
+        $table->update(["status" => Status::DELETED]);
         if($table){
             $status = 200;
             $boolen = true;

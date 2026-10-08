@@ -10,6 +10,7 @@ use App\Models\NotificationUser;
 use Auth;
 use DB;
 use CommonService;
+use App\Models\Settings\Status;
 
 class IncentiveController extends Controller
 {
@@ -40,7 +41,7 @@ class IncentiveController extends Controller
         $filter = CommonService::getFilter($input);
         $data = array(
             "data" => $this->dbTable::getData($filter),
-            "limit" => config_limit,
+            "limit" => setting('config_limit'),
             "total" => $this->dbTable::getTotal($filter),
             "data_fields" => $this->dbTable::dataFields(),
         );
@@ -652,7 +653,7 @@ class IncentiveController extends Controller
             ]
         );
 
-        DB::table("incentive_to_bank")->Where("incentive_id", $id)->update(["status" => 4]);
+        DB::table("incentive_to_bank")->Where("incentive_id", $id)->update(["status" => Status::DELETED]);
         $i2Banks = $input["bank"];
         for($i = 0; $i < sizeof($i2Banks); $i++){
             DB::table("incentive_to_bank")->insert(
@@ -663,7 +664,7 @@ class IncentiveController extends Controller
             );
         }
 
-        DB::table("incentive_to_entity")->Where("incentive_id", $id)->update(["status" => 4]);
+        DB::table("incentive_to_entity")->Where("incentive_id", $id)->update(["status" => Status::DELETED]);
         $i2Entities = $input["entity"];
         for($j = 0; $j < sizeof($i2Entities); $j++){
             DB::table("incentive_to_entity")->insert(
@@ -674,7 +675,7 @@ class IncentiveController extends Controller
             );
         }
 
-        DB::table("incentive_to_officer")->Where("incentive_id", $id)->update(["status" => 4]);
+        DB::table("incentive_to_officer")->Where("incentive_id", $id)->update(["status" => Status::DELETED]);
         for($j = 0; $j < sizeof($i2Officers); $j++){
             $officers = $i2Officers[$j]["officers"];
             for($k = 0; $k < sizeof($officers); $k++){
@@ -743,10 +744,10 @@ class IncentiveController extends Controller
      */
     public function destroy($id)
     {
-        $table = Incentive::where('id', $id)->update(["status" => 4]);
-        DB::table("incentive_to_bank")->Where("incentive_id", $id)->update(["status" => 4]);
-        DB::table("incentive_to_entity")->Where("incentive_id", $id)->update(["status" => 4]);
-        DB::table("incentive_to_officer")->Where("incentive_id", $id)->update(["status" => 4]);
+        $table = Incentive::where('id', $id)->update(["status" => Status::DELETED]);
+        DB::table("incentive_to_bank")->Where("incentive_id", $id)->update(["status" => Status::DELETED]);
+        DB::table("incentive_to_entity")->Where("incentive_id", $id)->update(["status" => Status::DELETED]);
+        DB::table("incentive_to_officer")->Where("incentive_id", $id)->update(["status" => Status::DELETED]);
 
         if($table){
             $status = 200;

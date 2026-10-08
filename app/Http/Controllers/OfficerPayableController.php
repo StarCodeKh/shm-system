@@ -68,13 +68,13 @@ class OfficerPayableController extends Controller
                 "data" => $dataList,
                 "summary" => array(
                     "total_paid_khr" =>  $this->convertToKhmerNumber(
-                        CommonService::formatDoubleNum(collect($dataList->where('status', 19))->sum('amount'))
+                        CommonService::formatDoubleNum(collect($dataList->where('status', Status::PAID))->sum('amount'))
                     ),
                     "total_unpaid_khr" =>  $this->convertToKhmerNumber(
-                        CommonService::formatDoubleNum(collect($dataList->where('status', 15))->sum('amount'))
+                        CommonService::formatDoubleNum(collect($dataList->where('status', Status::UNPAID))->sum('amount'))
                     )
                 ),
-                "limit" => config_limit,
+                "limit" => setting('config_limit'),
                 "total" => $this->db_table::getTotal($filter),
                 "permissions" => CommonService::permission($this->db_table),
                 "role_permissions" => CommonService::getPermissionsViaRoles(),
@@ -341,7 +341,7 @@ class OfficerPayableController extends Controller
     {
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_DELETE]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_DELETE] == true){
             $table=$this->db_table::find($id);
-            $table->update(["status" => 4]);
+            $table->update(["status" => Status::DELETED]);
             if($table){
                 $status = 200;
                 $boolen = true;
@@ -411,7 +411,7 @@ class OfficerPayableController extends Controller
             "sort" => "id",
             "order" => "desc",
             "page_number" => 0,
-            "limit" => config_limit,
+            "limit" => setting('config_limit'),
             "keysearch" => $request->all(),
         );
         $officers = Officer::getData($filters);

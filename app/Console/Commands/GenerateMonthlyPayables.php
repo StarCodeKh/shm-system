@@ -8,6 +8,7 @@ use App\Models\OfficerPayable;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Models\Settings\Status;
 
 class GenerateMonthlyPayables extends Command
 {
@@ -23,7 +24,7 @@ class GenerateMonthlyPayables extends Command
         $this->info('Generating payables for: ' . $targetMonth->format('Y-m'));
         $count = 0;
         // Chunk through active recurring payment schedules
-        OfficerPaymentRecurring::where('status', '13')->where("is_default", 1)
+        OfficerPaymentRecurring::where('status', Status::ACTIVE)->where("is_default", 1)
             ->chunkById(500, function ($schedules) use ($targetMonth, &$count) {
                 foreach ($schedules as $schedule) {
                     // Check if the schedule is active for the target month
@@ -50,7 +51,7 @@ class GenerateMonthlyPayables extends Command
                                     'payment_term' => $schedule->payment_term,
                                     'due_date' => $expectedDueDate,
                                     'remark' => ucfirst($schedule->payment_term) . ' subscription for ' . $expectedDueDate->format('F Y'),
-                                    'status' => '15', //Unpaid Status
+                                    'status' => Status::UNPAID, //Unpaid Status
                                 ]);
                                 $count++;
                             });

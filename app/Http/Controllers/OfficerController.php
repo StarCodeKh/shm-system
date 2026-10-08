@@ -63,7 +63,7 @@
                 $filter = CommonService::getFilter($input);
                 $data = array(
                     "data" => $this->db_table::getData($filter),
-                    "limit" => config_limit,
+                    "limit" => setting('config_limit'),
                     "total" => $this->db_table::getTotal($filter),
                     "summary" => array(
                         "total" => $this->db_table::getTotal($filter),
@@ -173,7 +173,7 @@
                         "schedule_end_date" => date("Y-m-d", strtotime("2100-01-01")),
                         "remark" => "",
                         "is_default" => 1,
-                        "status" => 13, // Status = 13 means active
+                        "status" => Status::ACTIVE, // Status = 13 means active
                     ]);
                     $status = 200;
                     $boolen = true;
@@ -311,7 +311,7 @@
         {
             if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_DELETE]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_DELETE] == true){
                 $table=$this->db_table::find($id);
-                $table->update(["status" => 4]);
+                $table->update(["status" => Status::DELETED]);
                 if($table){
                     $status = 200;
                     $boolen = true;

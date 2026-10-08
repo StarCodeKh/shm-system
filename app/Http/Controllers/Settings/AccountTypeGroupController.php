@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Auth;
 use DB;
 use CommonService;
+use App\Models\Settings\Status;
 class AccountTypeGroupController extends Controller
 {
     protected $db_table;
@@ -49,7 +50,7 @@ class AccountTypeGroupController extends Controller
             "form_attributes" => FormSchema::fields($this->db_table->getTable()),
             "permissions" => CommonService::permission($this->db_table),
             "model_name" => $this->db_table->getTable(),
-            "limit" => config_limit,
+            "limit" => setting('config_limit'),
             "total" => $this->db_table::getCount($filter)
         );
         return response()->json($data);
@@ -151,7 +152,7 @@ class AccountTypeGroupController extends Controller
 
     public function dataForm($input){
         $arr = $input;
-        $push_array = array_merge(array(["status" => 13], ["created_by" => Auth::user()->id]));
+        $push_array = array_merge(array(["status" => Status::ACTIVE], ["created_by" => Auth::user()->id]));
         $arraySingle = array_merge($arr, $push_array);
         $result = call_user_func_array('array_merge', $arraySingle);
         $dataFields = $result;
@@ -166,7 +167,7 @@ class AccountTypeGroupController extends Controller
     public function destroy($id)
     {
         $table=$this->db_table::find($id);
-$table->update(["status" => 4]);
+$table->update(["status" => Status::DELETED]);
         if($table){
             $status = 200;
             $boolen = true;

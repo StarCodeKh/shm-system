@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Auth;
 use DB;
 use CommonService;
+use App\Models\Settings\Status;
 
 class EntityMemberController extends Controller
 {
@@ -56,7 +57,7 @@ class EntityMemberController extends Controller
             "data_fields" => $this->dataFields(),
             "data" => $this->db_table::getMemberByEntity($filter),
             "entity_id" => $entities,
-            "limit" => config_limit,
+            "limit" => setting('config_limit'),
             "total" => $this->db_table::getCount($filter)
         );
         return response()->json($data);
@@ -183,7 +184,7 @@ class EntityMemberController extends Controller
     public function destroy($id)
     {
         $table=$this->db_table::find($id);
-$table->update(["status" => 4]);
+$table->update(["status" => Status::DELETED]);
         if($table){
             $status = 200;
             $boolen = true;

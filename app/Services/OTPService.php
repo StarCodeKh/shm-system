@@ -45,7 +45,7 @@
         }
 
         public static function setExpiredOTP(){
-            $expiredDate = date("Y-m-d H:i:s",strtotime(date("Y-m-d H:i:s")." +" . config_otp_expire));
+            $expiredDate = date("Y-m-d H:i:s",strtotime(date("Y-m-d H:i:s")." +" . setting('config_otp_expire')));
             return $expiredDate;
         }
 

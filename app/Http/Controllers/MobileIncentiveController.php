@@ -8,6 +8,7 @@ use App\Models\Mobile\Incentive;
 use App\Models\Mobile\TaxableSalary;
 use Auth;
 use DB;
+use App\Models\Settings\Status;
 
 class MobileIncentiveController extends Controller
 {
@@ -20,10 +21,10 @@ class MobileIncentiveController extends Controller
     {
         $input = $request->all();
         $filter = array(
-            "offset" => isset($input["offset"]) ? $input["offset"] : config_offset,
-            "limit" => isset($input["limit"]) ? $input["limit"] : config_limit,
-            "sort" => isset($input["sort"]) ? $input["sort"] : config_sort,
-            "order" => isset($input["order"]) ? $input["order"] : config_order,
+            "offset" => isset($input["offset"]) ? $input["offset"] : setting('config_offset'),
+            "limit" => isset($input["limit"]) ? $input["limit"] : setting('config_limit'),
+            "sort" => isset($input["sort"]) ? $input["sort"] : setting('config_sort'),
+            "order" => isset($input["order"]) ? $input["order"] : setting('config_order'),
             "userId" => Auth::user()->id
         );
         $query = Incentive::getIncentiveByOfficers($filter);
@@ -477,7 +478,7 @@ class MobileIncentiveController extends Controller
             ]
         );
 
-        DB::table("incentive_to_bank")->Where("incentive_id", $id)->update(["status" => 4]);
+        DB::table("incentive_to_bank")->Where("incentive_id", $id)->update(["status" => Status::DELETED]);
         $i2Banks = $input["bank"];
         for($i = 0; $i < sizeof($i2Banks); $i++){
             DB::table("incentive_to_bank")->insert(
@@ -488,7 +489,7 @@ class MobileIncentiveController extends Controller
             );
         }
 
-        DB::table("incentive_to_entity")->Where("incentive_id", $id)->update(["status" => 4]);
+        DB::table("incentive_to_entity")->Where("incentive_id", $id)->update(["status" => Status::DELETED]);
         $i2Entities = $input["entity"];
         for($j = 0; $j < sizeof($i2Entities); $j++){
             DB::table("incentive_to_entity")->insert(
@@ -499,7 +500,7 @@ class MobileIncentiveController extends Controller
             );
         }
 
-        DB::table("incentive_to_officer")->Where("incentive_id", $id)->update(["status" => 4]);
+        DB::table("incentive_to_officer")->Where("incentive_id", $id)->update(["status" => Status::DELETED]);
         for($j = 0; $j < sizeof($i2Officers); $j++){
             $officers = $i2Officers[$j]["officers"];
             for($k = 0; $k < sizeof($officers); $k++){
@@ -556,10 +557,10 @@ class MobileIncentiveController extends Controller
      */
     public function destroy($id)
     {
-        $table = Incentive::where('id', $id)->update(["status" => 4]);
-        DB::table("incentive_to_bank")->Where("incentive_id", $id)->update(["status" => 4]);
-        DB::table("incentive_to_entity")->Where("incentive_id", $id)->update(["status" => 4]);
-        DB::table("incentive_to_officer")->Where("incentive_id", $id)->update(["status" => 4]);
+        $table = Incentive::where('id', $id)->update(["status" => Status::DELETED]);
+        DB::table("incentive_to_bank")->Where("incentive_id", $id)->update(["status" => Status::DELETED]);
+        DB::table("incentive_to_entity")->Where("incentive_id", $id)->update(["status" => Status::DELETED]);
+        DB::table("incentive_to_officer")->Where("incentive_id", $id)->update(["status" => Status::DELETED]);
 
         if($table){
             $status = 200;

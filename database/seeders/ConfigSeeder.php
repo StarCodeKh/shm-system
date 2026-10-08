@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Site settings (tbl_config), from database/seeders/data/config.php.
- * The app needs them on every request: they become constants such as config_limit (GlobalSite middleware).
+ * The app reads them with setting('config_limit') (App\\Services\\Settings, cached until a setting changes).
  *
  * Safe to run more than once: php artisan db:seed --class=ConfigSeeder
  * Only missing keys are added; values already set on a server are never changed.
@@ -25,5 +25,6 @@ class ConfigSeeder extends Seeder
             $rows[] = ['code' => 'config', 'key' => $key, 'value' => $value, 'created_at' => $now, 'updated_at' => $now];
         }
         if ($rows) DB::table('config')->insert($rows);
+        \App\Services\Settings::forget();
     }
 }

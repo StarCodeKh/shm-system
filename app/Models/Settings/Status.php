@@ -15,6 +15,13 @@ class Status extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable,HasRoles;
     protected $table = 'mef_status';
+
+    // Status ids the code relies on (rows of the status table). Use these names, never the bare numbers.
+    const DELETED = 4;   // soft delete: hidden from every list (see the whereNotDeleted() query macro)
+    const ACTIVE = 13;
+    const INACTIVE = 14;
+    const UNPAID = 15;   // officer payable not yet paid
+    const PAID = 19;
     protected $primaryKey = 'id';
     protected $fillable = [];
     protected $guarded = [];

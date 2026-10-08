@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Settings\Currency;
 use App\Models\Settings\CurrencyExchange;
 use DB;
+use App\Models\Settings\Status;
 class Dashboard extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
@@ -14,6 +15,12 @@ class Dashboard extends Model implements Auditable
     protected $fillable = [];
     protected $guarded = [];
     public $timestamps = true;
+
+    /** A table name with the configured prefix (DB_PREFIX), for the raw SQL below */
+    protected static function table(string $name): string
+    {
+        return DB::getTablePrefix().$name;
+    }
 
     public static function getOfficerGrowth()
         {
@@ -28,7 +35,7 @@ class Dashboard extends Model implements Auditable
                     ) * 100,
                     0
                 ) AS growth_rate
-            FROM tbl_officer
+            FROM ".self::table('officer')."
             WHERE YEAR(register_date) >= YEAR(CURDATE()) - 5
             GROUP BY YEAR(register_date)
             ORDER BY YEAR(register_date)
@@ -56,10 +63,10 @@ class Dashboard extends Model implements Auditable
                 SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS total_in_khr,
                 SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS total_in_usd
             FROM (
-                SELECT amount, currency_id AS currency_id FROM tbl_expense
+                SELECT amount, currency_id AS currency_id FROM ".self::table('expense')."
                 WHERE issue_date BETWEEN ? AND ?
                 UNION ALL
-                SELECT amount, currency_id FROM tbl_officer_incentive
+                SELECT amount, currency_id FROM ".self::table('officer_incentive')."
                 WHERE issue_date BETWEEN ? AND ?
             ) AS total_expense_khr
         ", [
@@ -79,10 +86,10 @@ class Dashboard extends Model implements Auditable
             $result = DB::select("
             SELECT 
             (
-                SELECT COUNT(*) FROM tbl_officer_request WHERE status = '11'
+                SELECT COUNT(*) FROM ".self::table('officer_request')." WHERE status = '11'
             ) AS pending_request,
             (
-            SELECT COUNT(*) FROM tbl_officer_request WHERE status = '3'
+            SELECT COUNT(*) FROM ".self::table('officer_request')." WHERE status = '3'
             ) AS completed_request
         ");
             return $result[0] ?? (object)[
@@ -104,10 +111,10 @@ class Dashboard extends Model implements Auditable
                 SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS total_in_khr,
                 SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS total_in_usd
             FROM (
-                SELECT amount, currency_id as currency_id FROM tbl_income
+                SELECT amount, currency_id as currency_id FROM ".self::table('income')."
                 WHERE issue_date BETWEEN ? AND ?
                 UNION ALL
-                SELECT amount, currency_id FROM tbl_officer_payment
+                SELECT amount, currency_id FROM ".self::table('officer_payment')."
                 WHERE issue_date BETWEEN ? AND ?
             ) AS total_income_khr
         ", [
@@ -145,12 +152,12 @@ class Dashboard extends Model implements Auditable
                     SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS khr,
                     SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS usd
                 FROM (
-                    SELECT amount, currency_id FROM tbl_income
+                    SELECT amount, currency_id FROM ".self::table('income')."
                     WHERE issue_date BETWEEN ? AND ?
 
                     UNION ALL
 
-                    SELECT amount, currency_id FROM tbl_officer_payment
+                    SELECT amount, currency_id FROM ".self::table('officer_payment')."
                     WHERE issue_date BETWEEN ? AND ?
                 ) AS income_all
             ) AS A
@@ -161,12 +168,12 @@ class Dashboard extends Model implements Auditable
                     SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS khr,
                     SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS usd
                 FROM (
-                    SELECT amount, currency_id FROM tbl_expense
+                    SELECT amount, currency_id FROM ".self::table('expense')."
                     WHERE issue_date BETWEEN ? AND ?
 
                     UNION ALL
 
-                    SELECT amount, currency_id FROM tbl_officer_incentive
+                    SELECT amount, currency_id FROM ".self::table('officer_incentive')."
                     WHERE issue_date BETWEEN ? AND ?
                 ) AS expense_all
             ) AS B
@@ -207,9 +214,9 @@ class Dashboard extends Model implements Auditable
                     END
                 ) AS total_amount_usd
             FROM
-                tbl_officer_incentive A
+                ".self::table('officer_incentive')." A
             INNER JOIN
-                tbl_payment_type B ON A.request_title = B.name_en -- should join by payment request id (need to add new field)
+                ".self::table('payment_type')." B ON A.request_title = B.name_en -- should join by payment request id (need to add new field)
             GROUP BY
                 B.id, B.name_en
             ORDER BY
@@ -272,13 +279,13 @@ public static function getQuarterlyIncomeExpense($year = null, $quarter = null)
                     CASE WHEN src = 'expense' AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END AS expense_usd
                 FROM (
                     -- Combine all data
-                    SELECT amount, currency_id AS currency_id, created_at, 'income' AS src FROM tbl_income
+                    SELECT amount, currency_id AS currency_id, created_at, 'income' AS src FROM ".self::table('income')."
                     UNION ALL
-                    SELECT amount, currency_id, created_at, 'income' AS src FROM tbl_officer_payment
+                    SELECT amount, currency_id, created_at, 'income' AS src FROM ".self::table('officer_payment')."
                     UNION ALL
-                    SELECT amount, currency_id AS currency_id, created_at, 'expense' AS src FROM tbl_expense
+                    SELECT amount, currency_id AS currency_id, created_at, 'expense' AS src FROM ".self::table('expense')."
                     UNION ALL
-                    SELECT amount, currency_id, created_at, 'expense' AS src FROM tbl_officer_incentive
+                    SELECT amount, currency_id, created_at, 'expense' AS src FROM ".self::table('officer_incentive')."
                 ) AS all_data
                 WHERE YEAR(created_at) = ? -- Bind to $year (1st param)
             ) AS d
@@ -332,13 +339,13 @@ public static function getQuarterlyIncomeExpense($year = null, $quarter = null)
                     END AS expense_khr
                 FROM (
                     -- Unified source data (UNION ALL)
-                    SELECT amount, currency_id, created_at, 'income' AS src FROM tbl_income
+                    SELECT amount, currency_id, created_at, 'income' AS src FROM ".self::table('income')."
                     UNION ALL
-                    SELECT amount, currency_id, created_at, 'income' AS src FROM tbl_officer_payment
+                    SELECT amount, currency_id, created_at, 'income' AS src FROM ".self::table('officer_payment')."
                     UNION ALL
-                    SELECT amount, currency_id, created_at, 'expense' AS src FROM tbl_expense
+                    SELECT amount, currency_id, created_at, 'expense' AS src FROM ".self::table('expense')."
                     UNION ALL
-                    SELECT amount, currency_id, created_at, 'expense' AS src FROM tbl_officer_incentive
+                    SELECT amount, currency_id, created_at, 'expense' AS src FROM ".self::table('officer_incentive')."
                 ) AS all_data
                 WHERE YEAR(created_at) = :year
             )
@@ -372,19 +379,19 @@ public static function getOfficerPaymentSummary()
         WITH payments AS (
             SELECT 
                 officer_id,
-                MAX(CASE WHEN status = 19 THEN 1 ELSE 0 END) AS has_paid,
+                MAX(CASE WHEN status = ".Status::PAID." THEN 1 ELSE 0 END) AS has_paid,
                 SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS paid_khr,
                 SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS paid_usd
-            FROM tbl_officer_payment
+            FROM ".self::table('officer_payment')."
             GROUP BY officer_id
         ),
         payables AS (
             SELECT
                 officer_id,
-                SUM(CASE WHEN status = 15 AND currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS unpaid_khr,
-                SUM(CASE WHEN status = 15 AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS unpaid_usd,
+                SUM(CASE WHEN status = ".Status::UNPAID." AND currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS unpaid_khr,
+                SUM(CASE WHEN status = ".Status::UNPAID." AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS unpaid_usd,
                 MAX(payment_term) AS payment_term
-            FROM tbl_officer_payable
+            FROM ".self::table('officer_payable')."
             GROUP BY officer_id
         )
         SELECT
@@ -399,10 +406,10 @@ public static function getOfficerPaymentSummary()
                 ROUND(100.0 * SUM(COALESCE(p.has_paid,0)) / NULLIF(COUNT(*),0))
                 AS UNSIGNED
             ) AS percent_paid
-        FROM tbl_officer o
+        FROM ".self::table('officer')." o
         LEFT JOIN payments p ON o.id = p.officer_id
         LEFT JOIN payables pay ON o.id = pay.officer_id
-        where o.status = '13'
+        where o.status = ".Status::ACTIVE."
     ";
 
     // Execute SQL with an empty array, as this query has no parameters.
@@ -450,8 +457,8 @@ public static function getOfficerPaymentSummary()
             ", $bindings))->keyBy('month');
         };
 
-        $income = $sumByMonth(['tbl_income', 'tbl_officer_payment']);
-        $expense = $sumByMonth(['tbl_expense', 'tbl_officer_incentive']);
+        $income = $sumByMonth([self::table('income'), self::table('officer_payment')]);
+        $expense = $sumByMonth([self::table('expense'), self::table('officer_incentive')]);
 
         $months = [];
         $end = new \DateTime($end_date);
@@ -484,11 +491,11 @@ public static function getOfficerPaymentSummaryFilterByDate($start_date = null, 
             SELECT
                 officer_id,
                 COUNT(*) AS total_payables_range,
-                SUM(CASE WHEN status = 15 THEN 1 ELSE 0 END) AS unpaid_count,
+                SUM(CASE WHEN status = ".Status::UNPAID." THEN 1 ELSE 0 END) AS unpaid_count,
                 -- Unpaid amounts
-                SUM(CASE WHEN status = 15 AND currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS unpaid_khr,
-                SUM(CASE WHEN status = 15 AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS unpaid_usd
-            FROM tbl_officer_payable
+                SUM(CASE WHEN status = ".Status::UNPAID." AND currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS unpaid_khr,
+                SUM(CASE WHEN status = ".Status::UNPAID." AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS unpaid_usd
+            FROM ".self::table('officer_payable')."
             -- Period is by due date: unpaid payables have no payment_date yet.
             WHERE due_date >= ?
             AND due_date <= ?
@@ -498,10 +505,10 @@ public static function getOfficerPaymentSummaryFilterByDate($start_date = null, 
             SELECT 
                 p.officer_id,
                 -- Only successful payments in the same period
-                SUM(CASE WHEN p.status = 19 AND p.currency_id = ".Currency::idOf(Currency::KHR)." THEN p.amount ELSE 0 END) AS paid_khr,
-                SUM(CASE WHEN p.status = 19 AND p.currency_id = ".Currency::idOf(Currency::USD)." THEN p.amount ELSE 0 END) AS paid_usd
-            FROM tbl_officer_payment p
-            INNER JOIN tbl_officer_payable pa 
+                SUM(CASE WHEN p.status = ".Status::PAID." AND p.currency_id = ".Currency::idOf(Currency::KHR)." THEN p.amount ELSE 0 END) AS paid_khr,
+                SUM(CASE WHEN p.status = ".Status::PAID." AND p.currency_id = ".Currency::idOf(Currency::USD)." THEN p.amount ELSE 0 END) AS paid_usd
+            FROM ".self::table('officer_payment')." p
+            INNER JOIN ".self::table('officer_payable')." pa 
                 ON p.ref_payable_id = pa.id
             AND pa.due_date >= ?
             AND pa.due_date <= ?
@@ -536,10 +543,10 @@ public static function getOfficerPaymentSummaryFilterByDate($start_date = null, 
                     ),
                     0
                 ) AS percent_paid
-        FROM tbl_officer o
+        FROM ".self::table('officer')." o
         LEFT JOIN payables pb ON o.id = pb.officer_id
         LEFT JOIN payments pm ON o.id = pm.officer_id
-        WHERE o.status = '13'
+        WHERE o.status = ".Status::ACTIVE."
     ";
      $results = DB::select($sql, [
         $start_date,
@@ -557,12 +564,12 @@ public static function getTotalOfficer()
             CAST(COUNT(*) AS SIGNED) AS totalMembers,
             CAST(SUM(CASE WHEN A.gender = 'male' THEN 1 ELSE 0 END) AS SIGNED) AS totalMales,
             CAST(SUM(CASE WHEN A.gender = 'female' THEN 1 ELSE 0 END) AS SIGNED) AS totalFemales,
-            CAST(SUM(CASE WHEN A.status = 13 THEN 1 ELSE 0 END) AS SIGNED) AS activeMembers,
+            CAST(SUM(CASE WHEN A.status = ".Status::ACTIVE." THEN 1 ELSE 0 END) AS SIGNED) AS activeMembers,
             CAST(SUM(CASE WHEN A.status = 14 THEN 1 ELSE 0 END) AS SIGNED) AS inactiveMembers,
             CAST(SUM(CASE WHEN A.status = 26 THEN 1 ELSE 0 END) AS SIGNED) AS deadMembers,
             CAST(SUM(CASE WHEN A.status = 27 THEN 1 ELSE 0 END) AS SIGNED) AS retiredMembers
-        FROM tbl_officer A
-        INNER JOIN tbl_mef_status B 
+        FROM ".self::table('officer')." A
+        INNER JOIN ".self::table('mef_status')." B 
             ON A.status = B.id 
         AND B.`group` IN ('STATUS','OFFICER')
     ";
@@ -586,8 +593,8 @@ public static function getUserDetail($userID = null)
             COALESCE(A.telephone_2, B.telephone_2)      AS telephone2,
             COALESCE(A.gender, B.gender)                AS gender,
             COALESCE(A.email, B.email)                  AS email
-        FROM tbl_users A
-        LEFT JOIN tbl_officer B
+        FROM ".self::table('users')." A
+        LEFT JOIN ".self::table('officer')." B
             ON A.officer_id = B.id
         WHERE A.id = :userID
     ";
@@ -613,7 +620,7 @@ public static function getUserDetail($userID = null)
                 created_at      AS notificationDateTime,
                 read_at         AS readDateTime,
                 status          AS status 
-            FROM tbl_notifications
+            FROM ".self::table('notifications')."
             WHERE notifiable_id = :userID
             ORDER BY created_at DESC
             LIMIT $limit OFFSET $offset
@@ -627,7 +634,7 @@ public static function getUserDetail($userID = null)
      */
     public static function countNotificationsByUserId($userID = null)
     {
-        $sql = "SELECT COUNT(*) AS total FROM tbl_notifications WHERE notifiable_id = :userID";
+        $sql = "SELECT COUNT(*) AS total FROM ".self::table('notifications')." WHERE notifiable_id = :userID";
         $result = DB::selectOne($sql, ['userID' => $userID]);
         return $result->total ?? 0;
     }
@@ -647,8 +654,8 @@ public static function getIncomeListing($limit = 10, $offset = 0)
             reference         AS reference,
             issue_date        AS dateTime,
             status            AS status
-        FROM tbl_income
-        WHERE status = 13
+        FROM ".self::table('income')."
+        WHERE status = ".Status::ACTIVE."
         ORDER BY issue_date DESC
         LIMIT $limit OFFSET $offset
     ";
@@ -672,7 +679,7 @@ public static function getIncomeListing($limit = 10, $offset = 0)
  */
 public static function countIncome()
 {
-    $sql = "SELECT COUNT(*) AS total FROM tbl_income WHERE status = 13";
+    $sql = "SELECT COUNT(*) AS total FROM ".self::table('income')." WHERE status = ".Status::ACTIVE."";
     $result = DB::selectOne($sql);
     return $result->total ?? 0;
 }
@@ -692,8 +699,8 @@ public static function getExpenseListing($limit = 10, $offset = 0)
             reference         AS reference,
             issue_date        AS dateTime,
             status            AS status
-        FROM tbl_expense
-        WHERE status = 13
+        FROM ".self::table('expense')."
+        WHERE status = ".Status::ACTIVE."
         ORDER BY issue_date DESC
         LIMIT $limit OFFSET $offset
     ";
@@ -717,7 +724,7 @@ public static function getExpenseListing($limit = 10, $offset = 0)
  */
 public static function countExpenses()
 {
-    $sql = "SELECT COUNT(*) AS total FROM tbl_expense WHERE status = 13";
+    $sql = "SELECT COUNT(*) AS total FROM ".self::table('expense')." WHERE status = ".Status::ACTIVE."";
     $result = DB::selectOne($sql);
     return $result->total ?? 0;
 }
@@ -737,8 +744,8 @@ public static function getOfficerPaymentListing($limit = 10, $offset = 0)
             A.currency_id                              AS currency,
             A.note                                     AS remark,
             A.status                                   AS status
-        FROM tbl_officer_payment A
-        INNER JOIN tbl_officer B
+        FROM ".self::table('officer_payment')." A
+        INNER JOIN ".self::table('officer')." B
             ON A.officer_id = B.id
         ORDER BY A.payment_date DESC
         LIMIT $limit OFFSET $offset
@@ -763,7 +770,7 @@ public static function getOfficerPaymentListing($limit = 10, $offset = 0)
  */
 public static function countOfficerPayments()
 {
-    $sql = "SELECT COUNT(*) AS total FROM tbl_officer_payment";
+    $sql = "SELECT COUNT(*) AS total FROM ".self::table('officer_payment')."";
     $result = DB::selectOne($sql);
     return $result->total ?? 0;
 }
@@ -783,10 +790,10 @@ public static function getOfficerIncentiveListing($limit = 10, $offset = 0)
             A.amount                                     AS amount,
             A.currency_id                                AS currency,
             A.remark                                     AS remark
-        FROM tbl_officer_incentive A
-        LEFT JOIN tbl_officer B
+        FROM ".self::table('officer_incentive')." A
+        LEFT JOIN ".self::table('officer')." B
             ON A.officer_id = B.id
-        LEFT JOIN tbl_officer_request C
+        LEFT JOIN ".self::table('officer_request')." C
             ON A.ref_request_id = C.id
         ORDER BY A.issue_date DESC
         LIMIT $limit OFFSET $offset
@@ -811,7 +818,7 @@ public static function getOfficerIncentiveListing($limit = 10, $offset = 0)
  */
 public static function countOfficerIncentives()
 {
-    $sql = "SELECT COUNT(*) AS total FROM tbl_officer_incentive";
+    $sql = "SELECT COUNT(*) AS total FROM ".self::table('officer_incentive')."";
     $result = DB::selectOne($sql);
     return $result->total ?? 0;
 }
@@ -825,8 +832,8 @@ public static function getOfficerRequestSummary()
             COUNT(R.id) AS totalRequests,
             SUM(CASE WHEN R.currency_id = ".Currency::idOf(Currency::KHR)." THEN R.amount ELSE 0 END) AS total_amount_khr,
             SUM(CASE WHEN R.currency_id = ".Currency::idOf(Currency::USD)." THEN R.amount ELSE 0 END) AS total_amount_usd
-        FROM tbl_officer_request R
-        INNER JOIN tbl_mef_status S 
+        FROM ".self::table('officer_request')." R
+        INNER JOIN ".self::table('mef_status')." S 
             ON R.status = S.id
         WHERE S.`group` = 'CEILING'
         GROUP BY S.id, S.title_en, S.title_kh
@@ -859,8 +866,8 @@ public static function getOfficerRequestListing($limit = 10, $offset = 0)
             A.request_date                            AS requestDateTime,
             A.remark                                  AS remark,
             A.status                                  AS status
-        FROM tbl_officer_request A
-        LEFT JOIN tbl_officer B
+        FROM ".self::table('officer_request')." A
+        LEFT JOIN ".self::table('officer')." B
             ON A.officer_id = B.id
         ORDER BY A.request_date DESC
         LIMIT $limit OFFSET $offset
@@ -886,7 +893,7 @@ public static function getOfficerRequestListing($limit = 10, $offset = 0)
  */
 public static function countOfficerRequests()
 {
-    $sql = "SELECT COUNT(*) AS total FROM tbl_officer_request";
+    $sql = "SELECT COUNT(*) AS total FROM ".self::table('officer_request')."";
     $result = DB::selectOne($sql);
     return $result->total ?? 0;
 }
@@ -910,9 +917,9 @@ public static function getOfficersListing($limit = 10, $offset = 0)
             A.address                                 AS address,
             A.email                                   AS email,
             A.photo                                   AS photo
-        FROM tbl_officer A
-        LEFT JOIN tbl_department D ON D.id = A.department_id
-        WHERE A.status = 13
+        FROM ".self::table('officer')." A
+        LEFT JOIN ".self::table('department')." D ON D.id = A.department_id
+        WHERE A.status = ".Status::ACTIVE."
         ORDER BY A.id DESC
         LIMIT $limit OFFSET $offset
     ";
@@ -937,7 +944,7 @@ public static function getOfficersListing($limit = 10, $offset = 0)
 
 public static function countOfficers()
 {
-    $sql = "SELECT COUNT(*) AS total FROM tbl_officer WHERE status = 13";
+    $sql = "SELECT COUNT(*) AS total FROM ".self::table('officer')." WHERE status = ".Status::ACTIVE."";
     $result = DB::selectOne($sql);
     return $result->total ?? 0;
 }
@@ -949,8 +956,8 @@ public static function countOfficersByGender()
             SUM(CASE WHEN gender = 'M' THEN 1 ELSE 0 END) AS totalMale,
             SUM(CASE WHEN gender = 'F' THEN 1 ELSE 0 END) AS totalFemale,
             COUNT(*) AS total
-        FROM tbl_officer
-        WHERE status = 13
+        FROM ".self::table('officer')."
+        WHERE status = ".Status::ACTIVE."
     ";
 
     $result = DB::selectOne($sql);

@@ -102,7 +102,7 @@ class OfficerIncentive extends Model implements Auditable
             }
         }
 
-        $whereClause->whereNotIn("status", [4]);
+        $whereClause->whereNotIn("status", [Status::DELETED]);
         return $whereClause;
     }
 
@@ -121,7 +121,7 @@ class OfficerIncentive extends Model implements Auditable
     }
 
     public static function getTotalAmount($filter){
-        $whereClause = OfficerIncentive::where("status", 13);
+        $whereClause = OfficerIncentive::where("status", Status::ACTIVE);
         if($filter["search_field"]){
             $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
             $dataFields = $arraySingle;
@@ -172,7 +172,7 @@ class OfficerIncentive extends Model implements Auditable
             }
         }
 
-        $whereClause->whereNotIn("f.status", [4]);
+        $whereClause->whereNotIn("f.status", [Status::DELETED]);
         return $whereClause;
     }
 

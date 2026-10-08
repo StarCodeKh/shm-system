@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Auth;
 use CommonService;
+use App\Models\Settings\Status;
 
 class AccountGroupController extends Controller
 {
@@ -59,7 +60,7 @@ class AccountGroupController extends Controller
                 "account_type_id" => $accountTypes,
                 "permissions" => CommonService::permission($this->db_table),
                 "role_permissions" => CommonService::getPermissionsViaRoles(),
-                "limit" => config_limit,
+                "limit" => setting('config_limit'),
                 "total" => $this->db_table::getCount($filter)
             );
             $status = 200;
@@ -150,7 +151,7 @@ class AccountGroupController extends Controller
     public function destroy($id)
     {
         $table=$this->db_table::find($id);
-        $table->update(["status" => 4]);
+        $table->update(["status" => Status::DELETED]);
         if($table){
             $status = 200;
             $boolen = true;

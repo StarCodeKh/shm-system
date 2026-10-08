@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
+use App\Models\Settings\Status;
 
 class PaymentMethodController extends Controller
 {
@@ -16,10 +17,10 @@ class PaymentMethodController extends Controller
     {
         $input = $request->all();
         $filter = array(
-            "offset" => isset($input["offset"]) ? $input["offset"] : config_offset,
-            "limit" => isset($input["limit"]) ? $input["limit"] : config_limit,
-            "sort" => isset($input["sort"]) ? $input["sort"] : config_sort,
-        "order" => isset($input["order"]) ? $input["order"] : config_order
+            "offset" => isset($input["offset"]) ? $input["offset"] : setting('config_offset'),
+            "limit" => isset($input["limit"]) ? $input["limit"] : setting('config_limit'),
+            "sort" => isset($input["sort"]) ? $input["sort"] : setting('config_sort'),
+        "order" => isset($input["order"]) ? $input["order"] : setting('config_order')
         );
         $table = PaymentMethod::orderByFilter($filter)
                                 ->offset($filter["offset"])
@@ -131,7 +132,7 @@ class PaymentMethodController extends Controller
      */
     public function destroy($id)
     {
-        $table = PaymentMethod::where('id', $id)->update(["status" => 4]);
+        $table = PaymentMethod::where('id', $id)->update(["status" => Status::DELETED]);
         if($table){
             $status = 200;
             $boolen = true;

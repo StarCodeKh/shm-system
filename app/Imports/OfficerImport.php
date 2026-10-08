@@ -11,6 +11,7 @@ use DB;
 use Auth;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Carbon\Carbon;
+use App\Models\Settings\Status;
 class OfficerImport implements ToModel,WithHeadingRow,Auditable
 {
     use \OwenIt\Auditing\Auditable;
@@ -64,7 +65,7 @@ class OfficerImport implements ToModel,WithHeadingRow,Auditable
                     "schedule_start_date" => Carbon::instance(Date::excelToDateTimeObject($row["register_date"])),
                     "schedule_end_date" => "2100-01-01",
                     "remark" => "",
-                    "status" => 13,
+                    "status" => Status::ACTIVE,
                     "is_default" => 1,
                 ]
             );

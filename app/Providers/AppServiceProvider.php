@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use App\Models\Settings\Status;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -41,7 +42,7 @@ class AppServiceProvider extends ServiceProvider
         //   ... AND (status NOT IN (4) OR status IS NULL)
         Builder::macro('whereNotDeleted', function ($column = 'status') {
             return $this->where(function ($query) use ($column) {
-                $query->whereNotIn($column, [4])->orWhereNull($column);
+                $query->whereNotIn($column, [Status::DELETED])->orWhereNull($column);
             });
         });
 

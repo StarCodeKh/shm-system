@@ -46,7 +46,7 @@ class ConfigurationController extends Controller
      */
     public function planning()
     {
-        $planning = Planning::find(config_planning_year);
+        $planning = Planning::find(setting('config_planning_year'));
         return response()->json([
             'success' => (bool) $planning,
             'data' => $planning ? [

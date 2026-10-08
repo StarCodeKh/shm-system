@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\TaxableSalary;
 use Illuminate\Http\Request;
 use Auth;
+use App\Models\Settings\Status;
 
 class TaxableSalaryController extends Controller
 {
@@ -17,10 +18,10 @@ class TaxableSalaryController extends Controller
     {
         $input = $request->all();
         $filter = array(
-            "offset" => isset($input["offset"]) ? $input["offset"] : config_offset,
-            "limit" => isset($input["limit"]) ? $input["limit"] : config_limit,
-            "sort" => isset($input["sort"]) ? $input["sort"] : config_sort,
-            "order" => isset($input["order"]) ? $input["order"] : config_order
+            "offset" => isset($input["offset"]) ? $input["offset"] : setting('config_offset'),
+            "limit" => isset($input["limit"]) ? $input["limit"] : setting('config_limit'),
+            "sort" => isset($input["sort"]) ? $input["sort"] : setting('config_sort'),
+            "order" => isset($input["order"]) ? $input["order"] : setting('config_order')
         );
         $table = TaxableSalary::orderByFilter($filter)
                                 ->offset($filter["offset"])
@@ -135,7 +136,7 @@ class TaxableSalaryController extends Controller
      */
     public function destroy($id)
     {
-        $table = TaxableSalary::where('id', $id)->update(["status" => 4]);
+        $table = TaxableSalary::where('id', $id)->update(["status" => Status::DELETED]);
         if($table){
             $status = 200;
             $boolen = true;

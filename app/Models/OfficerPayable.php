@@ -133,7 +133,7 @@ class OfficerPayable extends Model implements Auditable
                 }
             }
         }
-        $whereClause->whereIn("status", [15,19]);
+        $whereClause->whereIn("status", [Status::UNPAID, Status::PAID]);
         $whereClause = $query;
         return $whereClause;
     }
@@ -191,7 +191,7 @@ class OfficerPayable extends Model implements Auditable
             ->LeftJoin("payment_method as pm", "pm.id", "=", "of.payment_method_id")
             ->LeftJoin("mef_status as ms", "ms.id", "=", "of.status")
             ->LeftJoin("currency as c", "c.id", "=", "of.currency_id")
-            ->where("of.status", 15);
+            ->where("of.status", Status::UNPAID);
         $whereClause = $query;
         if(isset($filter["data"]["officer_id"])){
         }
@@ -233,10 +233,10 @@ class OfficerPayable extends Model implements Auditable
         $findOfficer = Officer::with("department")->with("entity")->find($officerId);
         $paymentHistories = array();
         if($findOfficer){
-            $whereClause = OfficerPayable::where("officer_id", $officerId)->whereNotIn("status", [15])->orderby("due_date", "desc");
+            $whereClause = OfficerPayable::where("officer_id", $officerId)->whereNotIn("status", [Status::UNPAID])->orderby("due_date", "desc");
             $paymentHistories = collect($whereClause->get());
             // Get Payable
-            $payables = OfficerPayable::with("currency")->where("officer_id", $officerId)->where("status", 15)->orderby("due_date", "desc")->get();
+            $payables = OfficerPayable::with("currency")->where("officer_id", $officerId)->where("status", Status::UNPAID)->orderby("due_date", "desc")->get();
             $payableArr = array();
             foreach($payables as $payable){
                 $payableArr[] = array(

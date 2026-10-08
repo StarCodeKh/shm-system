@@ -140,7 +140,7 @@ class OfficerPayment extends Model implements Auditable
         }
 
         $whereClause->where(function ($q) {
-            $q->whereIn("officer_payment.status", [19])->orWhereNull("officer_payment.status");
+            $q->whereIn("officer_payment.status", [Status::PAID])->orWhereNull("officer_payment.status");
         });
         return $whereClause;
     }
@@ -175,7 +175,7 @@ class OfficerPayment extends Model implements Auditable
             ->Join("payment_method as pm", "pm.id", "=", "op.payment_method_id")
             ->Join("mef_status as ms", "ms.id", "=", "op.status")
             ->Join("currency as c", "c.id", "=", "op.currency_id")
-            ->where("op.status", 19);
+            ->where("op.status", Status::PAID);
         $whereClause = $query;
         if(isset($filter["data"]["officer_id"])){
         }

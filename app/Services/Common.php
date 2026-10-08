@@ -401,7 +401,7 @@
             return $newDate;
         }
         public static function FormatDateSql(){
-            return config_date_format;
+            return setting('config_date_format');
         }
         public static function GetNumberOfMonth($startDate, $endDate){
             $date1 = $startDate;
@@ -596,12 +596,12 @@
                     $item = array_filter($item, fn ($name) => is_string($name) && preg_match($column, $name) && !preg_match($secret, $name), ARRAY_FILTER_USE_KEY);
                     if ($item) $searchFields[] = $item;
                 }
-                $sort = isset($obj["sort"]) && is_string($obj["sort"]) && preg_match('/^[a-z][a-z0-9_.]*$/i', $obj["sort"]) ? $obj["sort"] : config_sort;
-                $order = isset($obj["order"]) && in_array(strtolower((string) $obj["order"]), ['asc', 'desc'], true) ? $obj["order"] : config_order;
-                $limit = isset($obj["limit"]) ? (int) $obj["limit"] : config_limit;
+                $sort = isset($obj["sort"]) && is_string($obj["sort"]) && preg_match('/^[a-z][a-z0-9_.]*$/i', $obj["sort"]) ? $obj["sort"] : setting('config_sort');
+                $order = isset($obj["order"]) && in_array(strtolower((string) $obj["order"]), ['asc', 'desc'], true) ? $obj["order"] : setting('config_order');
+                $limit = isset($obj["limit"]) ? (int) $obj["limit"] : setting('config_limit');
                 $filter = array(
                     "data" => $obj,
-                    "limit" => max(1, min((int) ($limit ?: config_limit), 1000)),
+                    "limit" => max(1, min((int) ($limit ?: setting('config_limit')), 1000)),
                     "sort" => $sort,
                     "order" => $order,
                     "page_number" => max(1, (int) ($obj["page_number"] ?? 1)),

@@ -56,14 +56,14 @@ use Illuminate\Support\Facades\Route;
 // Authentication
 Route::prefix('auth')->group(function () {
     // Sign-in: at most 10 attempts a minute per client, against password guessing
-    Route::middleware(['cors', 'global_site', 'throttle:10,1'])->group(function () {
+    Route::middleware(['cors', 'throttle:10,1'])->group(function () {
         Route::post('login', [AuthController::class, 'login']);
         Route::post('device_login', [AuthController::class, 'loginMobile']);
         Route::post('device_login_otp', [AuthController::class, 'loginMobileOTP']);
         Route::post('verify_otp', [AuthController::class, 'VerifyMobileOTP']);
     });
 
-    Route::middleware(['auth:api', 'global_site', 'cors'])->group(function () {
+    Route::middleware(['auth:api', 'cors'])->group(function () {
         // Creating accounts needs a signed-in user with create_users (it was open to anyone)
         Route::post('signup', [AuthController::class, 'signup']);
         Route::get('user', [AuthController::class, 'user']);
@@ -72,7 +72,7 @@ Route::prefix('auth')->group(function () {
 });
 
 // Mobile app
-Route::prefix('v1/mobile')->middleware(['auth:api', 'global_site', 'module_permission'])->group(function () {
+Route::prefix('v1/mobile')->middleware(['auth:api', 'module_permission'])->group(function () {
     Route::resource('department', DepartmentController::class)->only(['index', 'show']);
     Route::resource('incentive', MobileIncentiveController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
     Route::get('summary', [MobileIncentiveController::class, 'summary']);
@@ -114,7 +114,7 @@ Route::prefix('v1/mobile')->middleware(['auth:api', 'global_site', 'module_permi
 
 // Web app
 // module_permission: every store / update / destroy needs the permission its controller declares
-Route::prefix('v1')->middleware(['auth:api', 'global_site', 'cors', 'module_permission'])->group(function () {
+Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->group(function () {
 
     // Officer
     Route::prefix('officer')->group(function () {

@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Auth;
 use CommonService;
+use App\Models\Settings\Status;
 
 class FileManagerController extends Controller
 {
@@ -70,7 +71,7 @@ class FileManagerController extends Controller
             $filter = CommonService::getFilter($input);
             $data = array(
                 "data" => $this->db_table::getData($filter),
-                "limit" => config_limit,
+                "limit" => setting('config_limit'),
                 "total" => $this->db_table::getTotal($filter),
                 "permissions" => CommonService::permission($this->db_table),
                 "role_permissions" => CommonService::getPermissionsViaRoles(),
@@ -223,7 +224,7 @@ class FileManagerController extends Controller
         if (!$file) {
             return response()->json(['success' => false, 'message' => trans('common.error_msg')], 404);
         }
-        $file->update(['status' => 4, 'modified_by' => Auth::id()]);
+        $file->update(['status' => Status::DELETED, 'modified_by' => Auth::id()]);
         return response()->json(['success' => true, 'message' => trans('common.msg_delete_successfully')]);
     }
 

@@ -68,7 +68,7 @@ class DepartmentController extends Controller
             $data = array(
                 "data" => $this->db_table::getData($filter),
                 "form_attributes" => FormSchema::fields($this->db_table->getTable()),
-                "limit" => config_limit,
+                "limit" => setting('config_limit'),
                 "total" => $this->db_table::getTotal($filter),
                 "permissions" => CommonService::permission($this->db_table),
                 "role_permissions" => CommonService::getPermissionsViaRoles(),
@@ -218,7 +218,7 @@ class DepartmentController extends Controller
     {
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_DELETE]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_DELETE] == true){
             $table=$this->db_table::find($id);
-            $table->update(["status" => 4]);
+            $table->update(["status" => Status::DELETED]);
             if($table){
                 $status = 200;
                 $boolen = true;

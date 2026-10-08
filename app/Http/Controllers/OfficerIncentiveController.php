@@ -61,7 +61,7 @@ class OfficerIncentiveController extends Controller
             $dataList = $this->db_table::getData($filter);
             $data = array(
                 "data" => $dataList,
-                "limit" => config_limit,
+                "limit" => setting('config_limit'),
                 "total" => $this->db_table::getTotal($filter),
                 "total_amount" => $this->convertToKhmerNumber(
                         CommonService::formatDoubleNum(collect($dataList)->sum('amount'))
@@ -243,7 +243,7 @@ class OfficerIncentiveController extends Controller
     {
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_DELETE]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_DELETE] == true){
             $table=$this->db_table::find($id);
-            $table->update(["status" => 4]);
+            $table->update(["status" => Status::DELETED]);
             if($table){
                 $status = 200;
                 $boolen = true;

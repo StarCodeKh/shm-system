@@ -69,7 +69,7 @@ class UserController extends Controller
                 "status" => Status::getSingleOpt("STATUS"),
                 "form_attributes" => User::formAttributes(),
                 "data_fields" => User::dataFields(),
-                "limit" => config_limit,
+                "limit" => setting('config_limit'),
                 "total" => User::getTotal($filter)
             );
             $status = 200;
@@ -299,7 +299,7 @@ class UserController extends Controller
     {
         if(isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_DELETE]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_DELETE] == true){
             $table=$this->db_table::find($id);
-            $table->update(["status" => 4]);
+            $table->update(["status" => Status::DELETED]);
             if($table){
                 $status = 200;
                 $boolen = true;
@@ -366,7 +366,7 @@ class UserController extends Controller
         $table = UserDevice::getData($filter);
         $data = array(
             "data" => $table,
-            "limit" => config_limit,
+            "limit" => setting('config_limit'),
             "total" => UserDevice::getTotal($filter),
             "permissions" => CommonService::permission($this->db_table),
             "role_permissions" => CommonService::getPermissionsViaRoles(),

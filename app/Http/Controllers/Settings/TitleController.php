@@ -8,6 +8,7 @@ use App\Models\Settings\Title;
 use Illuminate\Http\Request;
 use Auth;
 use CommonService;
+use App\Models\Settings\Status;
 
 class TitleController extends Controller
 {
@@ -36,7 +37,7 @@ class TitleController extends Controller
         $filter = CommonService::getFilter($input);
         $data = array(
             "data" => $this->dbTable::getData($filter),
-            "limit" => config_limit,
+            "limit" => setting('config_limit'),
             "total" => $this->dbTable::getTotal($filter),
             "data_fields" => $this->dbTable::dataFields(),
             "form_attributes" => FormSchema::fields($this->dbTable->getTable()),
@@ -138,7 +139,7 @@ class TitleController extends Controller
     public function destroy($id)
     {
         $table = $this->dbTable::find($id);
-        $table->update(["status" => 4]);
+        $table->update(["status" => Status::DELETED]);
         if ($table) {
             $status = 200;
             $boolen = true;

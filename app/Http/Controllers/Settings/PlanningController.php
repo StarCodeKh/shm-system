@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Auth;
 use DB;
 use CommonService;
+use App\Models\Settings\Status;
 
 class PlanningController extends Controller
 {
@@ -63,7 +64,7 @@ class PlanningController extends Controller
                 "form_attributes" => FormSchema::fields($this->db_table->getTable()),
                 "permissions" => CommonService::permission($this->db_table),
                 "model_name" => $this->db_table->getTable(),
-                "limit" => config_limit,
+                "limit" => setting('config_limit'),
                 "total" => $this->db_table::getCount($filter),
                 "is_display" => true,
             );
@@ -197,7 +198,7 @@ class PlanningController extends Controller
     public function destroy($id)
     {
         $table=$this->db_table::find($id);
-$table->update(["status" => 4]);
+$table->update(["status" => Status::DELETED]);
         if($table){
             $status = 200;
             $boolen = true;

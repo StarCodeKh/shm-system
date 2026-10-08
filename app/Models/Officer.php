@@ -208,7 +208,7 @@ class Officer extends Model implements Auditable
 
         if(isset($filter["keysearch"]["keyword"]) && $filter["keysearch"]["keyword"] != null){
             $keyword = '%'.$filter["keysearch"]["keyword"].'%';
-            $whereClause->whereNotIn("status", [4]);
+            $whereClause->whereNotIn("status", [Status::DELETED]);
             $whereClause->where(function ($q) use ($keyword) {
                 $q->where("first_name", 'Like', $keyword)
                     ->orWhere("last_name", 'Like', $keyword)

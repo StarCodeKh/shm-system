@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Configuration;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\View;
 use Mpdf\Config\ConfigVariables;
@@ -98,8 +97,7 @@ class PdfDocument
         static $organization = null;
         if ($organization !== null) return $organization;
 
-        $settings = Configuration::whereIn('key', ['config_owner', 'config_name', 'config_logo', 'config_footer', 'config_address', 'config_telephone', 'config_email'])
-            ->pluck('value', 'key');
+        $settings = Settings::all();
         $logo = ltrim((string) ($settings['config_logo'] ?? ''), '/');
         $logoPath = $logo && is_file(public_path($logo)) ? public_path($logo) : public_path(config('report.default_logo'));
 

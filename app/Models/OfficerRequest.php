@@ -150,7 +150,7 @@ class OfficerRequest extends Model implements Auditable
             }
         }
 
-        $whereClause->whereNotIn("f.status", [4]);
+        $whereClause->whereNotIn("f.status", [Status::DELETED]);
         return $whereClause;
     }
 
