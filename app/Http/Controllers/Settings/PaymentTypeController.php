@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Settings;
 use App\Exports\PaymentTypeExport;
+use App\Services\FormSchema;
 use App\Imports\PaymentTypeImport;
 use App\Models\Settings\PaymentType;
 use App\Models\Settings\Currency;
@@ -53,7 +54,7 @@ class PaymentTypeController extends Controller
                 "role_permissions" => CommonService::getPermissionsViaRoles(),
                 "model_name" => $this->db_table->getTable(),
                 "data_fields" => $this->db_table::dataFields(),
-                "form_attributes" => $this->db_table::formAttributes(),
+                "form_attributes" => FormSchema::fields($this->db_table->getTable()),
                 "currency_id" => Currency::getSingleOpt(),
                 "status" => Status::getSingleOpt("STATUS"),
             );

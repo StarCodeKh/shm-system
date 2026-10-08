@@ -592,6 +592,7 @@ export default {
                     this.form.attribute[_formAttribute["name"]] = data["id"];
                 }
             });
+            this.relabelChosen() // a default id shows as its option (e.g. status: Active)
         },
         showNewFormByParent(obj) {
             this.form.attribute = [];
@@ -609,7 +610,11 @@ export default {
         showDataForm(data) {
             this.formAttributes.forEach(_formAttribute => {
                 this.form.attribute[_formAttribute["name"]] = data[_formAttribute["name"]];
-                if (_formAttribute["type"] == "select") {
+                const listed = _formAttribute["type"] == "select" && this.optionFor(_formAttribute["name"], data[_formAttribute["name"]]);
+                if (listed) {
+                    // The saved value is in the field's list: show that option
+                    this.form.attribute[_formAttribute["name"]] = listed;
+                } else if (_formAttribute["type"] == "select") {
                     // Customize on Data Selection
                     switch (_formAttribute["name"]) {
                         case "officer_id":
@@ -742,7 +747,7 @@ export default {
             if (this.saving) return
             const payload = this.formAttributes.map(({ type, name }) => {
                 const value = this.form.attribute[name]
-                return { [name]: type == "select" && value ? value.value : value }
+                return { [name]: type == "select" && value && typeof value === "object" && "value" in value ? value.value : value }
             })
             this.dataFields = payload
 
@@ -783,6 +788,12 @@ export default {
             if (typeof message === 'object') return Object.values(message).flat().join(' ')
             return String(message)
         },
+        // The option of a saved / default value in the field's current list, if it is there
+        optionFor(name, value) {
+            const choices = this.data && this.data[name]
+            if (!Array.isArray(choices) || value === null || value === undefined || value === '' || typeof value === 'object') return null
+            return choices.find(o => o && typeof o === 'object' && String(o.value) === String(value)) || null
+        },
         // A chosen { label, value } keeps the label it was picked with: take the one from the current list
         relabelChosen() {
             const attribute = this.form && this.form.attribute
@@ -791,7 +802,9 @@ export default {
                 const choices = this.data[name]
                 if (!Array.isArray(choices)) return
                 const relabel = picked => {
-                    if (!picked || typeof picked !== 'object' || !('value' in picked)) return picked
+                    if (picked === null || picked === undefined || picked === '') return picked
+                    if (typeof picked !== 'object') return this.optionFor(name, picked) || picked // a plain value, e.g. a default id
+                    if (!('value' in picked)) return picked
                     const match = choices.find(o => o && o.value === picked.value)
                     return match && match.label !== picked.label ? match : picked
                 }
@@ -814,8 +827,8 @@ export default {
     created() {
         // Language switched: lists from the shared lookup come again in the new language
         this.offLocaleChange = onLocaleChange(locale => {
-            (this.lookupFields || []).forEach(name => {
-                lookupChoices(name, locale).then(choices => {
+            (this.lookupFields || []).forEach(({ name, lookup }) => {
+                lookupChoices(lookup, locale).then(choices => {
                     if (!choices || !this.data) return
                     this.data[name] = choices
                     this.relabelChosen()
@@ -841,11 +854,14 @@ export default {
                         this.form.attribute[field.name] = field.default
                     }
                 });
-                (attributes || []).filter(field => field && field.type === 'select').forEach(({ name }) => {
+                (attributes || []).filter(field => field && field.type === 'select').forEach(({ name, lookup }) => {
                     if (!this.data || Array.isArray(this.data[name])) return
-                    this.lookupFields = [...new Set([...(this.lookupFields || []), name])]
-                    lookupChoices(name, this.$i18n.locale).then(choices => {
-                        if (choices && this.data && !Array.isArray(this.data[name])) this.data[name] = choices
+                    this.lookupFields = [...(this.lookupFields || []).filter(f => f.name !== name), { name, lookup: lookup || name }]
+                    lookupChoices(lookup || name, this.$i18n.locale).then(choices => {
+                        if (choices && this.data && !Array.isArray(this.data[name])) {
+                            this.data[name] = choices
+                            this.relabelChosen()
+                        }
                     })
                 })
             },

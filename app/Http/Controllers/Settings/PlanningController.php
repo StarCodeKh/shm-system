@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Services\FormSchema;
 use App\Models\Settings\Planning;
 use Illuminate\Http\Request;
 use Auth;
@@ -59,6 +60,9 @@ class PlanningController extends Controller
                 "data_fields" => $this->dataFields(),
                 "year" => $years,
                 "data" => $this->db_table::getPlannings($filter),
+                "form_attributes" => FormSchema::fields($this->db_table->getTable()),
+                "permissions" => CommonService::permission($this->db_table),
+                "model_name" => $this->db_table->getTable(),
                 "limit" => config_limit,
                 "total" => $this->db_table::getCount($filter),
                 "is_display" => true,

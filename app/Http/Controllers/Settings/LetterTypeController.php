@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Settings;
 use App\Models\Settings\LetterType;
+use App\Services\FormSchema;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -56,7 +57,7 @@ class LetterTypeController extends Controller
                 "role_permissions" => CommonService::getPermissionsViaRoles(),
                 "model_name" => $this->db_table->getTable(),
                 "data_fields" => $this->db_table::dataFields(),
-                "form_attributes" => $this->db_table::formAttributes(),
+                "form_attributes" => FormSchema::fields($this->db_table->getTable()),
             );
             $status = 200;
             $data["is_display"] = true;

@@ -72,7 +72,7 @@ export default {
                     this.raw = response.data;
                     this.dataHeaders = response.data.data_fields;
                     this.formAttributes = response.data.form_attributes;
-                    this.isVisible = response.data.is_display;
+                    this.isVisible = response.data.is_display !== false; // hidden only when the server says no access
                     // The list reloads after every save or delete: refresh the sidebar too
                     if (this.loaded) window.dispatchEvent(new Event('menu-changed'));
                     this.loaded = true;

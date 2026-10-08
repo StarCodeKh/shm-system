@@ -10,7 +10,7 @@
                 <entity></entity>
             </vs-tab>
 
-            <vs-tab v-if="tab_tittle" icon-pack="feather" icon="icon-award" :label="$t('setting_title')">
+            <vs-tab v-if="tab_tittle" icon-pack="feather" icon="icon-award" :label="$t('setting_officer_title')">
                 <titles></titles>
             </vs-tab>
 

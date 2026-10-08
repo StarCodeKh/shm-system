@@ -12,7 +12,8 @@ use Spatie\Permission\PermissionRegistrar;
  *
  * Safe to run more than once, also on a live server: php artisan db:seed --class=RolePermissionSeeder
  * It only adds what is missing. A role gets its default permissions only while it has none,
- * so changes made later in the role editor are kept.
+ * so changes made later in the role editor are kept. A permission added by a later version
+ * goes to the roles that have it by default, so they keep access to that module.
  */
 class RolePermissionSeeder extends Seeder
 {
@@ -26,6 +27,7 @@ class RolePermissionSeeder extends Seeder
 
         DB::transaction(function () use ($groups, $roles, $now) {
             $order = 0;
+            $added = [];
             foreach ($groups as $groupName => $permissions) {
                 $groupId = null;
                 if ($groupName !== '') {
@@ -34,7 +36,7 @@ class RolePermissionSeeder extends Seeder
                 }
                 foreach ($permissions as $name) {
                     if (DB::table('permissions')->where('name', $name)->where('guard_name', self::GUARD)->exists()) continue;
-                    DB::table('permissions')->insert(['group' => $groupId, 'name' => $name, 'guard_name' => self::GUARD, 'created_at' => $now, 'updated_at' => $now]);
+                    $added[$name] = DB::table('permissions')->insertGetId(['group' => $groupId, 'name' => $name, 'guard_name' => self::GUARD, 'created_at' => $now, 'updated_at' => $now]);
                 }
             }
 
@@ -42,8 +44,13 @@ class RolePermissionSeeder extends Seeder
                 $roleId = DB::table('roles')->where('name', $roleName)->where('guard_name', self::GUARD)->value('id')
                     ?? DB::table('roles')->insertGetId(['name' => $roleName, 'guard_name' => self::GUARD, 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now]);
 
-                if (!$permissions || DB::table('role_has_permissions')->where('role_id', $roleId)->exists()) continue;
-                $ids = DB::table('permissions')->whereIn('name', $permissions)->where('guard_name', self::GUARD)->pluck('id');
+                if (!$permissions) continue;
+                if (DB::table('role_has_permissions')->where('role_id', $roleId)->exists()) {
+                    // Role already set up: only the permissions created in this run that it has by default
+                    $ids = collect(array_intersect_key($added, array_flip($permissions)))->values();
+                } else {
+                    $ids = DB::table('permissions')->whereIn('name', $permissions)->where('guard_name', self::GUARD)->pluck('id');
+                }
                 DB::table('role_has_permissions')->insert($ids->map(fn ($id) => ['permission_id' => $id, 'role_id' => $roleId])->all());
             }
         });

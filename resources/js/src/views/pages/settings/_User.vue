@@ -59,7 +59,7 @@ export default {
                     this.data = response.data;
                     this.dataHeaders = response.data.data_fields;
                     this.formAttributes = response.data.form_attributes;
-                    this.isVisible = response.data.is_display;
+                    this.isVisible = response.data.is_display !== false; // hidden only when the server says no access
                 }).catch(() => {
                     this.$vs.notify({ text: 'msg.action_failed', color: 'danger' })
                 }).finally(() => {

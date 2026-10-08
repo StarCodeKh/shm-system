@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Settings;
 use App\Exports\AccountTypeExport;
+use App\Services\FormSchema;
 use App\Models\Settings\AccountType;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -55,7 +56,7 @@ class AccountTypeController extends Controller
                 "role_permissions" => CommonService::getPermissionsViaRoles(),
                 "model_name" => $this->db_table->getTable(),
                 "data_fields" => $this->db_table::dataFields(),
-                "form_attributes" => $this->db_table::formAttributes(),
+                "form_attributes" => FormSchema::fields($this->db_table->getTable()),
                 "type_code" => AccountType::getAccTypeCode(),
             );
             $status = 200;

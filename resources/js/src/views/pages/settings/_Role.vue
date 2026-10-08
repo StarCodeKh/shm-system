@@ -102,7 +102,7 @@ export default {
                         } else {
                             this.data = this.data;
                         }
-                        this.isVisible = response.data.is_display;
+                        this.isVisible = response.data.is_display !== false; // hidden only when the server says no access
                         this.$vs.loading.close();
                     }).catch((error) => {
                         this.$vs.notify({

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Settings;
 use App\Imports\DepartmentImport;
+use App\Services\FormSchema;
 use App\Exports\DepartmentExport;
 use App\Http\Controllers\Controller;
 use App\Models\Settings\Department;
@@ -67,6 +68,7 @@ class DepartmentController extends Controller
             $filter = CommonService::getFilter($input);
             $data = array(
                 "data" => $this->db_table::getData($filter),
+                "form_attributes" => FormSchema::fields($this->db_table->getTable()),
                 "limit" => config_limit,
                 "total" => $this->db_table::getTotal($filter),
                 "permissions" => CommonService::permission($this->db_table),
@@ -76,12 +78,12 @@ class DepartmentController extends Controller
                 "status" => Status::getSingleOpt("STATUS"),
             );
             $status = 200;
-            $boolen = true;
+            $data["is_display"] = true;
             $data["message"] = trans('common.msg_save_successfully');
             return response()->json($data, $status);
         }else{
             $status = 500;
-            $boolen = false;
+            $data["is_display"] = false;
             $data["message"] = trans('common.msg_no_permission_access');
             return response()->json($data, $status);
         }

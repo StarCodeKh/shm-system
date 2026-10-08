@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Services\FormSchema;
 use App\Models\Settings\AccountGroup;
 use App\Models\Settings\AccountType;
 use Illuminate\Http\Request;
@@ -53,6 +54,8 @@ class AccountGroupController extends Controller
             $data = array(
                 "data_fields" => $this->dataFields(),
                 "data" => $this->db_table::getAccountGroups($filter),
+                "form_attributes" => FormSchema::fields($this->db_table->getTable()),
+                "model_name" => $this->db_table->getTable(),
                 "account_type_id" => $accountTypes,
                 "permissions" => CommonService::permission($this->db_table),
                 "role_permissions" => CommonService::getPermissionsViaRoles(),

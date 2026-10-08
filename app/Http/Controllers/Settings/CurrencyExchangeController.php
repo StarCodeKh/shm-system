@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Models\Settings\CurrencyExchange;
+use App\Services\FormSchema;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
@@ -59,15 +60,15 @@ class CurrencyExchangeController extends Controller
                 "role_permissions" => CommonService::getPermissionsViaRoles(),
                 "model_name" => $this->db_table->getTable(),
                 "data_fields" => $this->db_table::dataFields(),
-                "form_attributes" => $this->db_table::formAttributes(),
+                "form_attributes" => FormSchema::fields($this->db_table->getTable()),
             );
             $status = 200;
-            $boolen = true;
+            $data["is_display"] = true;
             $data["message"] = trans('common.msg_save_successfully');
             return response()->json($data, $status);
         }else{
             $status = 500;
-            $boolen = false;
+            $data["is_display"] = false;
             $data["message"] = trans('common.msg_no_permission_access');
             return response()->json($data, $status);
         }

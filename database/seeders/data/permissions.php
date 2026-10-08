@@ -304,4 +304,40 @@ return array (
         4 => 'update_menu',
         5 => 'delete_menu',
     ),
+    'account_type_group' =>
+    array (
+        0 => 'list_account_type_group',
+        1 => 'create_account_type_group',
+        2 => 'show_account_type_group',
+        3 => 'edit_account_type_group',
+        4 => 'update_account_type_group',
+        5 => 'delete_account_type_group',
+    ),
+    'account_group' =>
+    array (
+        0 => 'list_account_group',
+        1 => 'create_account_group',
+        2 => 'show_account_group',
+        3 => 'edit_account_group',
+        4 => 'update_account_group',
+        5 => 'delete_account_group',
+    ),
+    'title' =>
+    array (
+        0 => 'list_title',
+        1 => 'create_title',
+        2 => 'show_title',
+        3 => 'edit_title',
+        4 => 'update_title',
+        5 => 'delete_title',
+    ),
+    'mef_planning' =>
+    array (
+        0 => 'list_mef_planning',
+        1 => 'create_mef_planning',
+        2 => 'show_mef_planning',
+        3 => 'edit_mef_planning',
+        4 => 'update_mef_planning',
+        5 => 'delete_mef_planning',
+    ),
 );

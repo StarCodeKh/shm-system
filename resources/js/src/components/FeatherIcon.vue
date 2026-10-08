@@ -2,10 +2,11 @@
 import { h, normalizeClass } from 'vue'
 import feather from 'feather-icons'
 
-// "ChevronDownIcon" -> "chevron-down", "BarChart2Icon" -> "bar-chart-2" (feather-icons names)
+// "ChevronDownIcon" -> "chevron-down", "BarChart2Icon" -> "bar-chart-2", "XCircleIcon" -> "x-circle" (feather-icons names)
 const featherName = icon => String(icon || '')
     .replace(/Icon$/, '')
     .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
     .replace(/([a-zA-Z])([0-9])/g, '$1-$2')
     .toLowerCase()
 

@@ -93,7 +93,7 @@ class Status extends Model implements Auditable
         $data = array();
         foreach($queries as $row){
             $data[] = array(
-                "label" => $row->title_kh.' ('.$row->title_en.')',
+                "label" => CommonService::localName($row, 'title'),
                 "value" => $row->id,
             );
         }

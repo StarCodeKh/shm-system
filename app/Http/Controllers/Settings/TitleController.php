@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Services\FormSchema;
 use App\Models\Settings\Title;
 use Illuminate\Http\Request;
 use Auth;
@@ -38,7 +39,9 @@ class TitleController extends Controller
             "limit" => config_limit,
             "total" => $this->dbTable::getTotal($filter),
             "data_fields" => $this->dbTable::dataFields(),
-            "form_attributes" => $this->dbTable::formAttributes()
+            "form_attributes" => FormSchema::fields($this->dbTable->getTable()),
+            "permissions" => CommonService::permission($this->dbTable),
+            "model_name" => $this->dbTable->getTable()
         );
         return response()->json($data);
     }

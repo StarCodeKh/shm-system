@@ -76,12 +76,12 @@ class OfficerPaymentController extends Controller
                 "account_id" => Account::getSingleOpt(),
             );
             $status = 200;
-            $boolen = true;
+            $data["is_display"] = true;
             $data["message"] = trans('common.msg_save_successfully');
             return response()->json($data, $status);
         }else{
             $status = 500;
-            $boolen = false;
+            $data["is_display"] = false;
             $data["message"] = trans('common.msg_no_permission_access');
             return response()->json($data, $status);
         }

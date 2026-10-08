@@ -38,48 +38,7 @@ export default {
                 limit: 10,
                 total: 3,
             },
-            formAttributes: [
-                {
-                    name: "name_en",
-                    type: "text",
-                    required: true
-                },
-                {
-                    name: "name_kh",
-                    type: "text",
-                    required: true
-                },
-                {
-                    name: "year",
-                    type: "select",
-                    required: true,
-                    options: [
-                        {
-                            "label": "2023",
-                            "value": "2023",
-                        },
-                        {
-                            "label": "2024",
-                            "value": "2024",
-                        },
-                    ],
-                },
-                {
-                    name: "start_date",
-                    type: "date",
-                    required: true
-                },
-                {
-                    name: "end_date",
-                    type: "date",
-                    required: true
-                },
-                {
-                    name: "is_default",
-                    type: "checkbox",
-                    required: false
-                }
-            ],
+            formAttributes: [], // from the server: built from the table's columns (app/Services/FormSchema.php)
             rowDisplay: "2grid", //1grid, 2grid, 3grid, 4grid
             dataFields: [],
             dataInfo: {},
@@ -123,10 +82,11 @@ export default {
                     .then((response) => {
                         if (response.data) {
                             this.data = response.data;
+                            if (response.data.form_attributes) this.formAttributes = response.data.form_attributes;
                         } else {
                             this.data = this.data;
                         }
-                        this.isVisible = response.data.is_display;
+                        this.isVisible = response.data.is_display !== false; // hidden only when the server says no access
                         this.$vs.loading.close();
                     }).catch((error) => {
                         this.$vs.notify({

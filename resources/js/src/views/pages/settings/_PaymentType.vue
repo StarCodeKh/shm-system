@@ -33,34 +33,7 @@ export default {
                 limit: 10,
                 total: 3,
             },
-            formAttributes: [
-                {
-                    name: "account_type_group_id",
-                    type: "select",
-                    required: true,
-                    options: []
-                },
-                {
-                    name: "name_en",
-                    type: "text",
-                    required: true
-                },
-                {
-                    name: "name_kh",
-                    type: "text",
-                    required: true
-                },
-                {
-                    name: "order_level",
-                    type: "number",
-                    required: false
-                },
-                {
-                    name: "description",
-                    type: "textarea",
-                    required: false
-                },
-            ],
+            formAttributes: [], // from the server: built from the table's columns (app/Services/FormSchema.php)
             rowDisplay: "2grid", //1grid, 2grid, 3grid, 4grid
             dataFields: [],
             dataInfo: {},

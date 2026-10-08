@@ -34,33 +34,7 @@ export default {
                 limit: 10,
                 total: 3,
             },
-            formAttributes: [
-                {
-                    name: "code",
-                    type: "text",
-                    required: true
-                },
-                {
-                    name: "name_en",
-                    type: "text",
-                    required: true
-                },
-                {
-                    name: "name_kh",
-                    type: "text",
-                    required: true
-                },
-                {
-                    name: "status",
-                    type: "select",
-                    required: true
-                },
-                {
-                    name: "order_level",
-                    type: "number",
-                    required: false
-                }
-            ],
+            formAttributes: [], // from the server: built from the table's columns (app/Services/FormSchema.php)
             rowDisplay: "2grid", //1grid, 2grid, 3grid, 4grid
             dataFields: [],
             dataInfo: {}
@@ -106,6 +80,7 @@ export default {
                     .then((response) => {
                         if (response.data) {
                             this.data = response.data;
+                            if (response.data.form_attributes) this.formAttributes = response.data.form_attributes;
                         } else {
                             this.data = this.data;
                         }
