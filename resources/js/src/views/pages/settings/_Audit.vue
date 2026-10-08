@@ -10,8 +10,29 @@
                 <button type="button" class="dt-btn dt-btn--icon" :title="$t('audit_refresh')" :disabled="loading" @click="load">
                     <feather-icon icon="RefreshCwIcon" svgClasses="h-4 w-4" :class="{ 'd-audit__spin': loading }" />
                 </button>
+                <button type="button" class="dt-btn dt-btn--icon d-audit__purge-btn" :title="$t('audit_purge')"
+                    :disabled="loading || purging || !total" @click="purge.open = true">
+                    <feather-icon icon="Trash2Icon" svgClasses="h-4 w-4" />
+                </button>
             </div>
         </div>
+
+        <!-- Clear old logs: pick an age, then confirm -->
+        <vs-prompt v-model:active="purge.open" type="confirm" color="danger" :title="$t('audit_purge')"
+            :accept-text="$t('dt_delete')" :cancel-text="$t('dt_cancel')" @accept="clearLogs">
+            <p class="d-audit__purge-text">{{ $t('audit_purge_text') }}</p>
+            <div class="d-audit__purge-options">
+                <button v-for="opt in purgeOptions" :key="opt.days" type="button" class="dt-chip"
+                    :class="{ 'is-active': purge.days === opt.days }" :style="{ '--tone': opt.days ? 'var(--vs-primary)' : '234, 84, 85' }"
+                    @click="purge.days = opt.days">
+                    {{ opt.label }}
+                </button>
+            </div>
+            <p class="d-audit__purge-warn">
+                <feather-icon icon="AlertTriangleIcon" svgClasses="h-4 w-4" />
+                <span>{{ purge.days ? $t('audit_purge_warn', { label: purgeLabel }) : $t('audit_purge_warn_all') }}</span>
+            </p>
+        </vs-prompt>
 
         <!-- Filters -->
         <div class="dt-filters">
@@ -198,6 +219,8 @@ export default {
             types: [],
             filters: { keyword: '', event: '', type: null, dates: '' },
             searchTimer: null,
+            purging: false,
+            purge: { open: false, days: 90 },
         }
     },
     computed: {
@@ -215,6 +238,14 @@ export default {
         eventFilters() {
             return [{ key: '', label: this.$t('audit_all'), color: 'var(--vs-primary)' }]
                 .concat(Object.keys(EVENTS).map(key => ({ key, label: this.$t('audit_event_' + key), color: EVENTS[key].color })))
+        },
+        purgeOptions() {
+            return [30, 90, 180, 365].map(days => ({ days, label: this.$t('audit_purge_' + days) }))
+                .concat({ days: 0, label: this.$t('audit_purge_all') })
+        },
+        purgeLabel() {
+            const opt = this.purgeOptions.find(o => o.days === this.purge.days)
+            return opt ? opt.label : ''
         },
         hasFilters() {
             const f = this.filters
@@ -281,6 +312,34 @@ export default {
         clearFilters() {
             this.filters = { keyword: '', event: '', type: null, dates: '' }
             this.search()
+        },
+        clearLogs() {
+            this.purging = true
+            return axios.post(this.api + '/clear', { days: this.purge.days })
+                .then(({ data }) => {
+                    this.$vs.notify({
+                        title: 'Message',
+                        text: this.$t('audit_purge_done', { n: this.number(data.deleted) }),
+                        iconPack: 'feather',
+                        icon: 'icon-check-circle',
+                        color: 'primary',
+                        position: 'top-right',
+                    })
+                    this.search()
+                })
+                .catch(() => {
+                    this.$vs.notify({
+                        title: 'Message',
+                        text: 'msg.action_failed',
+                        iconPack: 'feather',
+                        icon: 'icon-alert-circle',
+                        color: 'danger',
+                        position: 'top-right',
+                    })
+                })
+                .finally(() => {
+                    this.purging = false
+                })
         },
         toggle(id) {
             this.openId = this.openId === id ? null : id
@@ -369,6 +428,40 @@ export default {
     &__row.is-open &__caret {
         transform: rotate(180deg);
         color: rgb(var(--vs-primary));
+    }
+
+    &__purge-btn:hover:not(:disabled) {
+        color: rgb(234, 84, 85);
+        border-color: rgba(234, 84, 85, .5);
+    }
+
+    &__purge-text {
+        margin: 0 0 12px;
+        color: #5e6078;
+    }
+
+    &__purge-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    &__purge-warn {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin: 14px 0 0;
+        padding: 10px 12px;
+        font-size: .82rem;
+        color: rgb(234, 84, 85);
+        border-radius: 8px;
+        background: rgba(234, 84, 85, .08);
+
+        .feather-icon {
+            display: flex;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
     }
 
     &__spin svg {

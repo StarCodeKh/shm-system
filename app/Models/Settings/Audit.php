@@ -122,4 +122,35 @@ class Audit extends Model
         $total = $whereClause->count();
         return $total;
     }
+
+    // Delete log rows older than $days (0 = every row), in batches so a big table is never locked for long.
+    // Leaves one "cleared" row behind, so the clean-up itself stays on record.
+    public static function clearOlderThan(int $days, $request)
+    {
+        $before = $days > 0 ? now()->subDays($days) : null;
+        $deleted = 0;
+        do {
+            $query = Audit::query();
+            if ($before) {
+                $query->where("created_at", "<", $before);
+            }
+            $batch = $query->orderBy("id")->limit(5000)->delete();
+            $deleted += $batch;
+        } while ($batch > 0);
+
+        $user = $request->user();
+        Audit::create([
+            "user_type" => $user ? get_class($user) : null,
+            "user_id" => $user ? $user->id : null,
+            "event" => "cleared",
+            "auditable_type" => Audit::class,
+            "new_values" => json_encode(["older_than_days" => $days, "deleted" => $deleted]),
+            "url" => $request->fullUrl(),
+            "ip_address" => $request->ip(),
+            "user_agent" => $request->userAgent(),
+            "created_at" => now(),
+            "updated_at" => now(),
+        ]);
+        return $deleted;
+    }
 }

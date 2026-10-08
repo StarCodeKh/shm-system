@@ -48,6 +48,25 @@ class AuditController extends Controller
     }
 
     /**
+     * Clear old log rows: days = 30 / 90 / 180 / 365, or 0 for every row.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function clear(Request $request)
+    {
+        if (!CommonService::can('audit')) {
+            return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
+        }
+        $days = (int) $request->validate(['days' => 'required|integer|in:0,30,90,180,365'])['days'];
+        $deleted = $this->dbTable::clearOlderThan($days, $request);
+        return response()->json([
+            "success" => true,
+            "deleted" => $deleted,
+            "message" => trans('common.msg_delete_successfully'),
+        ]);
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response

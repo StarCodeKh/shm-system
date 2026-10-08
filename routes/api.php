@@ -263,6 +263,7 @@ Route::post('planning/search', [PlanningController::class, 'index']);
         Route::apiResource('planning', PlanningController::class);
 
 Route::post('audit/search', [AuditController::class, 'index']);
+        Route::post('audit/clear', [AuditController::class, 'clear']);
         Route::apiResource('audit', AuditController::class);
 
 Route::post('letter_type/search', [LetterTypeController::class, 'index']);
