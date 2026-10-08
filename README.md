@@ -7,333 +7,139 @@
 **Membership and finance management for**<br>
 **សមាគមសង្គហៈមិត្ត បុគ្គលិក មន្ត្រីរាជការ — ក្រសួងសេដ្ឋកិច្ចនិងហិរញ្ញវត្ថុ**
 
-<br>
-
-![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
-![PHP](https://img.shields.io/badge/PHP-8.3+-777BB4?style=for-the-badge&logo=php&logoColor=white)
-![Vue.js](https://img.shields.io/badge/Vue.js-3.5-4FC08D?style=for-the-badge&logo=vuedotjs&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
-![Firebase](https://img.shields.io/badge/Firebase-FCM-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
-
-[Features](#features) •
-[Getting started](#getting-started) •
-[Commands](#common-commands) •
-[Guides](#guides) •
-[Deployment](#deployment) •
-[Security](#security)
+![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?style=flat-square&logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.3+-777BB4?style=flat-square&logo=php&logoColor=white)
+![Vue.js](https://img.shields.io/badge/Vue.js-3.5-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?style=flat-square&logo=mysql&logoColor=white)
 
 </div>
 
----
-
 ## Features
 
-- **Members (សមាជិក)** — registration, documents, requests, import / export
+- **Members (សមាជិក)** — registration, documents, requests, Excel import / export
 - **Payments** — monthly payables, recurring payments, payment history
-- **Incentives (ប្រាក់ឧបត្ថម្ភ)** — incentive records and official letters / annexes to banks, GDNT and LM
-- **Finance** — income, expenses, chart of accounts, bank accounts
-- **Budget modules** — program management, budget arrangement (ceiling, PIP), budget monitoring
-- **Reports (របាយការណ៍)** — Khmer PDF reports with filters and download
+- **Incentives (ប្រាក់ឧបត្ថម្ភ)** — incentive records per member, entity and bank
+- **Finance** — income, expenses, chart of accounts
+- **Reports (របាយការណ៍)** — Khmer PDF reports with filters
 - **Notifications** — in-app and mobile push (Firebase Cloud Messaging)
-- **Mobile API** — login with OTP and dashboard endpoints under `/api/v1/mobile`
-- **Access control** — roles and permissions, audit log
-
-## Tech stack
-
-| Layer | Technology |
-|---|---|
-| Backend | PHP 8.3+, Laravel 13, Laravel Passport (API auth), Spatie Permission |
-| Frontend | Vue 3.5, Vue Router 5, Vuex 4, vue-i18n 11, Vite 8 (`laravel-vite-plugin`), Tailwind 3; Vuesax-style UI components in `resources/js/src/ui/` |
-| Database | MySQL (tables use the `tbl_` prefix) |
-| PDF / Excel | mPDF, Maatwebsite Excel |
-| Push | Firebase (kreait/laravel-firebase) |
+- **Mobile API** — OTP sign-in and dashboard under `/api/v1/mobile`
+- **Access** — three roles (Super Admin, Admin, Normal User), permissions per role, audit log
+- **Sidebar menu** — stored in the database, edited in *Administration › Menus*, filtered by permission
+- **File manager** — uploads stored on Laravel's `public` disk, with rename, caption and delete
+- **Khmer and English** — every screen, switchable at any time
 
 ## Requirements
 
-- PHP 8.3 or newer, with `mbstring`, `gd`, `zip`, `pdo_mysql`, `xml`, `curl`, `fileinfo` (upload checks), `openssl`
-- Composer 2
-- MySQL 8 (or MariaDB 10.6+)
-- Node.js 20+ and npm (on a server only to build the frontend)
+- PHP 8.3+ with `mbstring`, `gd`, `zip`, `pdo_mysql`, `xml`, `curl`, `fileinfo`, `openssl`
+- Composer 2, Node.js 20+ and npm
+- MySQL 8 (or MariaDB 10.6+), `utf8mb4`
 
 ## Getting started
 
 ```bash
-git clone https://github.com/StarCodeKh/shm-system.git
-cd shm-system
-
-composer install
-npm install
-
-cp .env.example .env
+git clone https://github.com/StarCodeKh/shm-system.git && cd shm-system
+composer install && npm install
+cp .env.example .env               # set DB_* (database must exist), SEED_USER_PASSWORD
 php artisan key:generate
 php artisan passport:keys
+php artisan migrate --seed         # schema + settings, permissions, roles, menu, first users
+php artisan storage:link           # serves uploaded files at /storage/...
 ```
 
-1. **Database** — create a database (default name `shm_system_db`), set the `DB_*` values in `.env`, then import the latest SQL dump from the team. Migrations only cover part of the schema, so start from a dump.
-2. **Firebase** — put the service account JSON in the project root as `service-account-key.json`, and a copy in `storage/firebase/firebase_credentials.json`. Fill in the `FIREBASE_*` and `FCM_*` values in `.env`.
-3. **Run** — in two terminals:
+Run it in two terminals: `php artisan serve` (http://127.0.0.1:8000) and `npm run dev`.
 
-```bash
-php artisan serve      # http://127.0.0.1:8000
-npm run dev            # Vite dev server: changes show instantly
-```
+On a new install (empty users table) the seeders create one user per role: `superadmin@system.com`, `admin@system.com`, `user@system.com`.
+Their password is `SEED_USER_PASSWORD`; outside production it defaults to `Password@123`. Change it after the first sign-in.
 
-> **"Vite manifest not found"** means the frontend was never built and `npm run dev` is not running. Start `npm run dev`, or run `npm run build` once.
-
-> Secrets (`.env`, `service-account-key.json`, `storage/firebase/`, `storage/oauth-*.key`) are git-ignored. Never commit them.
+> **"Vite manifest not found"** — start `npm run dev`, or run `npm run build` once.
+> Secrets (`.env`, `service-account-key.json`, `storage/firebase/`, `storage/oauth-*.key`) are git-ignored; never commit them.
 
 ## Common commands
 
 | Command | Purpose |
 |---|---|
-| `npm run dev` | Vite dev server with hot reload (local only) |
-| `npm run build` | Production build into `public/build/` |
-| `npm run watch` | Rebuild `public/build/` on every change |
-| `php artisan route:list --except-vendor` | List API routes |
+| `npm run dev` / `npm run build` | Vite dev server / production build into `public/build/` |
+| `php artisan migrate --seed` | Create or update the schema and fill in missing defaults (safe to repeat) |
+| `php artisan db:seed` | Add missing settings, permissions, roles and menu items only; never overwrites edits |
+| `php artisan db:transfer-legacy <old_db>` | Copy an old database into a new, migrated one (see [Upgrading](#upgrading-an-old-database)) |
 | `php artisan optimize:clear` | Clear config, route and view caches |
 | `php artisan schedule:work` | Run the scheduler locally |
 
-## Scheduled jobs
-
-Defined in `app/Console/Kernel.php`:
-
-| Command | When |
-|---|---|
-| `payables:generate` | 1st of each month, 01:00 — creates monthly payables |
-| `payments:dispatch` | Hourly, 02:00–23:00 — queues pending payments |
-| `queue:work --queue=payments,default` | Every minute — processes queued jobs |
-
-On a server these run from one cron entry, see [Deployment › Scheduler](#6-scheduler).
+Scheduled jobs (`app/Console/Kernel.php`): `payables:generate` on the 1st of each month at 01:00, `payments:dispatch` hourly, and the queue worker every minute.
 
 ## Project structure
 
 ```
-app/
-  Http/Controllers/     API controllers (Settings/, Modules/ for budget modules)
-  Models/               Eloquent models
-  Console/Commands/     Scheduled commands
-config/pdf.php          PDF font settings
-resources/
-  assets/fonts/         All fonts (self-hosted, no CDN)
-  js/src/               Vue app — router.js, apiConfig.js, views/pages/
-  sass/vuexy/_fonts.scss  Font declarations and CSS variables
-  views/reports/        PDF report templates
-routes/
-  api.php               API routes (/api/auth, /api/v1, /api/v1/mobile)
-  web.php               Single-page app entry
+app/Http/Controllers/        API controllers (Settings/ for setup screens)
+app/Models/                  Eloquent models
+app/Console/Commands/        Scheduled commands, db:transfer-legacy
+database/migrations/         The schema (one file per table)
+database/seeders/            Defaults; data/*.php holds settings, permissions, roles, menu
+resources/js/src/            Vue app: router.js, apiConfig.js, views/pages/, i18n/
+resources/views/reports/     PDF report templates
+routes/api.php               /api/auth, /api/v1, /api/v1/mobile
 ```
 
-## Guides
-
-### Fonts
-
-All fonts are local in `resources/assets/fonts` and declared once in `resources/sass/vuexy/_fonts.scss`. Use the CSS variables instead of font names:
-
-```css
-font-family: var(--font-base);      /* UI — Kantumruy Pro */
-font-family: var(--font-document);  /* letters — Khmer OS Battambang */
-```
-
-Other variables: `--font-heading`, `--font-mef1`, `--font-mef2`, `--font-fk1`, `--font-fk2`, `--font-mono`. PDF fonts are set in `config/pdf.php`.
-
-### Adding a PDF report
-
-Add an entry to `reports()` in `app/Http/Controllers/ReportController.php` (title, icon, color, columns, query). It then appears on the **/report** page and is served at `POST /api/v1/report/{key}`. No new route or template is needed.
+Code style: 4-space indents, UTF-8, no trailing spaces (`.editorconfig`). Each file keeps its own line endings (CRLF or LF).
 
 ## Deployment
 
-Server setup for **UAT** and **production (PRD)**. Both use the same steps; only `.env` differs.
+Same steps for UAT and production; only `.env` differs. The web root is `public/`, served over HTTPS.
 
-### 1. Server
-
-| Item | Value |
-|---|---|
-| OS user | one deploy user owns the code; the web server user (e.g. `www-data`) only needs write access to the folders in step 4 |
-| PHP | 8.3+ with the extensions listed under [Requirements](#requirements); `upload_max_filesize` and `post_max_size` at least `20M` (largest upload) |
-| Database | MySQL 8 / MariaDB 10.6+, `utf8mb4`; a database user with rights on this database only |
-| Web server | Apache 2.4 (`mod_rewrite`, `mod_headers`) or nginx; document root is `public/` |
-| HTTPS | required on UAT and PRD |
-| Time zone | `Asia/Phnom_Penh` (server and `APP_TIMEZONE`) |
-
-### 2. First install
+**First install**
 
 ```bash
-git clone https://github.com/StarCodeKh/shm-system.git
-cd shm-system
-cp .env.example .env               # then fill it in, see step 3
+cp .env.example .env               # APP_ENV, APP_DEBUG=false, APP_URL=https://..., DB_*, FIREBASE_*, SEED_USER_PASSWORD
 composer install --no-dev --optimize-autoloader
-php artisan key:generate           # first install only: a new key logs everyone out and breaks encrypted data
+php artisan key:generate           # first install only
 npm ci && npm run build
-php artisan migrate --force
+php artisan migrate --seed --force
+php artisan storage:link
 php artisan optimize
 ```
 
-Copy these by hand (never in git): `service-account-key.json`, `storage/firebase/firebase_credentials.json`, and the Passport keys `storage/oauth-private.key` / `storage/oauth-public.key`. Keep the same Passport keys on a server across deploys; new keys sign out every user. Restrict the key files: `chmod 600 storage/oauth-*.key service-account-key.json`.
+Copy by hand, never through git: `service-account-key.json`, `storage/firebase/firebase_credentials.json` and the Passport keys `storage/oauth-*.key` (keep the same keys across deploys, or every user is signed out).
+The web server user needs write access to `storage/` and `bootstrap/cache/` only.
+Cron: `* * * * * cd /path/to/shm-system && php artisan schedule:run >> /dev/null 2>&1`
 
-### 3. `.env` per server
-
-Start from the UAT / production block in `.env.example`:
-
-| Key | UAT | PRD |
-|---|---|---|
-| `APP_ENV` | `uat` | `production` |
-| `APP_DEBUG` | `false` | `false` |
-| `APP_URL` | `https://<uat-domain>` | `https://<prd-domain>` |
-| `LOG_STACK` | `daily` | `daily` |
-| `LOG_LEVEL` | `info` | `warning` |
-| `LOG_DAILY_DAYS` | `14` | `30` |
-| `AUTH_TOKEN_HOURS` | `24` | `24` |
-| `AUTH_TOKEN_REMEMBER_DAYS` | `30` | `30` |
-| `OTP_EXPOSE_CODE` | `true` (until SMS is connected) | `false` |
-| `CORS_ALLOWED_ORIGINS` | empty | empty, unless another site must call the API |
-| `DB_*` | UAT database | PRD database |
-| `SERVICE_ACCOUNT_KEY_PATH`, `FCM_*`, `FIREBASE_*` | Firebase project for UAT | Firebase project for PRD |
-| `QUEUE_CONNECTION` | `sync` | `sync` |
-
-- `APP_DEBUG=true` on a server shows code, settings and SQL to anyone who triggers an error.
-- After any change to `.env`: `php artisan optimize` (config is cached).
-- `QUEUE_CONNECTION=sync` runs jobs straight away. To run them in the background instead, create the jobs table first (`php artisan make:queue-table && php artisan migrate`) and set `database`; the scheduler then works the queue every minute.
-
-### 4. Folder permissions
+**Each deploy**
 
 ```bash
-sudo chown -R deploy:www-data storage bootstrap/cache public/upload public/images/uploads
-sudo chmod -R ug+rwX storage bootstrap/cache public/upload public/images/uploads
-```
-
-Everything else stays read-only for the web server.
-
-### 5. Web server
-
-**Apache**: point the virtual host at `public/` with `AllowOverride All`. `public/.htaccess` already routes requests to Laravel, refuses scripts in the upload folders and adds the security headers to static files. (IIS: `public/web.config` does the same.)
-
-**nginx**: `.htaccess` is not read, so add the same rules:
-
-```nginx
-server {
-    listen 443 ssl http2;
-    server_name <domain>;
-    root /var/www/shm-system/public;
-    index index.php;
-    client_max_body_size 20M;
-
-    add_header X-Content-Type-Options "nosniff" always;
-    add_header X-Frame-Options "SAMEORIGIN" always;
-    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-
-    # User files are served as plain files, never run
-    location ~* ^/(images/uploads|upload)/.*\.(php[0-9]?|phtml|phar|pl|py|cgi|sh)$ { return 403; }
-
-    location / { try_files $uri $uri/ /index.php?$query_string; }
-
-    location ~ \.php$ {
-        include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
-        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
-    }
-
-    location ~ /\.(?!well-known) { deny all; }
-}
-
-server { listen 80; server_name <domain>; return 301 https://$host$request_uri; }
-```
-
-### 6. Scheduler
-
-One cron entry for the deploy user runs every job listed under [Scheduled jobs](#scheduled-jobs):
-
-```cron
-* * * * * cd /var/www/shm-system && php artisan schedule:run >> /dev/null 2>&1
-```
-
-### 7. Each deploy
-
-```bash
-php artisan down                   # maintenance page while updating
+php artisan down
 git pull
 composer install --no-dev --optimize-autoloader
-npm ci && npm run build            # writes public/build/ (not in git)
-php artisan migrate --force
-php artisan optimize               # caches config, routes, events, views
-php artisan queue:restart
+npm ci && npm run build
+php artisan migrate --force && php artisan db:seed --force
+php artisan optimize && php artisan queue:restart
 php artisan up
 ```
 
-- `npm run build` leaves `console.log` / `debug` / `info` out of the bundle; `console.error` / `console.warn` stay.
-- Never upload `node_modules/`, `public/hot` (it exists only while `npm run dev` runs and makes Laravel load the dev server), a local `.env` or `storage/logs/*`.
-- Back up the database and `public/upload/` + `public/images/uploads/` before a deploy that runs migrations.
-- Roll back: check out the previous commit or tag, run the same steps (without `migrate`), and restore the database backup if a migration changed data.
+Back up the database and `storage/app/public/` first. After any `.env` change run `php artisan optimize`.
 
-### 8. Logs
+**nginx** does not read `public/.htaccess`: route requests to `index.php` (`try_files $uri $uri/ /index.php?$query_string;`), set `client_max_body_size 20M`, and refuse scripts in `storage/uploads`, `images/uploads` and `upload`.
 
-- Laravel writes to `storage/logs/`. With `LOG_STACK=daily` there is one file per day (`laravel-YYYY-MM-DD.log`); files older than `LOG_DAILY_DAYS` are deleted automatically.
-- To empty them by hand: `rm storage/logs/*.log` (keep the folder writable).
-- Code never prints debug output into responses (`echo`, `print_r`, `dd`, `dump`); use `Log::info()` / `Log::error()`, and never log tokens or passwords.
+## Upgrading an old database
 
-### 9. Check after deploying
+Build a clean database from the migrations, then copy the old data in. The old database is only read.
 
 ```bash
-php artisan about                  # environment, debug off, caches on, log driver
-php artisan route:list --path=api | head
-curl -sI https://<domain>/pages/login | grep -iE "x-frame-options|strict-transport|x-content-type"
+mysqldump <old_db> > backup.sql
+DB_DATABASE=<new_db> php artisan migrate --force
+DB_DATABASE=<new_db> php artisan db:transfer-legacy <old_db>
 ```
 
-Then sign in, open one list page and one report. If a `.env` or config change does not show, run `php artisan optimize:clear && php artisan optimize`.
+The transfer creates the standard roles and permissions, gives each user one of the three roles, leaves out the removed budget module and unused tables, and stops with `FAIL` / `CHECK` instead of cutting data. Then point `DB_DATABASE` at the new database and run `php artisan optimize`.
 
 ## Security
 
-Reviewed and fixed on 2026-10-07. Keep this section current: move an item to **In place** when it is done.
+- Every API route needs a token except sign-in; sign-in is limited to 10 attempts a minute, the API to 60 requests.
+- Writes check the role's permission (`EnforceModulePermission`); requests cannot set `id`, timestamps or audit columns.
+- Uploads: images, PDF, Word, Excel and CSV only (checked by content, max 20 MB), named by the server, never executed.
+- Tokens expire (`AUTH_TOKEN_HOURS`, `AUTH_TOKEN_REMEMBER_DAYS`); CORS allows `APP_URL` and `CORS_ALLOWED_ORIGINS` only; security headers on every response.
 
-**In place**
-
-- Secrets stay out of git: `.env`, `service-account-key.json`, `storage/firebase/`, Passport keys (`storage/oauth-*.key`)
-- Every API route needs a token (`auth:api`) except the four sign-in endpoints under `/api/auth/*`
-- Rate limits: sign-in 10 attempts a minute, the rest of the API 60 requests a minute
-- Permissions: create / update / delete on resource routes check the controller's permission (`EnforceModulePermission`); setting a member's login, member import and income import check theirs too
-- Requests cannot set `id`, timestamps or the audit columns `created_by` / `modified_by`; a member's link to a login account (`officer.user_id`) changes only through the permission-checked endpoint
-- Sign-in tokens expire: 24 hours on the web, 30 days with "remember me" and on the mobile app (`AUTH_TOKEN_HOURS`, `AUTH_TOKEN_REMEMBER_DAYS`)
-- Mobile OTP: 6 random digits from a secure generator, single use, expires per `config_otp_expire`; the user's password is never changed; the request answers the same for unknown numbers; the code is only returned when `OTP_EXPOSE_CODE=true` (test servers)
-- Uploads: only images, PDF, Word, Excel and CSV (checked by content, max 20 MB; imports max 10 MB); the server picks the file name; the web server refuses to run scripts in `public/images/uploads/` and `public/upload/` (`public/.htaccess`, `public/web.config`)
-- CORS: only `APP_URL` and `CORS_ALLOWED_ORIGINS`, without credentials
-- Security headers on every response: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, a Content-Security-Policy for framing / plugins / forms, and HSTS over HTTPS
-- SQL: report queries pass values as bound parameters
-- No debug output in responses; logs never contain tokens or passwords; production bundles leave out `console.log`
-- `composer audit`: no known advisories. `npm audit`: nothing in the browser bundle (see below)
-
-**Open**
-
-| Severity | Issue | Where | What is needed |
-|---|---|---|---|
-| High | Mobile OTP codes are not delivered by SMS; on production (`OTP_EXPOSE_CODE=false`) mobile OTP sign-in cannot complete | `OTPService::sentOTP` | Connect an SMS provider and send the code there |
-| High | The admin password that was in the sign-in form (`LoginJWT.vue`, in git history) is still the live password | user `admin@admin.com` | Change it on every server |
-| Medium | Old keys are still in git history (Firebase demo config, a Google Maps key) | git history | Revoke / rotate those keys in their consoles |
-| Low | Most models accept any column the form sends (only id, timestamps, audit columns and `officer.user_id` are blocked) | models with `$guarded = []`, controllers' `dataForm()` | List the allowed columns per model (`$fillable`) |
-| Low | The Content-Security-Policy does not restrict scripts | `SecurityHeaders` | Add nonces to the inline `<script>` blocks in `application.blade.php`, then a `script-src` rule |
-| Info | `npm audit`: 7 build-time advisories in Tailwind CSS 3 tooling (`braces`, `chokidar`, `fast-glob`, `micromatch`, `postcss-nested`); none reach the browser | `package.json` | Upgrade to Tailwind 4 when convenient |
-
-**Fixed on 2026-10-07**
-
-- Any signed-in account could set another user's password (`update_officer_user`): now needs the member update permission and only touches that member's own login
-- Mobile OTP code was returned in every response, and a successful OTP replaced the user's password
-- Uploaded files kept their own name and extension under `public/` (a script could be uploaded and run)
-- Member and income spreadsheet imports had no permission or file-type check
-- The sign-in form was pre-filled with an admin email and password (now only with `npm run dev`)
-- The push service printed the Firebase access token into API responses; a test sender with a hard-coded device token was removed
-- CORS allowed every origin with credentials
-- Tokens lasted 1 year and "remember me" did not change the real expiry
-- No security headers
-- Report SQL built by joining strings (one query also never matched; another ignored its entity filter)
-- The OTP request told whether a phone number has an account
-- `npm audit` went from 169 issues (6 critical) to 7 build-time ones: removed 21 unused Vue 2 / Laravel Mix packages, upgraded `axios` to 1.x and SheetJS (`xlsx`) to 0.20.3
-
-**Before going live**
-
-- `.env`: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL` with `https://`, `LOG_STACK=daily`, `OTP_EXPOSE_CODE=false`, `CORS_ALLOWED_ORIGINS` only if another site must call the API (see [Deployment](#deployment))
-- Serve over HTTPS only
-- Change the admin password; rotate the keys listed under **Open**
-- On nginx, use the server block in [Deployment › Web server](#5-web-server)
+Before going live: `APP_DEBUG=false`, `OTP_EXPOSE_CODE=false`, HTTPS only, and change the seeded passwords.
+Still open: mobile OTP codes are not sent by SMS yet (`OTPService`), and old keys in git history (Firebase demo config, a Google Maps key) should be rotated.
 
 ## License
 

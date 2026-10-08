@@ -6,7 +6,7 @@
     RewriteEngine On
 
     # Never run scripts from the upload folders (user files are served as plain files only)
-    RewriteRule ^(images/uploads|upload)/.*\.(php[0-9]?|phtml|phar|pl|py|cgi|sh|asp|aspx|jsp)$ - [F,L,NC]
+    RewriteRule ^(storage/uploads|images/uploads|upload)/.*\.(php[0-9]?|phtml|phar|pl|py|cgi|sh|asp|aspx|jsp)$ - [F,L,NC]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
