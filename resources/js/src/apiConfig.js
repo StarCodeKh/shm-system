@@ -1,5 +1,6 @@
 export default {
     _apiConfiguration: "/api/v1/configuration",
+    _apiSite: "/api/v1/site", // public branding: name, organisation, website (site.js)
     _apiPlanningYear: "/api/v1/configuration/planning",
     // Program Management
     // Notification

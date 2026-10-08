@@ -332,6 +332,7 @@
 <script>
 import { gridClass } from "@/formGrid.js";
 import axios from "@/axios.js"
+import { loadSite } from "@/site.js"
 import vSelect from 'vue-select';
 import apiConfig from "@/apiConfig.js"
 import DFileManager from '@/views/form-builder/DFileManager.vue';
@@ -849,6 +850,7 @@ this.$vs.notify({
                                     color: 'primary',
                                     position: 'top-right'
                                 })
+                                loadSite(true) // the footer shows the new name / organisation right away
                                 this.$emit('clickForm', '');
                             }
                         }).catch((error) => {

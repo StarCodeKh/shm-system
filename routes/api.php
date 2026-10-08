@@ -27,6 +27,8 @@ use App\Http\Controllers\Settings\AccountTypeController;
 use App\Http\Controllers\Settings\AccountTypeGroupController;
 use App\Http\Controllers\Settings\AuditController;
 use App\Http\Controllers\PrintController;
+use App\Http\Controllers\SiteController;
+use App\Http\Controllers\ImportController;
 use App\Http\Controllers\Settings\BankController;
 use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\CurrencyExchangeController;
@@ -52,6 +54,9 @@ use Illuminate\Support\Facades\Route;
 | API Routes
 |--------------------------------------------------------------------------
 */
+
+// Public branding (name, organisation, website, footer) for the footer and sign-in page: no secrets
+Route::get('v1/site', [SiteController::class, 'show'])->middleware(['cors', 'throttle:60,1']);
 
 // Authentication
 Route::prefix('auth')->group(function () {
@@ -318,6 +323,10 @@ Route::post('letter_type/search', [LetterTypeController::class, 'index']);
         Route::post('{type}/excel', 'excel')->where('type', '[a-z_]+');
         Route::post('{type}', 'generate')->where('type', '[a-z_]+');
     });
+
+    // Import: check a file before importing it, and an empty template with the right headings
+    Route::post('import/preview', [ImportController::class, 'preview']);
+    Route::get('import/template', [ImportController::class, 'template']);
 
     // Print button of list pages: the rows on screen as the standard PDF document
     Route::post('print', [PrintController::class, 'table']);

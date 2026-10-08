@@ -21,7 +21,7 @@
                     <!-- Logo -->
                     <router-link to="/" class="nav-brand__link" :title="title">
                         <span class="nav-brand__logo">
-                            <logo />
+                            <logo :src="logo" :alt="title" />
                         </span>
                         <span class="nav-brand__text" v-show="isMouseEnter || !reduce">
                             <span class="nav-brand__title" v-if="title">{{ title }}</span>

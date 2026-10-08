@@ -8,12 +8,15 @@
 
 import jwt         from "@/http/requests/auth/jwt/index.js"
 
-const APP_NAME = 'SHM-System'
+import { site } from "@/site.js"
+
+const APP_NAME = 'SHM-System' // until Settings › General has a name (site.js)
 
 export default {
     data() {
         return {
             vueAppClasses: [],
+            site,
             titleOverride: null, // set by pages whose title is only known after loading (e.g. reports)
         }
     },
@@ -25,7 +28,8 @@ export default {
             const last = crumbs.length ? crumbs[crumbs.length - 1].title : null
             const title = this.titleOverride || meta.title || meta.pageTitle || last
             // Depend on the locale so the title is re-translated when the language changes
-            return title && this.$i18n.locale ? `${this.$tt(title)} | ${APP_NAME}` : APP_NAME
+            const name = this.site.name || APP_NAME
+            return title && this.$i18n.locale ? `${this.$tt(title)} | ${name}` : name
         }
     },
     watch: {

@@ -1,8 +1,10 @@
 <template>
     <div class="layout--main" :class="[layoutTypeClass, navbarClasses, footerClasses, {'no-scroll': isAppPage}]">
 
+        <!-- Name and logo from Settings › General (site.js) -->
         <v-nav-menu
-            title         = "SHM-System"
+            :title        = "site.name || $t('brand_name_fallback')"
+            :logo         = "site.logo"
             parent        = ".layout--main" />
 
         <div id="content-area" :class="[contentAreaClass, {'show-overlay': bodyOverlay}]">
@@ -61,6 +63,7 @@
 import TheNavbarVertical   from '@/layouts/components/navbar/TheNavbarVertical.vue'
 import TheFooter           from '@/layouts/components/TheFooter.vue'
 import themeConfig         from '@/../themeConfig.js'
+import { site, loadSite }  from '@/site.js'
 import VNavMenu            from '@/layouts/components/vertical-nav-menu/VerticalNavMenu.vue'
 
 export default {
@@ -71,6 +74,7 @@ export default {
     },
     data() {
         return {
+            site,
             footerType        : themeConfig.footerType  || 'static',
             isNavbarDark      : false,
             navbarColor       : themeConfig.navbarColor || '#fff',
@@ -129,6 +133,7 @@ export default {
         },
     },
     created() {
+        loadSite()
         const color = this.navbarColor == "#fff" && this.isThemeDark ? "#10163a" : this.navbarColor
         this.updateNavbarColor(color)
         // Below 1200px the side menu starts closed and opens over the page
