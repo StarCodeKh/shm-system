@@ -16,6 +16,33 @@ class CurrencyExchange extends Model implements Auditable
     protected $guarded = [];
     public $timestamps = true;
 
+    // Used only when no USD -> KHR rate has been entered yet
+    public const DEFAULT_USD_KHR = 4000;
+
+    private static array $rates = [];
+
+    /**
+     * Latest rate to turn one $from into $to (by issue date), e.g. CurrencyExchange::rate() = riel per dollar.
+     * A rate entered the other way round is inverted. Without any rate: DEFAULT_USD_KHR (or its inverse), else 1.
+     */
+    public static function rate(string $from = Currency::USD, string $to = Currency::KHR): float
+    {
+        $from = strtoupper($from);
+        $to = strtoupper($to);
+        if ($from === $to) return 1.0;
+        return self::$rates["$from>$to"] ??= (function () use ($from, $to) {
+            $fromId = Currency::idOf($from);
+            $toId = Currency::idOf($to);
+            $latest = fn ($a, $b) => (float) self::query()->whereNotDeleted()->where('from_currency', $a)->where('to_currency', $b)
+                ->where('exchange_rate', '>', 0)->orderByDesc('issue_date')->orderByDesc('id')->value('exchange_rate');
+            if ($rate = $latest($fromId, $toId)) return $rate;
+            if ($rate = $latest($toId, $fromId)) return 1 / $rate;
+            if ($from === Currency::USD && $to === Currency::KHR) return (float) self::DEFAULT_USD_KHR;
+            if ($from === Currency::KHR && $to === Currency::USD) return 1 / self::DEFAULT_USD_KHR;
+            return 1.0;
+        })();
+    }
+
     public function paymentType()
     {
         return $this->hasMany(PaymentType::class);

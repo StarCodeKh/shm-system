@@ -146,7 +146,7 @@ class OfficerRequestController extends Controller
                             );
                         }
                         // Message to push
-                        $currencyCode = $table['currency_id'] == "1" ? "KHR": "USD";
+                        $currencyCode = Currency::codeOf($table['currency_id']) ?? Currency::KHR;
                         $amount = number_format($table['amount'], 2);
                         $title = "Your request has been approved";
                         $body = "Request for funding for academic members include the amount: " . $amount . " " . $currencyCode;
@@ -253,7 +253,7 @@ class OfficerRequestController extends Controller
                     if(!$checkExistRequest){
                         $result = DB::table("officer_incentive")->insert($incentiveData);
                     }
-                    $currencyCode = $table['currency_id'] == "1" ? "KHR": "USD";
+                    $currencyCode = Currency::codeOf($table['currency_id']) ?? Currency::KHR;
                     $amount = number_format($table['amount'], 2);
                     $getOfficer = Officer::where("id", $id)->first();
 

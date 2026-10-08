@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             PassportClientSeeder::class,
             MenuSeeder::class,
+            CurrencySeeder::class,
             OfficerLookupSeeder::class,
             UserSeeder::class,
         ]);

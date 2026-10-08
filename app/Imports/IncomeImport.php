@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Income;
+use App\Models\Settings\CurrencyExchange;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use DB;
@@ -91,7 +92,7 @@ class IncomeImport implements ToModel,WithHeadingRow
                     "title" => "របាយការណ៍ចំណូលរង្វាន់លើកទឹកចិត្ត ១% របស់ ".$row["entity"]."",
                     "issue_date" => $issue_date,
                     "amount" => (float)$row["month_".$i.""],
-                    "exchange_rate" => '4000',//$row["exchange_rate"],
+                    "exchange_rate" => CurrencyExchange::rate(),
                     "entity" => $row["entity"],
                     "entity_id" => $entity_id,
                     "currency" => "រៀល",

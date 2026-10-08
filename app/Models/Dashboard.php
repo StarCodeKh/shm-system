@@ -3,6 +3,8 @@
 namespace App\Models;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Settings\Currency;
+use App\Models\Settings\CurrencyExchange;
 use DB;
 class Dashboard extends Model implements Auditable
 {
@@ -51,8 +53,8 @@ class Dashboard extends Model implements Auditable
             }
             $result = DB::select("
             SELECT 
-                SUM(CASE WHEN currency_id = 1 THEN amount ELSE 0 END) AS total_in_khr,
-                SUM(CASE WHEN currency_id = 2 THEN amount ELSE 0 END) AS total_in_usd
+                SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS total_in_khr,
+                SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS total_in_usd
             FROM (
                 SELECT amount, currency_id AS currency_id FROM tbl_expense
                 WHERE issue_date BETWEEN ? AND ?
@@ -99,8 +101,8 @@ class Dashboard extends Model implements Auditable
             }
             $result = DB::select("
             SELECT 
-                SUM(CASE WHEN currency_id = 1 THEN amount ELSE 0 END) AS total_in_khr,
-                SUM(CASE WHEN currency_id = 2 THEN amount ELSE 0 END) AS total_in_usd
+                SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS total_in_khr,
+                SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS total_in_usd
             FROM (
                 SELECT amount, currency_id as currency_id FROM tbl_income
                 WHERE issue_date BETWEEN ? AND ?
@@ -140,8 +142,8 @@ class Dashboard extends Model implements Auditable
             (
                 -- income totals by currency
                 SELECT
-                    SUM(CASE WHEN currency_id = 1 THEN amount ELSE 0 END) AS khr,
-                    SUM(CASE WHEN currency_id = 2 THEN amount ELSE 0 END) AS usd
+                    SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS khr,
+                    SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS usd
                 FROM (
                     SELECT amount, currency_id FROM tbl_income
                     WHERE issue_date BETWEEN ? AND ?
@@ -156,8 +158,8 @@ class Dashboard extends Model implements Auditable
             (
                 -- expense totals by currency
                 SELECT
-                    SUM(CASE WHEN currency_id = 1 THEN amount ELSE 0 END) AS khr,
-                    SUM(CASE WHEN currency_id = 2 THEN amount ELSE 0 END) AS usd
+                    SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS khr,
+                    SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS usd
                 FROM (
                     SELECT amount, currency_id FROM tbl_expense
                     WHERE issue_date BETWEEN ? AND ?
@@ -193,14 +195,14 @@ class Dashboard extends Model implements Auditable
                 -- Total KHR
                 SUM(
                     CASE
-                        WHEN A.currency_id = 1 THEN A.amount
+                        WHEN A.currency_id = ".Currency::idOf(Currency::KHR)." THEN A.amount
                         ELSE 0
                     END
                 ) AS total_amount_khr,
                 -- Total USD
                 SUM(
                     CASE
-                        WHEN A.currency_id = 2 THEN A.amount
+                        WHEN A.currency_id = ".Currency::idOf(Currency::USD)." THEN A.amount
                         ELSE 0
                     END
                 ) AS total_amount_usd
@@ -263,11 +265,11 @@ public static function getQuarterlyIncomeExpense($year = null, $quarter = null)
                     QUARTER(created_at) AS quarter,
                     YEAR(created_at) AS year,
                     -- Income separated by currency
-                    CASE WHEN src = 'income' AND currency_id = 1 THEN amount ELSE 0 END AS income_khr,
-                    CASE WHEN src = 'income' AND currency_id = 2 THEN amount ELSE 0 END AS income_usd,
+                    CASE WHEN src = 'income' AND currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END AS income_khr,
+                    CASE WHEN src = 'income' AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END AS income_usd,
                     -- Expense separated by currency
-                    CASE WHEN src = 'expense' AND currency_id = 1 THEN amount ELSE 0 END AS expense_khr,
-                    CASE WHEN src = 'expense' AND currency_id = 2 THEN amount ELSE 0 END AS expense_usd
+                    CASE WHEN src = 'expense' AND currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END AS expense_khr,
+                    CASE WHEN src = 'expense' AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END AS expense_usd
                 FROM (
                     -- Combine all data
                     SELECT amount, currency_id AS currency_id, created_at, 'income' AS src FROM tbl_income
@@ -319,13 +321,13 @@ public static function getQuarterlyIncomeExpense($year = null, $quarter = null)
                     QUARTER(created_at) AS quarter,
                     YEAR(created_at) AS year,
                     CASE
-                        WHEN src = 'income' AND currency_id = 1 THEN amount
-                        WHEN src = 'income' AND currency_id = 2 THEN amount * 4000
+                        WHEN src = 'income' AND currency_id = ".Currency::idOf(Currency::KHR)." THEN amount
+                        WHEN src = 'income' AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount * ".CurrencyExchange::rate()."
                         ELSE 0
                     END AS income_khr,
                     CASE
-                        WHEN src = 'expense' AND currency_id = 1 THEN amount
-                        WHEN src = 'expense' AND currency_id = 2 THEN amount * 4000
+                        WHEN src = 'expense' AND currency_id = ".Currency::idOf(Currency::KHR)." THEN amount
+                        WHEN src = 'expense' AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount * ".CurrencyExchange::rate()."
                         ELSE 0
                     END AS expense_khr
                 FROM (
@@ -371,16 +373,16 @@ public static function getOfficerPaymentSummary()
             SELECT 
                 officer_id,
                 MAX(CASE WHEN status = 19 THEN 1 ELSE 0 END) AS has_paid,
-                SUM(CASE WHEN currency_id = 1 THEN amount ELSE 0 END) AS paid_khr,
-                SUM(CASE WHEN currency_id = 2 THEN amount ELSE 0 END) AS paid_usd
+                SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS paid_khr,
+                SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS paid_usd
             FROM tbl_officer_payment
             GROUP BY officer_id
         ),
         payables AS (
             SELECT
                 officer_id,
-                SUM(CASE WHEN status = 15 AND currency_id = 1 THEN amount ELSE 0 END) AS unpaid_khr,
-                SUM(CASE WHEN status = 15 AND currency_id = 2 THEN amount ELSE 0 END) AS unpaid_usd,
+                SUM(CASE WHEN status = 15 AND currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS unpaid_khr,
+                SUM(CASE WHEN status = 15 AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS unpaid_usd,
                 MAX(payment_term) AS payment_term
             FROM tbl_officer_payable
             GROUP BY officer_id
@@ -441,8 +443,8 @@ public static function getOfficerPaymentSummary()
 
             return collect(DB::select("
                 SELECT DATE_FORMAT(issue_date, '%Y-%m') AS month,
-                    SUM(CASE WHEN currency_id = 1 THEN amount ELSE 0 END) AS khr,
-                    SUM(CASE WHEN currency_id = 2 THEN amount ELSE 0 END) AS usd
+                    SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS khr,
+                    SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS usd
                 FROM ($union) AS t
                 GROUP BY month
             ", $bindings))->keyBy('month');
@@ -484,8 +486,8 @@ public static function getOfficerPaymentSummaryFilterByDate($start_date = null, 
                 COUNT(*) AS total_payables_range,
                 SUM(CASE WHEN status = 15 THEN 1 ELSE 0 END) AS unpaid_count,
                 -- Unpaid amounts
-                SUM(CASE WHEN status = 15 AND currency_id = 1 THEN amount ELSE 0 END) AS unpaid_khr,
-                SUM(CASE WHEN status = 15 AND currency_id = 2 THEN amount ELSE 0 END) AS unpaid_usd
+                SUM(CASE WHEN status = 15 AND currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS unpaid_khr,
+                SUM(CASE WHEN status = 15 AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS unpaid_usd
             FROM tbl_officer_payable
             -- Period is by due date: unpaid payables have no payment_date yet.
             WHERE due_date >= ?
@@ -496,8 +498,8 @@ public static function getOfficerPaymentSummaryFilterByDate($start_date = null, 
             SELECT 
                 p.officer_id,
                 -- Only successful payments in the same period
-                SUM(CASE WHEN p.status = 19 AND p.currency_id = 1 THEN p.amount ELSE 0 END) AS paid_khr,
-                SUM(CASE WHEN p.status = 19 AND p.currency_id = 2 THEN p.amount ELSE 0 END) AS paid_usd
+                SUM(CASE WHEN p.status = 19 AND p.currency_id = ".Currency::idOf(Currency::KHR)." THEN p.amount ELSE 0 END) AS paid_khr,
+                SUM(CASE WHEN p.status = 19 AND p.currency_id = ".Currency::idOf(Currency::USD)." THEN p.amount ELSE 0 END) AS paid_usd
             FROM tbl_officer_payment p
             INNER JOIN tbl_officer_payable pa 
                 ON p.ref_payable_id = pa.id
@@ -821,8 +823,8 @@ public static function getOfficerRequestSummary()
             S.title_en AS statusNameEn,
             S.title_kh AS statusNameKh,
             COUNT(R.id) AS totalRequests,
-            SUM(CASE WHEN R.currency_id = 1 THEN R.amount ELSE 0 END) AS total_amount_khr,
-            SUM(CASE WHEN R.currency_id = 2 THEN R.amount ELSE 0 END) AS total_amount_usd
+            SUM(CASE WHEN R.currency_id = ".Currency::idOf(Currency::KHR)." THEN R.amount ELSE 0 END) AS total_amount_khr,
+            SUM(CASE WHEN R.currency_id = ".Currency::idOf(Currency::USD)." THEN R.amount ELSE 0 END) AS total_amount_usd
         FROM tbl_officer_request R
         INNER JOIN tbl_mef_status S 
             ON R.status = S.id

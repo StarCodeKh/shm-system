@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\OfficerPayable;
+use App\Models\Settings\CurrencyExchange;
 use App\Models\OfficerPayment;
 use App\Imports\OfficerPayableImport;
 use App\Models\Officer;
@@ -215,7 +216,7 @@ class OfficerPayableController extends Controller
             if($table){
                 if (in_array($table["status"], [$status_unpaid, $status_paid_amount, 16, 20, 21])) {
                     // Common values
-                    $currencyCode = $table['currency_id'] == 1 ? "KHR" : "USD";
+                    $currencyCode = Currency::codeOf($table['currency_id']) ?? Currency::KHR;
                     $amount = number_format($table['amount'], 2);
                     $getOfficer = Officer::where("id", $table->officer_id)->first();
                     // Determine notification title and message
@@ -286,11 +287,9 @@ class OfficerPayableController extends Controller
     }
 
     protected function dataFormOfficerPayment($get_payable_info, $ref_payable_id) {
-        if ($get_payable_info->currency_id == "1") {
-            $currency_exchange = "0.0002";
-        }else {
-            $currency_exchange = "4000";
-        }
+        // Rate from the payable currency to the other one (KHR <-> USD), from the exchange rates in Settings
+        $code = Currency::codeOf($get_payable_info->currency_id) ?? Currency::KHR;
+        $currency_exchange = CurrencyExchange::rate($code, $code === Currency::KHR ? Currency::USD : Currency::KHR);
         return [
             'account_id'         => $get_payable_info->account_id,
             'officer_id'         => $get_payable_info->officer_id,

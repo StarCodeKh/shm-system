@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Settings\CurrencyExchange;
 use App\Models\Incentive;
 use App\Models\Officer;
 use App\Models\OfficerPayable;
@@ -401,7 +402,7 @@ class ReportController extends Controller
         $lastYeartoPeriod = ($year-1).'-12-01';
         // #################
         $mulNum = 1000000;
-        $exchangeRate = 4000;
+        $exchangeRate = CurrencyExchange::rate();
         $totalOfficer = count(Officer::Where("status", 1)->get());
         $totalIncentive = round(Incentive::sum("total_incentive") / $mulNum);
         $totalIncome = round(Income::sum("amount") / $mulNum);
@@ -1111,7 +1112,7 @@ class ReportController extends Controller
     public function getIncomeOutcomeByQuarter(Request $request){
         $year = $request["year"];
         $mulNum = 1000000;
-        $exchangeRate = 4000;
+        $exchangeRate = CurrencyExchange::rate();
         $totalOfficer = count(Officer::Where("status", 1)->get());
         $totalIncentive = round(Incentive::sum("total_incentive") / $mulNum);
         $totalIncome = round(Income::sum("amount") / $mulNum);

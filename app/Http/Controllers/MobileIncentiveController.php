@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Settings\CurrencyExchange;
 use App\Models\Mobile\Incentive;
 use App\Models\Mobile\TaxableSalary;
 use Auth;
@@ -466,7 +467,7 @@ class MobileIncentiveController extends Controller
                 'total_incentive' => $totalIncentive,
                 'total_tax' => $totalTax,
                 'total_incentive_after_tax' => (floatval($totalIncentive) - floatval($totalTax)),
-                'exchange_rate' => 4000,
+                'exchange_rate' => CurrencyExchange::rate(),
                 'issue_date' => $dateCreate,
                 'issue_from_date' => $issueFromDate,
                 'issue_to_date' => $issueToDate,

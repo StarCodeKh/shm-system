@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Settings\CurrencyExchange;
 use DB;
 use CommonService;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -50,7 +51,7 @@ class Incentive extends Model implements Auditable
                 "id" => $row->id,
                 "label" => $row->label,
                 "total_incentive" => $row->total_incentive,
-                "exchange_rate" => 4000
+                "exchange_rate" => CurrencyExchange::rate()
             );
             $i++;
         }
@@ -74,7 +75,7 @@ class Incentive extends Model implements Auditable
                 "entity" => $row->entity,
                 "total_incentive" => $row->total_incentive,
                 "total_incentive_after_tax" => $row->total_incentive_after_tax,
-                "exchange_rate" => 4000
+                "exchange_rate" => CurrencyExchange::rate()
             );
             $i++;
         }

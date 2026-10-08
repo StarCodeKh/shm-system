@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Settings\CurrencyExchange;
 use App\Models\Incentive;
 use App\Models\TaxableSalary;
 use App\Models\NotificationUser;
@@ -102,7 +103,7 @@ class IncentiveController extends Controller
             'total_incentive' => $totalIncentive,
             'total_tax' => $totalTax,
             'total_incentive_after_tax' => (floatval(($totalIncentive * $numMonth)) - floatval($totalTax)),
-            'exchange_rate' => 4000,
+            'exchange_rate' => CurrencyExchange::rate(),
             'issue_date' => $dateCreate,
             'issue_from_date' => $issueFromDate,
             'issue_to_date' => $issueToDate,
@@ -640,7 +641,7 @@ class IncentiveController extends Controller
                 'total_tax' => $totalTax,
                 'total_reminder' => $totalRemind,
                 'total_incentive_after_tax' => (floatval($totalIncentive * $numMonth) - floatval($totalTax)),
-                'exchange_rate' => 4000,
+                'exchange_rate' => CurrencyExchange::rate(),
                 'allow_cal_tax' => $input["allow_cal_tax"],
                 'issue_date' => $dateCreate,
                 'issue_from_date' => $issueFromDate,

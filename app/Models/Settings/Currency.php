@@ -17,6 +17,28 @@ class Currency extends Model implements Auditable
     protected $guarded = [];
     public $timestamps = true;
 
+    // Codes the app works with. CurrencySeeder adds them: KHR (id 1, default) and USD (id 2).
+    public const KHR = 'KHR';
+    public const USD = 'USD';
+
+    private static ?array $ids = null;
+
+    /** Id of a currency by its code, e.g. Currency::idOf(Currency::USD); 0 when there is no such currency */
+    public static function idOf(string $code): int
+    {
+        self::$ids ??= self::query()->whereNotDeleted()->whereNotNull('abbreviation')->pluck('id', 'abbreviation')
+            ->mapWithKeys(fn ($id, $abbr) => [strtoupper(trim($abbr)) => (int) $id])->all();
+        return self::$ids[strtoupper($code)] ?? 0;
+    }
+
+    /** Code of a currency id, e.g. "KHR"; null when it is unknown */
+    public static function codeOf($id): ?string
+    {
+        self::idOf('');
+        $code = array_search((int) $id, self::$ids, true);
+        return $code === false ? null : $code;
+    }
+
     public function paymentType()
     {
         return $this->hasMany(PaymentType::class);

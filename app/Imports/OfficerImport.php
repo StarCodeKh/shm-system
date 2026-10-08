@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 use OwenIt\Auditing\Contracts\Auditable;
+use App\Models\Settings\Currency;
 use App\Models\Officer;
 use App\Models\OfficerPaymentRecurring;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -58,7 +59,7 @@ class OfficerImport implements ToModel,WithHeadingRow,Auditable
                     "officer_id" => $row["id"],
                     "payment_term" => "Yearly",
                     "recurring_amount" => 60000,
-                    "currency_id" => 1,
+                    "currency_id" => Currency::idOf(Currency::KHR),
                     "executed_num" => 1,
                     "schedule_start_date" => Carbon::instance(Date::excelToDateTimeObject($row["register_date"])),
                     "schedule_end_date" => "2100-01-01",
