@@ -503,6 +503,7 @@ export default {
 
         &__list {
             position: relative; // the highlight scrolls with the strip
+            top: auto; // drop the desktop sticky offset, which would push the strip 90px down
             flex-direction: row;
             gap: 8px;
             max-height: none;
