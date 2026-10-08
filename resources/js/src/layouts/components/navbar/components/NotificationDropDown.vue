@@ -10,7 +10,7 @@
             <div class="nav-notify-menu__header">
                 <h4>{{ $t('nav_notifications') }}</h4>
                 <span v-if="countNot" class="nav-notify-menu__count">{{ $t('nav_new', { n: countNot }) }}</span>
-                <button v-if="countNot" type="button" class="nav-notify-menu__read-all" @click.stop="readAll">
+                <button v-if="countNot" type="button" class="nav-notify-menu__read-all" data-keep-open @click.stop="readAll">
                     <feather-icon icon="CheckCircleIcon" svgClasses="h-4 w-4" />
                     <span>{{ $t('nav_mark_all_read') }}</span>
                 </button>
@@ -19,7 +19,7 @@
             <VuePerfectScrollbar v-if="unreadNotifications.length" ref="mainSidebarPs" class="nav-notify-menu__list"
                 :settings="settings" :key="$vs.rtl">
                 <ul>
-                    <li v-for="ntf in unreadNotifications" :key="ntf.id" class="nav-notify-item" @click="openNotification(ntf)">
+                    <li v-for="ntf in unreadNotifications" :key="ntf.id" class="nav-notify-item" role="menuitem" @click="openNotification(ntf)">
                         <span class="nav-notify-item__icon">
                             <feather-icon icon="BellIcon" svgClasses="h-4 w-4" />
                         </span>
@@ -154,10 +154,12 @@
 }
 
 .nav-notify-menu {
+    // Sized by its messages, within these limits (see DROPDOWNS in custom.scss)
+    --menu-min: 300px;
+    --menu-max: 420px;
+
     .vs-dropdown--custom {
         padding: 0;
-        width: 360px;
-        max-width: calc(100vw - 32px);
         overflow: hidden;
     }
 

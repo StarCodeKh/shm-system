@@ -175,9 +175,12 @@ export default {
 }
 
 .nav-user-menu {
+    // As wide as the name / email / item labels need, within these limits (see DROPDOWNS in custom.scss)
+    --menu-min: 220px;
+    --menu-max: 340px;
+
     .vs-dropdown--custom {
         padding: 0;
-        width: 260px;
         overflow: hidden;
     }
 

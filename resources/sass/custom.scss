@@ -1996,6 +1996,95 @@ html {
     scrollbar-gutter: stable;
 }
 
+/* --- DROPDOWNS: every <vs-dropdown> menu (navbar notifications / profile / currency, table actions…)
+   is the same card: soft rounded panel, matching arrow, a quick fade + drop from its corner, rounded hover rows.
+   On phones, top-bar menus keep their content width and line up with the screen's right edge (VsDropdown.vue). */
+.con-vs-dropdown--menu {
+    // Width follows the content (longest name, email, message…) between the menu's own limits:
+    // --menu-min / --menu-max, set by each menu (defaults below); never wider than the screen
+    .vs-dropdown--menu {
+        width: max-content;
+        min-width: min(var(--menu-min, 180px), calc(100vw - 16px));
+        max-width: min(var(--menu-max, 360px), calc(100vw - 16px));
+        border: 1px solid rgba(23, 23, 74, .08);
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 16px 40px -12px rgba(23, 23, 74, .28), 0 2px 6px rgba(23, 23, 74, .06);
+    }
+
+    // Arrow pointing at the button that opened the menu
+    .vs-dropdown--menu--after,
+    .vs-dropdown-right--menu--after {
+        width: 12px;
+        height: 12px;
+        border-color: rgba(23, 23, 74, .08) !important;
+        border-top-left-radius: 3px;
+        background: #fff;
+    }
+
+    // Menu rows
+    .vs-dropdown--item {
+        border-radius: 8px;
+        width: calc(100% - 12px);
+        margin: 1px 6px;
+
+        .vs-dropdown--item-link {
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        &:hover {
+            color: rgb(var(--vs-primary)) !important;
+            background: rgba(var(--vs-primary), .08) !important;
+        }
+    }
+}
+
+// Opening: fade in while dropping 6px from the trigger's corner; closing is quicker.
+// translate(-100%) is how Vuesax places the menu (left = the menu's right edge), so it stays in every state.
+.con-vs-dropdown--menu {
+    transform-origin: top right;
+}
+
+.dropdownx-enter-active {
+    transition: opacity .18s ease, transform var(--tab-fade) var(--tab-ease) !important;
+}
+
+.dropdownx-leave-active {
+    transition: opacity .12s ease, transform .12s ease !important;
+}
+
+.dropdownx-enter-from,
+.dropdownx-leave-to {
+    opacity: 0;
+    transform: translate(-100%, -6px) scale(.97) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dropdownx-enter-active,
+    .dropdownx-leave-active {
+        transition: opacity .12s ease !important;
+    }
+
+    .dropdownx-enter-from,
+    .dropdownx-leave-to {
+        transform: translate(-100%) !important;
+    }
+}
+
+.theme-dark .con-vs-dropdown--menu {
+    .vs-dropdown--menu,
+    .vs-dropdown--menu--after,
+    .vs-dropdown-right--menu--after {
+        background: #10163a;
+        border-color: #414561 !important;
+    }
+
+    .vs-dropdown--menu {
+        box-shadow: 0 16px 40px -12px rgba(0, 0, 0, .6);
+    }
+}
+
 /* --- POPUPS: every <vs-popup> is a centered card with a fixed width per size: .d-modal--sm / md (default) / lg / xl.
    Form popups pick their size from their fields (DModalForm sizeClass). A fixed width keeps the
    layout still: a width that followed the content flickered scrollbars on and off in forms.
