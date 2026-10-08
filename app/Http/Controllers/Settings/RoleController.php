@@ -210,6 +210,11 @@ class RoleController extends Controller
         $arraySingle = array_merge($arr, $pushArray);
         $result = call_user_func_array('array_merge', $arraySingle);
         $dataFields = $result;
+        // Data scope: one of all / entity / own / member (a select may send { label, value })
+        if (array_key_exists('data_scope', $dataFields)) {
+            $scope = is_array($dataFields['data_scope']) ? ($dataFields['data_scope']['value'] ?? null) : $dataFields['data_scope'];
+            $dataFields['data_scope'] = in_array($scope, \App\Services\DataScope::LEVELS, true) ? $scope : \App\Services\DataScope::ALL;
+        }
         return $dataFields;
     }
 

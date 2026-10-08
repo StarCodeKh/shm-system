@@ -199,6 +199,10 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
 
     // Sidebar menu (tree) and Administration › Menus
     Route::get('menu/tree', [MenuController::class, 'tree']);
+    Route::get('menu/manage', [MenuController::class, 'manage']);
+    Route::get('menu/preview', [MenuController::class, 'preview']);
+    Route::post('menu/reorder', [MenuController::class, 'reorder']);
+    Route::post('menu/{id}/active', [MenuController::class, 'active'])->whereNumber('id');
     Route::post('menu/search', [MenuController::class, 'index']);
     Route::apiResource('menu', MenuController::class);
 

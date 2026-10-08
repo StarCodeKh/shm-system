@@ -12,6 +12,24 @@ class Menu extends Model implements Auditable
 
     public const TYPES = ['section', 'group', 'link'];
 
+    // Items that are always on: they can't be hidden or deleted, so nobody can lock themselves out of
+    // managing the menu. Their sections / groups can't be hidden either (that would hide them too).
+    public const LOCKED_URLS = ['/menu'];
+
+    /** Ids of the locked items and of every section / group above them */
+    public static function lockedIds(): array
+    {
+        $rows = self::get(['id', 'parent_id', 'url'])->keyBy('id');
+        $ids = [];
+        foreach ($rows as $row) {
+            if (!in_array($row->url, self::LOCKED_URLS, true)) continue;
+            for ($node = $row; $node; $node = $rows->get($node->parent_id)) {
+                $ids[$node->id] = true;
+            }
+        }
+        return array_keys($ids);
+    }
+
     protected $table = 'menu';
     protected $fillable = ['parent_id', 'type', 'name', 'i18n', 'url', 'slug', 'icon', 'permission', 'order_level', 'is_active', 'created_by', 'modified_by'];
     protected $casts = ['is_active' => 'boolean', 'order_level' => 'integer', 'parent_id' => 'integer'];

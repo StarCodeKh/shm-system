@@ -41,6 +41,7 @@ import './plugins/autosize'
 
 // Clicked tab scrolls into view in scrollable tab bars
 import './plugins/tabsScroll'
+import tabPill from './plugins/tabPill'
 
 // Feather font icons
 import '@assets/css/iconfont.css'
@@ -58,6 +59,7 @@ app.use(acl, { router })
 app.use(globalComponents)
 app.use(validation)
 app.use(hammer)
+app.use(tabPill) // v-tab-pill: sliding pill for tab bars and segmented switches
 installPhraseTranslation(app)
 installDatePicker(app)
 installPlanningYear(app)

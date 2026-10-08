@@ -7,6 +7,7 @@ use App\Models\Settings\Currency;
 use App\Models\Settings\CurrencyExchange;
 use DB;
 use App\Models\Settings\Status;
+use App\Services\DataScope;
 class Dashboard extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
@@ -16,10 +17,19 @@ class Dashboard extends Model implements Auditable
     protected $guarded = [];
     public $timestamps = true;
 
-    /** A table name with the configured prefix (DB_PREFIX), for the raw SQL below */
-    protected static function table(string $name): string
+    /**
+     * A table for the raw SQL below: the name with the configured prefix (DB_PREFIX), plus $alias.
+     * Tables under a data scope (App\Services\DataScope) come back as a derived table holding only
+     * the rows the signed-in user's role may see, so every total follows the role.
+     */
+    protected static function table(string $name, ?string $alias = null): string
     {
-        return DB::getTablePrefix().$name;
+        $table = DB::getTablePrefix().$name;
+        $condition = DataScope::sql($name, 'scoped');
+        if ($condition === '1 = 1') {
+            return $alias ? "$table $alias" : $table;
+        }
+        return "(SELECT * FROM $table scoped WHERE $condition) ".($alias ?: $table);
     }
 
     public static function getOfficerGrowth()
@@ -214,9 +224,9 @@ class Dashboard extends Model implements Auditable
                     END
                 ) AS total_amount_usd
             FROM
-                ".self::table('officer_incentive')." A
+                ".self::table('officer_incentive', 'A')." 
             INNER JOIN
-                ".self::table('payment_type')." B ON A.request_title = B.name_en -- should join by payment request id (need to add new field)
+                ".self::table('payment_type', 'B')."  ON A.request_title = B.name_en -- should join by payment request id (need to add new field)
             GROUP BY
                 B.id, B.name_en
             ORDER BY
@@ -406,7 +416,7 @@ public static function getOfficerPaymentSummary()
                 ROUND(100.0 * SUM(COALESCE(p.has_paid,0)) / NULLIF(COUNT(*),0))
                 AS UNSIGNED
             ) AS percent_paid
-        FROM ".self::table('officer')." o
+        FROM ".self::table('officer', 'o')." 
         LEFT JOIN payments p ON o.id = p.officer_id
         LEFT JOIN payables pay ON o.id = pay.officer_id
         where o.status = ".Status::ACTIVE."
@@ -507,8 +517,8 @@ public static function getOfficerPaymentSummaryFilterByDate($start_date = null, 
                 -- Only successful payments in the same period
                 SUM(CASE WHEN p.status = ".Status::PAID." AND p.currency_id = ".Currency::idOf(Currency::KHR)." THEN p.amount ELSE 0 END) AS paid_khr,
                 SUM(CASE WHEN p.status = ".Status::PAID." AND p.currency_id = ".Currency::idOf(Currency::USD)." THEN p.amount ELSE 0 END) AS paid_usd
-            FROM ".self::table('officer_payment')." p
-            INNER JOIN ".self::table('officer_payable')." pa 
+            FROM ".self::table('officer_payment', 'p')." 
+            INNER JOIN ".self::table('officer_payable', 'pa')."  
                 ON p.ref_payable_id = pa.id
             AND pa.due_date >= ?
             AND pa.due_date <= ?
@@ -543,7 +553,7 @@ public static function getOfficerPaymentSummaryFilterByDate($start_date = null, 
                     ),
                     0
                 ) AS percent_paid
-        FROM ".self::table('officer')." o
+        FROM ".self::table('officer', 'o')." 
         LEFT JOIN payables pb ON o.id = pb.officer_id
         LEFT JOIN payments pm ON o.id = pm.officer_id
         WHERE o.status = ".Status::ACTIVE."
@@ -568,8 +578,8 @@ public static function getTotalOfficer()
             CAST(SUM(CASE WHEN A.status = 14 THEN 1 ELSE 0 END) AS SIGNED) AS inactiveMembers,
             CAST(SUM(CASE WHEN A.status = 26 THEN 1 ELSE 0 END) AS SIGNED) AS deadMembers,
             CAST(SUM(CASE WHEN A.status = 27 THEN 1 ELSE 0 END) AS SIGNED) AS retiredMembers
-        FROM ".self::table('officer')." A
-        INNER JOIN ".self::table('mef_status')." B 
+        FROM ".self::table('officer', 'A')." 
+        INNER JOIN ".self::table('mef_status', 'B')."  
             ON A.status = B.id 
         AND B.`group` IN ('STATUS','OFFICER')
     ";
@@ -593,8 +603,8 @@ public static function getUserDetail($userID = null)
             COALESCE(A.telephone_2, B.telephone_2)      AS telephone2,
             COALESCE(A.gender, B.gender)                AS gender,
             COALESCE(A.email, B.email)                  AS email
-        FROM ".self::table('users')." A
-        LEFT JOIN ".self::table('officer')." B
+        FROM ".self::table('users', 'A')." 
+        LEFT JOIN ".self::table('officer', 'B')." 
             ON A.officer_id = B.id
         WHERE A.id = :userID
     ";
@@ -744,8 +754,8 @@ public static function getOfficerPaymentListing($limit = 10, $offset = 0)
             A.currency_id                              AS currency,
             A.note                                     AS remark,
             A.status                                   AS status
-        FROM ".self::table('officer_payment')." A
-        INNER JOIN ".self::table('officer')." B
+        FROM ".self::table('officer_payment', 'A')." 
+        INNER JOIN ".self::table('officer', 'B')." 
             ON A.officer_id = B.id
         ORDER BY A.payment_date DESC
         LIMIT $limit OFFSET $offset
@@ -790,10 +800,10 @@ public static function getOfficerIncentiveListing($limit = 10, $offset = 0)
             A.amount                                     AS amount,
             A.currency_id                                AS currency,
             A.remark                                     AS remark
-        FROM ".self::table('officer_incentive')." A
-        LEFT JOIN ".self::table('officer')." B
+        FROM ".self::table('officer_incentive', 'A')." 
+        LEFT JOIN ".self::table('officer', 'B')." 
             ON A.officer_id = B.id
-        LEFT JOIN ".self::table('officer_request')." C
+        LEFT JOIN ".self::table('officer_request', 'C')." 
             ON A.ref_request_id = C.id
         ORDER BY A.issue_date DESC
         LIMIT $limit OFFSET $offset
@@ -832,8 +842,8 @@ public static function getOfficerRequestSummary()
             COUNT(R.id) AS totalRequests,
             SUM(CASE WHEN R.currency_id = ".Currency::idOf(Currency::KHR)." THEN R.amount ELSE 0 END) AS total_amount_khr,
             SUM(CASE WHEN R.currency_id = ".Currency::idOf(Currency::USD)." THEN R.amount ELSE 0 END) AS total_amount_usd
-        FROM ".self::table('officer_request')." R
-        INNER JOIN ".self::table('mef_status')." S 
+        FROM ".self::table('officer_request', 'R')." 
+        INNER JOIN ".self::table('mef_status', 'S')."  
             ON R.status = S.id
         WHERE S.`group` = 'CEILING'
         GROUP BY S.id, S.title_en, S.title_kh
@@ -866,8 +876,8 @@ public static function getOfficerRequestListing($limit = 10, $offset = 0)
             A.request_date                            AS requestDateTime,
             A.remark                                  AS remark,
             A.status                                  AS status
-        FROM ".self::table('officer_request')." A
-        LEFT JOIN ".self::table('officer')." B
+        FROM ".self::table('officer_request', 'A')." 
+        LEFT JOIN ".self::table('officer', 'B')." 
             ON A.officer_id = B.id
         ORDER BY A.request_date DESC
         LIMIT $limit OFFSET $offset
@@ -917,8 +927,8 @@ public static function getOfficersListing($limit = 10, $offset = 0)
             A.address                                 AS address,
             A.email                                   AS email,
             A.photo                                   AS photo
-        FROM ".self::table('officer')." A
-        LEFT JOIN ".self::table('department')." D ON D.id = A.department_id
+        FROM ".self::table('officer', 'A')." 
+        LEFT JOIN ".self::table('department', 'D')."  ON D.id = A.department_id
         WHERE A.status = ".Status::ACTIVE."
         ORDER BY A.id DESC
         LIMIT $limit OFFSET $offset

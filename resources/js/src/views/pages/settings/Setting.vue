@@ -63,7 +63,7 @@
 
 <script>
 import { defineAsyncComponent } from "vue";
-import { can } from "@/acl/access.js";
+import { canSection } from "./settingsAccess.js";
 import { refreshLists } from "@/ui/utils";
 
 // Each section's code loads the first time it is needed (or when the pointer reaches its menu item)
@@ -86,13 +86,6 @@ export default {
     components,
     data() {
         return {
-            tab_account_admin: true,
-            tab_roles: true,
-            tab_general: true,
-            tab_entity: true,
-            tab_back_up: true,
-            tab_notification: true,
-            tab_autdit: true,
             // Position and size of the sliding highlight (px, relative to the list)
             indicator: { x: 0, y: 0, w: 0, h: 0, ready: false },
         }
@@ -155,22 +148,21 @@ export default {
         isSmallerScreen() {
             return this.$store.state.windowWidth < 768
         },
-        // Sections in display order; `flag` is the permission switch kept in data()
+        // Sections in display order; who sees each one is decided in settingsAccess.js
         tabs() {
             return [
-                { key: 'general', flag: this.tab_general, icon: 'SettingsIcon', color: '31, 32, 103', title: 'setting_tab_general', desc: 'setting_tab_general_desc', component: 'setting-general' },
-                { key: 'roles', flag: this.tab_roles, icon: 'UsersIcon', color: '62, 91, 169', title: 'setting_tab_roles', desc: 'setting_tab_roles_desc', component: 'setting-role' },
-                { key: 'account', flag: this.tab_account_admin, icon: 'BriefcaseIcon', color: '47, 164, 73', title: 'setting_tab_account', desc: 'setting_tab_account_desc', component: 'setting-account-admin' },
-                { key: 'entity', flag: this.tab_entity, icon: 'GridIcon', color: '31, 138, 122', title: 'setting_tab_entity', desc: 'setting_tab_entity_desc', component: 'setting-entity', card: true },
-                { key: 'backup', flag: this.tab_back_up, icon: 'DatabaseIcon', color: '138, 106, 18', title: 'setting_tab_backup', desc: 'setting_tab_backup_desc', component: 'setting-backup' },
-                { key: 'notification', flag: this.tab_notification, icon: 'BellIcon', color: '192, 57, 43', title: 'setting_tab_notification', desc: 'setting_tab_notification_desc', component: 'setting-notifications' },
-                { key: 'audit', flag: this.tab_autdit, icon: 'ClockIcon', color: '92, 99, 120', title: 'setting_tab_audit', desc: 'setting_tab_audit_desc', component: 'setting-audit' },
+                { key: 'general', icon: 'SettingsIcon', color: '31, 32, 103', title: 'setting_tab_general', desc: 'setting_tab_general_desc', component: 'setting-general' },
+                { key: 'roles', icon: 'UsersIcon', color: '62, 91, 169', title: 'setting_tab_roles', desc: 'setting_tab_roles_desc', component: 'setting-role' },
+                { key: 'account', icon: 'BriefcaseIcon', color: '47, 164, 73', title: 'setting_tab_account', desc: 'setting_tab_account_desc', component: 'setting-account-admin' },
+                { key: 'entity', icon: 'GridIcon', color: '31, 138, 122', title: 'setting_tab_entity', desc: 'setting_tab_entity_desc', component: 'setting-entity', card: true },
+                { key: 'backup', icon: 'DatabaseIcon', color: '138, 106, 18', title: 'setting_tab_backup', desc: 'setting_tab_backup_desc', component: 'setting-backup' },
+                { key: 'notification', icon: 'BellIcon', color: '192, 57, 43', title: 'setting_tab_notification', desc: 'setting_tab_notification_desc', component: 'setting-notifications' },
+                { key: 'audit', icon: 'ClockIcon', color: '92, 99, 120', title: 'setting_tab_audit', desc: 'setting_tab_audit_desc', component: 'setting-audit' },
             ]
         },
-        // Sections the user's role may open (permission per tab; tabs without one are always shown)
+        // Sections the user's role may open (at least one of the section's permissions, see settingsAccess.js)
         visibleTabs() {
-            const permissionOf = { roles: 'list_roles', account: 'list_users', entity: 'list_unit', notification: 'list_notifications', audit: 'audit' }
-            return this.tabs.filter(tab => tab.flag && (!permissionOf[tab.key] || can(permissionOf[tab.key])))
+            return this.tabs.filter(tab => canSection(tab.key))
         },
         // Active section comes from ?tab=… so it survives reloads and can be linked to
         activeKey() {
@@ -358,15 +350,16 @@ export default {
             background: rgb(var(--tile));
         }
 
-        // Instant on first placement, then glides (slight overshoot) and fades its color between sections
+        // Instant on first placement, then the same slide as every tab (--tab-move / --tab-ease),
+        // fading its color between sections
         &.is-ready {
             transition:
-                transform .42s cubic-bezier(.22, 1.2, .36, 1),
-                width .42s cubic-bezier(.22, 1.2, .36, 1),
-                height .42s cubic-bezier(.22, 1.2, .36, 1),
-                background-color .3s ease,
-                box-shadow .3s ease,
-                opacity .2s ease;
+                transform var(--tab-move) var(--tab-ease),
+                width var(--tab-move) var(--tab-ease),
+                height var(--tab-move) var(--tab-ease),
+                background-color var(--tab-move) ease,
+                box-shadow var(--tab-move) ease,
+                opacity var(--tab-tap) ease;
         }
     }
 
@@ -472,6 +465,27 @@ export default {
 }
 .setting-swap-leave-to {
     opacity: 0;
+}
+
+// Read-only sections (role may see but not save): a plain wrapper that disables every field, and a note
+.setting-fieldset {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    &:disabled {
+        opacity: .75;
+    }
+}
+
+.setting-readonly-note {
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    font-size: .85rem;
+    color: #9a5b0a;
+    border-radius: 10px;
+    background: #fff6e6;
 }
 
 @keyframes setting-item-in {

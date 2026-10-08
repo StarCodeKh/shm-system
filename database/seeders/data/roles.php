@@ -149,6 +149,9 @@ return array (
         139 => 'edit_mef_planning',
         140 => 'update_mef_planning',
         141 => 'delete_mef_planning',
+        142 => 'list_setting',
+        143 => 'update_setting',
+        144 => 'backup_setting',
     ),
     'Normal User' =>
     array (

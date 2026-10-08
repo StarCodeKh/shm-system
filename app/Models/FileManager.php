@@ -5,10 +5,11 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 use CommonService;
+use App\Models\Concerns\HasDataScope;
 
 class FileManager extends Model implements Auditable
 {
-    use \OwenIt\Auditing\Auditable;
+    use \OwenIt\Auditing\Auditable, HasDataScope;
     protected $table = 'file_manager';
     protected $primaryKey = 'id';
     protected $fillable = [];

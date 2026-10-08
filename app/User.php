@@ -69,6 +69,9 @@ class User extends Authenticatable implements Auditable
             ["name" => "fullname", "type" => "text", "required" => true],
             ["name" => "latin", "type" => "text", "required" => true],
             ["name" => "role", "type" => "select", "required" => true],
+            // Data scope of the role: "own unit" uses entity_id, "my member record" uses officer_id
+            ["name" => "entity_id", "type" => "select", "required" => false],
+            ["name" => "officer_id", "type" => "select", "required" => false],
             ["name" => "gender", "type" => "select", "required" => false],
             ["name" => "email", "type" => "text", "required" => true],
             ["name" => "telephone_1", "type" => "text", "required" => true],

@@ -15,7 +15,7 @@
                     :config="dateConfig"
                     class="vs-input dashboard-date mr-3 mb-2"
                     :placeholder="$t('dash_pick_date')" />
-                <div class="currency-switch mr-3 mb-2">
+                <div v-tab-pill class="currency-switch mr-3 mb-2">
                     <button v-for="c in ['KHR', 'USD']" :key="c" :class="{ active: currency === c }" @click="currency = c">
                         {{ c === 'KHR' ? '៛ ' + $t('dash_riel') : '$ ' + $t('dash_dollar') }}
                     </button>
@@ -37,7 +37,7 @@
 
         <!-- KPI cards -->
         <div class="vx-row">
-            <div v-for="card in kpiCards" :key="card.key" class="vx-col w-full sm:w-1/2 xl:w-1/4 mb-base">
+            <div v-for="card in kpiCards" :key="card.key" class="vx-col w-full sm:w-1/2 mb-base" :class="kpiWidth">
                 <dash-link v-if="summary" :to="card.to" tag="div" class="kpi-card" :class="{ 'is-link': card.to }" :aria-label="card.to ? `${card.label} · ${$t('dash_view_details')}` : null">
                     <div class="flex items-start justify-between">
                         <div>
@@ -60,8 +60,8 @@
         </div>
 
         <!-- Monthly income vs expense + payment progress -->
-        <div class="vx-row">
-            <div class="vx-col w-full lg:w-2/3 mb-base">
+        <div v-if="access.balance || access.payments" class="vx-row">
+            <div v-if="access.balance" class="vx-col w-full mb-base" :class="access.payments ? 'lg:w-2/3' : ''">
                 <vx-card :title="$t('dash_monthly_income_expense')" class="h-full">
                     <template v-if="links.income" #actions>
                         <router-link :to="links.income" class="card-link">
@@ -83,7 +83,7 @@
                 </vx-card>
             </div>
 
-            <div class="vx-col w-full lg:w-1/3 mb-base">
+            <div v-if="access.payments" class="vx-col w-full mb-base" :class="access.balance ? 'lg:w-1/3' : ''">
                 <vx-card :title="$t('dash_member_payments')" class="h-full">
                     <template v-if="links.payments" #actions>
                         <router-link :to="links.payments" class="card-link">
@@ -115,7 +115,7 @@
         </div>
 
         <!-- Members -->
-        <div class="vx-row">
+        <div v-if="access.members" class="vx-row">
             <div class="vx-col w-full lg:w-1/2 mb-base">
                 <vx-card :title="$t('dash_member_status')" class="h-full">
                     <template v-if="links.members" #actions>
@@ -145,8 +145,8 @@
         </div>
 
         <!-- Incentives + income by entity -->
-        <div class="vx-row">
-            <div class="vx-col w-full lg:w-1/3 mb-base">
+        <div v-if="access.incentives || access.income" class="vx-row">
+            <div v-if="access.incentives" class="vx-col w-full mb-base" :class="access.income ? 'lg:w-1/3' : ''">
                 <vx-card :title="$t('dash_allowance_by_type')" class="h-full">
                     <template v-if="links.allowances" #actions>
                         <router-link :to="links.allowances" class="card-link">
@@ -177,7 +177,7 @@
                     <div v-else class="skeleton-block" style="height: 300px"></div>
                 </vx-card>
             </div>
-            <div class="vx-col w-full lg:w-2/3 mb-base">
+            <div v-if="access.income" class="vx-col w-full mb-base" :class="access.incentives ? 'lg:w-2/3' : ''">
                 <vx-card :title="$t('dash_income_by_entity') + ' (៛)'" class="h-full">
                     <template v-if="links.income" #actions>
                         <router-link :to="links.income" class="card-link">
@@ -297,10 +297,19 @@ export default {
             const balance = income.map((value, i) => (running += value - expense[i]))
             return { months: t.months, income, expense, balance }
         },
+        // Blocks this role may see (sent by the API); everything while the first answer is loading
+        access() {
+            const all = { members: true, income: true, expense: true, balance: true, incentives: true, payments: true, requests: true }
+            return (this.summary && this.summary.access) || all
+        },
+        // KPI cards share the row evenly whatever their number
+        kpiWidth() {
+            return { 1: 'xl:w-full', 2: 'xl:w-1/2', 3: 'xl:w-1/3' }[this.kpiCards.length] || 'xl:w-1/4'
+        },
         kpiCards() {
             const s = this.summary
             if (!s) return [1, 2, 3, 4].map(key => ({ key }))
-            const pick = (obj, khr, usd) => toNumber(this.isKhr ? obj[khr] : obj[usd])
+            const pick = (obj, khr, usd) => obj ? toNumber(this.isKhr ? obj[khr] : obj[usd]) : 0 // block not sent for this role
             const members = s.totalMember || {}
             return [
                 {
@@ -324,7 +333,7 @@ export default {
                     value: this.money(pick(s.totalRemainingBalance, "remaining_balance_khr", "remaining_balance_usd")),
                     sub: this.$t("dash_cash_balance_sub"), trend: this.trend.balance, to: this.links.balance,
                 },
-            ]
+            ].filter(card => this.access[card.key])
         },
         monthLabels() {
             const multiYear = new Set(this.trend.months.map(m => m.slice(0, 4))).size > 1
@@ -558,7 +567,11 @@ export default {
     min-width: 230px;
 }
 
+// Segmented switch: the white pill slides to the chosen currency (v-tab-pill)
 .currency-switch {
+    --pill-bg: #fff;
+    --pill-radius: calc(var(--btn-radius) - 2px);
+    --pill-shadow: 0 2px 6px rgba(0, 0, 0, .1);
     display: inline-flex;
     height: var(--btn-height);
     padding: 3px;
@@ -574,13 +587,11 @@ export default {
         color: #626262;
         font-family: inherit;
         font-size: var(--btn-font-size);
-        transition: all 0.2s ease;
+        transition: color var(--tab-tap) ease;
 
         &.active {
-            background: #fff;
             color: rgba(var(--vs-primary), 1);
             font-weight: 600;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
     }
 }
@@ -808,7 +819,8 @@ export default {
 .theme-dark {
     .currency-switch { background: #1e2340; }
     .currency-switch button { color: #c2c6dc; }
-    .currency-switch button.active { background: #262c49; color: #fff; }
+    .currency-switch { --pill-bg: #262c49; }
+    .currency-switch button.active { color: #fff; }
     .toolbar-btn { background: #262c49; color: #c2c6dc; border-color: #414561; }
     .kpi-card { background: #262c49; }
     .kpi-card__label,

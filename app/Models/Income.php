@@ -11,9 +11,11 @@ use App\Models\Settings\Currency;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 use CommonService;
+use App\Models\Concerns\HasDataScope;
+use App\Services\DataScope;
 class Income extends Model implements Auditable
 {
-    use \OwenIt\Auditing\Auditable;
+    use \OwenIt\Auditing\Auditable, HasDataScope;
     protected $table = 'income';
     protected $primaryKey = 'id';
     protected $fillable = [];
@@ -138,6 +140,7 @@ class Income extends Model implements Auditable
         $query = DB::table("department as d")
             ->select("d.*", "i.amount", "i.currency_id")
             ->join("income as i", "i.department_id", "=", "d.id")
+            ->tap(fn ($query) => DataScope::where($query, 'income', 'i'))
             ->groupBy(
                 DB::raw('id'),
                 )
@@ -162,6 +165,7 @@ class Income extends Model implements Auditable
 
     public static function getMonthlyIncome(){
         $results = DB::table('income')
+            ->tap(fn ($query) => DataScope::where($query, 'income'))
             ->select('issue_date', DB::raw('SUM(amount) as total_amount'))
             ->whereYear('issue_date', date("Y"))
             ->groupBy(

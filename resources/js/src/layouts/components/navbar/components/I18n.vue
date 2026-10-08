@@ -78,7 +78,7 @@ export default {
         background: #fff;
         box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
         transform: translateX(calc(var(--lang-index, 0) * 100%));
-        transition: transform .3s cubic-bezier(.34, 1.3, .64, 1);
+        transition: transform var(--tab-move) var(--tab-ease); // the same slide as every tab
         will-change: transform;
     }
 
@@ -97,7 +97,7 @@ export default {
         border-radius: 999px;
         background: transparent;
         cursor: pointer;
-        transition: color .2s ease;
+        transition: color var(--tab-tap) ease;
 
         img {
             width: 18px;

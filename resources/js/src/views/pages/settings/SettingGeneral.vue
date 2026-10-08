@@ -8,6 +8,8 @@
             :rowDisplay="rowDisplay"/> -->
 
             <d-file-manager ref="refModelFileManager" @clicked="initPassProps"></d-file-manager>
+        <p v-if="!canUpdate" class="setting-readonly-note">{{ $t('setting_read_only') }}</p>
+        <fieldset class="setting-fieldset" :disabled="!canUpdate">
         <div class="vx-row">
             <template v-for="(formAttribute, i) in formAttributes">
                 <!-- Form Input Text -->
@@ -33,14 +35,14 @@
                     <label class="mb-2">{{ $tField(formAttribute.name) }}</label>
                     <span v-if="formAttribute.required">
                         <vs-input type="password" v-validate="'required'"
-                            v-model="form.attribute[formAttribute.name]" :placeholder="$tField(formAttribute.name)"
-                            :name="formAttribute.name" class="mt-1 w-full" />
+                            v-model="form.attribute[formAttribute.name]" :placeholder="secretHint(formAttribute.name)"
+                            autocomplete="new-password" :name="formAttribute.name" class="mt-1 w-full" />
                         <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
                             $tRequired(formAttribute.name)
                         }}</span>
                     </span>
-                    <vs-input type="password" v-else v-validate="''" :placeholder="$tField(formAttribute.name)"
-                        v-model="form.attribute[formAttribute.name]" :name="formAttribute.name" class="mt-1 w-full" />
+                    <vs-input type="password" v-else v-validate="''" :placeholder="secretHint(formAttribute.name)"
+                        autocomplete="new-password" v-model="form.attribute[formAttribute.name]" :name="formAttribute.name" class="mt-1 w-full" />
                 </div>
 
                 <!-- Form Input Number -->
@@ -315,7 +317,9 @@
             </template>
         </div>
 
-        <span class="pull-right">
+        </fieldset>
+
+        <span v-if="canUpdate" class="pull-right">
             <vs-button type="filled" @click.prevent="submitForm" class="mt-5 block">{{
                 $t("btn_save") }}</vs-button>
         </span>
@@ -426,7 +430,7 @@ export default {
                 },
                 {
                     name: "config_FIRE_BASE_SERVER_API_KEY",
-                    type: "textarea",
+                    type: "password",
                     required: false
                 },
                 {
@@ -482,7 +486,7 @@ export default {
                 },
                 {
                     name: "config_mail_smtp_password",
-                    type: "textarea",
+                    type: "password",
                     required: false
                 },
                 {
@@ -497,17 +501,6 @@ export default {
                 },
                 {
                     name: "config_mail_smtp_username",
-                    type: "textarea",
-                    required: false
-                },
-
-                {
-                    name: "config_mail_smtp_password",
-                    type: "textarea",
-                    required: false
-                },
-                {
-                    name: "config_mail_smtp_port",
                     type: "textarea",
                     required: false
                 },
@@ -590,6 +583,8 @@ export default {
             showFileManager: false,
             notFoundFile: "/images/not_found.png",
             iconThumnail: "",
+            canUpdate: true, // from the API: may this role save the settings
+            secretKeys: [], // secrets set on the server; their value is never sent here
             iconDoc: "/images/file-icons/doc.png",
             iconPDF: "/images/file-icons/pdf.png",
             iconExcel: "/images/file-icons/xls.png",
@@ -708,6 +703,8 @@ export default {
                     } else {
                         this.data = this.data;
                     }
+                    this.canUpdate = this.data.can_update !== false;
+                    this.secretKeys = this.data.secret_keys || [];
                     const saved = this.data.data || {};
                     this.formAttributes.forEach(_formAttribute => {
                         const name = _formAttribute["name"];
@@ -800,6 +797,10 @@ this.$vs.notify({
         }
         this.getDataTable(_search_criteria);
         return false;
+    },
+    // Secrets come back empty: say that leaving them blank keeps the value saved on the server
+    secretHint(name) {
+        return this.secretKeys.includes(name) ? this.$t('setting_secret_keep') : this.$tField(name);
     },
     submitForm() {
         let _d;

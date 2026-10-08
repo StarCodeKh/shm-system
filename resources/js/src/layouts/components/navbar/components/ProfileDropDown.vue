@@ -32,7 +32,7 @@
                     <feather-icon icon="UserIcon" svgClasses="w-4 h-4" />
                     <span>{{ $t('nav_profile') }}</span>
                 </button>
-                <button type="button" class="nav-user-menu__item" @click="$router.push('/setting').catch(() => { })">
+                <button v-if="canOpenSettings()" type="button" class="nav-user-menu__item" @click="$router.push('/setting').catch(() => { })">
                     <feather-icon icon="SettingsIcon" svgClasses="w-4 h-4" />
                     <span>{{ $t('nav_settings') }}</span>
                 </button>
@@ -50,6 +50,7 @@
 
 <script>
 import { setAuthHeader } from '@/axios.js'
+import { canOpenSettings } from '@/views/pages/settings/settingsAccess.js'
 
 export default {
     computed: {
@@ -72,6 +73,7 @@ export default {
         avatar() { this.avatarFailed = false },
     },
     methods: {
+        canOpenSettings,
         logout() {
             localStorage.removeItem("accessToken")
             localStorage.removeItem('userInfo')

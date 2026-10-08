@@ -1,6 +1,8 @@
 <template>
     <vx-card no-shadow>
 
+        <p v-if="!canUpdate" class="setting-readonly-note">{{ $t('setting_read_only') }}</p>
+        <fieldset class="setting-fieldset" :disabled="!canUpdate">
         <div class="mb-base">
             <h6 class="mb-4">Syncronize Data</h6>
             <div class="flex items-center mb-4">
@@ -28,9 +30,10 @@
                 <span class="ml-4">Allow Receiving Notification to all users</span>
             </div>
         </div>
+        </fieldset>
 
         <!-- Save & Reset Button -->
-        <div class="flex flex-wrap items-center justify-end mt-base">
+        <div v-if="canUpdate" class="flex flex-wrap items-center justify-end mt-base">
             <span class="pull-right">
                 <vs-button type="filled" @click.prevent="submitForm" class="mt-5 block">{{ $t("btn_save") }}</vs-button>
             </span>
@@ -46,6 +49,7 @@ export default {
     data() {
         return {
             api: apiConfig._apiConfiguration,
+            canUpdate: true, // from the API: may this role save the notification switches
             form: {
                 attribute: {
                     config_noti_weekly_syn_data_pdmef: false,
@@ -124,6 +128,7 @@ export default {
                     } else {
                         this.data = this.data;
                     }
+                    this.canUpdate = this.data.can_update !== false;
                     this.formAttributes.forEach(_formAttribute => {
                         if (_formAttribute["type"] == "select") {
                             this.form.attribute[_formAttribute["name"]] = (this.data.data[_formAttribute["name"]]);

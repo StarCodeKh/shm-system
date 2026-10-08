@@ -3,6 +3,11 @@ import { storedPermissions } from "@/layouts/components/vertical-nav-menu/menuPe
 // Feature → permission, mirroring config/access.php on the server (keep both in sync).
 export const FEATURES = {
     reports: "report_sale",
+    setting_view: "list_setting",
+    setting_update: "update_setting",
+    setting_backup: "backup_setting",
+    setting_notifications_view: "list_notifications",
+    setting_notifications_update: "update_notifications",
     audit: "permission_roles",
     role_permissions: "permission_roles",
     file_manager_list: "list_file_manager",

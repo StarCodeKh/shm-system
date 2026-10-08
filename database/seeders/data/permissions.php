@@ -340,4 +340,11 @@ return array (
         4 => 'update_mef_planning',
         5 => 'delete_mef_planning',
     ),
+    // Settings › General (system settings) and Backup
+    'setting' =>
+    array (
+        0 => 'list_setting',
+        1 => 'update_setting',
+        2 => 'backup_setting',
+    ),
 );

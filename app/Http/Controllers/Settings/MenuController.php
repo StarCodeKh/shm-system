@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Auth;
 use CommonService;
 
@@ -46,16 +47,95 @@ class MenuController extends Controller
             'model_name' => 'menu',
             'type' => $types,
             'parent_id' => Menu::parentOptions(),
-            'permission' => Permission::query()->where('permissions.guard_name', 'api')
-                ->leftJoin('permission_group', 'permission_group.id', '=', 'permissions.group')
-                ->orderBy('permission_group.order_level')->orderBy('permissions.id')
-                ->get(['permissions.name', 'permission_group.name as module'])
-                ->map(fn ($p) => ['label' => $p->name, 'value' => $p->name, 'module' => $p->module])->values(),
+            'permission' => $this->permissionChoices(),
             'data_fields' => Menu::dataFields(),
             'form_attributes' => Menu::formAttributes(),
             'is_display' => true,
             'message' => trans('common.msg_successfully'),
         ]);
+    }
+
+    /**
+     * The menu manager page: every item (hidden ones too) in sidebar order, the form choices,
+     * the roles to preview the sidebar as, and what this user may change.
+     */
+    public function manage()
+    {
+        if (!CommonService::can('list_menu')) {
+            return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
+        }
+        return response()->json([
+            'data' => Menu::orderBy('order_level')->orderBy('id')
+                ->get(['id', 'parent_id', 'type', 'name', 'i18n', 'url', 'slug', 'icon', 'permission', 'order_level', 'is_active']),
+            'types' => Menu::TYPES,
+            // Always-on items (and the sections / groups holding them): no hide, no delete
+            'locked' => Menu::lockedIds(),
+            'permission' => $this->permissionChoices(),
+            'roles' => Role::where('guard_name', 'api')->orderBy('id')->get(['id', 'name']),
+            'can' => [
+                'create' => CommonService::can('create_menu'),
+                'update' => CommonService::can('update_menu'),
+                'delete' => CommonService::can('delete_menu'),
+            ],
+        ]);
+    }
+
+    /** New order of the items under one parent: { parent_id, ids: [...] } (ids in their new order) */
+    public function reorder(Request $request)
+    {
+        if (!CommonService::can('update_menu')) {
+            return response()->json(['success' => false, 'message' => trans('common.msg_no_permission_access')], 403);
+        }
+        $data = $request->validate([
+            'parent_id' => ['nullable', 'integer'],
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'distinct'],
+        ]);
+        $siblings = Menu::where('parent_id', $data['parent_id'] ?? null)->pluck('id')->all();
+        if (array_diff($data['ids'], $siblings)) {
+            return response()->json(['success' => false, 'message' => trans('common.menu_bad_parent')], 422);
+        }
+        foreach (array_values($data['ids']) as $i => $id) {
+            Menu::whereKey($id)->update(['order_level' => ($i + 1) * 10, 'modified_by' => Auth::id()]);
+        }
+        return response()->json(['success' => true, 'message' => trans('common.msg_update_successfully')]);
+    }
+
+    /** Show / hide one item: { is_active } */
+    public function active(Request $request, $id)
+    {
+        if (!CommonService::can('update_menu')) {
+            return response()->json(['success' => false, 'message' => trans('common.msg_no_permission_access')], 403);
+        }
+        $menu = Menu::findOrFail($id);
+        if (!$request->boolean('is_active') && in_array($menu->id, Menu::lockedIds(), true)) {
+            return response()->json(['success' => false, 'message' => trans('common.menu_locked')], 422);
+        }
+        $menu->update(['is_active' => $request->boolean('is_active'), 'modified_by' => Auth::id()]);
+        return response()->json(['success' => true, 'message' => trans('common.msg_update_successfully'), 'data' => $menu]);
+    }
+
+    /** The sidebar as one role sees it (same rules as the real sidebar): ?role_id= */
+    public function preview(Request $request)
+    {
+        if (!CommonService::can('list_menu')) {
+            return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
+        }
+        $role = Role::findOrFail((int) $request->query('role_id'));
+        $permissions = CommonService::isSuperAdminRole($role)
+            ? ['*' => true]
+            : $role->permissions()->pluck('name')->mapWithKeys(fn ($name) => [$name => true])->all();
+        return response()->json(['data' => Menu::tree($permissions)]);
+    }
+
+    /** Permission choices for the form: { label, value, module } (the page labels them "action · module") */
+    private function permissionChoices()
+    {
+        return Permission::query()->where('permissions.guard_name', 'api')
+            ->leftJoin('permission_group', 'permission_group.id', '=', 'permissions.group')
+            ->orderBy('permission_group.order_level')->orderBy('permissions.id')
+            ->get(['permissions.name', 'permission_group.name as module'])
+            ->map(fn ($p) => ['label' => $p->name, 'value' => $p->name, 'module' => $p->module])->values();
     }
 
     public function show($id)
@@ -75,6 +155,7 @@ class MenuController extends Controller
     {
         $menu = Menu::findOrFail($id);
         $fields = $this->validated($request, $menu);
+        if (in_array($menu->id, Menu::lockedIds(), true)) $fields['is_active'] = true; // always on
         $fields['modified_by'] = Auth::id();
         $menu->update($fields);
         return response()->json(['success' => true, 'message' => trans('common.msg_update_successfully'), 'data' => $menu->fresh()]);
@@ -84,6 +165,9 @@ class MenuController extends Controller
     public function destroy($id)
     {
         $menu = Menu::findOrFail($id);
+        if (in_array($menu->id, Menu::lockedIds(), true)) {
+            return response()->json(['success' => false, 'message' => trans('common.menu_locked')], 422);
+        }
         if ($menu->children()->exists()) {
             return response()->json(['success' => false, 'message' => trans('common.menu_has_children')], 422);
         }

@@ -10,9 +10,11 @@ use App\Models\Settings\Currency;
 use App\Models\Settings\PaymentMethod;
 use DB;
 use CommonService;
+use App\Models\Concerns\HasDataScope;
+use App\Services\DataScope;
 class Expense extends Model implements Auditable
 {
-    use \OwenIt\Auditing\Auditable;
+    use \OwenIt\Auditing\Auditable, HasDataScope;
     protected $table = 'expense';
     protected $primaryKey = 'id';
     protected $fillable = [];
@@ -130,6 +132,7 @@ class Expense extends Model implements Auditable
 
     public static function getMonthlyExpense(){
         $results = DB::table('expense')
+            ->tap(fn ($query) => DataScope::where($query, 'expense'))
             ->select('issue_date', DB::raw('SUM(amount) as total_amount'))
             ->whereYear('issue_date', date("Y"))
             ->groupBy(

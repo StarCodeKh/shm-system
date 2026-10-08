@@ -149,117 +149,89 @@ class DashboardController extends BaseController
             $year = $request->input('year');     // optional
             $quarter = $request->input('quarter'); // optional
 
-            $growthData = Dashboard::getOfficerGrowth();
-            $totalExpense = Dashboard::getTotalExpenseKHR($start_date, $end_date);
-            $totalExpense->total_in_khr_kh =
-            $this->convertToKhmerNumber(
-                CommonService::formatDoubleNum($totalExpense->total_in_khr)
-            );
-            $totalExpense->total_in_khr = CommonService::formatDoubleNum($totalExpense->total_in_khr);
-            $totalExpense->total_in_usd = CommonService::formatDoubleNum($totalExpense->total_in_usd);
+            // Each block of the dashboard needs the list permission of the module it comes from;
+            // blocks the role may not see are neither computed nor sent ("access" tells the page which to show)
+            $access = [
+                'members' => CommonService::can('list_officer'),
+                'income' => CommonService::can('list_income'),
+                'expense' => CommonService::can('list_expense'),
+                'incentives' => CommonService::can('list_officer_incentive'),
+                'payments' => CommonService::can('list_officer_payable') || CommonService::can('list_officer_payment'),
+                'requests' => CommonService::can('list_officer_request'),
+            ];
+            $access['balance'] = $access['income'] && $access['expense']; // balance, quarters and monthly trend
+            $khr = fn ($value) => $this->convertToKhmerNumber(CommonService::formatDoubleNum($value));
+            $data = ['access' => $access];
 
-            $totalIncome = Dashboard::getTotalIncomeKHR($start_date, $end_date);
-            $totalIncome->total_in_khr_kh =
-            $this->convertToKhmerNumber(
-                CommonService::formatDoubleNum($totalIncome->total_in_khr)
-            );
-            $totalIncome->total_in_khr = CommonService::formatDoubleNum($totalIncome->total_in_khr);
-            $totalIncome->total_in_usd = CommonService::formatDoubleNum($totalIncome->total_in_usd);
-
-            $totalRemaining = Dashboard::getTotalRemainingBalanceKHR($start_date, $end_date);
-            $totalRemaining->remaining_balance_khr_kh =
-            $this->convertToKhmerNumber(
-                 CommonService::formatDoubleNum($totalRemaining->remaining_balance_khr)
-            );
-            $totalRemaining->remaining_balance_khr = CommonService::formatDoubleNum($totalRemaining->remaining_balance_khr);
-            $totalRemaining->remaining_balance_usd = CommonService::formatDoubleNum($totalRemaining->remaining_balance_usd);
-
-            $totalIncentive = Dashboard::getTotalIncentiveByCategory();
-            $totalIncentive = $totalIncentive->map(function ($item) {
-
-                $item['total_amount_khr_kh'] =
-                    $this->convertToKhmerNumber(
-                        CommonService::formatDoubleNum($item['total_amount_khr'])
-                    );
-                $item['total_amount_khr'] = CommonService::formatDoubleNum($item['total_amount_khr']);
-                $item['total_amount_usd'] = CommonService::formatDoubleNum($item['total_amount_usd']);
-                return $item;
-            });
-
-            $officerPaymentSummary = Dashboard::getOfficerPaymentSummaryFilterByDate($start_date,$end_date);
-
-            $TotalQuarterlyIncomeExpense = Dashboard::getQuarterlyIncomeExpense($year, $quarter);
-            $TotalQuarterlyIncomeExpense = collect($TotalQuarterlyIncomeExpense)->map(function ($item) {
-
-                $item->total_income_khr_kh =
-                    $this->convertToKhmerNumber(
-                        CommonService::formatDoubleNum($item->total_income_khr)
-                    );
-
-                $item->total_expense_khr_kh =
-                    $this->convertToKhmerNumber(
-                        CommonService::formatDoubleNum($item->total_expense_khr)
-                    );
-
-                $item->remaining_balance_khr_kh =
-                    $this->convertToKhmerNumber(
-                        CommonService::formatDoubleNum($item->remaining_balance_khr)
-                    );
-
-                $item->total_income_khr = CommonService::formatDoubleNum($item->total_income_khr);
-                $item->total_income_usd = CommonService::formatDoubleNum($item->total_income_usd);
-                $item->total_expense_khr = CommonService::formatDoubleNum($item->total_expense_khr);
-                $item->total_expense_usd = CommonService::formatDoubleNum($item->total_expense_usd);
-                $item->remaining_balance_khr = CommonService::formatDoubleNum($item->remaining_balance_khr);
-                $item->remaining_balance_usd = CommonService::formatDoubleNum($item->remaining_balance_usd);
-
-                return $item;
-            });
-            $requestInfo = Dashboard::getRequestInfo();
-            $totalOfficer = Dashboard::getTotalOfficer();
-
-            $officerStatistics = $growthData;
-            $officerStatisticYears = [];
-            $officerStatisticSeries = [];
-            foreach($officerStatistics as $officerStatistic){
-                $officerStatisticYears[] = $officerStatistic["year"];
-                $officerStatisticSeries[] = $officerStatistic["total_officers"];
+            if ($access['members']) {
+                $growthData = Dashboard::getOfficerGrowth();
+                $data['totalMember'] = Dashboard::getTotalOfficer();
+                $data['officerStatisticYears'] = collect($growthData)->pluck('year')->all();
+                $data['officerStatisticSeries'] = collect($growthData)->pluck('total_officers')->all();
             }
 
-            return $this->successResponse(
-                [
-                    'totalMember' => $totalOfficer,
-                    "officerStatisticYears" => $officerStatisticYears,
-                    "officerStatisticSeries" => $officerStatisticSeries,
-                    'totalExpense' => $totalExpense,
-                    'totalIncome' => $totalIncome,
-                    'totalRemainingBalance' => $totalRemaining,
-                    'totalIncentive' => $totalIncentive,
-                    'officerPaymentInfo' => $officerPaymentSummary,
-                    'quarterlySummary' => $TotalQuarterlyIncomeExpense,
-                    'requestInfo' => $requestInfo,
-                    'incomeByDepartments' => [
-                        [
-                            "department" => "Department1",
-                            "income_dollar" => 200,
-                            "income_reil" =>  300
-                        ],
-                        [
-                            "department" => "Department1",
-                            "income_dollar" => 200,
-                            "income_reil" =>  300
-                        ],
-                        "incomes" => Income::getIncomeByDpts(),
-                        "departments" => Income::getDptsByIncome(),
-                    ],
-                    "monthlyTrend" => Dashboard::getMonthlyTrend($start_date, $end_date),
-                    "monthlyIncomes" => Income::getMonthlyIncome(),
-                    "incomeExpComparations" => [
-                        "income" => Income::getMonthlyIncome(),
-                        "expense" => Expense::getMonthlyExpense(),
-                    ]
-                ]
-            );
+            if ($access['expense']) {
+                $totalExpense = Dashboard::getTotalExpenseKHR($start_date, $end_date);
+                $totalExpense->total_in_khr_kh = $khr($totalExpense->total_in_khr);
+                $totalExpense->total_in_khr = CommonService::formatDoubleNum($totalExpense->total_in_khr);
+                $totalExpense->total_in_usd = CommonService::formatDoubleNum($totalExpense->total_in_usd);
+                $data['totalExpense'] = $totalExpense;
+            }
+
+            if ($access['income']) {
+                $totalIncome = Dashboard::getTotalIncomeKHR($start_date, $end_date);
+                $totalIncome->total_in_khr_kh = $khr($totalIncome->total_in_khr);
+                $totalIncome->total_in_khr = CommonService::formatDoubleNum($totalIncome->total_in_khr);
+                $totalIncome->total_in_usd = CommonService::formatDoubleNum($totalIncome->total_in_usd);
+                $data['totalIncome'] = $totalIncome;
+                $data['incomeByDepartments'] = [
+                    "incomes" => Income::getIncomeByDpts(),
+                    "departments" => Income::getDptsByIncome(),
+                ];
+                $data['monthlyIncomes'] = Income::getMonthlyIncome();
+            }
+
+            if ($access['balance']) {
+                $totalRemaining = Dashboard::getTotalRemainingBalanceKHR($start_date, $end_date);
+                $totalRemaining->remaining_balance_khr_kh = $khr($totalRemaining->remaining_balance_khr);
+                $totalRemaining->remaining_balance_khr = CommonService::formatDoubleNum($totalRemaining->remaining_balance_khr);
+                $totalRemaining->remaining_balance_usd = CommonService::formatDoubleNum($totalRemaining->remaining_balance_usd);
+                $data['totalRemainingBalance'] = $totalRemaining;
+
+                $data['quarterlySummary'] = collect(Dashboard::getQuarterlyIncomeExpense($year, $quarter))->map(function ($item) use ($khr) {
+                    $item->total_income_khr_kh = $khr($item->total_income_khr);
+                    $item->total_expense_khr_kh = $khr($item->total_expense_khr);
+                    $item->remaining_balance_khr_kh = $khr($item->remaining_balance_khr);
+                    foreach (['total_income_khr', 'total_income_usd', 'total_expense_khr', 'total_expense_usd', 'remaining_balance_khr', 'remaining_balance_usd'] as $field) {
+                        $item->$field = CommonService::formatDoubleNum($item->$field);
+                    }
+                    return $item;
+                });
+                $data['monthlyTrend'] = Dashboard::getMonthlyTrend($start_date, $end_date);
+                $data['incomeExpComparations'] = [
+                    "income" => Income::getMonthlyIncome(),
+                    "expense" => Expense::getMonthlyExpense(),
+                ];
+            }
+
+            if ($access['incentives']) {
+                $data['totalIncentive'] = Dashboard::getTotalIncentiveByCategory()->map(function ($item) use ($khr) {
+                    $item['total_amount_khr_kh'] = $khr($item['total_amount_khr']);
+                    $item['total_amount_khr'] = CommonService::formatDoubleNum($item['total_amount_khr']);
+                    $item['total_amount_usd'] = CommonService::formatDoubleNum($item['total_amount_usd']);
+                    return $item;
+                });
+            }
+
+            if ($access['payments']) {
+                $data['officerPaymentInfo'] = Dashboard::getOfficerPaymentSummaryFilterByDate($start_date, $end_date);
+            }
+
+            if ($access['requests']) {
+                $data['requestInfo'] = Dashboard::getRequestInfo();
+            }
+
+            return $this->successResponse($data);
 
         }catch (Exception $e) {
             return $this->errorResponse($e->getMessage());

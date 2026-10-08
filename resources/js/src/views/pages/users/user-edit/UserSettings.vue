@@ -35,7 +35,7 @@
         </div>
 
         <!-- Tabs -->
-        <div class="user-profile__tabs" role="tablist">
+        <div v-tab-pill class="user-profile__tabs" role="tablist">
             <button v-for="t in tabs" :key="t.key" type="button" role="tab" class="user-profile__tab"
                 :class="{ 'is-active': tab === t.key }" :aria-selected="tab === t.key" @click="tab = t.key">
                 <feather-icon :icon="t.icon" svgClasses="h-4 w-4" />
@@ -244,6 +244,12 @@ export default {
         }
     }
 
+    // The active look (tint + outline) is the pill that slides between tabs (v-tab-pill)
+    &__tabs {
+        --pill-bg: rgba(var(--vs-primary), .1);
+        --pill-shadow: inset 0 0 0 1px rgba(var(--vs-primary), .45);
+    }
+
     &__tab {
         display: inline-flex;
         align-items: center;
@@ -256,7 +262,7 @@ export default {
         color: #5f6170;
         border: 1px solid #e6e8ee;
         border-radius: 999px;
-        background: #fff;
+        background: transparent;
         cursor: pointer;
         transition: color var(--tab-tap) ease, background var(--tab-tap) ease, border-color var(--tab-tap) ease;
 
@@ -274,8 +280,7 @@ export default {
 
         &.is-active {
             color: rgb(var(--vs-primary));
-            border-color: rgba(var(--vs-primary), .45);
-            background: rgba(var(--vs-primary), .1);
+            border-color: transparent;
         }
     }
 
@@ -335,10 +340,17 @@ export default {
 
 .theme-dark .user-profile {
     &__head,
-    .user-form,
-    &__tab {
+    .user-form {
         background: #10163a;
         border-color: #414561;
+    }
+
+    &__tab:not(.is-active) {
+        border-color: #414561;
+    }
+
+    &__tabs {
+        --pill-bg: rgba(var(--vs-primary), .18);
     }
 
     &__who h2,

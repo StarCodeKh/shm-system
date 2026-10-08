@@ -64,6 +64,11 @@ class LookupController extends Controller
                 ->map(fn ($row) => ['label' => $row->code.' - '.CommonService::localName($row), 'value' => $row->code])->values()->all(),
             'account_type' => fn () => AccountType::query()->whereNotDeleted()->orderByLevel()->get()
                 ->map(fn ($row) => ['label' => $row->type_code.' - '.CommonService::localName($row), 'value' => $row->type_code])->values()->all(),
+            // Roles: which records the role may see (App\Services\DataScope)
+            'data_scope' => fn () => collect(\App\Services\DataScope::LEVELS)
+                ->map(fn ($level) => ['label' => trans('common.data_scope_'.$level), 'value' => $level])->all(),
+            // Users: the member record a login belongs to (members see their own data with the "member" scope)
+            'officer_id' => fn () => \App\Models\Officer::getSingleOpt(),
             // Active / Inactive of a settings row (its "status" field asks for this list by name, see FormSchema)
             'record_status' => fn () => Status::query()->where('group', 'STATUS')->whereNotDeleted()->orderByLevel()->get()
                 ->map(fn ($row) => ['label' => CommonService::localName($row, 'title'), 'value' => $row->id])->values()->all(),

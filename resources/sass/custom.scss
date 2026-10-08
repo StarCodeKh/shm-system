@@ -36,6 +36,50 @@
     to { opacity: 1; transform: none; }
 }
 
+// v-tab-pill (plugins/tabPill.js): a pill sliding under the active item of any tab bar / segmented switch.
+// The bar sets the pill's look: --pill-bg, --pill-radius, --pill-shadow; its active item keeps only its text color.
+.tab-pill-host {
+    position: relative;
+    isolation: isolate;
+
+    > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 0;
+        width: var(--pill-w, 0);
+        height: var(--pill-h, 0);
+        border-radius: var(--pill-radius, 999px);
+        background: var(--pill-bg, #fff);
+        box-shadow: var(--pill-shadow, 0 2px 6px rgba(0, 0, 0, .1));
+        opacity: var(--pill-on, 0);
+        transform: translate(var(--pill-x, 0), var(--pill-y, 0));
+        pointer-events: none;
+    }
+
+    // First placement is instant; after that the pill slides like every other tab indicator
+    &.is-ready::before {
+        transition:
+            transform var(--tab-move) var(--tab-ease),
+            width var(--tab-move) var(--tab-ease),
+            height var(--tab-move) var(--tab-ease),
+            background-color var(--tab-tap) ease,
+            opacity var(--tab-tap) ease;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tab-pill-host.is-ready::before {
+        transition: none;
+    }
+}
+
 .vs-navbar.vx-navbar.navbar-custom{
     min-height: 64px;
     padding: .6rem 1rem;
@@ -2308,56 +2352,6 @@ input.vs-input--input.large {
         }
     }
 
-    .dt-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        height: var(--btn-height);
-        padding: 0 var(--btn-padding-x);
-        font-family: inherit;
-        font-size: var(--btn-font-size);
-        font-weight: 500;
-        border-radius: var(--btn-radius);
-        border: 1px solid var(--input-border, #d8d9e3);
-        background: #fff;
-        color: #5e6078;
-        cursor: pointer;
-        transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
-
-        .feather-icon {
-            display: flex;
-        }
-
-        &:hover {
-            border-color: rgba(var(--vs-primary), .5);
-            color: rgb(var(--vs-primary));
-        }
-
-        &--icon {
-            width: var(--btn-height);
-            padding: 0;
-
-            &.is-active {
-                color: rgb(var(--vs-primary));
-                border-color: rgba(var(--vs-primary), .5);
-                background: rgba(var(--vs-primary), .08);
-            }
-        }
-
-        &--primary {
-            color: #fff;
-            border-color: rgb(var(--vs-primary));
-            background: rgb(var(--vs-primary));
-            box-shadow: 0 6px 14px -6px rgba(var(--vs-primary), .7);
-
-            &:hover {
-                color: #fff;
-                filter: brightness(.95);
-            }
-        }
-    }
-
     // "Add new": bolder, and its "+" turns a quarter on hover
     .dt-toolbar .dt-btn--primary {
         font-weight: var(--btn-font-weight);
@@ -2568,8 +2562,6 @@ input.vs-input--input.large {
 
 .theme-dark .dt-list {
     .dt-toolbar__title h3 { color: #fff; }
-    .dt-btn:not(.dt-btn--primary):hover:not(:disabled) { color: rgb(var(--vs-primary)); background: #2c3354; }
-    .dt-btn:not(.dt-btn--primary),
     .dt-action {
         color: #c2c6dc;
         border-color: #414561;
@@ -3563,6 +3555,77 @@ label.vs-select--label {
     &:focus-visible {
         outline: 2px solid rgb(var(--vs-primary));
         outline-offset: 2px;
+    }
+}
+
+// The standard button (.dt-btn, .dt-btn--primary, .dt-btn--icon): the same everywhere,
+// in pages, popups and dialogs (popups are drawn in <body>, outside any page wrapper)
+.dt-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: var(--btn-height);
+    padding: 0 var(--btn-padding-x);
+    font-family: inherit;
+    font-size: var(--btn-font-size);
+    font-weight: 500;
+    border-radius: var(--btn-radius);
+    border: 1px solid var(--input-border, #d8d9e3);
+    background: #fff;
+    color: #5e6078;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
+
+    .feather-icon {
+        display: flex;
+    }
+
+    &:hover {
+        border-color: rgba(var(--vs-primary), .5);
+        color: rgb(var(--vs-primary));
+    }
+
+    &--icon {
+        width: var(--btn-height);
+        padding: 0;
+
+        &.is-active {
+            color: rgb(var(--vs-primary));
+            border-color: rgba(var(--vs-primary), .5);
+            background: rgba(var(--vs-primary), .08);
+        }
+    }
+
+    &--primary {
+        color: #fff;
+        border-color: rgb(var(--vs-primary));
+        background: rgb(var(--vs-primary));
+        box-shadow: 0 6px 14px -6px rgba(var(--vs-primary), .7);
+
+        &:hover {
+            color: #fff;
+            filter: brightness(.95);
+        }
+    }
+}
+
+.dt-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.theme-dark {
+    .dt-btn:not(.dt-btn--primary) {
+        color: #c2c6dc;
+        border-color: #414561;
+        background: #262c49;
+    }
+
+    .dt-btn:not(.dt-btn--primary):hover:not(:disabled) {
+        color: rgb(var(--vs-primary));
+        background: #2c3354;
     }
 }
 

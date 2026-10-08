@@ -16,6 +16,15 @@ return [
     // Report catalogue, on-screen viewer and PDF export (each report also needs its module's list permission)
     'reports' => 'report_sale',
 
+    // Settings › General: see / save the system settings; Settings › Backup
+    'setting_view' => 'list_setting',
+    'setting_update' => 'update_setting',
+    'setting_backup' => 'backup_setting',
+
+    // Settings › Notifications: see / save the notification switches (config_noti_* settings)
+    'setting_notifications_view' => 'list_notifications',
+    'setting_notifications_update' => 'update_notifications',
+
     // Settings › Audit log
     'audit' => 'permission_roles',
 

@@ -75,8 +75,14 @@ return [
     'notification_failed'      => 'The notification couldn\'t be sent.',
     'notification_read'        => 'Notification marked as read.',
     'lookup_no_choices'        => 'This field has no choices.',
+    // Role data scope (App\Services\DataScope)
+    'data_scope_all' => 'All data',
+    'data_scope_entity' => "Own unit's data",
+    'data_scope_own' => 'Records I created',
+    'data_scope_member' => 'My own member record',
     'lookup_no_form'           => 'New items can\'t be added here.',
     'menu_has_children' => 'Move or delete the items inside it first.',
+    'menu_locked' => 'This item is always on: it cannot be hidden or deleted.',
     'menu_bad_parent' => 'A section is top level; a group can only be in a section; a link cannot be inside another link.',
     'times'                    => ':n times',
 ];

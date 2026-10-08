@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { can } from '@/acl/access.js'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -39,6 +40,7 @@ const router = createRouter({
                     name: 'data-user-list',
                     component: () => import('@/views/pages/settings/_User.vue'),
                     meta: {
+                        permission: ['list_users'],
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
                             { title: 'អ្នកប្រើប្រាស់'},
@@ -53,6 +55,7 @@ const router = createRouter({
                     name: 'user-edit',
                     component: () => import('@/views/pages/users/user-edit/UserSettings.vue'),
                     meta: {
+                        permission: ['edit_users'], allowSelf: 'userId',
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
                             { title: 'អ្នកប្រើប្រាស់', url: '/user' },
@@ -67,6 +70,7 @@ const router = createRouter({
                     name: 'data-auditrail',
                     component: () => import('@/views/pages/settings/_Audit.vue'),
                     meta: {
+                        permission: ['audit'],
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
                             { title: 'កំណត់ហេតុ'},
@@ -87,6 +91,7 @@ const router = createRouter({
                     name: 'data-role-list',
                     component: () => import('@/views/pages/settings/_Role.vue'),
                     meta: {
+                        permission: ['list_roles'],
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
                             { title: 'សិទ្ធិ' },
@@ -101,6 +106,7 @@ const router = createRouter({
                     name: 'app-menu',
                     component: () => import('@/views/pages/settings/_Menu.vue'),
                     meta: {
+                        permission: ['list_menu'],
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
                             { title: 'អ្នកប្រើប្រាស់' },
@@ -115,6 +121,7 @@ const router = createRouter({
                     name: 'data-role-form',
                     component: () => import('@/views/pages/roles/RoleForm.vue'),
                     meta: {
+                        permission: ['role_permissions'],
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
                             { title: 'គ្រប់គ្រងសិទ្ធិ', url: '/role' },
@@ -141,6 +148,7 @@ const router = createRouter({
                     name: 'Report',
                     component: () => import('@/views/pages/reports/Index.vue'),
                     meta: {
+                        permission: ['reports'],
                         pageTitle: 'របាយការណ៍',
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
@@ -156,6 +164,7 @@ const router = createRouter({
                     name: 'nofication',
                     component: () => import('@/views/pages/notification/Index.vue'),
                     meta: {
+                        permission: ['list_notifications'],
                         pageTitle: 'បញ្ជីការជូនដំណឹង',
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
@@ -173,6 +182,7 @@ const router = createRouter({
                     name: 'officer',
                     component: () => import('@/views/pages/officers/Index.vue'),
                     meta: {
+                        permission: ['list_officer'],
                         pageTitle: 'រាយនាមសមាជិក',
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
@@ -187,6 +197,7 @@ const router = createRouter({
                     name: 'officer-form',
                     component: () => import('@/views/pages/officers/tabs/_OfficerForm.vue'),
                     meta: {
+                        permission: ['create_officer', 'edit_officer'],
                         pageTitle: 'ចុះឈ្មោះសមាជិក',
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
@@ -201,6 +212,7 @@ const router = createRouter({
                     name: 'data-officer-activity',
                     component: () => import('@/views/pages/officers/tabs/OfficerDetail.vue'),
                     meta: {
+                        permission: ['show_officer'],
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
                             { title: 'រាយនាមសមាជិក', url: '/officer' },
@@ -215,6 +227,7 @@ const router = createRouter({
                     name: 'data-incentive-list',
                     component: () => import('@/views/pages/officers/tabs/_TabIncentive.vue'),
                     meta: {
+                        permission: ['list_officer_incentive'],
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
                             { title: 'ហិរញ្ញវត្ថុ' },
@@ -229,6 +242,7 @@ const router = createRouter({
                     name: 'data-request',
                     component: () => import('@/views/pages/officers/tabs/_TabRequest.vue'),
                     meta: {
+                        permission: ['list_officer_request'],
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
                             { title: 'ហិរញ្ញវត្ថុ' },
@@ -260,6 +274,7 @@ const router = createRouter({
                     name: 'account-expense-list',
                     component: () => import('@/views/pages/account/expense/Index.vue'),
                     meta: {
+                        permission: ['list_expense'],
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
                             { title: 'គ្រប់គ្រងចំណាយ', url: '/account/expense' },
@@ -275,6 +290,7 @@ const router = createRouter({
                     name: 'account-chart-account',
                     component: () => import('@/views/pages/account/coa/Index.vue'),
                     meta: {
+                        permission: ['list_account'],
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
                             { title: 'តារាងគណនី', url: '/account/chart-account' },
@@ -290,6 +306,7 @@ const router = createRouter({
                     name: 'account-income-list',
                     component: () => import('@/views/pages/account/income/Index.vue'),
                     meta: {
+                        permission: ['list_income'],
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
                             { title: 'គ្រប់គ្រងចំណូល', url: '/account/income' },
@@ -304,6 +321,7 @@ const router = createRouter({
                     name: 'account-officer-payment',
                     component: () => import('@/views/pages/officers/tabs/_TabPayable.vue'),
                     meta: {
+                        permission: ['list_officer_payable'],
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
                             { title: 'ហិរញ្ញវត្ថុ' },
@@ -318,6 +336,7 @@ const router = createRouter({
                     name: 'account-officer-payable-form',
                     component: () => import('@/views/pages/officers/tabs/_PayableForm.vue'),
                     meta: {
+                        permission: ['create_officer_payable', 'edit_officer_payable'],
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
                             { title: 'ហិរញ្ញវត្ថុ' },
@@ -349,6 +368,7 @@ const router = createRouter({
                     name: 'report',
                     component: () => import('@/views/pages/reports/ReportViewer.vue'),
                     meta: {
+                        permission: ['reports'],
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
                             { title: 'គ្រប់គ្រងរបាយការណ៍', url: '/report'},
@@ -366,6 +386,11 @@ const router = createRouter({
                     path: '/setting',
                     name: 'setting',
                     component: () => import('@/views/pages/settings/Setting.vue'),
+                    // Nothing in Settings for this role: back to the home page (the API refuses it as well)
+                    beforeEnter: async () => {
+                        const { canOpenSettings } = await import('@/views/pages/settings/settingsAccess.js')
+                        return canOpenSettings() ? true : { path: '/' }
+                    },
                     meta: {
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
@@ -384,6 +409,7 @@ const router = createRouter({
                     name: 'file-manager',
                     component: () => import('./views/file-managers/Index.vue'),
                     meta: {
+                        permission: ['file_manager_list'],
                         pageTitle: 'ឃ្លាំងឯកសារ',
                         breadcrumb: [
                             { title: 'ទំព័រដើម', url: '/' },
@@ -471,11 +497,27 @@ router.afterEach(() => {
         }
 })
 
+// The signed-in user's id (from login), for pages a user may always open about themselves
+function currentUserId() {
+    try {
+        return String((JSON.parse(localStorage.getItem('userInfo')) || {}).id || '')
+    } catch (e) {
+        return ''
+    }
+}
+
 router.beforeEach((to, from, next) => {
     // Pages marked authRequired need a signed-in user (the API checks every request as well)
     const signedIn = localStorage.getItem('accessToken') && localStorage.getItem('userInfo') // as auth.isUserLoggedIn
     if (to.meta.authRequired && !signedIn) {
         return next({ path: '/pages/login', query: { to: to.path } })
+    }
+    // meta.permission: the role needs at least one of them (permission names or feature keys, see acl/access.js).
+    // meta.allowSelf: the route param holding a user id; that user may open the page about themselves.
+    const needed = to.matched.flatMap(record => record.meta.permission || [])
+    if (needed.length && !needed.some(permission => can(permission))) {
+        const self = to.meta.allowSelf && String(to.params[to.meta.allowSelf]) === currentUserId()
+        if (!self) return next({ name: 'page-not-authorized' })
     }
     return next()
 })

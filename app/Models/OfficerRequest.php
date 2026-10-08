@@ -8,9 +8,11 @@ use App\Models\Settings\PaymentMethod;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 use CommonService;
+use App\Models\Concerns\HasDataScope;
+use App\Services\DataScope;
 class OfficerRequest extends Model implements Auditable
 {
-    use \OwenIt\Auditing\Auditable;
+    use \OwenIt\Auditing\Auditable, HasDataScope;
     protected $table = 'officer_request';
     protected $primaryKey = 'id';
     protected $fillable = [];
@@ -129,6 +131,7 @@ class OfficerRequest extends Model implements Auditable
             ->Join("mef_status as ms", "ms.id", "=", "or.status")
             ->Join("currency as c", "c.id", "=", "or.currency_id");
         $whereClause = $query;
+        DataScope::where($whereClause, 'officer_request', 'or'); // only what the role may see
         if(isset($filter["data"]["officer_id"])){
         }
         $whereClause->orderByFilter($filter);

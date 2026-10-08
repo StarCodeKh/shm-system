@@ -9,9 +9,10 @@ use Spatie\Permission\Traits\HasRoles;
 use OwenIt\Auditing\Contracts\Auditable;
 use DB;
 use CommonService;
+use App\Models\Concerns\HasDataScope;
 class Officer extends Model implements Auditable
 {
-    use \OwenIt\Auditing\Auditable,HasRoles;
+    use \OwenIt\Auditing\Auditable,HasRoles, HasDataScope;
 
     protected $table = 'officer';
     protected $primaryKey = 'id';
