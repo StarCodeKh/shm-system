@@ -26,6 +26,7 @@ use App\Http\Controllers\Settings\AccountGroupController;
 use App\Http\Controllers\Settings\AccountTypeController;
 use App\Http\Controllers\Settings\AccountTypeGroupController;
 use App\Http\Controllers\Settings\AuditController;
+use App\Http\Controllers\PrintController;
 use App\Http\Controllers\Settings\BankController;
 use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\CurrencyExchangeController;
@@ -320,6 +321,9 @@ Route::post('letter_type/search', [LetterTypeController::class, 'index']);
         Route::post('{type}/data', 'preview')->where('type', '[a-z_]+');
         Route::post('{type}', 'generate')->where('type', '[a-z_]+');
     });
+
+    // Print button of list pages: the rows on screen as the standard PDF document
+    Route::post('print', [PrintController::class, 'table']);
 
     // File manager
     Route::post('file_manager/search', [FileManagerController::class, 'index']);

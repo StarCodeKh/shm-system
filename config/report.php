@@ -32,6 +32,22 @@ return [
         'money' => '/amount|total|price|balance|salary|fee|cost|paid|budget|ceiling/i',
     ],
 
+    // Accent colour of printed list pages (reports have their own colour)
+    'default_color' => '#28C76F',
+
+    // Print button of list pages: most rows it prints (the list's search caps a page at 1000)
+    'print_max_rows' => 1000,
+
     // Fallback logo when the settings have none
     'default_logo' => 'images/logo.png',
+
+    // PDF letterhead: the national motto above the organisation, as on official documents
+    'national_header' => true,
+
+    // Signature block under the table. Roles print left to right (labels in report.php → signatures);
+    // the place and date line sits above the last one. An empty list hides the block.
+    'signature' => [
+        'roles' => ['approved_by', 'checked_by', 'prepared_by'],
+        'place' => env('REPORT_SIGN_PLACE', ''),
+    ],
 ];

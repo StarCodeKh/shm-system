@@ -14,17 +14,13 @@ use App\Models\Settings\Entity;
 use App\Models\IncentiveToOfficer;
 use App\Models\Income;
 use App\Models\Expense;
-use App\Models\Configuration;
+use App\Services\PdfDocument;
 use DB;
 use CommonService;
-use View;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use Mpdf\Mpdf;
-use Mpdf\Config\ConfigVariables;
-use Mpdf\Config\FontVariables;
 
 class ReportController extends Controller
 {
@@ -204,7 +200,6 @@ class ReportController extends Controller
         $summary = $this->summaryTiles($type, $report, $filter, count($rows));
 
         $columns = $this->columns($report['fields'](), $rows);
-        $user = auth()->user();
         $data = [
             'title' => $this->text($type, 'title'),
             'description' => $this->text($type, 'description'),
@@ -213,16 +208,13 @@ class ReportController extends Controller
             'rows' => $rows,
             'summary' => $summary,
             'filters' => $this->filterLabels($request->input('data') ?: []),
-            'printedBy' => $user ? ($user->username ?? $user->email ?? '') : '',
             'truncated' => count($rows) >= $maxRows,
-            'organization' => $this->organization(),
-            'moneyPattern' => config('report.columns.money'),
         ];
 
         // Building the PDF is the slow part (Khmer text shaping in mPDF), so keep each result for a few minutes.
-        // The key is the report's content, so any change in the data builds a fresh PDF.
-        $key = 'report_pdf:'.md5(json_encode([$type, App::getLocale(), $data]));
-        $pdf = Cache::remember($key, now()->addMinutes(config('report.pdf_cache_minutes')), fn () => $this->renderPdf($type, $report, $data));
+        // The key is the report's content and who prints it, so any change builds a fresh PDF.
+        $key = 'report_pdf:'.md5(json_encode([$type, App::getLocale(), auth()->id(), $data]));
+        $pdf = Cache::remember($key, now()->addMinutes(config('report.pdf_cache_minutes')), fn () => PdfDocument::render($data));
 
         $filename = $type.'-report-'.date('Y-m-d').'.pdf';
         $disposition = $request->boolean('download') ? 'attachment' : 'inline';
@@ -230,35 +222,6 @@ class ReportController extends Controller
         return response($pdf, 200)
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', $disposition.'; filename="'.$filename.'"');
-    }
-
-    /** Lay out one report as PDF bytes */
-    protected function renderPdf(string $type, array $report, array $data): string
-    {
-        $html = View::make('reports.table', $data)->render();
-
-        // Large reports produce a big HTML string; mPDF needs more regex, memory and time to lay it out.
-        ini_set('pcre.backtrack_limit', '50000000');
-        ini_set('memory_limit', '1024M');
-        set_time_limit(300);
-
-        // Narrow reports read better in portrait
-        $mpdf = $this->makePdf(count($data['columns']) <= config('report.portrait_max_columns') ? 'P' : 'L');
-        $mpdf->SetTitle($this->text($type, 'title'));
-        $mpdf->SetHTMLFooter(View::make('reports.footer', [
-            'title' => $this->text($type, 'title'),
-            'color' => $report['color'],
-            'organization' => $this->organization(),
-        ])->render());
-
-        // mPDF's Khmer shaper emits harmless warnings on some malformed text; don't let them abort the report.
-        set_error_handler(fn ($severity, $message, $file) => str_contains($file, '/mpdf/'), E_WARNING | E_NOTICE);
-        try {
-            $mpdf->WriteHTML($html);
-            return $mpdf->Output('', 'S');
-        } finally {
-            restore_error_handler();
-        }
     }
 
     /**
@@ -295,25 +258,6 @@ class ReportController extends Controller
             $labels[Lang::has($id) ? trans($id) : Str::headline($key)] = $value;
         }
         return $labels;
-    }
-
-    /** Organisation name, logo and footer from the system settings (configuration table) */
-    protected function organization(): array
-    {
-        static $organization = null;
-        if ($organization !== null) return $organization;
-
-        $settings = Configuration::whereIn('key', ['config_owner', 'config_name', 'config_logo', 'config_footer'])
-            ->pluck('value', 'key');
-        $logo = ltrim((string) ($settings['config_logo'] ?? ''), '/');
-        $logoPath = $logo && is_file(public_path($logo)) ? public_path($logo) : public_path(config('report.default_logo'));
-
-        return $organization = [
-            'name' => $settings['config_owner'] ?? config('app.name'),
-            'system' => $settings['config_name'] ?? '',
-            'logo' => $logoPath,
-            'footer' => $settings['config_footer'] ?? '',
-        ];
     }
 
     /**
@@ -359,26 +303,6 @@ class ReportController extends Controller
             }
         }
         return $labels;
-    }
-
-    protected function makePdf(string $orientation = 'L'): Mpdf
-    {
-        $fontDirs = (new ConfigVariables())->getDefaults()['fontDir'];
-        $fontData = (new FontVariables())->getDefaults()['fontdata'];
-
-        return new Mpdf([
-            'mode' => 'utf-8',
-            'format' => 'A4',
-            'orientation' => $orientation,
-            'tempDir' => config('pdf.temp_dir'),
-            'fontDir' => array_merge($fontDirs, [config('pdf.font_dir')]),
-            'fontdata' => $fontData + config('pdf.fonts'),
-            'default_font' => config('pdf.default_font'),
-            'margin_top' => 12,
-            'margin_bottom' => 18,
-            'margin_footer' => 8,
-            'simpleTables' => true,
-        ]);
     }
 
     public function incentiveByEntity(Request $request)

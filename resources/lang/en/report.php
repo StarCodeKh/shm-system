@@ -12,6 +12,21 @@ return [
     'page' => 'Page',
     'error' => 'Could not build the report. Please try again.',
 
+    // PDF letterhead, info bar and signature block
+    'kingdom' => 'KINGDOM OF CAMBODIA',
+    'motto' => 'Nation Religion King',
+    'records' => 'Records',
+    'filters' => 'Filters',
+    'no_filter' => 'All data',
+    'no_data_hint' => 'No records match the selected criteria',
+    'date_line' => ':place :month :day, :year',
+    'months' => ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    'signatures' => [
+        'approved_by' => 'Approved by',
+        'checked_by' => 'Checked by',
+        'prepared_by' => 'Prepared by',
+    ],
+
     // Report catalogue: title, description and summary labels per report key
     'types' => [
         'officers' => [

@@ -20,5 +20,12 @@ return [
             'R' => 'KhmerOSBattambang.ttf',
             'useOTL' => 0xFF,
         ],
+        // Headings of official documents: national motto, organisation, report title.
+        // Google's Moul (SIL OFL) plus an empty zero-width U+200B glyph: mPDF inserts U+200B
+        // between Khmer words, and the original font draws it as a box.
+        'moul' => [
+            'R' => 'Moul-zwsp.ttf',
+            'useOTL' => 0xFF,
+        ],
     ],
 ];

@@ -1872,8 +1872,48 @@ export default {
         initImport(dataTables, api) {
             this.$refs.refModelFileUploader.initFileUploader(dataTables, api);
         },
-        initPrint() {
-            window.print();
+        // Print = the rows of the current search as the standard PDF document (same layout as the reports)
+        async initPrint() {
+            // Open the tab now (inside the click) so popup blockers allow it; fill it when the PDF is ready
+            const tab = window.open('', '_blank')
+            if (tab) tab.document.write(`<p style="font-family:sans-serif;padding:24px;color:#666">${this.$t('report_preparing')}</p>`)
+            this.$vs.loading()
+            try {
+                const value = v => (v && typeof v === 'object') ? (v.label ?? v.value ?? '') : v
+                const search = Object.entries(this.lastSearchFields || {})
+                    .filter(([, v]) => value(v) !== undefined && value(v) !== null && value(v) !== '')
+                let rows = this.dataTables.data || []
+                let total = Number(this.dataTables.total) || rows.length
+                if (this.api) {
+                    const { data } = await axios.post(this.api + '/search', {
+                        sort: 'id', order: '', page_number: 1, limit: 1000,
+                        search_field: search.map(([k, v]) => ({ [k]: v })),
+                    })
+                    rows = data.data || rows
+                    total = Number(data.total) || rows.length
+                }
+                const headers = (this.dataHeaders || []).filter(h => !this.isFileColumn(h))
+                const cell = (row, h) => {
+                    if (h === 'status' && row[h] && typeof row[h] === 'object') return this.statusTitle(row[h])
+                    const v = value(this.customField(row, h))
+                    return v === undefined || v === null ? '' : (typeof v === 'object' ? (v.name_kh || v.title_kh || v.name_en || '') : String(v))
+                }
+                const response = await axios.post('/api/v1/print', {
+                    title: this.$t(this.title),
+                    columns: headers.map(h => ({ key: h, label: this.$tField(h), numeric: this.isAmountColumn(h), date: this.isDateColumn(h) })),
+                    rows: rows.map(row => Object.fromEntries(headers.map(h => [h, cell(row, h)]))),
+                    filters: Object.fromEntries(search.map(([k, v]) => [this.$tField(k), String(value(v))])),
+                    total,
+                }, { responseType: 'blob' })
+                const url = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }))
+                if (tab) tab.location.href = url
+                else window.open(url, '_blank')
+                setTimeout(() => URL.revokeObjectURL(url), 60000)
+            } catch (e) {
+                if (tab) tab.close()
+                this.$vs.notify({ title: 'Message', text: this.$t('report_error'), iconPack: 'feather', icon: 'icon-alert-circle', color: 'danger' })
+            }
+            this.$vs.loading.close()
         },
         initDowlonadElsx() {
             const modelName = this.dataTables.model_name;

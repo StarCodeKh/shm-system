@@ -13,51 +13,50 @@
             $mix = fn ($i) => (int) round(hexdec(substr($hex, $i, 2)) + (255 - hexdec(substr($hex, $i, 2))) * $amount);
             return sprintf('#%02x%02x%02x', $mix(0), $mix(2), $mix(4));
         };
-        $soft = $tint($color, 0.88);
-        $softer = $tint($color, 0.95);
+        $soft = $tint($color, 0.86);
+        $softer = $tint($color, 0.94);
+        // Moul is a Khmer display face; English headings stay in the body font
+        $heading = app()->getLocale() === 'kh' ? 'moul' : config('pdf.default_font');
+        $headingWeight = $heading === 'moul' ? 'normal' : 'bold';
     @endphp
     <style>
         body { font-family: {{ config('pdf.default_font') }}; font-size: 8.5pt; color: #2c2e45; }
+        table { border-collapse: collapse; }
+        td { vertical-align: top; }
 
-        /* Header */
-        .head td { border: none; vertical-align: middle; }
-        .org { font-size: 10.5pt; font-weight: bold; color: #2c2e45; line-height: 1.6; }
-        .org small { font-size: 8pt; font-weight: normal; color: #8a8ca5; }
-        .meta { text-align: right; font-size: 7.5pt; color: #8a8ca5; line-height: 1.7; }
-        .meta b { color: #2c2e45; }
-        .rule { height: 1.2mm; background-color: {{ $color }}; margin-top: 3mm; }
+        /* Letterhead: national motto centred, organisation block on the left */
+        .kingdom { font-family: {{ $heading }}; font-weight: {{ $headingWeight }}; font-size: 11pt; color: #1f2140; text-align: center; }
+        .motto { font-family: {{ $heading }}; font-weight: {{ $headingWeight }}; font-size: 9.5pt; color: #1f2140; text-align: center; }
+        .org-name { font-family: {{ $heading }}; font-weight: {{ $headingWeight }}; font-size: 9pt; color: #1f2140; text-align: center; line-height: 1.5; }
+        .org-system { font-size: 7.8pt; color: #8a8ca5; text-align: center; }
 
         /* Title */
-        .title { font-size: 15pt; font-weight: bold; color: #2c2e45; margin-top: 6mm; }
-        .subtitle { font-size: 8.5pt; color: #8a8ca5; margin-top: 1mm; }
+        .title { font-family: {{ $heading }}; font-weight: {{ $headingWeight }}; font-size: 14pt; color: {{ $color }}; text-align: center; }
+        .subtitle { font-size: 8.5pt; color: #8a8ca5; text-align: center; }
 
-        /* Active filters */
-        .filters { margin-top: 3mm; }
-        .chip {
-            background-color: #f3f4f7; color: #4b4d68; font-size: 7.5pt;
-            padding: 1mm 2.5mm; border-radius: 2mm;
-        }
-        .chip b { color: #2c2e45; }
-
-        /* Summary tiles */
-        .summary { width: 100%; border-collapse: separate; border-spacing: 2.5mm 0; margin: 5mm -2.5mm 5mm; }
-        .summary td { background-color: {{ $softer }}; padding: 0; vertical-align: top; }
+        /* Info bar */
+        .info td { background-color: #f6f7fb; padding: 2.4mm 4mm; vertical-align: middle; }
+        .info .label { font-size: 7pt; color: #8a8ca5; }
+        .info .value { font-size: 8.5pt; font-weight: bold; color: #2c2e45; }
 
         /* Data table */
-        table.data { width: 100%; border-collapse: collapse; margin-top: 2mm; }
+        table.data { width: 100%; margin-top: 4mm; }
         table.data th {
-            background-color: {{ $soft }}; color: #2c2e45; font-size: 7.8pt; font-weight: bold;
-            padding: 2.6mm 2.2mm; text-align: left;
+            background-color: {{ $color }}; color: #ffffff; font-size: 7.8pt; font-weight: bold;
+            padding: 2.8mm 2.2mm; text-align: left; vertical-align: middle;
         }
-        table.data td { padding: 2mm 2.2mm; font-size: 8pt; color: #3f4157; border-bottom: 0.2mm solid #eceef4; }
-        table.data tr.alt td { background-color: #f7f8fa; }
+        table.data td { padding: 2.1mm 2.2mm; font-size: 8pt; color: #3f4157; vertical-align: middle; }
+        table.data tr.alt td { background-color: {{ $softer }}; }
         table.data .no { width: 9mm; text-align: center; color: #8a8ca5; }
+        table.data th.no { color: #ffffff; }
         table.data .num { text-align: right; }
         table.data .date { white-space: nowrap; color: #6b6d7a; }
         table.data .muted { color: #b0b2bd; }
-        table.data tfoot td { font-weight: bold; color: #2c2e45; background-color: {{ $soft }}; padding-top: 2.6mm; padding-bottom: 2.6mm; }
+        table.data tfoot td {
+            font-weight: bold; color: #1f2140; background-color: {{ $soft }};
+            padding-top: 2.8mm; padding-bottom: 2.8mm;
+        }
 
-        .empty { text-align: center; color: #8a8ca5; padding: 12mm 0; }
         .note {
             margin-top: 4mm; padding: 2.5mm 4mm; font-size: 7.8pt; color: #9a5b0a;
             background-color: #fff6e6; border-left: 1mm solid #ff9f43;
@@ -84,56 +83,100 @@
                 $numericTotals[$column['key']] = collect($rows)->sum(fn ($row) => (float) str_replace(',', '', (string) data_get($row, $column['key'])));
             }
         }
+        $summary = $summary ?? [];
     @endphp
 
-    {{-- Header --}}
-    <table class="head" width="100%">
+    {{-- Letterhead --}}
+    @if($nationalHeader)
+        <div class="kingdom">{{ trans('report.kingdom') }}</div>
+        <div class="motto">{{ trans('report.motto') }}</div>
+        {{-- the short double rule under the motto --}}
+        <table align="center" style="margin-top: 1.5mm;">
+            <tr>
+                <td style="width: 9mm; height: 0.5mm; background-color: #1f2140;"></td>
+                <td style="width: 2mm;"></td>
+                <td style="width: 3mm; height: 0.5mm; background-color: {{ $color }};"></td>
+                <td style="width: 2mm;"></td>
+                <td style="width: 9mm; height: 0.5mm; background-color: #1f2140;"></td>
+            </tr>
+        </table>
+    @endif
+
+    <table width="100%" style="margin-top: {{ $nationalHeader ? '-4mm' : '0' }};">
         <tr>
-            <td width="17mm"><img src="{{ $organization['logo'] }}" width="14mm"/></td>
-            <td class="org">
-                {{ $organization['name'] }}
-                @if($organization['system'])<br/><small>{{ $organization['system'] }}</small>@endif
+            <td width="78mm" style="padding: 0;">
+                {{-- one row each, so the gaps are exact: logo · 2.5mm · name · 1mm · system --}}
+                <table width="100%">
+                    <tr><td style="text-align: center; padding: 0 0 2.5mm;"><img src="{{ $organization['logo'] }}" width="17mm"/></td></tr>
+                    <tr><td class="org-name" style="padding: 0;">{{ $organization['name'] }}</td></tr>
+                    @if($organization['system'])
+                        <tr><td class="org-system" style="padding: 1mm 0 0;">{{ $organization['system'] }}</td></tr>
+                    @endif
+                </table>
             </td>
-            <td class="meta">
-                {{ trans('report.printed_at') }} <b>{{ date('d-m-Y H:i') }}</b><br/>
-                @if($printedBy) {{ trans('report.printed_by') }} <b>{{ $printedBy }}</b><br/> @endif
-                {{ trans('report.rows') }} <b>{{ number_format(count($rows)) }}</b>
+            <td></td>
+        </tr>
+    </table>
+
+    {{-- Title, with a short accent bar under it --}}
+    <div class="title" style="margin-top: 5mm;">{{ $title }}</div>
+    @if(!empty($description))
+        <div class="subtitle" style="margin-top: 0.5mm;">{{ $description }}</div>
+    @endif
+    <table align="center" style="margin-top: 2mm;">
+        <tr><td style="width: 18mm; height: 0.8mm; background-color: {{ $color }};"></td></tr>
+    </table>
+
+    {{-- Info bar: when, who, how many, which filters --}}
+    <table class="info" width="100%" style="margin-top: 5mm;">
+        <tr>
+            <td width="4mm" style="padding: 0; background-color: {{ $color }};"></td>
+            <td width="22%">
+                <span class="label">{{ trans('report.printed_at') }}</span><br/>
+                <span class="value">{{ date('d-m-Y H:i') }}</span>
+            </td>
+            <td width="18%">
+                <span class="label">{{ trans('report.printed_by') }}</span><br/>
+                <span class="value">{{ $printedBy ?: '—' }}</span>
+            </td>
+            <td width="15%">
+                <span class="label">{{ trans('report.records') }}</span><br/>
+                <span class="value">{{ number_format(count($rows)) }}</span>
+            </td>
+            <td>
+                <span class="label">{{ trans('report.filters') }}</span><br/>
+                @if(!empty($filters))
+                    @foreach($filters as $label => $value)
+                        <span style="font-size: 7.8pt; color: #6b6d7a;">{{ $label }}:</span>
+                        <span class="value">{{ $value }}</span>@if(!$loop->last)<span style="color: #c4c6d0;">&nbsp;&nbsp;|&nbsp;&nbsp;</span>@endif
+                    @endforeach
+                @else
+                    <span class="value">{{ trans('report.no_filter') }}</span>
+                @endif
             </td>
         </tr>
     </table>
-    <div class="rule"></div>
 
-    {{-- Title --}}
-    <div class="title">{{ $title }}</div>
-    @if(!empty($description))
-        <div class="subtitle">{{ $description }}</div>
-    @endif
-
-    {{-- Active filters --}}
-    @if(!empty($filters))
-        <div class="filters">
-            @foreach($filters as $label => $value)
-                <span class="chip">{{ $label }}: <b>{{ $value }}</b></span>&nbsp;
-            @endforeach
-        </div>
-    @endif
-
-    {{-- Summary --}}
-    @if(!empty($summary))
-        <table class="summary">
+    {{-- Summary cards: fixed width, so one card doesn't stretch across the page --}}
+    @if(count($summary))
+        <table width="100%" style="margin-top: 4mm;">
             <tr>
                 @foreach($summary as $label => $value)
-                    <td>
-                        {{-- accent strip + inline-styled spans: mPDF ignores font sizes on divs inside cells --}}
-                        <table width="100%" style="border-collapse: collapse;">
-                            <tr><td style="background-color: {{ $color }}; height: 1mm; padding: 0;"></td></tr>
-                            <tr><td style="padding: 2.5mm 4mm 3mm;">
-                                <span style="font-size: 7.5pt; color: #8a8ca5;">{{ $label }}</span><br/>
-                                <span style="font-size: 16pt; font-weight: bold; color: #2c2e45;">{{ is_numeric($value) ? number_format($value) : $value }}</span>
-                            </td></tr>
+                    <td width="46mm" style="padding: 0;">
+                        {{-- inline-styled spans: mPDF ignores font sizes on divs inside cells --}}
+                        <table width="100%" style="background-color: {{ $softer }};">
+                            <tr>
+                                <td width="1.2mm" style="background-color: {{ $color }}; padding: 0;"></td>
+                                <td style="padding: 2.6mm 4mm 3mm;">
+                                    <span style="font-size: 7.5pt; color: #6b6d7a;">{{ $label }}</span><br/>
+                                    <span style="font-size: 15pt; font-weight: bold; color: #1f2140;">{{ is_numeric($value) ? number_format($value) : $value }}</span>
+                                </td>
+                            </tr>
                         </table>
                     </td>
+                    <td width="3mm" style="padding: 0;"></td>
                 @endforeach
+                <td></td>
             </tr>
         </table>
     @endif
@@ -167,7 +210,10 @@
                 </tr>
             @empty
                 <tr>
-                    <td class="empty" colspan="{{ count($columns) + 1 }}">{{ trans('report.no_data') }}</td>
+                    <td colspan="{{ count($columns) + 1 }}" style="background-color: {{ $softer }}; padding: 10mm 0; text-align: center;">
+                        <span style="font-size: 10pt; font-weight: bold; color: #4b4d68;">{{ trans('report.no_data') }}</span><br/>
+                        <span style="font-size: 8pt; color: #8a8ca5;">{{ trans('report.no_data_hint') }}</span>
+                    </td>
                 </tr>
             @endforelse
         </tbody>
@@ -191,6 +237,31 @@
 
     @if($truncated)
         <div class="note">{{ trans('report.truncated', ['count' => number_format(count($rows))]) }}</div>
+    @endif
+
+    {{-- Signatures: place and date above the last role, room to sign under each --}}
+    @if(count($signatures))
+        <table width="100%" style="margin-top: 8mm; page-break-inside: avoid;" autosize="1">
+            <tr>
+                @foreach($signatures as $role)
+                    <td width="{{ round(100 / count($signatures), 2) }}%" style="text-align: center; font-size: 8pt; color: #6b6d7a;">
+                        {{ $loop->last ? $dateLine : '' }}
+                    </td>
+                @endforeach
+            </tr>
+            <tr>
+                @foreach($signatures as $role)
+                    <td style="text-align: center; padding-top: 1mm;">
+                        <span style="font-family: {{ $heading }}; font-weight: {{ $headingWeight }}; font-size: 9pt; color: #1f2140;">{{ $role }}</span>
+                    </td>
+                @endforeach
+            </tr>
+            <tr>
+                @foreach($signatures as $role)
+                    <td style="height: 22mm;"></td>
+                @endforeach
+            </tr>
+        </table>
     @endif
 </body>
 </html>
