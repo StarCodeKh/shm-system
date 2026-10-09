@@ -393,9 +393,9 @@ export default {
 }
 </script>
 
-<style lang="scss">
-// Audit-specific cells; the toolbar, filters, chips, table, badges, empty state and footer
-// come from the shared list standard (LIST PAGES in resources/sass/custom.scss).
+<style>
+/* Audit-specific cells; the toolbar, filters, chips, table, badges, empty state and footer */
+/* come from the shared list standard (LIST PAGES in resources/css/custom.css). */
 .d-audit {
     &__table {
         min-width: 720px;
@@ -534,7 +534,7 @@ export default {
         color: #6b6d7a;
     }
 
-    // ---------------------------------------------------------------- Detail
+    /* ---------------------------------------------------------------- Detail */
     &__detail-row > td {
         padding: 0 !important;
         background: #fafbfd;
@@ -640,7 +640,7 @@ export default {
         }
     }
 
-    // ---------------------------------------------------------------- Phones: each log row becomes a card
+    /* ---------------------------------------------------------------- Phones: each log row becomes a card */
     @media (max-width: 768px) {
         &__table {
             min-width: 0;

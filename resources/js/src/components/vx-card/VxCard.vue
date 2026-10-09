@@ -218,6 +218,5 @@ export default{
 }
 </script>
 
-<style lang="scss">
-@import "@sass/shm/components/vxCard.scss"
-</style>
+<style>
+@import "@css/shm/components/vxCard.css";</style>

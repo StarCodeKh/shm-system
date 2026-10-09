@@ -1,0 +1,39 @@
+
+
+body {
+    color: rgb(var(--content-color-rgb));
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: var(--headings-font-family);
+    font-weight: var(--headings-font-weight);
+    line-height: var(--headings-line-height);
+    color: rgb(var(--headings-color-rgb));
+}
+
+h1, .h1 { font-size: var(--h1-font-size); }
+h2, .h2 { font-size: var(--h2-font-size); }
+h3, .h3 { font-size: var(--h3-font-size); }
+h4, .h4 { font-size: var(--h4-font-size); }
+h5, .h5 { font-size: var(--h5-font-size); }
+h6, .h6 { font-size: var(--h6-font-size); }
+
+h4 {
+    .vs-tooltip &{
+        color: rgb(var(--white-rgb));
+    }
+}
+
+
+a:active,
+a:visited,
+a:hover,
+a {
+    color: rgba(var(--vs-primary), 1);
+}
+
+/* quill editor */
+u {
+    text-decoration: underline;
+}

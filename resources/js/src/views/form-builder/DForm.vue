@@ -851,12 +851,12 @@ export default {
     }
 }
 </script>
-<style lang="scss">
-// ---------------------------------------------------------------- Standard form layout
+<style>
+/* ---------------------------------------------------------------- Standard form layout */
 .d-form {
-    // Field rows, quick-add button and control sizes are shared app-wide: see .d-form in resources/sass/custom.scss
+    /* Field rows, quick-add button and control sizes are shared app-wide: see .d-form in resources/css/custom.css */
 
-    // Sticky footer
+    /* Sticky footer */
     &__footer {
         position: sticky;
         bottom: -1px;
@@ -935,7 +935,7 @@ export default {
     }
 }
 
-// Popup frame and sizes (.d-modal--sm/md/lg/xl) are shared app-wide: see "POPUPS" in resources/sass/custom.scss
+/* Popup frame and sizes (.d-modal--sm/md/lg/xl) are shared app-wide: see "POPUPS" in resources/css/custom.css */
 
 .theme-dark {
     .d-form .d-field > label { color: #c2c6dc; }

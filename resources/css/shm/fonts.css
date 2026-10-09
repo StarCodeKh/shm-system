@@ -1,5 +1,5 @@
 /*=========================================================================================
-    File Name: _fonts.scss
+    File Name: fonts.css
     Description: Every font the app uses, self-hosted (no Google Fonts / CDN).
     Font files live in resources/assets/fonts; Vite bundles them from the @assets paths below,
     so nothing has to be copied into public/ (a fresh clone + npm run build has every font).
@@ -9,7 +9,7 @@
         document.documentElement.style.setProperty('--font-base', "'Khmer OS Battambang', sans-serif")
 ==========================================================================================*/
 
-// Kantumruy Pro — main UI font. Variable fonts: one file covers weights 100–700.
+/* Kantumruy Pro — main UI font. Variable fonts: one file covers weights 100–700. */
 @font-face {
     font-family: 'Kantumruy Pro';
     src: url('@assets/fonts/KantumruyPro.woff2') format('woff2');
@@ -25,7 +25,7 @@
     font-display: swap;
 }
 
-// Khmer OS Battambang — printed letters and documents.
+/* Khmer OS Battambang — printed letters and documents. */
 @font-face {
     font-family: 'Khmer OS Battambang';
     src: url('@assets/fonts/KhmerOSBattambang.woff2') format('woff2');

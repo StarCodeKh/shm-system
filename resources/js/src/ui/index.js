@@ -1,7 +1,7 @@
 /*=========================================================================================
     The app's UI components, replacing Vuesax 3 (which only runs on Vue 2).
     They keep Vuesax's tag names (<vs-input>, <vs-popup>, ...), props, events and HTML/class names,
-    so the templates, vuesax.css and custom.scss work unchanged. Ported from Vuesax 3 (MIT).
+    so the templates, vuesax.css and custom.css work unchanged. Ported from Vuesax 3 (MIT).
 ==========================================================================================*/
 import VsButton from './VsButton.vue'
 import VsCheckbox from './VsCheckbox.vue'

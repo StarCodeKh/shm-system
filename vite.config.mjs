@@ -9,7 +9,7 @@ export default defineConfig({
     plugins: [
         laravel({
             // Order is the cascade order: component base styles, Tailwind utilities, then the app's own styles
-            input: ['resources/assets/css/vuesax.css', 'node_modules/vue-select/dist/vue-select.css', 'resources/assets/css/main.css', 'resources/sass/app.scss', 'resources/js/app.js'],
+            input: ['resources/assets/css/vuesax.css', 'node_modules/vue-select/dist/vue-select.css', 'resources/assets/css/main.css', 'resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
         }),
         vue({
@@ -32,17 +32,7 @@ export default defineConfig({
         alias: {
             '@': path.resolve(root, 'resources/js/src'),
             '@assets': path.resolve(root, 'resources/assets'),
-            '@sass': path.resolve(root, 'resources/sass'),
-        },
-    },
-    css: {
-        preprocessorOptions: {
-            scss: {
-                // Partials are imported as "shm/..." from resources/sass
-                loadPaths: [path.resolve(root, 'resources/sass'), path.resolve(root, 'node_modules')],
-                // The theme (resources/sass/shm) still uses @import and global color functions; they compile, just deprecated
-                silenceDeprecations: ['import', 'global-builtin', 'color-functions', 'slash-div', 'legacy-js-api'],
-            },
+            '@css': path.resolve(root, 'resources/css'),
         },
     },
 })

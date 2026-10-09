@@ -26,11 +26,11 @@
             width: 100%;
 
             .search-full-container {
-                background: $white;
+                background: rgb(var(--white-rgb));
             }
 
             .vx-auto-suggest {
-                color: $content-color;
+                color: rgb(var(--content-color-rgb));
             }
         }
 
@@ -56,9 +56,9 @@
     background: linear-gradient(to bottom, rgba(44, 48, 60, 0.9) 44%, rgba(44, 48, 60, 0.43) 73%, rgba(44, 48, 60, 0) 100%);
 }
 
-/////////////////////////////////////////////////////////
-// NAVBAR VARIANTS
-/////////////////////////////////////////////////////////
+/* /////////////////////////////////////////////////////// */
+/* NAVBAR VARIANTS */
+/* /////////////////////////////////////////////////////// */
 
 .navbar-floating {
 
@@ -166,12 +166,12 @@
     }
 }
 
-// Bookmark Dropdown
+/* Bookmark Dropdown */
 .bookmark-dropdown {
     z-index: 41002;
 }
 
-// navbar update fixes
+/* navbar update fixes */
 .navbar-custom {
     .vs-navbar--btn-responsive {
         display: none !important;
@@ -232,7 +232,7 @@
     }
 }
 
-// BOOKMARK
+/* BOOKMARK */
 .starred-page,
 .starred-page--more {
     &:hover {
@@ -240,7 +240,7 @@
     }
 }
 
-// I18N
+/* I18N */
 .i18n-dropdown {
     .vs-dropdown--item-link {
         display: flex;
@@ -257,7 +257,7 @@
     }
 }
 
-// CART & NOTIFICATIONS DROPDOWN
+/* CART & NOTIFICATIONS DROPDOWN */
 .cart-dropdown {
     width: 365px;
 
@@ -273,7 +273,7 @@
 .cart-dropdown {
     width: 365px;
 
-    // Full width notification in mobile devices
+    /* Full width notification in mobile devices */
     @media screen and (max-width: 500px) {
         width: 95vw;
         left: 97.5vw !important;

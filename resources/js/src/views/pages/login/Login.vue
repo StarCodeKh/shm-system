@@ -70,10 +70,8 @@ export default {
 }
 </script>
 
-<style lang="scss">
-// Same blue as the sidebar and the loading screen
-$login-blue: #5972ac;
-$login-blue-dark: #324693;
+<style>
+/* Same blue as the sidebar and the loading screen */
 
 .login-page {
     min-height: 100vh;
@@ -118,7 +116,7 @@ $login-blue-dark: #324693;
     padding: 48px 40px;
     color: #fff;
     overflow: hidden;
-    background: linear-gradient(150deg, $login-blue 0%, $login-blue-dark 100%);
+    background: linear-gradient(150deg, #5972ac 0%, #324693 100%);
 
     &__ring {
         position: absolute;
@@ -160,7 +158,7 @@ $login-blue-dark: #324693;
         justify-content: center;
         box-shadow: 0 0 0 10px rgba(255, 255, 255, .08), 0 20px 40px rgba(0, 0, 0, .25);
 
-        // Logo.vue wraps the image in a div
+        /* Logo.vue wraps the image in a div */
         > div {
             width: 100%;
             height: 100%;

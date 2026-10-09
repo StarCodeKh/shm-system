@@ -132,7 +132,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 .user-profile {
     &__head {
         display: flex;
@@ -235,7 +235,7 @@ export default {
         margin: 18px 0 14px;
     }
 
-    // The panel shown by v-show replays the shared tab entrance each time it appears
+    /* The panel shown by v-show replays the shared tab entrance each time it appears */
     &__body > * {
         animation: tab-content-in var(--tab-fade) var(--tab-ease) backwards;
 
@@ -244,7 +244,7 @@ export default {
         }
     }
 
-    // The active look (tint + outline) is the pill that slides between tabs (v-tab-pill)
+    /* The active look (tint + outline) is the pill that slides between tabs (v-tab-pill) */
     &__tabs {
         --pill-bg: rgba(var(--vs-primary), .1);
         --pill-shadow: inset 0 0 0 1px rgba(var(--vs-primary), .45);
@@ -284,7 +284,7 @@ export default {
         }
     }
 
-    // Shared by both tab forms
+    /* Shared by both tab forms */
     .user-form {
         padding: 22px 24px;
         border: 1px solid #eceef4;

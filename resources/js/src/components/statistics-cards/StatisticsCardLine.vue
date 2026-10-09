@@ -166,19 +166,19 @@ export default{
 }
 </script>
 
-<style lang="scss">
-// Icon in a soft circle of its own colour (same recipe for every tone)
+<style>
+/* Icon in a soft circle of its own colour (same recipe for every tone) */
 .stat-card-line__icon {
     color: rgb(var(--tone));
     background: rgba(var(--tone), .12);
 }
-// Navy is too dark on the dark theme: a lighter shade of it
+/* Navy is too dark on the dark theme: a lighter shade of it */
 .theme-dark .stat-card-line__icon--navy {
     color: #a9b0ff;
     background: rgba(169, 176, 255, .14);
 }
 
-    // Scoped to this card: a bare .truncate rule also pushed down every sidebar label
+    /* Scoped to this card: a bare .truncate rule also pushed down every sidebar label */
     .stat-card-line__body {
         padding-top: 5%;
     }

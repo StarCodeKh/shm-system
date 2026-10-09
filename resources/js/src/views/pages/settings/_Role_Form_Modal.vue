@@ -239,7 +239,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 .perm-modal .perm-modal__content {
     padding-bottom: 0 !important;
 }
@@ -278,7 +278,7 @@ export default {
         }
     }
 
-    // Matrix scrolls inside the popup; header row and module column stay in view
+    /* Matrix scrolls inside the popup; header row and module column stay in view */
     &__wrap {
         max-height: calc(100vh - 300px);
         overflow: auto;
@@ -360,7 +360,7 @@ export default {
         }
     }
 
-    // Native checkbox restyled to the theme colour (supports the indeterminate state for "some")
+    /* Native checkbox restyled to the theme colour (supports the indeterminate state for "some") */
     &__check {
         appearance: none;
         -webkit-appearance: none;
@@ -434,7 +434,7 @@ export default {
         }
     }
 
-    // Sticky footer inside the popup
+    /* Sticky footer inside the popup */
     &__footer {
         position: sticky;
         bottom: 0;

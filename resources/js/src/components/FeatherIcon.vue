@@ -30,6 +30,6 @@ export default {
 }
 </script>
 
-<style lang="scss">
-@import "@sass/shm/components/featherIcon.scss";
+<style>
+@import "@css/shm/components/featherIcon.css";
 </style>

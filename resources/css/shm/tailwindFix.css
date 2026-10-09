@@ -1,5 +1,5 @@
 
-// button fix
+/* button fix */
 button:focus {
     outline: none;
 }

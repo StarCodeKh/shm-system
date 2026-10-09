@@ -44,7 +44,7 @@ export function onLocaleChange(listener) {
     }
 }
 
-// vue-select prints "Sorry, no matching options." as fixed English text: it is hidden by CSS (custom.scss)
+// vue-select prints "Sorry, no matching options." as fixed English text: it is hidden by CSS (custom.css)
 // and this translated text is shown in its place, kept in step with the language.
 function applySelectTexts() {
     document.documentElement.style.setProperty('--vs-no-options', JSON.stringify(t.t('select_no_options')))

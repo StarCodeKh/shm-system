@@ -3,41 +3,41 @@
 }
 
 .theme-semi-dark {
-    // Vertical NavMenu
+    /* Vertical NavMenu */
     .v-nav-menu{
         .vs-sidebar {
-            background-color: $sidebar-dark-bg;
+            background-color: rgb(var(--sidebar-dark-bg-rgb));
             border-radius: 30px;
         }
         .shadow-bottom{
             width: 94%;
-            background: none !important;//linear-gradient(to bottom, rgb(15, 22, 66) 44%, rgba(15, 22, 66, 0.51) 73%, rgba(44, 48, 60, 0) 100%)
+            background: none !important;/* linear-gradient(to bottom, rgb(15, 22, 66) 44%, rgba(15, 22, 66, 0.51) 73%, rgba(44, 48, 60, 0) 100%) */
         }
         .scroll-area-v-nav-menu{
             .feather-icon, span{
-                color: $white;
+                color: rgb(var(--white-rgb));
             }
             a{
                 .feather-icon{
                     svg, span{
-                        color: $white;
+                        color: rgb(var(--white-rgb));
                     }
                 }
             }
             .vs-sidebar-group{
                 &.vs-sidebar-group-open{
                     > .group-header{
-                        background: $content-dark-bg;
+                        background: rgb(var(--content-dark-bg-rgb));
                     }
                 }
                 &.vs-sidebar-group-active{
                     > .group-header{
-                        background: $content-dark-bg;
+                        background: rgb(var(--content-dark-bg-rgb));
                     }
                 }
             }
             .con-vs-chip{
-                box-shadow: 0px 0px 4px 2px $content-dark-bg;
+                box-shadow: 0px 0px 4px 2px rgb(var(--content-dark-bg-rgb));
             }
         }
     }

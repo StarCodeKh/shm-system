@@ -481,7 +481,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 .mm {
     &__head {
         display: flex;
@@ -569,7 +569,7 @@ export default {
     }
 }
 
-// One item of the tree; --depth indents children
+/* One item of the tree; --depth indents children */
 .mm-row {
     display: flex;
     align-items: center;
@@ -702,7 +702,7 @@ export default {
         background: #fff3e0;
     }
 
-    // Who sees the item (its permission)
+    /* Who sees the item (its permission) */
     &--access {
         color: rgb(var(--vs-primary));
         background: rgba(var(--vs-primary), .1);
@@ -710,7 +710,7 @@ export default {
     }
 }
 
-// Always-on switch: stays on, faded, not clickable
+/* Always-on switch: stays on, faded, not clickable */
 .mm-row__actions .con-vs-switch.is-locked {
     opacity: .5;
     cursor: not-allowed;
@@ -758,7 +758,7 @@ export default {
     }
 }
 
-// "+ Add" link under a section / group
+/* "+ Add" link under a section / group */
 .mm-add {
     padding: 10px 18px 12px calc(18px + 32px + var(--depth, 1) * 32px);
     border-bottom: 1px solid #f0f1f5;
@@ -792,7 +792,7 @@ export default {
     }
 }
 
-// Sidebar preview, in the sidebar's own colors
+/* Sidebar preview, in the sidebar's own colors */
 .mm-side {
     margin-top: 16px;
     padding: 14px 10px;
@@ -838,7 +838,7 @@ export default {
             opacity: .85;
         }
 
-        // Current page: the same pill as the real sidebar
+        /* Current page: the same pill as the real sidebar */
         &.is-active {
             font-weight: 600;
             opacity: 1;
@@ -855,7 +855,7 @@ export default {
     }
 }
 
-// Add / edit form
+/* Add / edit form */
 .mm-form {
     display: flex;
     flex-direction: column;
@@ -961,7 +961,7 @@ export default {
     to { background-position: -200% 0; }
 }
 
-// Narrow screens: preview under the tree, actions wrap under the text
+/* Narrow screens: preview under the tree, actions wrap under the text */
 @media (max-width: 1100px) {
     .mm__layout {
         grid-template-columns: 1fr;

@@ -1,0 +1,79 @@
+/*=========================================================================================
+    File Name: tokens.css
+    Description: Design tokens (spacing, colors, type, theme) as CSS custom properties.
+    Colors are RGB channels so any alpha works: color: rgb(var(--grey-rgb) / .5);
+    The same names are Tailwind colors (tailwind.config.js): bg-grey, text-content-color/60, ...
+    ----------------------------------------------------------------------------------------
+    Project: SHM-System
+    Author: Soeng Souy
+==========================================================================================*/
+
+:root {
+    /* Spacing */
+    --spacer: 2.2rem;
+    --spacer-sm: calc(var(--spacer) / 2);
+    --spacer-lg: calc(var(--spacer) * 2);
+
+    /* Colors (RGB channels) */
+    --primary-rgb: 118 138 210;
+    --success-rgb: 40 199 111;
+    --danger-rgb: 234 84 85;
+    --warning-rgb: 255 159 67;
+    --dark-rgb: 30 30 30;
+    --grey-rgb: 184 194 204;
+    --grey-light-rgb: 218 225 231;
+    --white-rgb: 255 255 255;
+    --black-rgb: 34 41 47;
+    --headings-color-rgb: 44 44 44;
+    --content-color-rgb: 98 98 98;
+    --theme-background-rgb: 255 255 255;
+    --sidebar-dark-bg-rgb: 89 114 172;
+    --content-dark-bg-rgb: 38 44 73;
+    --dark-card-color-rgb: 16 22 58;
+    --table-dark-stripe-rgb: 33 39 68;
+    --table-light-stripe-rgb: 38 44 73;
+    --grid-dark-color-rgb: 52 54 97;
+    --theme-light-dark-bg-rgb: 38 44 73;
+    --theme-dark-bg-rgb: 16 22 58;
+    --theme-dark-secondary-bg-rgb: 23 30 73;
+    --theme-dark-text-color-rgb: 194 198 220;
+    --theme-dark-heading-color-rgb: 235 238 253;
+    --theme-dark-border-color-rgb: 65 69 97;
+    --theme-dark-shadow-color-rgb: 12 17 46;
+
+    /* Typography */
+    --font-family-sans-serif: var(--font-base);
+    --font-family-serif: var(--font-document);
+    --font-family-monospace: var(--font-mono);
+    --font-family-base: var(--font-family-sans-serif);
+    --font-size-base: 14px;
+    --font-size-large: 18px;
+    --font-size-small: 12px;
+    --h1-font-size: calc(var(--font-size-base) * 2);
+    --h2-font-size: calc(var(--font-size-base) * 1.74);
+    --h3-font-size: calc(var(--font-size-base) * 1.51);
+    --h4-font-size: calc(var(--font-size-base) * 1.32);
+    --h5-font-size: calc(var(--font-size-base) * 1.14);
+    --h6-font-size: var(--font-size-base);
+    --line-height-base: 1.45;
+    --headings-font-family: var(--font-heading);
+    --headings-font-weight: 500;
+    --headings-line-height: 1.2;
+    --headings-margin-bottom: calc(var(--spacer) / 2);
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-bold: 700;
+    --font-weight-base: var(--font-weight-normal);
+
+    /* Layout */
+    --reduced-sidebar-width: 80px;
+
+    /* Icons (inline SVG masks) */
+    --dlg-icon-trash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/%3E%3Cline x1='10' y1='11' x2='10' y2='17'/%3E%3Cline x1='14' y1='11' x2='14' y2='17'/%3E%3C/svg%3E");
+    --dlg-icon-alert: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z'/%3E%3Cline x1='12' y1='9' x2='12' y2='13'/%3E%3Cline x1='12' y1='17' x2='12.01' y2='17'/%3E%3C/svg%3E");
+    --dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='16' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'/%3E%3C/svg%3E");
+    --field-error-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='8' x2='12' y2='12'/%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'/%3E%3C/svg%3E");
+    --select-search-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+    --select-check-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+    --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236e7091' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+}

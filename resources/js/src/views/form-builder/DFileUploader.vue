@@ -597,7 +597,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 .imp {
     &__pick {
         display: flex;
@@ -855,7 +855,7 @@ export default {
             background: rgba(234, 84, 85, .08);
         }
 
-        // Fixing in place: a known cell shows it can be clicked; a fixed one keeps a mark
+        /* Fixing in place: a known cell shows it can be clicked; a fixed one keeps a mark */
         td {
             transition: background-color .35s ease, color .35s ease, box-shadow .2s ease;
         }
@@ -1139,7 +1139,7 @@ export default {
     }
 }
 
-// Bars slide in, rows fade out (removed, or fixed out of the "problems" group)
+/* Bars slide in, rows fade out (removed, or fixed out of the "problems" group) */
 .imp-pop-enter-active,
 .imp-pop-leave-active {
     transition: opacity .25s ease, transform .25s ease;
@@ -1159,7 +1159,7 @@ export default {
     opacity: 0;
 }
 
-// A cell's dropdown menu lives on the page (moved out of the scrolling table), placed by placeMenu()
+/* A cell's dropdown menu lives on the page (moved out of the scrolling table), placed by placeMenu() */
 .vs__dropdown-menu.imp__menu {
     position: fixed !important;
     top: var(--imp-top) !important;
@@ -1169,7 +1169,7 @@ export default {
     min-width: 0;
     max-height: var(--imp-max, 260px) !important;
     margin: 0;
-    z-index: 530001; // above popups (.con-vs-popup is 53000), like the app's other popup menus
+    z-index: 530001; /* above popups (.con-vs-popup is 53000), like the app's other popup menus */
 }
 
 @keyframes imp-spin {

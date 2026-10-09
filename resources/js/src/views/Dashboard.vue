@@ -554,7 +554,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .dashboard-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -567,7 +567,7 @@ export default {
     min-width: 230px;
 }
 
-// Segmented switch: the white pill slides to the chosen currency (v-tab-pill)
+/* Segmented switch: the white pill slides to the chosen currency (v-tab-pill) */
 .currency-switch {
     --pill-bg: #fff;
     --pill-radius: calc(var(--btn-radius) - 2px);

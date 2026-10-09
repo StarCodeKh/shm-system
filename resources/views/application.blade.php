@@ -9,11 +9,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ $siteName }}</title>
-    <!-- Fonts are self-hosted, see resources/sass/shm/_fonts.scss -->
+    <!-- Fonts are self-hosted, see resources/css/shm/fonts.css -->
     <link rel="preload" href="{{ \Illuminate\Support\Facades\Vite::asset('resources/assets/fonts/KantumruyPro.woff2') }}" as="font" type="font/woff2" crossorigin>
-    <!-- Styles: Material Icons is a static file; the rest is built by Vite (see vite.config.js) -->
+    <!-- Styles: Material Icons is a static file; the rest is built by Vite (see vite.config.mjs) -->
     <link rel="stylesheet" href="{{ asset('css/material-icons/material-icons.css') }}">
-    @vite(['resources/assets/css/vuesax.css', 'node_modules/vue-select/dist/vue-select.css', 'resources/assets/css/main.css', 'resources/sass/app.scss', 'resources/js/app.js'])
+    @vite(['resources/assets/css/vuesax.css', 'node_modules/vue-select/dist/vue-select.css', 'resources/assets/css/main.css', 'resources/css/app.css', 'resources/js/app.js'])
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="64x64" href="{{ asset('images/logo/favicon.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/logo/apple-touch-icon.png') }}">

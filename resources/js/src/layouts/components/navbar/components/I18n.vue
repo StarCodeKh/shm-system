@@ -57,8 +57,8 @@ export default {
 }
 </script>
 
-<style lang="scss">
-// Same segmented style as the Dashboard currency switch, with a sliding pill
+<style>
+/* Same segmented style as the Dashboard currency switch, with a sliding pill */
 .nav-lang-switch {
     position: relative;
     display: inline-grid;
@@ -78,7 +78,7 @@ export default {
         background: #fff;
         box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
         transform: translateX(calc(var(--lang-index, 0) * 100%));
-        transition: transform var(--tab-move) var(--tab-ease); // the same slide as every tab
+        transition: transform var(--tab-move) var(--tab-ease); /* the same slide as every tab */
         will-change: transform;
     }
 
@@ -132,12 +132,12 @@ export default {
         }
     }
 
-    // Small pop on the label that was just picked
+    /* Small pop on the label that was just picked */
     &.is-switching button.active span {
         animation: nav-lang-pop .3s cubic-bezier(.34, 1.56, .64, 1);
     }
 
-    // Flags only on small screens
+    /* Flags only on small screens */
     @media (max-width: 640px) {
         button {
             padding: .4rem .6rem;

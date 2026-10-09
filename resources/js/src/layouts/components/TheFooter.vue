@@ -42,7 +42,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 .app-footer {
     display: flex;
     flex-wrap: wrap;
@@ -91,7 +91,7 @@ export default {
         }
     }
 
-    // Phones: one centred column
+    /* Phones: one centred column */
     @media (max-width: 640px) {
         flex-direction: column;
         justify-content: center;

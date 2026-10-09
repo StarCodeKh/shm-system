@@ -504,8 +504,8 @@ export default {
 }
 </script>
 
-<style lang="scss">
-// ---------------------------------------------------------------- File manager popup
+<style>
+/* ---------------------------------------------------------------- File manager popup */
 .d-fm {
     .d-fm__content {
         padding: 20px 24px 24px;
@@ -513,7 +513,7 @@ export default {
     }
 }
 
-// ---------------------------------------------------------------- Upload drop zone
+/* ---------------------------------------------------------------- Upload drop zone */
 .d-fm__drop {
     position: relative;
     display: flex;
@@ -614,7 +614,7 @@ input.d-fm__input {
     box-shadow: 0 6px 14px -8px rgba(var(--vs-primary), .9);
 }
 
-// ---------------------------------------------------------------- Toolbar + filter
+/* ---------------------------------------------------------------- Toolbar + filter */
 .d-fm__toolbar {
     display: flex;
     align-items: center;
@@ -678,7 +678,7 @@ input.d-fm__input {
     margin-top: 16px;
 }
 
-// ---------------------------------------------------------------- File list
+/* ---------------------------------------------------------------- File list */
 .d-fm__list {
     border: 1px solid #eceef3;
     border-radius: 14px;
@@ -859,7 +859,7 @@ input.d-fm__input {
 }
 
 .d-fm__table td:nth-child(2) {
-    max-width: 0; // lets the name/path ellipsis inside a fluid column
+    max-width: 0; /* lets the name/path ellipsis inside a fluid column */
     width: 100%;
 }
 
@@ -970,7 +970,7 @@ input.d-fm__input {
     }
 }
 
-// ---------------------------------------------------------------- Dark theme
+/* ---------------------------------------------------------------- Dark theme */
 .theme-dark {
     .d-fm__drop,
     .d-fm__tool-btn,

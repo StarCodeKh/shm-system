@@ -2303,4 +2303,4 @@ th.rotate {
 }
 </style>
 
-<!-- List page styles (.dt-list, .dt-toolbar, .dt-btn, .dt-badge, …) are shared app-wide: see "LIST PAGES" in resources/sass/custom.scss -->
+<!-- List page styles (.dt-list, .dt-toolbar, .dt-btn, .dt-badge, …) are shared app-wide: see "LIST PAGES" in resources/css/custom.css -->

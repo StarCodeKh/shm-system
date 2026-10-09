@@ -174,15 +174,15 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 .d-tabform {
     border: 1px solid #eceef4;
     border-radius: 16px;
     background: #fff;
     box-shadow: 0 4px 24px -10px rgba(23, 23, 74, .12);
-    scroll-margin-top: 90px; // keeps the header below the sticky navbar when scrolled into view
+    scroll-margin-top: 90px; /* keeps the header below the sticky navbar when scrolled into view */
 
-    // ---------------------------------------------------------------- Header
+    /* ---------------------------------------------------------------- Header */
     &__head {
         display: flex;
         align-items: center;
@@ -234,7 +234,7 @@ export default {
         background: #f3f4f7;
     }
 
-    // ---------------------------------------------------------------- Tabs
+    /* ---------------------------------------------------------------- Tabs */
     &__tabs {
         position: relative;
         display: flex;
@@ -250,7 +250,7 @@ export default {
         }
     }
 
-    // Sliding highlight behind the active tab
+    /* Sliding highlight behind the active tab */
     &__indicator {
         position: absolute;
         top: 12px;
@@ -348,12 +348,12 @@ export default {
         background: rgb(var(--vs-danger));
     }
 
-    // ---------------------------------------------------------------- Body
+    /* ---------------------------------------------------------------- Body */
     &__body {
         padding: 8px 24px 24px;
     }
 
-    // ---------------------------------------------------------------- Footer
+    /* ---------------------------------------------------------------- Footer */
     &__footer {
         position: sticky;
         bottom: 0;
@@ -442,13 +442,13 @@ export default {
     }
 }
 
-// ---------------------------------------------------------------- Field grid inside tabs (.form-grid / .form-group markup)
+/* ---------------------------------------------------------------- Field grid inside tabs (.form-grid / .form-group markup) */
 .d-tabform__body {
-    // Content slides in from the side the user is moving towards
+    /* Content slides in from the side the user is moving towards */
     .form-section {
         padding-top: 16px;
-        // "backwards", not "both": a kept end transform makes the section a stacking context, and its
-        // open dropdowns then slide under the sticky footer
+        /* "backwards", not "both": a kept end transform makes the section a stacking context, and its */
+        /* open dropdowns then slide under the sticky footer */
         animation: d-tabform-next var(--tab-fade) var(--tab-ease) backwards;
     }
 
@@ -500,7 +500,7 @@ export default {
             background: #f1f2f5;
         }
 
-        // Controls share one size; old icon wrappers and margins are neutralised
+        /* Controls share one size; old icon wrappers and margins are neutralised */
         .vs-input,
         .v-select,
         .vs-con-textarea,

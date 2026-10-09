@@ -1,19 +1,19 @@
 :root {
-    // Colors taken from the SHM seal (resources/assets/images/logo/logo.svg)
-    --brand-navy: 31, 32, 103;   // #1F2067 ribbon & lettering
-    --brand-gold: 196, 150, 28;  // #C4961C bird
-    --brand-green: 47, 164, 73;  // #2FA449 laurels
+    /* Colors taken from the SHM seal (resources/assets/images/logo/logo.svg) */
+    --brand-navy: 31, 32, 103;   /* #1F2067 ribbon & lettering */
+    --brand-gold: 196, 150, 28;  /* #C4961C bird */
+    --brand-green: 47, 164, 73;  /* #2FA449 laurels */
 
-    // Every form control (inputs, selects, textareas, date pickers) is one button high with the
-    // button radius, so fields and buttons line up everywhere. Change --btn-height to resize both.
+    /* Every form control (inputs, selects, textareas, date pickers) is one button high with the */
+    /* button radius, so fields and buttons line up everywhere. Change --btn-height to resize both. */
     --input-radius: var(--btn-radius);
     --input-height: var(--btn-height);
-    --control-sm-height: var(--btn-height-sm); // compact controls: pagination, page-size selects, table footers
+    --control-sm-height: var(--btn-height-sm); /* compact controls: pagination, page-size selects, table footers */
 
-    // Buttons: every button type (vs-button, .dt-btn, .d-form__btn, dialogs…) reads these
+    /* Buttons: every button type (vs-button, .dt-btn, .d-form__btn, dialogs…) reads these */
     --btn-height: 42px;
-    --btn-height-sm: 32px;   // vs-button size="small"
-    --btn-height-lg: 48px;   // vs-button size="large"
+    --btn-height-sm: 32px;   /* vs-button size="small" */
+    --btn-height-lg: 48px;   /* vs-button size="large" */
     --btn-padding-x: 18px;
     --btn-radius: 10px;
     --btn-font-size: .875rem;
@@ -23,21 +23,21 @@
     --input-border-hover: #c3c5d4;
     --field-gap: 20px;
 
-    // Tabs: every tab style (vs-tabs, form tabs, settings, profile) moves the same way
-    --tab-ease: cubic-bezier(.22, 1, .36, 1); // quick start, soft landing
-    --tab-move: .4s;   // active indicator sliding to the new tab
-    --tab-fade: .32s;  // new tab content fading in
-    --tab-tap: .15s;   // hover and colour changes on a tab
+    /* Tabs: every tab style (vs-tabs, form tabs, settings, profile) moves the same way */
+    --tab-ease: cubic-bezier(.22, 1, .36, 1); /* quick start, soft landing */
+    --tab-move: .4s;   /* active indicator sliding to the new tab */
+    --tab-fade: .32s;  /* new tab content fading in */
+    --tab-tap: .15s;   /* hover and colour changes on a tab */
 }
 
-// New tab content rises slightly while fading in (shared by every tab style)
+/* New tab content rises slightly while fading in (shared by every tab style) */
 @keyframes tab-content-in {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: none; }
 }
 
-// v-tab-pill (plugins/tabPill.js): a pill sliding under the active item of any tab bar / segmented switch.
-// The bar sets the pill's look: --pill-bg, --pill-radius, --pill-shadow; its active item keeps only its text color.
+/* v-tab-pill (plugins/tabPill.js): a pill sliding under the active item of any tab bar / segmented switch. */
+/* The bar sets the pill's look: --pill-bg, --pill-radius, --pill-shadow; its active item keeps only its text color. */
 .tab-pill-host {
     position: relative;
     isolation: isolate;
@@ -63,7 +63,7 @@
         pointer-events: none;
     }
 
-    // First placement is instant; after that the pill slides like every other tab indicator
+    /* First placement is instant; after that the pill slides like every other tab indicator */
     &.is-ready::before {
         transition:
             transform var(--tab-move) var(--tab-ease),
@@ -160,7 +160,7 @@ textarea {
     min-height: 100px;
 }
 
-// One-line fields are exactly one control high (the text sits centred, whatever the font)
+/* One-line fields are exactly one control high (the text sits centred, whatever the font) */
 input[type="text"],
 input[type="email"],
 input[type="tel"],
@@ -182,9 +182,9 @@ input[type="password"] {
     border-radius: 20px;
 }
 .vs-con-table .vs-con-tbody .vs-table--tbody-table .vs-table--thead th {
-    padding: 12px 14px !important; // same as the cells, so headers line up with their column
+    padding: 12px 14px !important; /* same as the cells, so headers line up with their column */
 }
-// ---------------------------------------------------------------- Page header (title + breadcrumb)
+/* ---------------------------------------------------------------- Page header (title + breadcrumb) */
 .router-header {
     margin-bottom: 1.25rem !important;
 
@@ -226,24 +226,21 @@ input[type="password"] {
     color: #fff;
 }
 
-// ---------------------------------------------------------------- Dialogs ($vs.dialog / vs-prompt)
-$dlg-icon-trash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/%3E%3Cline x1='10' y1='11' x2='10' y2='17'/%3E%3Cline x1='14' y1='11' x2='14' y2='17'/%3E%3C/svg%3E");
-$dlg-icon-alert: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z'/%3E%3Cline x1='12' y1='9' x2='12' y2='13'/%3E%3Cline x1='12' y1='17' x2='12.01' y2='17'/%3E%3C/svg%3E");
-$dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='16' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'/%3E%3C/svg%3E");
+/* ---------------------------------------------------------------- Dialogs ($vs.dialog / vs-prompt) */
 
 .con-vs-dialog {
     --dlg-color: var(--vs-primary);
-    --dlg-icon: #{$dlg-icon-info};
+    --dlg-icon: var(--dlg-icon-info);
 
-    &.vs-dialog-danger  { --dlg-color: var(--vs-danger);  --dlg-icon: #{$dlg-icon-trash}; }
-    &.vs-dialog-warning { --dlg-color: var(--vs-warning); --dlg-icon: #{$dlg-icon-alert}; }
+    &.vs-dialog-danger  { --dlg-color: var(--vs-danger);  --dlg-icon: var(--dlg-icon-trash); }
+    &.vs-dialog-warning { --dlg-color: var(--vs-warning); --dlg-icon: var(--dlg-icon-alert); }
 
     .vs-dialog-dark {
         background: rgba(17, 20, 45, .45);
         backdrop-filter: blur(3px);
     }
 
-    // Width follows the message: short confirms stay compact, long ones grow up to a readable line length
+    /* Width follows the message: short confirms stay compact, long ones grow up to a readable line length */
     .vs-dialog {
         width: fit-content;
         min-width: min(var(--dialog-min), calc(100vw - 32px));
@@ -254,7 +251,7 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
         box-shadow: 0 24px 60px -12px rgba(17, 20, 45, .35);
     }
 
-    // Icon in a tinted circle, then the title
+    /* Icon in a tinted circle, then the title */
     .vs-dialog-header {
         display: flex;
         flex-direction: column;
@@ -264,7 +261,7 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
 
         position: relative;
 
-        // Tinted circle
+        /* Tinted circle */
         &::before {
             content: '';
             width: 56px;
@@ -274,7 +271,7 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
             background: rgba(var(--dlg-color), .12);
         }
 
-        // Icon drawn in the dialog color, centered in the circle
+        /* Icon drawn in the dialog color, centered in the circle */
         &::after {
             content: '';
             position: absolute;
@@ -323,7 +320,7 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
         color: #6e7091;
     }
 
-    // Cancel left, primary action right, equal width
+    /* Cancel left, primary action right, equal width */
     footer {
         display: flex;
         flex-direction: row-reverse;
@@ -369,9 +366,9 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
     }
 }
 
-// ---------------------------------------------------------------- Pager (d-pagination): fits its space
-// The pager takes the room left beside the "showing 1–20 of …" text, and d-pagination shows
-// as many page buttons as fit (9, 7 or 5). Buttons may wrap as a last resort, never overflow.
+/* ---------------------------------------------------------------- Pager (d-pagination): fits its space */
+/* The pager takes the room left beside the "showing 1–20 of …" text, and d-pagination shows */
+/* as many page buttons as fit (9, 7 or 5). Buttons may wrap as a last resort, never overflow. */
 .d-pagination {
     flex: 1 1 260px;
     min-width: 0;
@@ -389,15 +386,15 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
     .vs-pagination--ul { flex-wrap: wrap; justify-content: center; }
 }
 
-// Footers: the info text keeps its size, the pager gets the rest
+/* Footers: the info text keeps its size, the pager gets the rest */
 .dt-footer:has(.d-pagination) .dt-footer__info { flex: 0 1 auto; }
 
 @media (max-width: 640px) {
     .d-pagination { flex-basis: 100%; justify-content: center; }
 }
 
-// ---------------------------------------------------------------- Loading spinner ($vs.loading): white ring on the sidebar blue (same as the startup screen)
-// Only one page spinner is shown at a time (plugins/loading.js).
+/* ---------------------------------------------------------------- Loading spinner ($vs.loading): white ring on the sidebar blue (same as the startup screen) */
+/* Only one page spinner is shown at a time (plugins/loading.js). */
 @keyframes shm-spin { to { transform: rotate(360deg); } }
 
 .con-vs-loading {
@@ -411,7 +408,7 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
         border-top-color: #fff !important;
         border-radius: 50%;
         animation: shm-spin .75s linear infinite;
-        > * { display: none !important; } // the default three-ring effect
+        > * { display: none !important; } /* the default three-ring effect */
     }
 
     .title-loading { font-size: .9rem; font-weight: 500; color: #fff; }
@@ -421,7 +418,7 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
     background: linear-gradient(150deg, rgba(50, 70, 147, .85) 0%, rgba(16, 22, 58, .9) 100%) !important;
 }
 
-// ---------------------------------------------------------------- Program management overview (objective > program cards)
+/* ---------------------------------------------------------------- Program management overview (objective > program cards) */
 .pm-objective {
     margin-bottom: 28px;
 
@@ -516,11 +513,11 @@ $dlg-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
     .pm-empty { color: #c2c6dc; }
 }
 
-// ---------------------------------------------------------------- Table row and header tones (DTableList, DChildTable)
-// Soft tints of the theme colors, readable in light and dark mode. Use these classes, not inline colors.
-//   dt-th-strong / dt-thead-accent  emphasised header       dt-th-muted   secondary header
-//   dt-row-group / -group-strong    group / subtotal rows   dt-row-level  hierarchy level rows
-//   dt-row-highlight                totals to notice        dt-row-muted  quiet rows
+/* ---------------------------------------------------------------- Table row and header tones (DTableList, DChildTable) */
+/* Soft tints of the theme colors, readable in light and dark mode. Use these classes, not inline colors. */
+/* dt-th-strong / dt-thead-accent  emphasised header       dt-th-muted   secondary header */
+/* dt-row-group / -group-strong    group / subtotal rows   dt-row-level  hierarchy level rows */
+/* dt-row-highlight                totals to notice        dt-row-muted  quiet rows */
 .dt-th-strong, .dt-thead-accent {
     background: rgba(var(--vs-primary), .1) !important;
     color: rgb(var(--vs-primary)) !important;
@@ -549,9 +546,8 @@ tr:is(.dt-row-group, .dt-row-group-strong, .dt-row-level, .dt-row-highlight, .dt
     tr.dt-row-muted, .dt-row-muted { background: rgba(255, 255, 255, .05) !important; }
 }
 
-// ---------------------------------------------------------------- Field errors: same look on every form
-// <span class="text-danger text-sm" v-show="errors.has('x')">…</span> under a field
-$field-error-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='8' x2='12' y2='12'/%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'/%3E%3C/svg%3E");
+/* ---------------------------------------------------------------- Field errors: same look on every form */
+/* <span class="text-danger text-sm" v-show="errors.has('x')">…</span> under a field */
 
 span.text-danger.text-sm {
     display: flex;
@@ -567,25 +563,24 @@ span.text-danger.text-sm {
         width: 13px;
         height: 13px;
         background: currentColor;
-        -webkit-mask: #{$field-error-icon} center / contain no-repeat;
-        mask: #{$field-error-icon} center / contain no-repeat;
+        -webkit-mask: var(--field-error-icon) center / contain no-repeat;
+        mask: var(--field-error-icon) center / contain no-repeat;
     }
 
     &[style*="display: none"] { display: none !important; }
 }
 
-// The field itself turns red while its error is shown
-$field-error-shown: "+ span.text-danger.text-sm:not([style*='display: none'])";
-:is(.vs-con-input-label, .v-select, .con-select, .vs-textarea-primary):has(#{$field-error-shown}) {
+/* The field itself turns red while its error is shown */
+:is(.vs-con-input-label, .v-select, .con-select, .vs-textarea-primary):has(+ span.text-danger.text-sm:not([style*='display: none'])) {
     .vs-inputx, .vs__dropdown-toggle, .vs-select--input, textarea { border-color: rgba(var(--vs-danger), .7) !important; }
 }
-input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-danger), .7) !important; }
+input.flatpickr-input:has(+ span.text-danger.text-sm:not([style*='display: none'])) { border-color: rgba(var(--vs-danger), .7) !important; }
 
-// ---------------------------------------------------------------- Buttons: one style per action
-// Main action (Save, Yes…)  color="primary" type="filled"
-// Back out (Cancel, No…)    color="dark"    type="border"   neutral outline, styled below
-// Reset                     color="warning" type="border"
-// Remove / delete           color="danger"  type="border"
+/* ---------------------------------------------------------------- Buttons: one style per action */
+/* Main action (Save, Yes…)  color="primary" type="filled" */
+/* Back out (Cancel, No…)    color="dark"    type="border"   neutral outline, styled below */
+/* Reset                     color="warning" type="border" */
+/* Remove / delete           color="danger"  type="border" */
 .vs-button-dark.vs-button-border {
     border-color: var(--input-border) !important;
     color: #5e5873 !important;
@@ -607,14 +602,14 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
     .vs-button-backgroundx { background: rgba(255, 255, 255, .08) !important; }
 }
 
-// ---------------------------------------------------------------- Toasts ($vs.notify): white card, colored accent and icon
-// Color, icon, title and time come from the toast's type (see translateNotify in i18n/i18n.js).
+/* ---------------------------------------------------------------- Toasts ($vs.notify): white card, colored accent and icon */
+/* Color, icon, title and time come from the toast's type (see translateNotify in i18n/i18n.js). */
 .vs-notifications {
     --noti: var(--vs-primary);
     width: 360px;
     max-width: calc(100vw - 32px);
     min-width: 0;
-    margin: 0; // Vuesax adds 5px side margins; the toast sits flush with the navbar edge instead
+    margin: 0; /* Vuesax adds 5px side margins; the toast sits flush with the navbar edge instead */
     padding: 12px 14px 12px 12px;
     border-radius: 12px;
     background: #fff !important;
@@ -625,15 +620,15 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
     &.vs-noti-danger  { --noti: var(--vs-danger); }
     &.vs-noti-warning { --noti: var(--vs-warning); }
 
-    .filling { display: none; } // the default solid color fill
+    .filling { display: none; } /* the default solid color fill */
 
     .content-noti {
         align-items: flex-start;
         gap: 12px;
     }
 
-    // Same specificity as Vuesax's .vs-notifications .content-noti .vs-icon-noti, plus !important,
-    // so the icon is centred in its circle (Vuesax sets display: block and padding: 5px)
+    /* Same specificity as Vuesax's .vs-notifications .content-noti .vs-icon-noti, plus !important, */
+    /* so the icon is centred in its circle (Vuesax sets display: block and padding: 5px) */
     .content-noti .vs-icon-noti {
         order: -1;
         flex: none;
@@ -680,7 +675,7 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
     p { color: #c2c6dc !important; }
 }
 
-// ---------------------------------------------------------------- Tabs (vs-tabs): compact segmented track; scrolls sideways when tabs don't fit
+/* ---------------------------------------------------------------- Tabs (vs-tabs): compact segmented track; scrolls sideways when tabs don't fit */
 .con-vs-tabs.vs-tabs-position-top {
     > .con-ul-tabs {
         position: relative;
@@ -696,7 +691,7 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
         scroll-padding: 0 3px;
         border-radius: 10px;
         background: #f1f2f6;
-        // Thin scrollbar under the track, only noticeable on hover
+        /* Thin scrollbar under the track, only noticeable on hover */
         scrollbar-width: thin;
         scrollbar-color: transparent transparent;
 
@@ -717,8 +712,8 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
             background: rgba(110, 112, 145, .35);
         }
 
-        // As wide as its tabs (Vuesax makes it 100% wide and centres it, so with many tabs
-        // the first ones overflowed to the left where the track can't scroll to them)
+        /* As wide as its tabs (Vuesax makes it 100% wide and centres it, so with many tabs */
+        /* the first ones overflowed to the left where the track can't scroll to them) */
         .vs-tabs--ul {
             display: flex;
             flex-wrap: nowrap;
@@ -767,8 +762,8 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
             }
         }
 
-        // White pill that slides to the active tab. tabsScroll.js measures the tab and sets
-        // --tab-pill-x / --tab-pill-w (Vuesax's own measurement is off inside this track).
+        /* White pill that slides to the active tab. tabsScroll.js measures the tab and sets */
+        /* --tab-pill-x / --tab-pill-w (Vuesax's own measurement is off inside this track). */
         .line-vs-tabs {
             display: block !important;
             top: 3px !important;
@@ -784,14 +779,14 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
             pointer-events: none;
         }
 
-        // Until the first measurement, show the pill in place without sliding in from the left
+        /* Until the first measurement, show the pill in place without sliding in from the left */
         &:not(.has-tab-pill) .line-vs-tabs {
             opacity: 0;
             transition: none !important;
         }
     }
 
-    // Tab content fades up when it appears
+    /* Tab content fades up when it appears */
     > .con-slot-tabs > .vs-tabs--content {
         padding: 0;
         animation: tab-content-in var(--tab-fade) var(--tab-ease) backwards;
@@ -817,7 +812,7 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
     .vs-tabs--li.activeChild .vs-tabs--btn { color: rgb(var(--vs-primary)); }
 }
 
-// ---------------------------------------------------------------- Side tabs (position left / right): same track, pill slides vertically
+/* ---------------------------------------------------------------- Side tabs (position left / right): same track, pill slides vertically */
 .con-vs-tabs.vs-tabs-position-left,
 .con-vs-tabs.vs-tabs-position-right {
     display: flex;
@@ -834,9 +829,9 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
         border-radius: 14px;
         background: #f1f2f6;
 
-        // The padding lives on the list: Vuesax sets the pill's top from each tab's offsetTop, measured
-        // inside this (positioned) list, while the pill itself sits in .con-ul-tabs. Padding on
-        // .con-ul-tabs would put the pill 6px above its tab.
+        /* The padding lives on the list: Vuesax sets the pill's top from each tab's offsetTop, measured */
+        /* inside this (positioned) list, while the pill itself sits in .con-ul-tabs. Padding on */
+        /* .con-ul-tabs would put the pill 6px above its tab. */
         .vs-tabs--ul {
             display: flex;
             flex-direction: column;
@@ -874,7 +869,7 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
                     color: inherit !important;
                 }
 
-                // One line per tab keeps every tab the same height for the sliding pill
+                /* One line per tab keeps every tab the same height for the sliding pill */
                 > span {
                     min-width: 0;
                     overflow: hidden;
@@ -893,7 +888,7 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
             }
         }
 
-        // Vuesax's indicator line becomes the white pill behind the active tab
+        /* Vuesax's indicator line becomes the white pill behind the active tab */
         .line-vs-tabs {
             left: 6px !important;
             right: 6px;
@@ -908,7 +903,7 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
 
     > .con-slot-tabs {
         flex: 1 1 auto;
-        min-width: 0; // lets wide tables scroll inside instead of squeezing the menu
+        min-width: 0; /* lets wide tables scroll inside instead of squeezing the menu */
 
         > .vs-tabs--content {
             padding: 0;
@@ -916,7 +911,7 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
         }
     }
 
-    // Phones: the side menu becomes a swipeable chip row above the content
+    /* Phones: the side menu becomes a swipeable chip row above the content */
     @media (max-width: 767px) {
         flex-direction: column;
         gap: 14px;
@@ -958,7 +953,7 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
                 }
             }
 
-            // Its offsets are measured for the vertical layout
+            /* Its offsets are measured for the vertical layout */
             .line-vs-tabs {
                 display: none;
             }
@@ -990,56 +985,18 @@ input.flatpickr-input:has(#{$field-error-shown}) { border-color: rgba(var(--vs-d
     }
 }
 
-// ================================================================ Selects (vue-select, vs-select, native)
-// One look for every dropdown: rounded field, primary ring when open, floating panel, roomy options.
-$select-search-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
-$select-check-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
-$select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236e7091' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+/* ================================================================ Selects (vue-select, vs-select, native) */
+/* One look for every dropdown: rounded field, primary ring when open, floating panel, roomy options. */
 
-@mixin select-panel {
-    margin-top: 6px;
-    padding: 6px;
-    border: 1px solid #e9ebf2 !important;
-    border-radius: 14px !important;
-    background: #fff;
-    box-shadow: 0 16px 40px -12px rgba(23, 23, 74, .25), 0 2px 6px rgba(23, 23, 74, .06) !important;
-    animation: select-panel-in .18s cubic-bezier(.22, 1, .36, 1);
-    scrollbar-width: thin;
-}
 
-@mixin select-option {
-    position: relative;
-    display: flex;
-    align-items: center;
-    min-height: 40px;
-    padding: 8px 36px 8px 12px;
-    font-size: 14px;
-    line-height: 1.45;
-    white-space: normal;
-    color: #2c2e45;
-    border-radius: 9px;
-    transition: background .12s ease, color .12s ease;
-}
 
-@mixin select-check {
-    content: '';
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    width: 16px;
-    height: 16px;
-    margin-top: -8px;
-    background: currentColor;
-    -webkit-mask: $select-check-icon center / contain no-repeat;
-    mask: $select-check-icon center / contain no-repeat;
-}
 
 @keyframes select-panel-in {
     from { opacity: 0; transform: translateY(-6px) scale(.98); }
     to { opacity: 1; transform: none; }
 }
 
-// ---------------------------------------------------------------- vue-select
+/* ---------------------------------------------------------------- vue-select */
 .v-select {
     font-family: inherit;
 
@@ -1106,7 +1063,7 @@ $select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
         }
     }
 
-    // Multi-select chips
+    /* Multi-select chips */
     &.vs--multiple .vs__selected {
         padding: 2px 4px 2px 10px;
         font-size: 13px;
@@ -1125,7 +1082,7 @@ $select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
         }
     }
 
-    // Open: primary ring, chevron flips, search icon shows the field is now searchable
+    /* Open: primary ring, chevron flips, search icon shows the field is now searchable */
     &.vs--open {
         .vs__dropdown-toggle {
             border-color: rgb(var(--vs-primary)) !important;
@@ -1156,8 +1113,8 @@ $select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
             height: 16px;
             margin-top: -8px;
             background: #8a8ca5;
-            -webkit-mask: $select-search-icon center / contain no-repeat;
-            mask: $select-search-icon center / contain no-repeat;
+            -webkit-mask: var(--select-search-icon) center / contain no-repeat;
+            mask: var(--select-search-icon) center / contain no-repeat;
         }
     }
 
@@ -1173,15 +1130,32 @@ $select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 }
 
 .vs__dropdown-menu {
-    @include select-panel;
+    margin-top: 6px;
+    padding: 6px;
+    border: 1px solid #e9ebf2 !important;
+    border-radius: 14px !important;
+    background: #fff;
+    box-shadow: 0 16px 40px -12px rgba(23, 23, 74, .25), 0 2px 6px rgba(23, 23, 74, .06) !important;
+    animation: select-panel-in .18s cubic-bezier(.22, 1, .36, 1);
+    scrollbar-width: thin;
     top: 100% !important;
     max-height: 320px;
     min-width: 100%;
-    z-index: 52000; // above vs-popup modals
+    z-index: 52000; /* above vs-popup modals */
 }
 
 .vs__dropdown-option {
-    @include select-option;
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 36px 8px 12px;
+    font-size: 14px;
+    line-height: 1.45;
+    white-space: normal;
+    color: #2c2e45;
+    border-radius: 9px;
+    transition: background .12s ease, color .12s ease;
 
     &--highlight {
         color: #2c2e45;
@@ -1189,12 +1163,21 @@ $select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
     }
 
     &--selected {
-        color: rgb(var(--vs-primary)) !important; // beats the theme's `.v-select .vs__dropdown-menu .vs__dropdown-option`
+        color: rgb(var(--vs-primary)) !important; /* beats the theme's `.v-select .vs__dropdown-menu .vs__dropdown-option` */
         font-weight: 600;
         background: rgba(var(--vs-primary), .08);
 
         &::after {
-            @include select-check;
+            content: '';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            width: 16px;
+            height: 16px;
+            margin-top: -8px;
+            background: currentColor;
+            -webkit-mask: var(--select-check-icon) center / contain no-repeat;
+            mask: var(--select-check-icon) center / contain no-repeat;
         }
     }
 
@@ -1211,7 +1194,7 @@ $select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
     text-align: center;
 }
 
-// ---------------------------------------------------------------- Vuesax vs-select
+/* ---------------------------------------------------------------- Vuesax vs-select */
 .con-select {
     .input-select {
         height: var(--input-height);
@@ -1239,11 +1222,18 @@ $select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
         transform: rotate(180deg);
     }
 
-    // Label: see "FORMS OUTSIDE .d-form"
+    /* Label: see "FORMS OUTSIDE .d-form" */
 }
 
 .vs-select--options {
-    @include select-panel;
+    margin-top: 6px;
+    padding: 6px;
+    border: 1px solid #e9ebf2 !important;
+    border-radius: 14px !important;
+    background: #fff;
+    box-shadow: 0 16px 40px -12px rgba(23, 23, 74, .25), 0 2px 6px rgba(23, 23, 74, .06) !important;
+    animation: select-panel-in .18s cubic-bezier(.22, 1, .36, 1);
+    scrollbar-width: thin;
     z-index: 52000 !important;
 
     ul {
@@ -1256,7 +1246,17 @@ $select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
     }
 
     .vs-select--item {
-        @include select-option;
+        position: relative;
+        display: flex;
+        align-items: center;
+        min-height: 40px;
+        padding: 8px 36px 8px 12px;
+        font-size: 14px;
+        line-height: 1.45;
+        white-space: normal;
+        color: #2c2e45;
+        border-radius: 9px;
+        transition: background .12s ease, color .12s ease;
         width: 100%;
         font-family: inherit;
         text-align: left;
@@ -1276,31 +1276,40 @@ $select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
             background: rgba(var(--vs-primary), .08) !important;
 
             &::after {
-                @include select-check;
+                content: '';
+                position: absolute;
+                right: 12px;
+                top: 50%;
+                width: 16px;
+                height: 16px;
+                margin-top: -8px;
+                background: currentColor;
+                -webkit-mask: var(--select-check-icon) center / contain no-repeat;
+                mask: var(--select-check-icon) center / contain no-repeat;
             }
         }
     }
 
     .vs-select--item-icon {
-        display: none; // replaced by the check mark
+        display: none; /* replaced by the check mark */
     }
 }
 
-// ---------------------------------------------------------------- Native <select>
+/* ---------------------------------------------------------------- Native <select> */
 select:not([multiple]) {
     height: var(--input-height);
     min-height: var(--input-height);
     padding: 0 38px 0 14px;
     border: 1px solid #d8d9e3;
     border-radius: var(--input-radius);
-    background: #fff $select-chevron no-repeat right 12px center / 16px 16px;
+    background: #fff var(--select-chevron) no-repeat right 12px center / 16px 16px;
     cursor: pointer;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
 }
 
-// ---------------------------------------------------------------- Dark theme
+/* ---------------------------------------------------------------- Dark theme */
 .theme-dark {
     .v-select .vs__dropdown-toggle,
     .con-select .input-select,
@@ -1363,7 +1372,7 @@ input.flatpickr-input.active {
         animation: shmDatepickerIn .16s ease-out;
     }
 
-    // Header: month + year with square nav buttons
+    /* Header: month + year with square nav buttons */
     .flatpickr-months {
         position: relative;
         height: auto !important;
@@ -1442,7 +1451,7 @@ input.flatpickr-input.active {
         }
     }
 
-    // Day grid
+    /* Day grid */
     .flatpickr-innerContainer {
         padding: 6px 14px 12px !important;
     }
@@ -1522,7 +1531,7 @@ input.flatpickr-input.active {
         }
     }
 
-    // Footer: Today / Clear
+    /* Footer: Today / Clear */
     .shm-datepicker-footer {
         display: flex;
         align-items: center;
@@ -1723,12 +1732,12 @@ select:disabled {
 
 /* --- FORM FIELDS (.d-form / .d-field): label row with an optional "+ Add" button, control below --- */
 .d-form {
-    // One gap between every row of fields (column classes carry mt-4; the grid owns spacing here)
+    /* One gap between every row of fields (column classes carry mt-4; the grid owns spacing here) */
     .vx-row {
         row-gap: var(--field-gap);
     }
     .vx-row > .d-field,
-    .vx-row > .vx-col:has(> .d-field) {   // forms that wrap each field in an extra column (DFormElement)
+    .vx-row > .vx-col:has(> .d-field) {   /* forms that wrap each field in an extra column (DFormElement) */
         margin-top: 0 !important;
     }
 
@@ -1864,11 +1873,11 @@ input[type="file"] {
 
     .vs-popup,
     .vs-dialog {
-        animation: none !important; // Vuesax's "rebound" bounce (scale .9 → 1.08 → 1)
+        animation: none !important; /* Vuesax's "rebound" bounce (scale .9 → 1.08 → 1) */
         transition: transform var(--modal-in) var(--tab-ease), opacity var(--modal-in) ease !important;
     }
 
-    // The parts move with the card, not on their own
+    /* The parts move with the card, not on their own */
     header h3,
     .vs-popup--content,
     .vs-dialog-text,
@@ -1931,7 +1940,7 @@ html:has(> body > .con-vs-dialog) {
     overflow: hidden;
 }
 
-// Keep the scrollbar's space so the page doesn't shift sideways when the lock hides it
+/* Keep the scrollbar's space so the page doesn't shift sideways when the lock hides it */
 html {
     scrollbar-gutter: stable;
 }
@@ -1940,8 +1949,8 @@ html {
    is the same card: soft rounded panel, matching arrow, a quick fade + drop from its corner, rounded hover rows.
    On phones, top-bar menus keep their content width and line up with the screen's right edge (VsDropdown.vue). */
 .con-vs-dropdown--menu {
-    // Width follows the content (longest name, email, message…) between the menu's own limits:
-    // --menu-min / --menu-max, set by each menu (defaults below); never wider than the screen
+    /* Width follows the content (longest name, email, message…) between the menu's own limits: */
+    /* --menu-min / --menu-max, set by each menu (defaults below); never wider than the screen */
     .vs-dropdown--menu {
         width: max-content;
         min-width: min(var(--menu-min, 180px), calc(100vw - 16px));
@@ -1952,7 +1961,7 @@ html {
         box-shadow: 0 16px 40px -12px rgba(23, 23, 74, .28), 0 2px 6px rgba(23, 23, 74, .06);
     }
 
-    // Arrow pointing at the button that opened the menu
+    /* Arrow pointing at the button that opened the menu */
     .vs-dropdown--menu--after,
     .vs-dropdown-right--menu--after {
         width: 12px;
@@ -1962,7 +1971,7 @@ html {
         background: #fff;
     }
 
-    // Menu rows
+    /* Menu rows */
     .vs-dropdown--item {
         border-radius: 8px;
         width: calc(100% - 12px);
@@ -1980,8 +1989,8 @@ html {
     }
 }
 
-// Opening: fade in while dropping 6px from the trigger's corner; closing is quicker.
-// translate(-100%) is how Vuesax places the menu (left = the menu's right edge), so it stays in every state.
+/* Opening: fade in while dropping 6px from the trigger's corner; closing is quicker. */
+/* translate(-100%) is how Vuesax places the menu (left = the menu's right edge), so it stays in every state. */
 .con-vs-dropdown--menu {
     transform-origin: top right;
 }
@@ -2071,7 +2080,7 @@ html {
         border-bottom: 1px solid #eceef4;
     }
 
-    // Long titles wrap onto balanced lines instead of pushing the close button out
+    /* Long titles wrap onto balanced lines instead of pushing the close button out */
     .vs-popup--title {
         flex: 1 1 auto;
         min-width: 0;
@@ -2114,12 +2123,12 @@ html {
         max-height: none !important;
         margin: 0;
         padding: 16px 24px;
-        overflow-x: hidden; // the form footer bleeds to the edges with negative margins; never scroll sideways
+        overflow-x: hidden; /* the form footer bleeds to the edges with negative margins; never scroll sideways */
         overflow-y: auto;
-        overscroll-behavior: contain; // scrolling past the end of the popup doesn't move the page
+        overscroll-behavior: contain; /* scrolling past the end of the popup doesn't move the page */
 
-        // A form's footer is the popup's bottom edge: no padding below it and no negative margin
-        // pulling it into that padding (that left a couple of pixels to scroll even when all fits)
+        /* A form's footer is the popup's bottom edge: no padding below it and no negative margin */
+        /* pulling it into that padding (that left a couple of pixels to scroll even when all fits) */
         &:has(.d-form__footer) {
             padding-bottom: 0;
         }
@@ -2130,7 +2139,7 @@ html {
         }
     }
 
-    // One column inside small dialogs and on phones
+    /* One column inside small dialogs and on phones */
     &.d-modal--sm .d-form .d-field {
         width: 100% !important;
     }
@@ -2200,7 +2209,7 @@ textarea:focus,
 .vs--open .vs__dropdown-toggle {
     border-color: rgb(var(--vs-primary)) !important;
 }
-// Field-level errors (vee-validate adds .vs-input-danger / aria-invalid)
+/* Field-level errors (vee-validate adds .vs-input-danger / aria-invalid) */
 .vs-input-danger input.vs-input--input,
 input[aria-invalid="true"],
 textarea[aria-invalid="true"] {
@@ -2246,7 +2255,7 @@ textarea:disabled {
 textarea:not([rows]):not(:focus),
 textarea.vs-textarea:not([rows]):not(:focus) {
     height: var(--input-height) !important;
-    white-space: nowrap;   // one clean line: no half-visible second line
+    white-space: nowrap;   /* one clean line: no half-visible second line */
     overflow: hidden;
     resize: none;
 }
@@ -2279,7 +2288,7 @@ select {
     padding-bottom: 0 !important;
     line-height: 20px;
 }
-// Vuesax size variants follow the standard too
+/* Vuesax size variants follow the standard too */
 input.vs-input--input.small,
 input.vs-input--input.large {
     padding-top: 0 !important;
@@ -2287,7 +2296,7 @@ input.vs-input--input.large {
     font-size: 14px !important;
 }
 
-// vue-select: the toggle is the box; its inner search <input type="search"> must not get input styles
+/* vue-select: the toggle is the box; its inner search <input type="search"> must not get input styles */
 .v-select .vs__dropdown-toggle {
     box-sizing: border-box;
     height: var(--input-height);
@@ -2339,15 +2348,15 @@ input.vs-input--input.large {
     padding: 0 0 0 6px;
 }
 
-// Vuesax <vs-select>
+/* Vuesax <vs-select> */
 .con-select .vs-select--input {
     padding-left: 14px !important;
 }
 
 /* --- LIST PAGES: toolbar, buttons, badges, tables, filters, empty states (used by DTableList, audit log, …) --- */
-// ---------------------------------------------------------------- Standard list page
+/* ---------------------------------------------------------------- Standard list page */
 .dt-list {
-    // Toolbar
+    /* Toolbar */
     .dt-toolbar {
         display: flex;
         flex-wrap: wrap;
@@ -2381,7 +2390,7 @@ input.vs-input--input.large {
         }
     }
 
-    // "Add new": bolder, and its "+" turns a quarter on hover
+    /* "Add new": bolder, and its "+" turns a quarter on hover */
     .dt-toolbar .dt-btn--primary {
         font-weight: var(--btn-font-weight);
 
@@ -2390,7 +2399,7 @@ input.vs-input--input.large {
         }
     }
 
-    // Table
+    /* Table */
     .vs-con-table {
         background: transparent;
 
@@ -2447,7 +2456,7 @@ input.vs-input--input.large {
         }
     }
 
-    // Cells
+    /* Cells */
     .dt-amount {
         font-variant-numeric: tabular-nums;
         font-weight: 600;
@@ -2476,7 +2485,7 @@ input.vs-input--input.large {
         &--warning { color: #d97706; background: rgba(255, 159, 67, .15); }
         &--danger  { color: #d93b3b; background: rgba(234, 84, 85, .12); }
         &--neutral { color: #5e6078; background: #f1f2f6; }
-        // Any colour: style="--tone: r, g, b"
+        /* Any colour: style="--tone: r, g, b" */
         &--tone    { color: rgb(var(--tone)); background: rgba(var(--tone), .12); }
     }
 
@@ -2525,7 +2534,7 @@ input.vs-input--input.large {
         }
     }
 
-    // Alignment: text left, amounts right, actions right
+    /* Alignment: text left, amounts right, actions right */
     .vs-con-table {
         thead th,
         .vs-table--thead th {
@@ -2554,7 +2563,7 @@ input.vs-input--input.large {
             justify-content: flex-end;
         }
 
-        // Row number column stays narrow
+        /* Row number column stays narrow */
         thead th:first-child,
         tr td:first-child {
             width: 1%;
@@ -2563,7 +2572,7 @@ input.vs-input--input.large {
         }
     }
 
-    // Footer
+    /* Footer */
     .dt-footer {
         display: flex;
         flex-wrap: wrap;
@@ -2610,8 +2619,8 @@ input.vs-input--input.large {
     }
 }
 
-// ---------------------------------------------------------------- Shared list building blocks
-// Filter grid: every cell is one control high and its control fills it
+/* ---------------------------------------------------------------- Shared list building blocks */
+/* Filter grid: every cell is one control high and its control fills it */
 .dt-filters {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 240px) minmax(0, 260px);
@@ -2651,7 +2660,7 @@ input.vs-input--input.large {
     }
 }
 
-// Search box with a leading icon (wrapper needed: feather-icon carries Tailwind's `relative !important`)
+/* Search box with a leading icon (wrapper needed: feather-icon carries Tailwind's `relative !important`) */
 .dt-search {
     &__icon {
         position: absolute;
@@ -2674,7 +2683,7 @@ input.vs-input--input.large {
     }
 }
 
-// Chip filters + summary line
+/* Chip filters + summary line */
 .dt-chipbar {
     display: flex;
     align-items: center;
@@ -2770,7 +2779,7 @@ input.vs-input--input.large {
     }
 }
 
-// Plain-markup table with the same look as the vs-table lists
+/* Plain-markup table with the same look as the vs-table lists */
 .dt-table-wrap {
     border: 1px solid #eceef4;
     border-radius: 12px;
@@ -2826,7 +2835,7 @@ input.vs-input--input.large {
         font-variant-numeric: tabular-nums;
     }
 
-    // Phones: rows become cards; each cell shows its column name from data-label
+    /* Phones: rows become cards; each cell shows its column name from data-label */
     @media (max-width: 768px) {
         &.dt-table--cards {
             thead {
@@ -2866,7 +2875,7 @@ input.vs-input--input.large {
     }
 }
 
-// Loading placeholders
+/* Loading placeholders */
 .dt-skeleton td span {
     display: block;
     height: 12px;
@@ -2881,8 +2890,8 @@ input.vs-input--input.large {
     to { background-position: -200% 0; }
 }
 
-// Empty state (also restyles Vuesax's built-in "No data Available").
-// Vuesax renders it after the table box, so it continues that box: full width, same border, rounded bottom.
+/* Empty state (also restyles Vuesax's built-in "No data Available"). */
+/* Vuesax renders it after the table box, so it continues that box: full width, same border, rounded bottom. */
 .dt-list .vs-table--not-data {
     display: block !important;
     width: 100%;
@@ -2981,7 +2990,7 @@ input.vs-input--input.large {
     }
 }
 
-// Filter panel opened from a list toolbar (DSearch)
+/* Filter panel opened from a list toolbar (DSearch) */
 .dt-filter-panel {
     margin-bottom: 16px;
     padding: 14px 18px 16px;
@@ -3002,7 +3011,7 @@ input.vs-input--input.large {
         }
     }
 
-    // Number of filters in use
+    /* Number of filters in use */
     &__count {
         display: inline-flex;
         align-items: center;
@@ -3017,7 +3026,7 @@ input.vs-input--input.large {
         background: rgb(var(--vs-primary));
     }
 
-    // Labels: smaller than in add/edit forms
+    /* Labels: smaller than in add/edit forms */
     .d-field > label {
         margin-bottom: 4px !important;
         font-size: .8125rem;
@@ -3038,7 +3047,7 @@ input.vs-input--input.large {
         }
     }
 
-    // Fields and buttons share one grid: as many ~240px columns as fit, buttons in the last cell
+    /* Fields and buttons share one grid: as many ~240px columns as fit, buttons in the last cell */
     &__grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -3046,7 +3055,7 @@ input.vs-input--input.large {
         align-items: end;
         margin-top: 12px;
 
-        // Field wrappers carry column classes (vx-col, w-1/3, mt-4): the grid owns sizing and spacing here
+        /* Field wrappers carry column classes (vx-col, w-1/3, mt-4): the grid owns sizing and spacing here */
         > .d-field {
             width: auto !important;
             max-width: none !important;
@@ -3056,7 +3065,7 @@ input.vs-input--input.large {
     }
 
     &__actions {
-        grid-column-end: -1;   // last column of the current row (next row when the row is full)
+        grid-column-end: -1;   /* last column of the current row (next row when the row is full) */
         display: flex;
         justify-content: flex-end;
         align-items: center;
@@ -3107,7 +3116,7 @@ input.vs-input--input.large {
     }
 }
 
-// List cells: file thumbnails, dates, storage paths
+/* List cells: file thumbnails, dates, storage paths */
 .dt-list {
     .dt-file-cell {
         width: 1%;
@@ -3249,7 +3258,7 @@ input.vs-input--input.large {
 
 }
 
-// vs-table's built-in pager (Vuesax sizes its items 30px) uses the same controls
+/* vs-table's built-in pager (Vuesax sizes its items 30px) uses the same controls */
 .vs-con-table .vs-table--pagination {
     padding: 0;
 
@@ -3281,7 +3290,7 @@ input.vs-input--input.large {
     }
 }
 
-// Compact selects next to the pager
+/* Compact selects next to the pager */
 .theme-dark .v-select.is-compact,
 .theme-dark .dt-footer .v-select {
     .vs__dropdown-toggle {
@@ -3323,7 +3332,7 @@ input.vs-input--input.large {
         transform: rotate(180deg) scale(.8);
     }
 
-    // Compact menu: wider than the box, right-aligned, smaller rows
+    /* Compact menu: wider than the box, right-aligned, smaller rows */
     .vs__dropdown-menu {
         left: auto !important;
         right: 0;
@@ -3349,14 +3358,14 @@ input.vs-input--input.large {
     }
 }
 
-// In list footers (bottom of the card) compact menus open upwards
+/* In list footers (bottom of the card) compact menus open upwards */
 .dt-footer .v-select .vs__dropdown-menu {
     top: auto !important;
     bottom: 100%;
     margin: 0 0 4px;
 }
 
-// Non-searchable selects keep showing their value while open (nothing is being typed)
+/* Non-searchable selects keep showing their value while open (nothing is being typed) */
 .v-select.vs--single.vs--open.vs--unsearchable .vs__selected {
     position: static;
     opacity: 1;
@@ -3396,13 +3405,13 @@ input.vs-input--input.large {
         border-color: var(--input-border-hover);
     }
 
-    // Checked: the box picks up the theme colour
+    /* Checked: the box picks up the theme colour */
     &:has(.vs-checkbox--input:checked) {
         border-color: rgba(var(--vs-primary), .45);
         background: rgba(var(--vs-primary), .05);
     }
 
-    // Keyboard focus on the checkbox inside (not shown for mouse clicks)
+    /* Keyboard focus on the checkbox inside (not shown for mouse clicks) */
     &:has(:focus-visible) {
         outline: 2px solid rgb(var(--vs-primary));
         outline-offset: 2px;
@@ -3439,7 +3448,7 @@ input.vs-input--input.large {
 }
 
 /* --- FORMS OUTSIDE .d-form: Vuesax labels, buttons and side panels follow the same standard as DForm --- */
-// Field labels (vs-input label="…", vs-select label="…", the theme's <span class="vs-input--label">)
+/* Field labels (vs-input label="…", vs-select label="…", the theme's <span class="vs-input--label">) */
 .vs-input--label,
 .con-select .vs-select--label,
 label.vs-select--label {
@@ -3451,7 +3460,7 @@ label.vs-select--label {
     color: #4b4d68;
 }
 
-// Buttons: --btn-* tokens (same as .d-form__btn, .dt-btn); icon-only and round buttons keep Vuesax sizes
+/* Buttons: --btn-* tokens (same as .d-form__btn, .dt-btn); icon-only and round buttons keep Vuesax sizes */
 .vs-button:not(.vs-button-small):not(.vs-button-large):not(.includeIconOnly):not(.vs-radius) {
     display: inline-flex;
     align-items: center;
@@ -3520,8 +3529,8 @@ label.vs-select--label {
     }
 }
 
-// ---------------------------------------------------------------- Button motion, shared by every button type
-// Hover lifts 1px and the icon pops; press shrinks; keyboard focus shows a ring.
+/* ---------------------------------------------------------------- Button motion, shared by every button type */
+/* Hover lifts 1px and the icon pops; press shrinks; keyboard focus shows a ring. */
 .vs-button,
 .dt-btn,
 .d-form__btn,
@@ -3561,8 +3570,8 @@ label.vs-select--label {
     }
 }
 
-// Flat icon buttons (navbar, sidebar, row actions) and segmented switches: no lift, just
-// the icon pop, press and focus ring
+/* Flat icon buttons (navbar, sidebar, row actions) and segmented switches: no lift, just */
+/* the icon pop, press and focus ring */
 .nav-icon-btn,
 .nav-brand__btn,
 .d-fm__icon-btn,
@@ -3587,8 +3596,8 @@ label.vs-select--label {
     }
 }
 
-// The standard button (.dt-btn, .dt-btn--primary, .dt-btn--icon): the same everywhere,
-// in pages, popups and dialogs (popups are drawn in <body>, outside any page wrapper)
+/* The standard button (.dt-btn, .dt-btn--primary, .dt-btn--icon): the same everywhere, */
+/* in pages, popups and dialogs (popups are drawn in <body>, outside any page wrapper) */
 .dt-btn {
     display: inline-flex;
     align-items: center;
@@ -3658,7 +3667,7 @@ label.vs-select--label {
     }
 }
 
-// Text and icon sizes inside buttons
+/* Text and icon sizes inside buttons */
 .dt-btn,
 .d-form__btn,
 .d-tabform__btn,
@@ -3670,7 +3679,7 @@ label.vs-select--label {
     }
 }
 
-// Outlined buttons pick up a primary tint on hover
+/* Outlined buttons pick up a primary tint on hover */
 .dt-btn:not(.dt-btn--primary):hover:not(:disabled) {
     color: rgb(var(--vs-primary));
     border-color: rgba(var(--vs-primary), .5);
@@ -3698,7 +3707,7 @@ label.vs-select--label {
     }
 }
 
-// Slide-out add/edit panels (DataViewSidebar): title row, body, button row
+/* Slide-out add/edit panels (DataViewSidebar): title row, body, button row */
 .add-new-data-sidebar {
     .vs-sidebar {
         max-width: 420px;
@@ -3778,10 +3787,10 @@ label.vs-select--label {
         width: max-content;
         max-width: var(--cell-max);
         white-space: normal;
-        overflow-wrap: anywhere; // very long words / URLs break instead of overflowing the cap
+        overflow-wrap: anywhere; /* very long words / URLs break instead of overflowing the cap */
     }
 
-    // Numbers, dates and row actions never wrap
+    /* Numbers, dates and row actions never wrap */
     tbody tr td.dt-num > span,
     tbody tr td.dt-date > span,
     tbody tr td.dt-actions-cell > span,
@@ -3790,7 +3799,7 @@ label.vs-select--label {
         max-width: none;
     }
 
-    // A block span ignores text-align, so align it with margins (logical, works in RTL)
+    /* A block span ignores text-align, so align it with margins (logical, works in RTL) */
     tbody tr td.dt-num > span {
         margin-inline-start: auto;
     }
@@ -3825,8 +3834,8 @@ label.vs-select--label {
     }
 
     > span {
-        padding: 0 !important; // spacing comes from gap, not Vuesax's padding-left
-        line-height: 24px; // matches the icon box so Khmer and Latin labels sit on its centre line
+        padding: 0 !important; /* spacing comes from gap, not Vuesax's padding-left */
+        line-height: 24px; /* matches the icon box so Khmer and Latin labels sit on its centre line */
     }
 }
 
@@ -3850,7 +3859,7 @@ label.vs-select--label {
 }
 
 /* --- LIST TABLE DETAILS --- */
-// Row number column centred under its header
+/* Row number column centred under its header */
 .dt-list .vs-con-table {
     thead th:first-child .vs-table-text {
         justify-content: center !important;
@@ -3861,7 +3870,7 @@ label.vs-select--label {
     }
 }
 
-// Footer: info left, pager right on one row; stacked on phones
+/* Footer: info left, pager right on one row; stacked on phones */
 .dt-list .dt-footer {
     flex-wrap: nowrap;
 

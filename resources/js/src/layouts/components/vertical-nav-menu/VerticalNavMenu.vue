@@ -300,13 +300,17 @@ export default {
 
 </script>
 
-<style lang="scss">
+<style>
 .vs-sidebar-group, .navigation-header, .vs-sidebar--item, ul.vs-sidebar-group-items li,.content-wrapper, select, textarea, p, article, b, ul, li, button {
     font-family: var(--font-base);
 }
-@import "@sass/shm/components/verticalNavMenu.scss";
+</style>
 
-// Header keeps its height, the menu scrolls in whatever space is left
+<style>
+/* In CSS an @import must come first in its block, so the menu styles start a second block (same order as before) */
+@import "@css/shm/components/verticalNavMenu.css";
+
+/* Header keeps its height, the menu scrolls in whatever space is left */
 .v-nav-menu {
     .vs-sidebar--items {
         flex: 1;
@@ -422,7 +426,7 @@ export default {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 !important; // the theme adds margin-right to every sidebar icon
+            margin: 0 !important; /* the theme adds margin-right to every sidebar icon */
             transition: transform .25s ease;
 
             svg {
@@ -434,14 +438,14 @@ export default {
             background: rgba(255, 255, 255, .22);
         }
 
-        // Collapsed: point the arrows outward
+        /* Collapsed: point the arrows outward */
         &.is-reduced .feather-icon {
             transform: rotate(180deg);
         }
     }
 }
-// ---------------------------------------------------------------- Menu items (blue sidebar)
-// Dark mode keeps the same blue sidebar as the standard (semi-dark) look
+/* ---------------------------------------------------------------- Menu items (blue sidebar) */
+/* Dark mode keeps the same blue sidebar as the standard (semi-dark) look */
 .theme-dark .v-nav-menu {
     .vs-sidebar {
         border-radius: 30px;
@@ -456,7 +460,6 @@ export default {
     }
 }
 
-$nav-active-text: #34468a;
 
 .theme-semi-dark .v-nav-menu,
 .theme-dark .v-nav-menu {
@@ -467,7 +470,7 @@ $nav-active-text: #34468a;
         }
     }
 
-    // Section titles
+    /* Section titles */
     .navigation-header {
         margin: 1.2rem 0 .4rem 1.5rem;
         font-size: .72rem;
@@ -480,10 +483,10 @@ $nav-active-text: #34468a;
         }
     }
 
-    // Links and group headers share one row style: icon box + label, vertically centered
+    /* Links and group headers share one row style: icon box + label, vertically centered */
     .vs-sidebar--item a,
     .vs-sidebar-group > .group-header {
-        position: relative; // anchors the group arrow to its own row
+        position: relative; /* anchors the group arrow to its own row */
         display: flex;
         align-items: center;
         min-height: 42px;
@@ -494,7 +497,7 @@ $nav-active-text: #34468a;
         transition: background .15s ease, color .15s ease;
 
         > *:not(.feather-grp-header-arrow) {
-            transform: none !important; // no sideways jump on hover
+            transform: none !important; /* no sideways jump on hover */
         }
 
         &:hover {
@@ -506,10 +509,10 @@ $nav-active-text: #34468a;
         display: flex;
         align-items: center;
         min-width: 0;
-        padding-right: 20px; // room for the arrow
+        padding-right: 20px; /* room for the arrow */
     }
 
-    // Fixed-size icon box so every label lines up
+    /* Fixed-size icon box so every label lines up */
     .vs-sidebar--item a > .feather-icon,
     .vs-sidebar-group > .group-header > span > .feather-icon {
         flex-shrink: 0;
@@ -535,7 +538,7 @@ $nav-active-text: #34468a;
         line-height: 1.5;
     }
 
-    // Active page: white pill, icon on a soft tinted square
+    /* Active page: white pill, icon on a soft tinted square */
     .vs-sidebar--item .router-link-active {
         background: #fff !important;
         box-shadow: 0 6px 16px -6px rgba(0, 0, 0, .35);
@@ -543,7 +546,7 @@ $nav-active-text: #34468a;
         span,
         .feather-icon,
         .feather-icon svg {
-            color: $nav-active-text !important;
+            color: #34468a !important;
             font-weight: 600;
         }
 
@@ -552,7 +555,7 @@ $nav-active-text: #34468a;
         }
     }
 
-    // Open group, or group that holds the active page
+    /* Open group, or group that holds the active page */
     .vs-sidebar-group {
         &.vs-sidebar-group-open > .group-header,
         &.vs-sidebar-group-active > .group-header {
@@ -601,7 +604,7 @@ $nav-active-text: #34468a;
         }
     }
 
-    // Sub-items hang off a thin guide line under the group icon
+    /* Sub-items hang off a thin guide line under the group icon */
     .vs-sidebar-group-items {
         width: auto;
         margin-left: 27px;
@@ -625,11 +628,11 @@ $nav-active-text: #34468a;
         }
     }
 }
-// ---------------------------------------------------------------- Motion
-// Row transforms are locked (no sideways jump from the theme), so motion lives on the svg, pseudo-elements and list items.
+/* ---------------------------------------------------------------- Motion */
+/* Row transforms are locked (no sideways jump from the theme), so motion lives on the svg, pseudo-elements and list items. */
 .theme-semi-dark .v-nav-menu,
 .theme-dark .v-nav-menu {
-    // Light sweep across a link on hover
+    /* Light sweep across a link on hover */
     .vs-sidebar--item a {
         overflow: hidden;
 
@@ -651,7 +654,7 @@ $nav-active-text: #34468a;
         }
     }
 
-    // Icons lift and tilt slightly on hover
+    /* Icons lift and tilt slightly on hover */
     .vs-sidebar--item a,
     .vs-sidebar-group > .group-header {
         .feather-icon .feather {
@@ -663,7 +666,7 @@ $nav-active-text: #34468a;
         }
     }
 
-    // Active page: pill settles in and its icon pops
+    /* Active page: pill settles in and its icon pops */
     .vs-sidebar--item .router-link-active {
         animation: nav-pill-in .35s cubic-bezier(.22, 1, .36, 1);
 
@@ -676,32 +679,88 @@ $nav-active-text: #34468a;
         }
     }
 
-    // Opening a group: sub-items cascade in
+    /* Opening a group: sub-items cascade in */
     .vs-sidebar-group-open > .vs-sidebar-group-items > li {
         animation: nav-item-in .32s cubic-bezier(.22, 1, .36, 1) both;
 
-        @for $i from 1 through 10 {
-            &:nth-child(#{$i}) {
-                animation-delay: #{($i - 1) * 40}ms;
-            }
+        &:nth-child(1) {
+            animation-delay: 0ms;
+        }
+        &:nth-child(2) {
+            animation-delay: 40ms;
+        }
+        &:nth-child(3) {
+            animation-delay: 80ms;
+        }
+        &:nth-child(4) {
+            animation-delay: 120ms;
+        }
+        &:nth-child(5) {
+            animation-delay: 160ms;
+        }
+        &:nth-child(6) {
+            animation-delay: 200ms;
+        }
+        &:nth-child(7) {
+            animation-delay: 240ms;
+        }
+        &:nth-child(8) {
+            animation-delay: 280ms;
+        }
+        &:nth-child(9) {
+            animation-delay: 320ms;
+        }
+        &:nth-child(10) {
+            animation-delay: 360ms;
         }
     }
 
-    // Guide line grows down with the list
+    /* Guide line grows down with the list */
     .vs-sidebar-group-open > .vs-sidebar-group-items {
         animation: nav-guide-in .35s ease both;
     }
 
-    // Section titles and top-level rows fade up once when the menu first renders
+    /* Section titles and top-level rows fade up once when the menu first renders */
     .scroll-area-v-nav-menu > .navigation-header,
     .scroll-area-v-nav-menu > .vs-sidebar--item,
     .scroll-area-v-nav-menu > .vs-sidebar-group {
         animation: nav-item-in .4s cubic-bezier(.22, 1, .36, 1) both;
 
-        @for $i from 1 through 12 {
-            &:nth-child(#{$i}) {
-                animation-delay: #{$i * 30}ms;
-            }
+        &:nth-child(1) {
+            animation-delay: 30ms;
+        }
+        &:nth-child(2) {
+            animation-delay: 60ms;
+        }
+        &:nth-child(3) {
+            animation-delay: 90ms;
+        }
+        &:nth-child(4) {
+            animation-delay: 120ms;
+        }
+        &:nth-child(5) {
+            animation-delay: 150ms;
+        }
+        &:nth-child(6) {
+            animation-delay: 180ms;
+        }
+        &:nth-child(7) {
+            animation-delay: 210ms;
+        }
+        &:nth-child(8) {
+            animation-delay: 240ms;
+        }
+        &:nth-child(9) {
+            animation-delay: 270ms;
+        }
+        &:nth-child(10) {
+            animation-delay: 300ms;
+        }
+        &:nth-child(11) {
+            animation-delay: 330ms;
+        }
+        &:nth-child(12) {
+            animation-delay: 360ms;
         }
     }
 }

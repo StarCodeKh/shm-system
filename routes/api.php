@@ -286,6 +286,8 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
     Route::get('lookup/{field}', [LookupController::class, 'show'])->where('field', '[a-z_]+');
 
     Route::post('user/device', [UserController::class, 'getUserDevice']);
+    // The users list posts to api + "_index" (settings and officer tabs)
+    Route::post('user_index', [UserController::class, 'index']);
     Route::post('user/profile', [UserController::class, 'getProfile']);
     Route::apiResource('user', UserController::class);
 

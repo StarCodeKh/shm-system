@@ -201,7 +201,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 .profile-card {
     &__head {
         display: flex;

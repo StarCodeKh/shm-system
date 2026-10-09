@@ -286,7 +286,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style>
 .report-viewer {
     --accent: var(--vs-primary);
 

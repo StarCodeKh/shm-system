@@ -65,7 +65,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 .nav-theme {
     overflow: hidden;
 
@@ -82,7 +82,7 @@ export default {
         }
     }
 
-    // Light: show the moon (switch to dark); dark: show the sun
+    /* Light: show the moon (switch to dark); dark: show the sun */
     &__icon--sun {
         opacity: 0;
         transform: rotate(-90deg) scale(.5);
@@ -100,7 +100,7 @@ export default {
     }
 }
 
-// Theme switch: the browser's snapshot cross-fade is replaced by the circle reveal above
+/* Theme switch: the browser's snapshot cross-fade is replaced by the circle reveal above */
 ::view-transition-old(root),
 ::view-transition-new(root) {
     animation: none;

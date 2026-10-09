@@ -55,7 +55,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 .error-page {
     display: flex;
     align-items: center;
@@ -140,8 +140,8 @@ export default {
         margin-top: 32px;
     }
 
-    // ".error-page .error-page__btn": stronger than the global a / a:visited colour, which would
-    // otherwise turn the text green on the green button once the link has been visited
+    /* ".error-page .error-page__btn": stronger than the global a / a:visited colour, which would */
+    /* otherwise turn the text green on the green button once the link has been visited */
     .error-page__btn {
         display: inline-flex;
         align-items: center;

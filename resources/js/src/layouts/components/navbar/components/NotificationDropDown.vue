@@ -122,7 +122,7 @@
     }
 </script>
 
-<style lang="scss">
+<style>
 .nav-badge {
     position: absolute;
     top: 4px;
@@ -154,7 +154,7 @@
 }
 
 .nav-notify-menu {
-    // Sized by its messages, within these limits (see DROPDOWNS in custom.scss)
+    /* Sized by its messages, within these limits (see DROPDOWNS in custom.css) */
     --menu-min: 300px;
     --menu-max: 420px;
 
@@ -185,7 +185,7 @@
         background: rgba(var(--vs-primary), .12);
     }
 
-    // Pushed to the right of the title and count
+    /* Pushed to the right of the title and count */
     &__read-all {
         display: inline-flex;
         align-items: center;
@@ -278,7 +278,7 @@
         background: #f8f9fb;
     }
 
-    // Unread marker at the end of the row
+    /* Unread marker at the end of the row */
     &__dot {
         order: 1;
         flex-shrink: 0;

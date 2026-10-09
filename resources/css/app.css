@@ -1,10 +1,9 @@
 /*=========================================================================================
-    File Name: _extraComponents.scss
-    Description: Styles for third-party components (vue-select, date picker)
+    File Name: app.css
+    Description: App stylesheet entry: the theme (main.css) plus the app's own styles
     ----------------------------------------------------------------------------------------
     Project: SHM-System
     Author: Soeng Souy
 ==========================================================================================*/
 
-@import "shm/extraComponents/vueSelect";
-@import "shm/extraComponents/datePicker";
+@import "./main.css";

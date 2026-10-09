@@ -88,7 +88,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 .nav-user {
     display: flex;
     align-items: center;
@@ -175,7 +175,7 @@ export default {
 }
 
 .nav-user-menu {
-    // As wide as the name / email / item labels need, within these limits (see DROPDOWNS in custom.scss)
+    /* As wide as the name / email / item labels need, within these limits (see DROPDOWNS in custom.css) */
     --menu-min: 220px;
     --menu-max: 340px;
 

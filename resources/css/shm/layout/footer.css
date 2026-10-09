@@ -1,7 +1,7 @@
 .footer-sticky {
     .the-footer {
         position: fixed;
-        background: $white;
+        background: rgb(var(--white-rgb));
         bottom: 0;
         width: calc(100% - 260px);
         box-shadow: 0 -4px 20px 0 rgba(0, 0, 0, .05);

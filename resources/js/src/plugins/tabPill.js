@@ -11,7 +11,7 @@
       (or the selector given: v-tab-pill="'.selected'").
     - The pill is the bar's ::before (no extra element for Vue to manage), placed from
       --pill-x / --pill-y / --pill-w / --pill-h. Its look comes from the bar's CSS:
-      --pill-bg, --pill-radius, --pill-shadow (see .tab-pill-host in custom.scss).
+      --pill-bg, --pill-radius, --pill-shadow (see .tab-pill-host in custom.css).
     - It follows clicks, resizes, late fonts and tabs added or removed; the first placement
       doesn't slide in from the corner.
 ==========================================================================================*/

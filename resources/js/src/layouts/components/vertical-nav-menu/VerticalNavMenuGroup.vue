@@ -217,6 +217,5 @@ export default {
 </script>
 
 
-<style lang="scss">
-@import "@sass/shm/components/verticalNavMenuGroup.scss"
-</style>
+<style>
+@import "@css/shm/components/verticalNavMenuGroup.css";</style>

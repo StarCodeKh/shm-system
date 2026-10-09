@@ -127,7 +127,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 .vx-navbar.navbar-custom {
     .vs-con-items {
         align-items: center;
@@ -183,7 +183,7 @@ export default {
     }
 }
 
-// Round icon button used across navbar actions
+/* Round icon button used across navbar actions */
 .nav-icon-btn {
     position: relative;
     display: inline-flex;

@@ -1,6 +1,6 @@
 /*=========================================================================================
     File Name: tabsScroll.js
-    Description: Top tab bars (see custom.scss): a white pill slides to the active tab, and
+    Description: Top tab bars (see custom.css): a white pill slides to the active tab, and
     the track scrolls sideways when the tabs don't fit.
 
     - The pill is Vuesax's .line-vs-tabs, placed from --tab-pill-x / --tab-pill-w measured

@@ -198,18 +198,18 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 .setting-page {
     display: flex;
     min-height: calc(100vh - 220px);
     border-radius: 16px;
-    overflow: clip; // rounds the corners without breaking the sticky nav
+    overflow: clip; /* rounds the corners without breaking the sticky nav */
     background: #fff;
     border: 1px solid rgba(23, 23, 74, .05);
     box-shadow: 0 4px 24px -8px rgba(23, 23, 74, .12);
 }
 
-// Colored icon square; --tile is an "r, g, b" triple inherited from the nav item / section
+/* Colored icon square; --tile is an "r, g, b" triple inherited from the nav item / section */
 .setting-tile {
     flex-shrink: 0;
     display: inline-flex;
@@ -235,7 +235,7 @@ export default {
     }
 }
 
-// ---------------------------------------------------------------- Left navigation
+/* ---------------------------------------------------------------- Left navigation */
 .setting-nav {
     flex: 0 0 290px;
     border-right: 1px solid #eef0f5;
@@ -262,7 +262,7 @@ export default {
 
     &__list {
         position: sticky;
-        top: 90px; // below the sticky navbar
+        top: 90px; /* below the sticky navbar */
         display: flex;
         flex-direction: column;
         gap: 2px;
@@ -285,7 +285,7 @@ export default {
         border-radius: 12px;
         background: transparent;
         cursor: pointer;
-        z-index: 1; // above the sliding highlight
+        z-index: 1; /* above the sliding highlight */
         animation: setting-item-in .35s ease backwards;
         animation-delay: var(--delay);
         transition: background var(--tab-tap) ease, box-shadow var(--tab-tap) ease;
@@ -304,7 +304,7 @@ export default {
             outline-offset: 2px;
         }
 
-        // Active: the highlight underneath gives the tint; the icon fills with the section color and pops
+        /* Active: the highlight underneath gives the tint; the icon fills with the section color and pops */
         &.is-active {
             .setting-tile {
                 color: #fff;
@@ -326,7 +326,7 @@ export default {
         }
     }
 
-    // Sliding highlight: soft tint of the section color, thin outline, accent bar on the left
+    /* Sliding highlight: soft tint of the section color, thin outline, accent bar on the left */
     &__indicator {
         position: absolute;
         top: 0;
@@ -347,8 +347,8 @@ export default {
             background: rgb(var(--tile));
         }
 
-        // Instant on first placement, then the same slide as every tab (--tab-move / --tab-ease),
-        // fading its color between sections
+        /* Instant on first placement, then the same slide as every tab (--tab-move / --tab-ease), */
+        /* fading its color between sections */
         &.is-ready {
             transition:
                 transform var(--tab-move) var(--tab-ease),
@@ -394,14 +394,14 @@ export default {
     }
 }
 
-// ---------------------------------------------------------------- Content
+/* ---------------------------------------------------------------- Content */
 .setting-content {
     --tile: 31, 32, 103;
     position: relative;
     flex: 1;
     min-width: 0;
     padding: 24px 28px 28px;
-    // Plain surface: the section's color shows only in its header icon
+    /* Plain surface: the section's color shows only in its header icon */
     background: #f7f8fb;
 
     &__head {
@@ -433,7 +433,7 @@ export default {
         }
     }
 
-    // Inner tabs and cards sit on white panels
+    /* Inner tabs and cards sit on white panels */
     .vx-card,
     .vs-tabs {
         border-radius: 14px;
@@ -453,7 +453,7 @@ export default {
     }
 }
 
-// Same motion as every other tab: the old section fades out quickly, the new one rises in
+/* Same motion as every other tab: the old section fades out quickly, the new one rises in */
 .setting-swap-enter-active {
     animation: tab-content-in var(--tab-fade) var(--tab-ease) backwards;
 }
@@ -464,7 +464,7 @@ export default {
     opacity: 0;
 }
 
-// Read-only sections (role may see but not save): a plain wrapper that disables every field, and a note
+/* Read-only sections (role may see but not save): a plain wrapper that disables every field, and a note */
 .setting-fieldset {
     min-width: 0;
     margin: 0;
@@ -496,7 +496,7 @@ export default {
     100% { transform: scale(1); }
 }
 
-// ---------------------------------------------------------------- Small screens: nav becomes a scrollable strip
+/* ---------------------------------------------------------------- Small screens: nav becomes a scrollable strip */
 @media (max-width: 900px) {
     .setting-page {
         flex-direction: column;
@@ -513,8 +513,8 @@ export default {
         }
 
         &__list {
-            position: relative; // the highlight scrolls with the strip
-            top: auto; // drop the desktop sticky offset, which would push the strip 90px down
+            position: relative; /* the highlight scrolls with the strip */
+            top: auto; /* drop the desktop sticky offset, which would push the strip 90px down */
             flex-direction: row;
             gap: 8px;
             max-height: none;

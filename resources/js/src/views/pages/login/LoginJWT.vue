@@ -205,9 +205,9 @@ export default {
 
 </script>
 
-<style lang="scss">
+<style>
 .login-jwt {
-    // "Remember me": the same checkbox as the forms (20px box, 6px corners, theme colour), inline under the fields
+    /* "Remember me": the same checkbox as the forms (20px box, 6px corners, theme colour), inline under the fields */
     .login-remember.con-vs-checkbox {
         display: inline-flex;
         align-items: center;
@@ -230,7 +230,7 @@ export default {
             color: #4b4d68;
         }
 
-        // Keyboard focus only (not shown for mouse clicks)
+        /* Keyboard focus only (not shown for mouse clicks) */
         &:has(:focus-visible) {
             border-radius: 6px;
             outline: 2px solid rgb(var(--vs-primary));
@@ -241,7 +241,7 @@ export default {
     .login-field {
         margin-bottom: 16px;
 
-        // Same label, control and button as every other form (tokens in custom.scss :root)
+        /* Same label, control and button as every other form (tokens in custom.css :root) */
         label {
             display: block;
             font-size: .875rem;
@@ -254,8 +254,8 @@ export default {
             position: relative;
         }
 
-        // Wrapper span (not the feather-icon itself): Tailwind's `.relative` is
-        // !important and would otherwise un-pin the icon.
+        /* Wrapper span (not the feather-icon itself): Tailwind's `.relative` is */
+        /* !important and would otherwise un-pin the icon. */
         &__icon {
             position: absolute;
             top: 0;
@@ -493,7 +493,7 @@ export default {
     transform: translateY(-6px);
 }
 
-// Shake the alert in when it appears so a repeated failure is still noticed
+/* Shake the alert in when it appears so a repeated failure is still noticed */
 .login-alert-enter-active {
     animation: login-shake .35s ease;
 }

@@ -1,10 +1,10 @@
 .theme-dark {
 
-    // Changes color code of dark color
+    /* Changes color code of dark color */
     --vs-dark: 184,194,204;
 
-    background-color: $content-dark-bg;
-    color: $theme-dark-text-color !important;
+    background-color: rgb(var(--content-dark-bg-rgb));
+    color: rgb(var(--theme-dark-text-color-rgb)) !important;
 
     .main-vertical {
         &.navbar-static {
@@ -34,8 +34,8 @@
         &.navbar-sticky {
             .vs-navbar {
                 &:not(.vx-navbar) {
-                    // body dark bg
-                    background-color: $theme-light-dark-bg !important;
+                    /* body dark bg */
+                    background-color: rgb(var(--theme-light-dark-bg-rgb)) !important;
                 }
             }
         }
@@ -44,7 +44,7 @@
             .vs-navbar {
                 &:not(.vx-navbar) {
                     &.d-theme-dark-light-bg {
-                        background-color: $theme-light-dark-bg !important;
+                        background-color: rgb(var(--theme-light-dark-bg-rgb)) !important;
                     }
                 }
             }
@@ -53,17 +53,17 @@
 
     .content-area__heading {
         h2 {
-            color: $theme-dark-heading-color;
+            color: rgb(var(--theme-dark-heading-color-rgb));
         }
     }
 
     code {
-        color: $grey;
-        background: $content-dark-bg;
+        color: rgb(var(--grey-rgb));
+        background: rgb(var(--content-dark-bg-rgb));
     }
 
     pre[class*="language-"] {
-        background-color: $dark;
+        background-color: rgb(var(--dark-rgb));
         text-shadow: none;
 
         code {
@@ -75,9 +75,9 @@
         }
     }
 
-    // Label
+    /* Label */
     label {
-        color: $theme-dark-text-color;
+        color: rgb(var(--theme-dark-text-color-rgb));
     }
 
     h1,
@@ -86,73 +86,73 @@
     h4,
     h5,
     h6 {
-        color: $theme-dark-heading-color;
+        color: rgb(var(--theme-dark-heading-color-rgb));
 
     }
 
     ul.bordered-items {
         li {
-            border-color: $theme-dark-border-color !important;
+            border-color: rgb(var(--theme-dark-border-color-rgb)) !important;
         }
     }
 
-    // Notification
+    /* Notification */
     .notification-dropdown,
     .cart-dropdown {
 
         .notification:hover,
         .cart-item:hover {
-            background: $dark-card-color;
+            background: rgb(var(--dark-card-color-rgb));
         }
 
         .checkout-footer,
         .notification-footer {
-            background-color: $theme-light-dark-bg;
+            background-color: rgb(var(--theme-light-dark-bg-rgb));
         }
 
         .checkout-footer:hover,
         .notification-footer:hover {
-            background-color: $theme-dark-bg;
+            background-color: rgb(var(--theme-dark-bg-rgb));
         }
     }
 
     .vs-component {
         &.vs-notifications {
             &.vs-noti-dark {
-                color: $black !important;
+                color: rgb(var(--black-rgb)) !important;
 
                 .filling {
-                    background: $grey !important;
+                    background: rgb(var(--grey-rgb)) !important;
                 }
 
                 h3 {
-                    color: $black !important;
+                    color: rgb(var(--black-rgb)) !important;
                 }
             }
         }
     }
 
-    // Card
+    /* Card */
     .vx-card {
-        background-color: $dark-card-color;
+        background-color: rgb(var(--dark-card-color-rgb));
 
         &.card-border {
-            border-color: $theme-dark-border-color;
+            border-color: rgb(var(--theme-dark-border-color-rgb));
         }
 
         .vx-card__title {
             h4 {
-                color: $theme-dark-heading-color;
+                color: rgb(var(--theme-dark-heading-color-rgb));
             }
         }
 
         .con-vs-alert-dark {
-            color: $grey-light;
+            color: rgb(var(--grey-light-rgb));
         }
 
         .code-content {
             pre[class^="language-"] {
-                background-color: $content-dark-bg;
+                background-color: rgb(var(--content-dark-bg-rgb));
                 text-shadow: none;
 
                 code {
@@ -197,11 +197,11 @@
             }
         }
 
-        // Card-analytics
+        /* Card-analytics */
         .tasks-today-container {
             .tasks-today__task {
                 &:hover {
-                    background: $table-dark-stripe !important;
+                    background: rgb(var(--table-dark-stripe-rgb)) !important;
                 }
             }
         }
@@ -212,11 +212,11 @@
 
         .vs-navbar {
             .search-full-container {
-                background-color: $dark-card-color !important;
+                background-color: rgb(var(--dark-card-color-rgb)) !important;
 
                 .vx-auto-suggest {
                     input {
-                        background: $dark-card-color;
+                        background: rgb(var(--dark-card-color-rgb));
                     }
                 }
             }
@@ -225,33 +225,33 @@
                 .auto-suggest-suggestions-list {
                     .auto-suggest__suggestion-group__suggestion {
                         &.vx-auto-suggest__current-selected {
-                            background: $dark-card-color;
-                            color: $white;
+                            background: rgb(var(--dark-card-color-rgb));
+                            color: rgb(var(--white-rgb));
                         }
 
-                        color: $theme-dark-text-color;
+                        color: rgb(var(--theme-dark-text-color-rgb));
                     }
                 }
             }
         }
     }
 
-    // Vertical NavMenu
+    /* Vertical NavMenu */
     .v-nav-menu {
         .vs-sidebar {
-            background-color: $sidebar-dark-bg;
+            background-color: rgb(var(--sidebar-dark-bg-rgb));
         }
 
         .shadow-bottom {
             width: 94%;
-            // background: linear-gradient(to bottom, rgb(15, 22, 66) 44%, rgba(15, 22, 66, 0.51) 73%, rgba(44, 48, 60, 0) 100%)
+            /* background: linear-gradient(to bottom, rgb(15, 22, 66) 44%, rgba(15, 22, 66, 0.51) 73%, rgba(44, 48, 60, 0) 100%) */
         }
 
         .scroll-area-v-nav-menu {
 
             .feather-icon,
             span:not(.vs-chip--text) {
-                color: $theme-dark-text-color;
+                color: rgb(var(--theme-dark-text-color-rgb));
             }
 
             a {
@@ -260,14 +260,14 @@
 
                         svg,
                         span {
-                            color: $theme-dark-text-color;
+                            color: rgb(var(--theme-dark-text-color-rgb));
                         }
                     }
                 }
 
                 &.router-link-active {
                     span {
-                        color: $white;
+                        color: rgb(var(--white-rgb));
                     }
                 }
             }
@@ -275,38 +275,38 @@
             .vs-sidebar-group {
                 &.vs-sidebar-group-active {
                     >.group-header {
-                        background: $content-dark-bg;
+                        background: rgb(var(--content-dark-bg-rgb));
                     }
                 }
 
                 &.vs-sidebar-group-open {
                     >.group-header {
-                        background: $content-dark-bg;
+                        background: rgb(var(--content-dark-bg-rgb));
                     }
                 }
             }
         }
     }
 
-    // Sidebar Perfect Scrollbar
+    /* Sidebar Perfect Scrollbar */
     .ps {
         &:hover {
             &>.ps__scrollbar-y-rail {
                 &:hover {
-                    background-color: $dark-card-color;
+                    background-color: rgb(var(--dark-card-color-rgb));
                 }
             }
         }
     }
 
-    // Grid
+    /* Grid */
     .grid-demo__layout-container {
         .vs-row {
             .vs-col {
-                background-color: $table-dark-stripe;
+                background-color: rgb(var(--table-dark-stripe-rgb));
 
                 &:last-of-type {
-                    background-color: $table-dark-stripe;
+                    background-color: rgb(var(--table-dark-stripe-rgb));
                 }
             }
         }
@@ -314,128 +314,128 @@
 
     .grid-demo__layout-container--block {
         .vs-row {
-            background-color: $table-dark-stripe;
+            background-color: rgb(var(--table-dark-stripe-rgb));
         }
     }
 
-    // Chat card of ecommerce page
+    /* Chat card of ecommerce page */
     .chat-card-log {
         .flex-row-reverse {
             .msg {
                 &.chat-sent-msg {
-                    background-color: $sidebar-dark-bg !important;
+                    background-color: rgb(var(--sidebar-dark-bg-rgb)) !important;
                 }
             }
         }
 
         .msg {
-            background-color: $table-dark-stripe !important;
+            background-color: rgb(var(--table-dark-stripe-rgb)) !important;
         }
     }
 
     .chat-input-container,
     .chat__input {
-        background-color: $dark-card-color !important;
-        border-top: 1px solid $table-dark-stripe;
+        background-color: rgb(var(--dark-card-color-rgb)) !important;
+        border-top: 1px solid rgb(var(--table-dark-stripe-rgb));
     }
 
-    // Chat App
+    /* Chat App */
     #chat-app {
         .chat__profile-search {
             .vs-inputx {
-                border-color: $theme-dark-border-color !important;
+                border-color: rgb(var(--theme-dark-border-color-rgb)) !important;
             }
         }
 
         #chat-list-sidebar {
             .chat-scroll-area {
                 .chat__contact:hover {
-                    background: $dark-card-color;
+                    background: rgb(var(--dark-card-color-rgb));
                 }
             }
         }
 
         .chat__header {
             header {
-                background: $table-dark-stripe !important;
+                background: rgb(var(--table-dark-stripe-rgb)) !important;
 
                 h6 {
-                    color: $theme-dark-heading-color;
+                    color: rgb(var(--theme-dark-heading-color-rgb));
                 }
             }
         }
 
         .chat__bg {
-            background-color: $theme-dark-secondary-bg;
+            background-color: rgb(var(--theme-dark-secondary-bg-rgb));
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%236f76a1' fill-opacity='0.4'%3E%3Cpath d='M24.37 16c.2.65.39 1.32.54 2H21.17l1.17 2.34.45.9-.24.11V28a5 5 0 0 1-2.23 8.94l-.02.06a8 8 0 0 1-7.75 6h-20a8 8 0 0 1-7.74-6l-.02-.06A5 5 0 0 1-17.45 28v-6.76l-.79-1.58-.44-.9.9-.44.63-.32H-20a23.01 23.01 0 0 1 44.37-2zm-36.82 2a1 1 0 0 0-.44.1l-3.1 1.56.89 1.79 1.31-.66a3 3 0 0 1 2.69 0l2.2 1.1a1 1 0 0 0 .9 0l2.21-1.1a3 3 0 0 1 2.69 0l2.2 1.1a1 1 0 0 0 .9 0l2.21-1.1a3 3 0 0 1 2.69 0l2.2 1.1a1 1 0 0 0 .86.02l2.88-1.27a3 3 0 0 1 2.43 0l2.88 1.27a1 1 0 0 0 .85-.02l3.1-1.55-.89-1.79-1.42.71a3 3 0 0 1-2.56.06l-2.77-1.23a1 1 0 0 0-.4-.09h-.01a1 1 0 0 0-.4.09l-2.78 1.23a3 3 0 0 1-2.56-.06l-2.3-1.15a1 1 0 0 0-.45-.11h-.01a1 1 0 0 0-.44.1L.9 19.22a3 3 0 0 1-2.69 0l-2.2-1.1a1 1 0 0 0-.45-.11h-.01a1 1 0 0 0-.44.1l-2.21 1.11a3 3 0 0 1-2.69 0l-2.2-1.1a1 1 0 0 0-.45-.11h-.01zm0-2h-4.9a21.01 21.01 0 0 1 39.61 0h-2.09l-.06-.13-.26.13h-32.31zm30.35 7.68l1.36-.68h1.3v2h-36v-1.15l.34-.17 1.36-.68h2.59l1.36.68a3 3 0 0 0 2.69 0l1.36-.68h2.59l1.36.68a3 3 0 0 0 2.69 0L2.26 23h2.59l1.36.68a3 3 0 0 0 2.56.06l1.67-.74h3.23l1.67.74a3 3 0 0 0 2.56-.06zM-13.82 27l16.37 4.91L18.93 27h-32.75zm-.63 2h.34l16.66 5 16.67-5h.33a3 3 0 1 1 0 6h-34a3 3 0 1 1 0-6zm1.35 8a6 6 0 0 0 5.65 4h20a6 6 0 0 0 5.66-4H-13.1z'/%3E%3Cpath id='path6_fill-copy' d='M284.37 16c.2.65.39 1.32.54 2H281.17l1.17 2.34.45.9-.24.11V28a5 5 0 0 1-2.23 8.94l-.02.06a8 8 0 0 1-7.75 6h-20a8 8 0 0 1-7.74-6l-.02-.06a5 5 0 0 1-2.24-8.94v-6.76l-.79-1.58-.44-.9.9-.44.63-.32H240a23.01 23.01 0 0 1 44.37-2zm-36.82 2a1 1 0 0 0-.44.1l-3.1 1.56.89 1.79 1.31-.66a3 3 0 0 1 2.69 0l2.2 1.1a1 1 0 0 0 .9 0l2.21-1.1a3 3 0 0 1 2.69 0l2.2 1.1a1 1 0 0 0 .9 0l2.21-1.1a3 3 0 0 1 2.69 0l2.2 1.1a1 1 0 0 0 .86.02l2.88-1.27a3 3 0 0 1 2.43 0l2.88 1.27a1 1 0 0 0 .85-.02l3.1-1.55-.89-1.79-1.42.71a3 3 0 0 1-2.56.06l-2.77-1.23a1 1 0 0 0-.4-.09h-.01a1 1 0 0 0-.4.09l-2.78 1.23a3 3 0 0 1-2.56-.06l-2.3-1.15a1 1 0 0 0-.45-.11h-.01a1 1 0 0 0-.44.1l-2.21 1.11a3 3 0 0 1-2.69 0l-2.2-1.1a1 1 0 0 0-.45-.11h-.01a1 1 0 0 0-.44.1l-2.21 1.11a3 3 0 0 1-2.69 0l-2.2-1.1a1 1 0 0 0-.45-.11h-.01zm0-2h-4.9a21.01 21.01 0 0 1 39.61 0h-2.09l-.06-.13-.26.13h-32.31zm30.35 7.68l1.36-.68h1.3v2h-36v-1.15l.34-.17 1.36-.68h2.59l1.36.68a3 3 0 0 0 2.69 0l1.36-.68h2.59l1.36.68a3 3 0 0 0 2.69 0l1.36-.68h2.59l1.36.68a3 3 0 0 0 2.56.06l1.67-.74h3.23l1.67.74a3 3 0 0 0 2.56-.06zM246.18 27l16.37 4.91L278.93 27h-32.75zm-.63 2h.34l16.66 5 16.67-5h.33a3 3 0 1 1 0 6h-34a3 3 0 1 1 0-6zm1.35 8a6 6 0 0 0 5.65 4h20a6 6 0 0 0 5.66-4H246.9z'/%3E%3Cpath d='M159.5 21.02A9 9 0 0 0 151 15h-42a9 9 0 0 0-8.5 6.02 6 6 0 0 0 .02 11.96A8.99 8.99 0 0 0 109 45h42a9 9 0 0 0 8.48-12.02 6 6 0 0 0 .02-11.96zM151 17h-42a7 7 0 0 0-6.33 4h54.66a7 7 0 0 0-6.33-4zm-9.34 26a8.98 8.98 0 0 0 3.34-7h-2a7 7 0 0 1-7 7h-4.34a8.98 8.98 0 0 0 3.34-7h-2a7 7 0 0 1-7 7h-4.34a8.98 8.98 0 0 0 3.34-7h-2a7 7 0 0 1-7 7h-7a7 7 0 1 1 0-14h42a7 7 0 1 1 0 14h-9.34zM109 27a9 9 0 0 0-7.48 4H101a4 4 0 1 1 0-8h58a4 4 0 0 1 0 8h-.52a9 9 0 0 0-7.48-4h-42z'/%3E%3Cpath d='M39 115a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm6-8a6 6 0 1 1-12 0 6 6 0 0 1 12 0zm-3-29v-2h8v-6H40a4 4 0 0 0-4 4v10H22l-1.33 4-.67 2h2.19L26 130h26l3.81-40H58l-.67-2L56 84H42v-6zm-4-4v10h2V74h8v-2h-8a2 2 0 0 0-2 2zm2 12h14.56l.67 2H22.77l.67-2H40zm13.8 4H24.2l3.62 38h22.36l3.62-38z'/%3E%3Cpath d='M129 92h-6v4h-6v4h-6v14h-3l.24 2 3.76 32h36l3.76-32 .24-2h-3v-14h-6v-4h-6v-4h-8zm18 22v-12h-4v4h3v8h1zm-3 0v-6h-4v6h4zm-6 6v-16h-4v19.17c1.6-.7 2.97-1.8 4-3.17zm-6 3.8V100h-4v23.8a10.04 10.04 0 0 0 4 0zm-6-.63V104h-4v16a10.04 10.04 0 0 0 4 3.17zm-6-9.17v-6h-4v6h4zm-6 0v-8h3v-4h-4v12h1zm27-12v-4h-4v4h3v4h1v-4zm-6 0v-8h-4v4h3v4h1zm-6-4v-4h-4v8h1v-4h3zm-6 4v-4h-4v8h1v-4h3zm7 24a12 12 0 0 0 11.83-10h7.92l-3.53 30h-32.44l-3.53-30h7.92A12 12 0 0 0 130 126z'/%3E%3Cpath d='M212 86v2h-4v-2h4zm4 0h-2v2h2v-2zm-20 0v.1a5 5 0 0 0-.56 9.65l.06.25 1.12 4.48a2 2 0 0 0 1.94 1.52h.01l7.02 24.55a2 2 0 0 0 1.92 1.45h4.98a2 2 0 0 0 1.92-1.45l7.02-24.55a2 2 0 0 0 1.95-1.52L224.5 96l.06-.25a5 5 0 0 0-.56-9.65V86a14 14 0 0 0-28 0zm4 0h6v2h-9a3 3 0 1 0 0 6H223a3 3 0 1 0 0-6H220v-2h2a12 12 0 1 0-24 0h2zm-1.44 14l-1-4h24.88l-1 4h-22.88zm8.95 26l-6.86-24h18.7l-6.86 24h-4.98zM150 242a22 22 0 1 0 0-44 22 22 0 0 0 0 44zm24-22a24 24 0 1 1-48 0 24 24 0 0 1 48 0zm-28.38 17.73l2.04-.87a6 6 0 0 1 4.68 0l2.04.87a2 2 0 0 0 2.5-.82l1.14-1.9a6 6 0 0 1 3.79-2.75l2.15-.5a2 2 0 0 0 1.54-2.12l-.19-2.2a6 6 0 0 1 1.45-4.46l1.45-1.67a2 2 0 0 0 0-2.62l-1.45-1.67a6 6 0 0 1-1.45-4.46l.2-2.2a2 2 0 0 0-1.55-2.13l-2.15-.5a6 6 0 0 1-3.8-2.75l-1.13-1.9a2 2 0 0 0-2.5-.8l-2.04.86a6 6 0 0 1-4.68 0l-2.04-.87a2 2 0 0 0-2.5.82l-1.14 1.9a6 6 0 0 1-3.79 2.75l-2.15.5a2 2 0 0 0-1.54 2.12l.19 2.2a6 6 0 0 1-1.45 4.46l-1.45 1.67a2 2 0 0 0 0 2.62l1.45 1.67a6 6 0 0 1 1.45 4.46l-.2 2.2a2 2 0 0 0 1.55 2.13l2.15.5a6 6 0 0 1 3.8 2.75l1.13 1.9a2 2 0 0 0 2.5.8zm2.82.97a4 4 0 0 1 3.12 0l2.04.87a4 4 0 0 0 4.99-1.62l1.14-1.9a4 4 0 0 1 2.53-1.84l2.15-.5a4 4 0 0 0 3.09-4.24l-.2-2.2a4 4 0 0 1 .97-2.98l1.45-1.67a4 4 0 0 0 0-5.24l-1.45-1.67a4 4 0 0 1-.97-2.97l.2-2.2a4 4 0 0 0-3.09-4.25l-2.15-.5a4 4 0 0 1-2.53-1.84l-1.14-1.9a4 4 0 0 0-5-1.62l-2.03.87a4 4 0 0 1-3.12 0l-2.04-.87a4 4 0 0 0-4.99 1.62l-1.14 1.9a4 4 0 0 1-2.53 1.84l-2.15.5a4 4 0 0 0-3.09 4.24l.2 2.2a4 4 0 0 1-.97 2.98l-1.45 1.67a4 4 0 0 0 0 5.24l1.45 1.67a4 4 0 0 1 .97 2.97l-.2 2.2a4 4 0 0 0 3.09 4.25l2.15.5a4 4 0 0 1 2.53 1.84l1.14 1.9a4 4 0 0 0 5 1.62l2.03-.87zM152 207a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm6 2a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm-11 1a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm-6 0a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm3-5a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm-8 8a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm3 6a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm0 6a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm4 7a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm5-2a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm5 4a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm4-6a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm6-4a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm-4-3a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm4-3a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm-5-4a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm-24 6a1 1 0 1 1 2 0 1 1 0 0 1-2 0zm16 5a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm7-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0zm86-29a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm19 9a1 1 0 0 1 1-1h2a1 1 0 0 1 0 2h-2a1 1 0 0 1-1-1zm-14 5a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-25 1a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm5 4a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm9 0a1 1 0 0 1 1-1h2a1 1 0 0 1 0 2h-2a1 1 0 0 1-1-1zm15 1a1 1 0 0 1 1-1h2a1 1 0 0 1 0 2h-2a1 1 0 0 1-1-1zm12-2a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-11-14a1 1 0 0 1 1-1h2a1 1 0 0 1 0 2h-2a1 1 0 0 1-1-1zm-19 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm6 5a1 1 0 0 1 1-1h2a1 1 0 0 1 0 2h-2a1 1 0 0 1-1-1zm-25 15c0-.47.01-.94.03-1.4a5 5 0 0 1-1.7-8 3.99 3.99 0 0 1 1.88-5.18 5 5 0 0 1 3.4-6.22 3 3 0 0 1 1.46-1.05 5 5 0 0 1 7.76-3.27A30.86 30.86 0 0 1 246 184c6.79 0 13.06 2.18 18.17 5.88a5 5 0 0 1 7.76 3.27 3 3 0 0 1 1.47 1.05 5 5 0 0 1 3.4 6.22 4 4 0 0 1 1.87 5.18 4.98 4.98 0 0 1-1.7 8c.02.46.03.93.03 1.4v1h-62v-1zm.83-7.17a30.9 30.9 0 0 0-.62 3.57 3 3 0 0 1-.61-4.2c.37.28.78.49 1.23.63zm1.49-4.61c-.36.87-.68 1.76-.96 2.68a2 2 0 0 1-.21-3.71c.33.4.73.75 1.17 1.03zm2.32-4.54c-.54.86-1.03 1.76-1.49 2.68a3 3 0 0 1-.07-4.67 3 3 0 0 0 1.56 1.99zm1.14-1.7c.35-.5.72-.98 1.1-1.46a1 1 0 1 0-1.1 1.45zm5.34-5.77c-1.03.86-2 1.79-2.9 2.77a3 3 0 0 0-1.11-.77 3 3 0 0 1 4-2zm42.66 2.77c-.9-.98-1.87-1.9-2.9-2.77a3 3 0 0 1 4.01 2 3 3 0 0 0-1.1.77zm1.34 1.54c.38.48.75.96 1.1 1.45a1 1 0 1 0-1.1-1.45zm3.73 5.84c-.46-.92-.95-1.82-1.5-2.68a3 3 0 0 0 1.57-1.99 3 3 0 0 1-.07 4.67zm1.8 4.53c-.29-.9-.6-1.8-.97-2.67.44-.28.84-.63 1.17-1.03a2 2 0 0 1-.2 3.7zm1.14 5.51c-.14-1.21-.35-2.4-.62-3.57.45-.14.86-.35 1.23-.63a2.99 2.99 0 0 1-.6 4.2zM275 214a29 29 0 0 0-57.97 0h57.96zM72.33 198.12c-.21-.32-.34-.7-.34-1.12v-12h-2v12a4.01 4.01 0 0 0 7.09 2.54c.57-.69.91-1.57.91-2.54v-12h-2v12a1.99 1.99 0 0 1-2 2 2 2 0 0 1-1.66-.88zM75 176c.38 0 .74-.04 1.1-.12a4 4 0 0 0 6.19 2.4A13.94 13.94 0 0 1 84 185v24a6 6 0 0 1-6 6h-3v9a5 5 0 1 1-10 0v-9h-3a6 6 0 0 1-6-6v-24a14 14 0 0 1 14-14 5 5 0 0 0 5 5zm-17 15v12a1.99 1.99 0 0 0 1.22 1.84 2 2 0 0 0 2.44-.72c.21-.32.34-.7.34-1.12v-12h2v12a3.98 3.98 0 0 1-5.35 3.77 3.98 3.98 0 0 1-.65-.3V209a4 4 0 0 0 4 4h16a4 4 0 0 0 4-4v-24c.01-1.53-.23-2.88-.72-4.17-.43.1-.87.16-1.28.17a6 6 0 0 1-5.2-3 7 7 0 0 1-6.47-4.88A12 12 0 0 0 58 185v6zm9 24v9a3 3 0 1 0 6 0v-9h-6z'/%3E%3Cpath d='M-17 191a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm19 9a1 1 0 0 1 1-1h2a1 1 0 0 1 0 2H3a1 1 0 0 1-1-1zm-14 5a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm-25 1a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm5 4a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm9 0a1 1 0 0 1 1-1h2a1 1 0 0 1 0 2h-2a1 1 0 0 1-1-1zm15 1a1 1 0 0 1 1-1h2a1 1 0 0 1 0 2h-2a1 1 0 0 1-1-1zm12-2a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2H4zm-11-14a1 1 0 0 1 1-1h2a1 1 0 0 1 0 2h-2a1 1 0 0 1-1-1zm-19 0a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2h-2zm6 5a1 1 0 0 1 1-1h2a1 1 0 0 1 0 2h-2a1 1 0 0 1-1-1zm-25 15c0-.47.01-.94.03-1.4a5 5 0 0 1-1.7-8 3.99 3.99 0 0 1 1.88-5.18 5 5 0 0 1 3.4-6.22 3 3 0 0 1 1.46-1.05 5 5 0 0 1 7.76-3.27A30.86 30.86 0 0 1-14 184c6.79 0 13.06 2.18 18.17 5.88a5 5 0 0 1 7.76 3.27 3 3 0 0 1 1.47 1.05 5 5 0 0 1 3.4 6.22 4 4 0 0 1 1.87 5.18 4.98 4.98 0 0 1-1.7 8c.02.46.03.93.03 1.4v1h-62v-1zm.83-7.17a30.9 30.9 0 0 0-.62 3.57 3 3 0 0 1-.61-4.2c.37.28.78.49 1.23.63zm1.49-4.61c-.36.87-.68 1.76-.96 2.68a2 2 0 0 1-.21-3.71c.33.4.73.75 1.17 1.03zm2.32-4.54c-.54.86-1.03 1.76-1.49 2.68a3 3 0 0 1-.07-4.67 3 3 0 0 0 1.56 1.99zm1.14-1.7c.35-.5.72-.98 1.1-1.46a1 1 0 1 0-1.1 1.45zm5.34-5.77c-1.03.86-2 1.79-2.9 2.77a3 3 0 0 0-1.11-.77 3 3 0 0 1 4-2zm42.66 2.77c-.9-.98-1.87-1.9-2.9-2.77a3 3 0 0 1 4.01 2 3 3 0 0 0-1.1.77zm1.34 1.54c.38.48.75.96 1.1 1.45a1 1 0 1 0-1.1-1.45zm3.73 5.84c-.46-.92-.95-1.82-1.5-2.68a3 3 0 0 0 1.57-1.99 3 3 0 0 1-.07 4.67zm1.8 4.53c-.29-.9-.6-1.8-.97-2.67.44-.28.84-.63 1.17-1.03a2 2 0 0 1-.2 3.7zm1.14 5.51c-.14-1.21-.35-2.4-.62-3.57.45-.14.86-.35 1.23-.63a2.99 2.99 0 0 1-.6 4.2zM15 214a29 29 0 0 0-57.97 0h57.96z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 
             .select-none {
-                background-color: $table-dark-stripe !important;
+                background-color: rgb(var(--table-dark-stripe-rgb)) !important;
             }
 
             h4 {
-                background-color: $table-dark-stripe !important;
-                color: $theme-dark-heading-color;
+                background-color: rgb(var(--table-dark-stripe-rgb)) !important;
+                color: rgb(var(--theme-dark-heading-color-rgb));
             }
 
             .msg {
-                background-color: $theme-dark-bg !important;
+                background-color: rgb(var(--theme-dark-bg-rgb)) !important;
             }
 
             &.chat-content-area {
                 .chat-content-scroll-area {
-                    background: rgba($black, 0.2);
+                    background: rgb(var(--black-rgb) / 0.2);
                 }
             }
 
             .chat__input {
                 input {
-                    border-color: $theme-dark-border-color !important;
+                    border-color: rgb(var(--theme-dark-border-color-rgb)) !important;
                 }
             }
         }
     }
 
-    // ToDo
+    /* ToDo */
     #todo-app {
         .todo-list {
             h6 {
                 &.todo-title {
-                    color: $theme-dark-heading-color;
+                    color: rgb(var(--theme-dark-heading-color-rgb));
                 }
             }
 
             .todo-tags {
                 .con-vs-chip {
-                    background: $dark-card-color;
-                    color: $theme-dark-text-color !important;
+                    background: rgb(var(--dark-card-color-rgb));
+                    color: rgb(var(--theme-dark-text-color-rgb)) !important;
                 }
             }
         }
 
         .list-item-component {
-            border-color: $theme-dark-border-color;
+            border-color: rgb(var(--theme-dark-border-color-rgb));
 
             &:hover {
-                box-shadow: 0px 0 0 0px $dark;
+                box-shadow: 0px 0 0 0px rgb(var(--dark-rgb));
             }
         }
     }
 
-    // Email
+    /* Email */
     #email-app {
         .email__mails {
             .email__mail-item {
                 .mail__mail-item {
 
-                    background: $theme-dark-bg;
+                    background: rgb(var(--theme-dark-bg-rgb));
 
                     &:hover {
-                        box-shadow: 10px 0 0 0px $dark;
+                        box-shadow: 10px 0 0 0px rgb(var(--dark-rgb));
                     }
 
                     &.mail__opened-mail {
-                        background: $theme-light-dark-bg;
+                        background: rgb(var(--theme-light-dark-bg-rgb));
                     }
                 }
 
@@ -449,7 +449,7 @@
 
         .email-view-sidebar {
             .vs-sidebar {
-                background-color: $table-dark-stripe !important;
+                background-color: rgb(var(--table-dark-stripe-rgb)) !important;
                 border-left-color: #414561;
             }
 
@@ -459,7 +459,7 @@
         }
     }
 
-    // Calendar
+    /* Calendar */
     #calendar-app {
         .full-calendar-body {
             .week-row {
@@ -472,19 +472,19 @@
         }
     }
 
-    // Alert
+    /* Alert */
     .vs-alert {
         code {
-            color: $grey;
-            background: $content-dark-bg;
+            color: rgb(var(--grey-rgb));
+            background: rgb(var(--content-dark-bg-rgb));
         }
     }
 
-    // Avatar
+    /* Avatar */
     .con-vs-avatar {
-        background: $theme-dark-bg !important;
+        background: rgb(var(--theme-dark-bg-rgb)) !important;
 
-        // avatar color
+        /* avatar color */
         &.con-vs-avatar-primary {
             background: rgba(var(--vs-primary), 1) !important;
         }
@@ -506,41 +506,41 @@
         }
 
         &.con-vs-avatar-dark {
-            background: rgba($grey, 1) !important;
+            background: rgb(var(--grey-rgb) / 1) !important;
         }
     }
 
-    // Profile
+    /* Profile */
     #profile-page {
         .profile-header {
             .profile-header-nav {
-                background: $dark-card-color !important;
+                background: rgb(var(--dark-card-color-rgb)) !important;
             }
         }
     }
 
-    // FAQ
+    /* FAQ */
     #faq-page {
         .faq-bg {
-            background-color: $dark-card-color;
+            background-color: rgb(var(--dark-card-color-rgb));
         }
     }
 
-    // breadcrumb
+    /* breadcrumb */
     .vs-breadcrumb--ol {
 
         a,
         .vs-breadcrum--separator {
-            color: $grey-light;
+            color: rgb(var(--grey-light-rgb));
         }
     }
 
-    // Chip
+    /* Chip */
     .con-vs-chip {
-        background: $theme-dark-bg;
-        color: $theme-dark-text-color !important;
+        background: rgb(var(--theme-dark-bg-rgb));
+        color: rgb(var(--theme-dark-text-color-rgb)) !important;
 
-        // CHIP COLOR
+        /* CHIP COLOR */
         &.vs-chip-primary {
             background: rgba(var(--vs-primary), 1);
         }
@@ -566,25 +566,25 @@
         }
 
         .con-vs-avatar {
-            background-color: $theme-light-dark-bg !important;
+            background-color: rgb(var(--theme-light-dark-bg-rgb)) !important;
         }
 
-        // white text color for colored chips
+        /* white text color for colored chips */
         &.con-color {
-            color: $white !important;
+            color: rgb(var(--white-rgb)) !important;
         }
     }
 
     .con-chips {
         .con-chips--input {
-            background-color: $theme-light-dark-bg;
+            background-color: rgb(var(--theme-light-dark-bg-rgb));
         }
     }
 
-    // Divider
+    /* Divider */
     .vs-divider {
         .vs-divider-border {
-            border-color: $theme-dark-border-color !important;
+            border-color: rgb(var(--theme-dark-border-color-rgb)) !important;
 
             &.vs-divider-border-primary {
                 border-color: rgba(var(--vs-primary), 1) !important;
@@ -607,7 +607,7 @@
             }
 
             &.vs-divider-border-dark {
-                border-color: rgba($grey, 0.5) !important;
+                border-color: rgb(var(--grey-rgb) / 0.5) !important;
             }
         }
 
@@ -618,56 +618,56 @@
         }
     }
 
-    // Dropdown
+    /* Dropdown */
     .vs-dropdown--menu,
     .vs-dropdown--menu--after {
-        background: $content-dark-bg;
-        border-color: $theme-dark-border-color;
+        background: rgb(var(--content-dark-bg-rgb));
+        border-color: rgb(var(--theme-dark-border-color-rgb));
 
         .con-dropdown--group-ul {
-            background: $content-dark-bg;
+            background: rgb(var(--content-dark-bg-rgb));
         }
 
         .vs-dropdown--item {
             .vs-dropdown--item-link.disabled {
-                color: $grey !important;
+                color: rgb(var(--grey-rgb)) !important;
             }
         }
     }
 
-    // Loading
+    /* Loading */
     .con-vs-loading {
-        background: rgba($dark-card-color, .6);
+        background: rgb(var(--dark-card-color-rgb) / .6);
 
         h4.title-loading {
-            color: $theme-dark-text-color;
+            color: rgb(var(--theme-dark-text-color-rgb));
         }
     }
 
-    // List
+    /* List */
     .vs-list {
         .vs-list--header {
-            box-shadow: 0 7px 7px -5px rgba($theme-dark-shadow-color, 1);
+            box-shadow: 0 7px 7px -5px rgb(var(--theme-dark-shadow-color-rgb) / 1);
         }
 
         .vs-list--item {
-            border-color: rgba($theme-dark-text-color, .08);
+            border-color: rgb(var(--theme-dark-text-color-rgb) / .08);
         }
     }
 
-    // Navbar
+    /* Navbar */
     .vs-navbar {
-        border-color: $content-dark-bg;
+        border-color: rgb(var(--content-dark-bg-rgb));
 
         li {
             &.vs-navbar--item {
                 a {
-                    color: $grey-light;
+                    color: rgb(var(--grey-light-rgb));
                 }
 
                 &.is-active-item {
                     a {
-                        color: $white;
+                        color: rgb(var(--white-rgb));
                     }
                 }
             }
@@ -676,45 +676,45 @@
 
     .vs-navbar {
         &.vs-navbar-color-transparent:not(.vs-navbar-flat) {
-            background-color: $theme-dark-bg !important;
+            background-color: rgb(var(--theme-dark-bg-rgb)) !important;
             box-shadow: 0 4px 20px 0 rgba(0, 0, 0, .5);
         }
     }
 
-    // Pagination
+    /* Pagination */
     .vs-pagination--nav {
         .vs-pagination--ul {
-            background: $theme-dark-bg;
+            background: rgb(var(--theme-dark-bg-rgb));
 
             .vs-pagination--li {
-                color: $theme-dark-text-color;
+                color: rgb(var(--theme-dark-text-color-rgb));
             }
 
             .item-pagination {
                 &.is-current {
-                    color: $white;
+                    color: rgb(var(--white-rgb));
                 }
             }
         }
 
         .vs-pagination--buttons {
-            background: $theme-dark-bg;
-            color: $theme-dark-text-color;
+            background: rgb(var(--theme-dark-bg-rgb));
+            color: rgb(var(--theme-dark-text-color-rgb));
         }
     }
 
-    // Popup
+    /* Popup */
     .con-vs-popup {
         .vs-popup {
-            background: $content-dark-bg !important;
-            color: $theme-dark-text-color;
+            background: rgb(var(--content-dark-bg-rgb)) !important;
+            color: rgb(var(--theme-dark-text-color-rgb));
 
             .vs-popup--header {
-                background: $dark-card-color !important;
+                background: rgb(var(--dark-card-color-rgb)) !important;
 
                 .vs-popup--close {
-                    background: $content-dark-bg !important;
-                    color: $theme-dark-text-color;
+                    background: rgb(var(--content-dark-bg-rgb)) !important;
+                    color: rgb(var(--theme-dark-text-color-rgb));
                 }
             }
         }
@@ -723,32 +723,32 @@
     #popup-demo {
         .demo-alignment {
             .vs-button {
-                background: $content-dark-bg !important;
+                background: rgb(var(--content-dark-bg-rgb)) !important;
 
                 &:hover {
-                    box-shadow: $content-dark-bg 0px 8px 25px -8px !important;
+                    box-shadow: rgb(var(--content-dark-bg-rgb)) 0px 8px 25px -8px !important;
                 }
             }
         }
     }
 
-    // Sidebar component
+    /* Sidebar component */
     .vs-sidebar {
-        background: $sidebar-dark-bg;
+        background: rgb(var(--sidebar-dark-bg-rgb));
 
         h4,
         h5 {
-            color: $theme-dark-heading-color;
+            color: rgb(var(--theme-dark-heading-color-rgb));
         }
 
         .vs-sidebar--header {
-            border-bottom-color: $theme-dark-border-color;
+            border-bottom-color: rgb(var(--theme-dark-border-color-rgb));
         }
 
         .vs-sidebar--items {
             .vs-sidebar--item {
                 a {
-                    color: $theme-dark-text-color;
+                    color: rgb(var(--theme-dark-text-color-rgb));
                 }
             }
         }
@@ -756,24 +756,24 @@
         .vs-sidebar-group {
             &.vs-sidebar-group-active {
                 >.group-header {
-                    background: $content-dark-bg;
+                    background: rgb(var(--content-dark-bg-rgb));
                 }
             }
         }
     }
 
-    // Slider
+    /* Slider */
     .con-vs-slider {
         .vs-slider {
-            background: rgba($content-dark-bg, 0.5);
+            background: rgb(var(--content-dark-bg-rgb) / 0.5);
         }
     }
 
-    // Tabs
+    /* Tabs */
     .ul-tabs {
         .vs-tabs--li {
             button {
-                color: $theme-dark-text-color;
+                color: rgb(var(--theme-dark-text-color-rgb));
             }
         }
     }
@@ -782,65 +782,65 @@
 
         .activeChild button,
         button:not(:disabled):hover {
-            color: $grey !important;
+            color: rgb(var(--grey-rgb)) !important;
         }
 
         .line-vs-tabs {
-            background: linear-gradient(30deg, rgba($grey, 1), rgba($grey, .5)) !important;
-            box-shadow: 0 0 8px 0 rgba($grey, .4) !important;
+            background: linear-gradient(30deg, rgb(var(--grey-rgb) / 1), rgb(var(--grey-rgb) / .5)) !important;
+            box-shadow: 0 0 8px 0 rgb(var(--grey-rgb) / .4) !important;
         }
     }
 
-    // Tooltip
+    /* Tooltip */
     .vs-tooltip {
         &.vs-tooltip-dark {
-            background: $content-dark-bg;
+            background: rgb(var(--content-dark-bg-rgb));
         }
     }
 
-    // Upload
+    /* Upload */
     .con-upload {
 
         .con-input-upload,
         .con-img-upload {
-            background-color: $content-dark-bg;
+            background-color: rgb(var(--content-dark-bg-rgb));
         }
 
         .btn-upload-all {
-            background-color: $sidebar-dark-bg;
+            background-color: rgb(var(--sidebar-dark-bg-rgb));
         }
 
         .con-input-upload {
-            border-color: $theme-dark-border-color;
+            border-color: rgb(var(--theme-dark-border-color-rgb));
         }
     }
 
-    // Form Fields
+    /* Form Fields */
     input {
-        background: $theme-dark-bg;
-        color: $theme-dark-text-color;
+        background: rgb(var(--theme-dark-bg-rgb));
+        color: rgb(var(--theme-dark-text-color-rgb));
 
         ~.vs-placeholder-label,
         ~.vs-input--placeholder {
-            color: $theme-dark-text-color;
+            color: rgb(var(--theme-dark-text-color-rgb));
         }
     }
 
     ::placeholder {
-        color: $theme-dark-text-color !important;
+        color: rgb(var(--theme-dark-text-color-rgb)) !important;
     }
 
     .vs-input--icon {
-        color: $theme-dark-text-color;
-        border-right-color: rgba($theme-dark-text-color, .2);
+        color: rgb(var(--theme-dark-text-color-rgb));
+        border-right-color: rgb(var(--theme-dark-text-color-rgb) / .2);
 
         &.icon-after {
-            border-left-color: rgba($theme-dark-text-color, .2);
+            border-left-color: rgb(var(--theme-dark-text-color-rgb) / .2);
         }
     }
 
     .vs-input-number {
-        background: $content-dark-bg;
+        background: rgb(var(--content-dark-bg-rgb));
 
         button {
 
@@ -850,18 +850,18 @@
                 &:disabled,
                 &.limit {
                     opacity: 0.75;
-                    background: $grey;
+                    background: rgb(var(--grey-rgb));
                 }
             }
         }
     }
 
     .vs-con-textarea {
-        background: $content-dark-bg;
-        color: $theme-dark-text-color;
+        background: rgb(var(--content-dark-bg-rgb));
+        color: rgb(var(--theme-dark-text-color-rgb));
 
         .vs-textarea {
-            color: $theme-dark-text-color;
+            color: rgb(var(--theme-dark-text-color-rgb));
 
             &:focus {
                 border-color: transparent;
@@ -884,7 +884,7 @@
     }
 
     .vs-switch {
-        background: $content-dark-bg;
+        background: rgb(var(--content-dark-bg-rgb));
 
         &.vs-switch-primary {
             &.vs-switch-active {
@@ -918,29 +918,29 @@
 
         &.vs-switch-dark {
             &.vs-switch-active {
-                background: $grey;
+                background: rgb(var(--grey-rgb));
             }
         }
     }
 
     .vs-radio-dark {
         .vs-radio--circle {
-            background: $grey;
-            box-shadow: 0 3px 12px 0 rgba($grey, .4);
+            background: rgb(var(--grey-rgb));
+            box-shadow: 0 3px 12px 0 rgb(var(--grey-rgb) / .4);
         }
     }
 
     .op-block {
-        box-shadow: 1px 1px 10px rgba($white, .1)
+        box-shadow: 1px 1px 10px rgb(var(--white-rgb) / .1)
     }
 
     .vs-input-dark {
         .vs-input--input {
             &:focus {
-                border-color: $grey !important;
+                border-color: rgb(var(--grey-rgb)) !important;
 
                 ~.vs-input--placeholder {
-                    color: $grey;
+                    color: rgb(var(--grey-rgb));
                 }
             }
         }
@@ -948,21 +948,21 @@
 
     .vue-form-wizard {
         .wizard-icon-circle {
-            background: $table-light-stripe;
-            border-color: $table-dark-stripe
+            background: rgb(var(--table-light-stripe-rgb));
+            border-color: rgb(var(--table-dark-stripe-rgb))
         }
 
         .wizard-nav-pills {
             &>li {
                 &>a {
-                    color: $white;
+                    color: rgb(var(--white-rgb));
 
                     .stepTitle {
-                        color: $grey-light;
+                        color: rgb(var(--grey-light-rgb));
                     }
 
                     &:hover {
-                        color: $white;
+                        color: rgb(var(--white-rgb));
                     }
                 }
             }
@@ -971,26 +971,26 @@
         .wizard-navigation {
             .wizard-nav {
                 .stepTitle {
-                    color: $grey-light;
+                    color: rgb(var(--grey-light-rgb));
                 }
             }
         }
     }
 
-    // Tables
+    /* Tables */
     .vs-con-table {
         .vs-con-tbody {
-            background: $table-dark-stripe;
-            border: 2px solid $content-dark-bg;
+            background: rgb(var(--table-dark-stripe-rgb));
+            border: 2px solid rgb(var(--content-dark-bg-rgb));
 
             .vs-table--tbody-table {
                 tr {
-                    background: $table-light-stripe;
+                    background: rgb(var(--table-light-stripe-rgb));
                 }
 
                 .vs-table--thead {
                     tr {
-                        background: $table-dark-stripe;
+                        background: rgb(var(--table-dark-stripe-rgb));
                     }
 
                 }
@@ -998,90 +998,90 @@
         }
 
         .con-edit-td {
-            background: $table-dark-stripe;
+            background: rgb(var(--table-dark-stripe-rgb));
         }
 
         .is-selected {
             .tr-values {
-                background: $table-dark-stripe !important;
+                background: rgb(var(--table-dark-stripe-rgb)) !important;
             }
         }
     }
 
-    // Charts : Apex Chart
+    /* Charts : Apex Chart */
     .apexcharts-canvas {
         .apexcharts-tooltip {
             &.light {
-                background: $table-dark-stripe;
-                border-color: $table-light-stripe;
+                background: rgb(var(--table-dark-stripe-rgb));
+                border-color: rgb(var(--table-light-stripe-rgb));
 
                 .apexcharts-tooltip-title {
-                    background: $table-dark-stripe;
+                    background: rgb(var(--table-dark-stripe-rgb));
                 }
             }
         }
 
         .apexcharts-xaxistooltip {
-            background: $table-dark-stripe;
-            border-color: $table-light-stripe;
-            color: $white;
+            background: rgb(var(--table-dark-stripe-rgb));
+            border-color: rgb(var(--table-light-stripe-rgb));
+            color: rgb(var(--white-rgb));
 
             &:before,
             &:after {
-                border-bottom-color: $table-dark-stripe;
+                border-bottom-color: rgb(var(--table-dark-stripe-rgb));
             }
         }
 
         .apexcharts-yaxistooltip {
-            background: $table-dark-stripe;
-            border-color: $table-light-stripe;
-            color: $white;
+            background: rgb(var(--table-dark-stripe-rgb));
+            border-color: rgb(var(--table-light-stripe-rgb));
+            color: rgb(var(--white-rgb));
 
             &:before,
             &:after {
-                border-left-color: $table-dark-stripe;
+                border-left-color: rgb(var(--table-dark-stripe-rgb));
             }
         }
 
         text {
-            fill: $white !important;
+            fill: rgb(var(--white-rgb)) !important;
         }
 
         .apexcharts-pie-series {
             path {
-                stroke: $table-light-stripe;
+                stroke: rgb(var(--table-light-stripe-rgb));
             }
         }
 
         .apexcharts-legend {
             .apexcharts-legend-series {
                 .apexcharts-legend-text {
-                    color: $grey !important;
+                    color: rgb(var(--grey-rgb)) !important;
                 }
             }
         }
 
         .apexcharts-toolbar {
             .apexcharts-menu {
-                background: $table-light-stripe;
-                border-color: $table-light-stripe;
+                background: rgb(var(--table-light-stripe-rgb));
+                border-color: rgb(var(--table-light-stripe-rgb));
 
                 .apexcharts-menu-item {
-                    background: $table-dark-stripe;
+                    background: rgb(var(--table-dark-stripe-rgb));
                 }
             }
         }
 
         .apexcharts-radar-series {
             polygon {
-                fill: $content-dark-bg;
-                stroke: $table-dark-stripe;
+                fill: rgb(var(--content-dark-bg-rgb));
+                stroke: rgb(var(--table-dark-stripe-rgb));
             }
         }
 
         .apexcharts-track {
             path {
-                stroke: $table-light-stripe;
+                stroke: rgb(var(--table-light-stripe-rgb));
             }
         }
 
@@ -1091,16 +1091,16 @@
         .apexcharts-zoom-out-icon:hover svg,
         .apexcharts-reset-zoom-icon:hover svg,
         .apexcharts-menu-icon:hover svg {
-            fill: $white;
+            fill: rgb(var(--white-rgb));
         }
 
-        // grid color
+        /* grid color */
         .apexcharts-gridline {
-            stroke: $theme-dark-border-color;
+            stroke: rgb(var(--theme-dark-border-color-rgb));
         }
     }
 
-    // Colors
+    /* Colors */
     .token.operator,
     .token.entity,
     .token.url,
@@ -1109,57 +1109,57 @@
         background: transparent;
     }
 
-    // Seach
+    /* Seach */
     .search-tab-filter {
-        background: $dark-card-color;
+        background: rgb(var(--dark-card-color-rgb));
     }
 
-    // Select
+    /* Select */
     .vs-select--options {
-        background: $dark-card-color;
-        border-color: rgba($grey, 0.2);
+        background: rgb(var(--dark-card-color-rgb));
+        border-color: rgb(var(--grey-rgb) / 0.2);
 
         span {
-            color: $theme-dark-text-color;
+            color: rgb(var(--theme-dark-text-color-rgb));
         }
 
         .vs-select--item {
-            color: $grey;
-            border-color: rgba($grey, 0.2);
+            color: rgb(var(--grey-rgb));
+            border-color: rgb(var(--grey-rgb) / 0.2);
             box-shadow: none;
 
             &:hover {
-                background: $content-dark-bg;
+                background: rgb(var(--content-dark-bg-rgb));
             }
         }
     }
 
-    // Quill editor
+    /* Quill editor */
     .quill-editor {
         .ql-toolbar {
             button {
-                color: $white;
+                color: rgb(var(--white-rgb));
 
                 svg {
                     path {
-                        stroke: $white;
+                        stroke: rgb(var(--white-rgb));
                     }
                 }
             }
 
             .ql-fill {
-                fill: $white;
+                fill: rgb(var(--white-rgb));
             }
 
             .ql-stroke {
-                stroke: $white;
+                stroke: rgb(var(--white-rgb));
             }
 
             .ql-picker {
-                color: $white;
+                color: rgb(var(--white-rgb));
 
                 .ql-picker-options {
-                    background: $dark-card-color;
+                    background: rgb(var(--dark-card-color-rgb));
                 }
             }
         }
@@ -1167,21 +1167,21 @@
         .ql-editor {
             &.ql-blank {
                 &::before {
-                    color: rgba($white, .6);
+                    color: rgb(var(--white-rgb) / .6);
                 }
             }
         }
     }
 
     .activity-timeline {
-        border-color: $theme-dark-border-color;
+        border-color: rgb(var(--theme-dark-border-color-rgb));
     }
 
-    // Datepicker
+    /* Datepicker */
     .vdp-datepicker {
         .vdp-datepicker__calendar {
-            background: $content-dark-bg;
-            border-color: $theme-dark-border-color;
+            background: rgb(var(--content-dark-bg-rgb));
+            border-color: rgb(var(--theme-dark-border-color-rgb));
 
             header {
 
@@ -1190,22 +1190,22 @@
                 .up {
                     &:not(.disabled) {
                         &:hover {
-                            background: $dark-card-color;
+                            background: rgb(var(--dark-card-color-rgb));
                         }
                     }
                 }
             }
             .disabled {
-                color: rgba($grey, .6);
+                color: rgb(var(--grey-rgb) / .6);
             }
 
             .cell {
                 .highlighted {
-                    background: $dark-card-color;
+                    background: rgb(var(--dark-card-color-rgb));
                 }
 
                 &:hover {
-                    background-color: $theme-dark-bg;
+                    background-color: rgb(var(--theme-dark-bg-rgb));
                 }
             }
         }
@@ -1216,156 +1216,156 @@
         }
     }
 
-    // Collapse
+    /* Collapse */
     .vs-collapse {
         &.shadow {
-            box-shadow: 0 0px 10px 1px rgba($theme-dark-shadow-color, 1) !important;
+            box-shadow: 0 0px 10px 1px rgb(var(--theme-dark-shadow-color-rgb) / 1) !important;
         }
 
         .vs-collapse-item {
-            border-bottom-color: rgba($white, .04);
+            border-bottom-color: rgb(var(--white-rgb) / .04);
         }
 
         &.border {
-            border-color: rgba($white, .1);
+            border-color: rgb(var(--white-rgb) / .1);
 
             .vs-collapse-item {
-                border-bottom-color: rgba($white, .04);
+                border-bottom-color: rgb(var(--white-rgb) / .04);
             }
         }
 
         &.margin {
             .vs-collapse-item {
-                box-shadow: 0 2px 10px 0 rgba($theme-dark-shadow-color, 1)
+                box-shadow: 0 2px 10px 0 rgb(var(--theme-dark-shadow-color-rgb) / 1)
             }
         }
     }
 
-    // vx-auto-suggest
+    /* vx-auto-suggest */
     .vx-auto-suggest {
         .auto-suggest-suggestions-list {
-            background-color: $content-dark-bg !important;
+            background-color: rgb(var(--content-dark-bg-rgb)) !important;
         }
     }
 
-    // footer layouts
+    /* footer layouts */
     .footer-sticky {
         .the-footer {
-            background-color: $dark-card-color;
-            color: $white !important;
+            background-color: rgb(var(--dark-card-color-rgb));
+            color: rgb(var(--white-rgb)) !important;
         }
     }
 
-    // Dialogs - This dialog need a dark layout claas
+    /* Dialogs - This dialog need a dark layout claas */
     .con-vs-dialog {
         .vs-dialog {
-            background: $content-dark-bg;
-            color: $white;
+            background: rgb(var(--content-dark-bg-rgb));
+            color: rgb(var(--white-rgb));
 
             header {
-                background: $dark-card-color;
+                background: rgb(var(--dark-card-color-rgb));
 
                 .con-title-after {
                     h3 {
-                        color: $white;
+                        color: rgb(var(--white-rgb));
                     }
                 }
 
                 .vs-dialog-cancel,
                 .vs-icon {
-                    background: $content-dark-bg;
-                    color: $white;
+                    background: rgb(var(--content-dark-bg-rgb));
+                    color: rgb(var(--white-rgb));
                 }
             }
 
             footer {
                 .vs-button--text {
-                    color: $white;
+                    color: rgb(var(--white-rgb));
                 }
             }
 
             .vs-dialog-text {
                 .date-label {
-                    color: $white;
+                    color: rgb(var(--white-rgb));
                 }
             }
 
             input,
             .vs-con-textarea {
-                background: $dark-card-color;
+                background: rgb(var(--dark-card-color-rgb));
             }
 
             .con-upload {
 
                 .con-input-upload,
                 .con-img-upload {
-                    background: $dark-card-color;
+                    background: rgb(var(--dark-card-color-rgb));
                 }
             }
 
             .quill-editor {
-                background: $table-light-stripe;
+                background: rgb(var(--table-light-stripe-rgb));
             }
         }
     }
 
     .tree-container {
-        border-color: $theme-dark-border-color;
+        border-color: rgb(var(--theme-dark-border-color-rgb));
 
         .tag,
         .search-input {
-            border-color: $theme-dark-border-color;
+            border-color: rgb(var(--theme-dark-border-color-rgb));
         }
     }
 
     .halo-tree {
         .node-title {
             &:hover {
-                background-color: $theme-light-dark-bg;
+                background-color: rgb(var(--theme-light-dark-bg-rgb));
             }
         }
     }
 
-    // Customizer
+    /* Customizer */
     #theme-customizer {
         input {
-            background: $theme-light-dark-bg;
+            background: rgb(var(--theme-light-dark-bg-rgb));
         }
     }
 
     .add-new-data-sidebar {
         input {
-            background: $theme-light-dark-bg;
+            background: rgb(var(--theme-light-dark-bg-rgb));
         }
     }
 
-    // //////////////////////////////////////////////////////////////////////////////////////////////
-    // STYLE IF COMPONENT IS INSIDE CARD (Any wrapper which have dark $theme-dark background color)
-    // //////////////////////////////////////////////////////////////////////////////////////////////
+    /* ////////////////////////////////////////////////////////////////////////////////////////////// */
+    /* STYLE IF COMPONENT IS INSIDE CARD (Any wrapper which have dark $theme-dark background color) */
+    /* ////////////////////////////////////////////////////////////////////////////////////////////// */
 
     .vx-card {
 
-        // PAGINATION
+        /* PAGINATION */
         .vs-pagination--nav {
             .vs-pagination--ul {
-                background: $theme-light-dark-bg;
+                background: rgb(var(--theme-light-dark-bg-rgb));
 
                 .vs-pagination--li {
-                    color: $white;
+                    color: rgb(var(--white-rgb));
                 }
             }
 
             .vs-pagination--buttons {
-                background: $theme-light-dark-bg;
-                color: $white;
+                background: rgb(var(--theme-light-dark-bg-rgb));
+                color: rgb(var(--white-rgb));
             }
         }
 
-        // AVATAR
+        /* AVATAR */
         .con-vs-avatar {
-            background: $theme-light-dark-bg !important;
+            background: rgb(var(--theme-light-dark-bg-rgb)) !important;
 
-            // avatar color
+            /* avatar color */
             &.con-vs-avatar-primary {
                 background: rgba(var(--vs-primary), 1) !important;
             }
@@ -1387,15 +1387,15 @@
             }
 
             &.con-vs-avatar-dark {
-                background: rgba($grey, 1) !important;
+                background: rgb(var(--grey-rgb) / 1) !important;
             }
         }
 
-        // CHIP
+        /* CHIP */
         .con-vs-chip {
-            background: $theme-light-dark-bg;
+            background: rgb(var(--theme-light-dark-bg-rgb));
 
-            // CHIP COLOR
+            /* CHIP COLOR */
             &.vs-chip-primary {
                 background: rgba(var(--vs-primary), 1);
             }
@@ -1421,54 +1421,54 @@
             }
 
             .con-vs-avatar {
-                background-color: $theme-dark-bg !important;
+                background-color: rgb(var(--theme-dark-bg-rgb)) !important;
             }
         }
 
         .con-chips {
             .con-chips--input {
-                background-color: $theme-dark-bg !important;
+                background-color: rgb(var(--theme-dark-bg-rgb)) !important;
             }
         }
 
-        // NAVBAR
+        /* NAVBAR */
         .vs-navbar {
             &.vs-navbar-color-transparent {
-                background-color: $theme-light-dark-bg !important;
+                background-color: rgb(var(--theme-light-dark-bg-rgb)) !important;
             }
 
             .vs-navbar--btn-responsive {
                 .btn-responsive-line {
-                    background: $theme-dark-text-color;
+                    background: rgb(var(--theme-dark-text-color-rgb));
                 }
             }
         }
 
         .vs-navbar-border,
         {
-            border-color: $theme-dark-border-color;
+            border-color: rgb(var(--theme-dark-border-color-rgb));
 
             .vs-navbar--item {
-                border-color: $theme-dark-border-color;
+                border-color: rgb(var(--theme-dark-border-color-rgb));
             }
         }
 
         .vs-navbar-shadow {
             .vs-navbar--item {
                 &.is-active-item {
-                    background-color: $theme-dark-bg;
+                    background-color: rgb(var(--theme-dark-bg-rgb));
                 }
             }
         }
 
-        // INPUT
+        /* INPUT */
         input {
-            background: $theme-light-dark-bg;
+            background: rgb(var(--theme-light-dark-bg-rgb));
         }
     }
 }
 
-// RTL Fixes for dark mode
+/* RTL Fixes for dark mode */
 /*! rtl:begin:ignore */
 .theme-dark {
     .vdp-datepicker {
@@ -1476,13 +1476,13 @@
             header {
                 .prev {
                     &:after {
-                        border-right-color: $white;
+                        border-right-color: rgb(var(--white-rgb));
                     }
                 }
 
                 .next {
                     &:after {
-                        border-left-color: $white;
+                        border-left-color: rgb(var(--white-rgb));
                     }
                 }
             }

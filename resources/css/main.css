@@ -1,0 +1,25 @@
+/*=========================================================================================
+    File Name: main.css
+    Description: Theme styles: design tokens first, then the partials from the shm folder
+    ----------------------------------------------------------------------------------------
+    Project: SHM-System
+    Author: Soeng Souy
+==========================================================================================*/
+
+@import "./shm/tokens.css";
+@import "./shm/fonts.css";
+
+@import "./shm/layout.css";
+@import "./shm/typography.css";
+@import "./shm/misc.css";
+@import "./shm/extraComponents.css";
+@import "./shm/themes.css";
+@import "./shm/transitions.css";
+@import "./shm/customClasses.css";
+@import "./custom.css";
+/* Vuesax fixes and enhancments */
+@import "./shm/fixesVuesax.css";
+
+/* Tailwind Fixes */
+@import "./shm/tailwindFix.css";
+

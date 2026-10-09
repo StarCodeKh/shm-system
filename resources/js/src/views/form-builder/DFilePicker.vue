@@ -97,7 +97,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 .d-file-picker {
     --picker-accent: var(--vs-primary);
     width: 100%;
@@ -140,7 +140,7 @@ export default {
         }
     }
 
-    // Empty: the title stays whole and the hint gives way; chosen: the file name gives way
+    /* Empty: the title stays whole and the hint gives way; chosen: the file name gives way */
     &.has-file &__title {
         flex-shrink: 1;
     }
@@ -154,7 +154,7 @@ export default {
         border-color: var(--input-border, #d8d9e3);
     }
 
-    // ---------------------------------------------------------------- Thumbnail
+    /* ---------------------------------------------------------------- Thumbnail */
     &__thumb {
         position: relative;
         flex-shrink: 0;
@@ -220,7 +220,7 @@ export default {
         }
     }
 
-    // ---------------------------------------------------------------- Text
+    /* ---------------------------------------------------------------- Text */
     &__text {
         display: flex;
         align-items: baseline;
@@ -254,7 +254,7 @@ export default {
         overflow: hidden;
         text-overflow: ellipsis;
 
-        // Plain text hint: block so the ellipsis applies
+        /* Plain text hint: block so the ellipsis applies */
         &:not(.is-done) {
             display: block;
         }
@@ -268,7 +268,7 @@ export default {
         }
     }
 
-    // ---------------------------------------------------------------- Actions
+    /* ---------------------------------------------------------------- Actions */
     &__browse {
         flex-shrink: 0;
         padding: 5px 10px;

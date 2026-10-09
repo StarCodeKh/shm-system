@@ -121,7 +121,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style>
 .report-list {
     &__search {
         flex: 0 1 320px;

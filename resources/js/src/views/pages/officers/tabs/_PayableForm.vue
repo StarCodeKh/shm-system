@@ -382,7 +382,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
 .payable-history {
     border: 1px solid #eceef4;
     border-radius: 16px;
