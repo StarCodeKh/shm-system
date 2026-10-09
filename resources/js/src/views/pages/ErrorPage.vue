@@ -44,7 +44,7 @@ export default {
         },
         home() {
             return this.signedIn
-                ? { to: '/dashboard', icon: 'HomeIcon', label: 'btn_back_home' }
+                ? { to: '/', icon: 'HomeIcon', label: 'btn_back_home' }
                 : { to: '/pages/login', icon: 'LogInIcon', label: 'btn_go_login' }
         },
         // Opened straight from a link or the address bar: there is nothing to go back to

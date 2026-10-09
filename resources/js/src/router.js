@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { can } from '@/acl/access.js'
+import { homePath } from '@/layouts/components/vertical-nav-menu/menuPermissions.js'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -15,7 +16,8 @@ const router = createRouter({
             component: () => import('./layouts/main/Main.vue'),
             // '/' matches this layout route itself (not a child), so the home redirect lives here.
             // As a child '/' route it never matched and the layout showed an empty page.
-            redirect: '/dashboard',
+            // Home is the first page of the user's own menu (Administration › Menus), else the dashboard.
+            redirect: () => homePath(),
             meta: { authRequired: true },
             children: [
                 // Components

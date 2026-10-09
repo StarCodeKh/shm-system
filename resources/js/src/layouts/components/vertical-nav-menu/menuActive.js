@@ -27,6 +27,11 @@ export function setMenu(items) {
     menuUrls.value = collectUrls(items)
 }
 
+// The first page of a menu, in the order the sidebar shows it (null when it has none)
+export function firstMenuUrl(items) {
+    return collectUrls(items || [])[0] || null
+}
+
 // True when the user's menu has this page (e.g. the dashboard only links to pages the user can open)
 export function hasMenuUrl(url) {
     return menuUrls.value.includes(url)

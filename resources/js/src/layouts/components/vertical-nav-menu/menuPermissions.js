@@ -1,5 +1,6 @@
 import axios from "@/axios.js"
 import apiConfig from "@/apiConfig.js"
+import { firstMenuUrl } from "./menuActive.js"
 
 // Same key the login page and settings pages already use.
 const STORAGE_KEY = "role_menus"
@@ -31,6 +32,12 @@ export function storedMenu() {
     } catch (e) {
         return []
     }
+}
+
+// Where a signed-in user starts: the first page of their menu, so every role lands on a page it may open
+export const DEFAULT_HOME = "/dashboard"
+export function homePath(menu = storedMenu()) {
+    return firstMenuUrl(menu) || DEFAULT_HOME
 }
 
 // The sidebar menu from Administration › Menus, already limited by the server to what this user may open.
