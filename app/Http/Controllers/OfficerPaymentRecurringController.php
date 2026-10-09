@@ -19,23 +19,18 @@ class OfficerPaymentRecurringController extends Controller
     protected $PERMISSION_ACTION_LIST;
     protected $PERMISSION_ACTION_CREATE;
     protected $PERMISSION_ACTION_SHOW;
-    protected $PERMISSION_ACTION_EDIT;
     protected $PERMISSION_ACTION_UPDATE;
     protected $PERMISSION_ACTION_DELETE;
     protected $PERMISSION_ACTION_EXECUTE_PAYMENT;
     protected $db_table;
-    public $path = "admin/setting";
 
     public function __construct()
     {
         $this->middleware('auth');
-        $this->view_title = $this->path.'.entry_title';
         $this->db_table = new OfficerPaymentRecurring;
-        $this->lang_path = $this->path;
         $this->PERMISSION_ACTION_LIST = "list_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_CREATE = "create_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_SHOW = "show_".$this->db_table->getTable();
-        $this->PERMISSION_ACTION_EDIT = "edit_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_UPDATE = "update_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_DELETE = "delete_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_EXECUTE_PAYMENT = "execute_officer_payment_recurring";
@@ -76,16 +71,6 @@ class OfficerPaymentRecurringController extends Controller
             $data["message"] = trans('common.msg_no_permission_access');
             return response()->json($data, $status);
         }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-
     }
 
      /**
@@ -158,17 +143,6 @@ class OfficerPaymentRecurringController extends Controller
             "data" => $data,
         );
         return response()->json($data, $status);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**

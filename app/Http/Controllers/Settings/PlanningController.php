@@ -14,18 +14,13 @@ use App\Models\Settings\Status;
 class PlanningController extends Controller
 {
     protected $db_table;
-    public $path = "admin/setting";
 
     public function __construct()
     {
         $this->middleware('auth');
-        $this->view_title = $this->path.'.entry_planning';
         $this->db_table = new Planning;
-        $this->lang_path = $this->path;
         $this->PERMISSION_ACTION_LIST = "list_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_CREATE = "create_".$this->db_table->getTable();
-        $this->PERMISSION_ACTION_SHOW = "show_".$this->db_table->getTable();
-        $this->PERMISSION_ACTION_EDIT = "edit_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_UPDATE = "update_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_DELETE = "delete_".$this->db_table->getTable();
     }
@@ -80,16 +75,6 @@ class PlanningController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -130,17 +115,6 @@ class PlanningController extends Controller
             "data" => $table
         );
         return response()->json($data);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**

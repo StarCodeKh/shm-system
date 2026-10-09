@@ -4,47 +4,32 @@
     use App\Imports\OfficerImport;
     use App\Models\Officer;
     use App\Models\OfficerPaymentRecurring;
-    use App\Models\TaxableSalary;
     use App\Models\Settings\Department;
     use App\Models\Settings\Position;
     use App\Models\Settings\Title;
     use App\Models\Settings\Bank;
     use App\Models\Settings\Status;
     use App\Models\Settings\PaymentTerm;
-    use App\Http\Controllers\BaseController;
     use Illuminate\Http\Request;
-    use App\User;
-    use DB;
     use Auth;
     use CommonService;
-    use Validator;
     class OfficerController extends BaseController
     {
-        /**
-         * Display a listing of the resource.
-         *
-         * @return \Illuminate\Http\Response
-        */
         protected $PERMISSION_ACTION_LIST;
         protected $PERMISSION_ACTION_CREATE;
         protected $PERMISSION_ACTION_SHOW;
-        protected $PERMISSION_ACTION_EDIT;
         protected $PERMISSION_ACTION_UPDATE;
         protected $PERMISSION_ACTION_DELETE;
         protected $db_table;
-        public $path = "admin/setting";
 
         public function __construct()
         {
             $this->middleware('auth');
-            $this->view_title = $this->path.'.entry_title';
             $this->db_table = new Officer;
-            $this->langPath = $this->path;
 
             $this->PERMISSION_ACTION_LIST = "list_".$this->db_table->getTable();
             $this->PERMISSION_ACTION_CREATE = "create_".$this->db_table->getTable();
             $this->PERMISSION_ACTION_SHOW = "show_".$this->db_table->getTable();
-            $this->PERMISSION_ACTION_EDIT = "edit_".$this->db_table->getTable();
             $this->PERMISSION_ACTION_UPDATE = "update_".$this->db_table->getTable();
             $this->PERMISSION_ACTION_DELETE = "delete_".$this->db_table->getTable();
         }
@@ -243,17 +228,6 @@
         }
 
         /**
-         * Show the form for editing the specified resource.
-         *
-         * @param  int  $id
-         * @return \Illuminate\Http\Response
-         */
-        public function edit($id)
-        {
-            //
-        }
-
-        /**
          * Update the specified resource in storage.
          *
          * @param  \Illuminate\Http\Request  $request
@@ -335,202 +309,6 @@
 
         public function import(Request $request){
             return CommonService::importSpreadsheet(new OfficerImport, $request);
-        }
-
-        // Creates or updates the mobile login of one member. Needs the member "update" permission, and only
-        // ever touches the login linked to that member (a user_id sent by the client is ignored).
-        public function updateIncentiveOfficer(Request $request){
-            if (!\App\Services\Common::can($this->PERMISSION_ACTION_UPDATE)) {
-                return response()->json([
-                    "success" => false,
-                    "message" => trans('common.msg_no_permission_access')
-                ], 403);
-            }
-            $input = $request->validate([
-                "id" => "required|integer",
-                "username" => "nullable|string|max:191",
-                "password" => "nullable|string|min:8|max:191",
-                "email" => "nullable|email|max:120",
-            ]);
-            $officer = Officer::findOrFail($input["id"]);
-
-            if(!$officer->user_id){
-                $input["email"] = $input["email"] ?? $officer->email;
-                validator($input, [
-                    "username" => "required|unique:users,username",
-                    "password" => "required",
-                    "email" => "required|email|unique:users,email",
-                ])->validate();
-                // Mobile app login for this officer, with the standard role for staff
-                $user = User::create([
-                    "officer_id" => $officer->id,
-                    "entity_id" => $officer->entity_id,
-                    "fullname" => trim($officer->first_name." ".$officer->last_name),
-                    "latin" => $officer->latin ?? "",
-                    "gender" => $officer->gender,
-                    "email" => $input["email"],
-                    "username" => $input["username"],
-                    "password" => bcrypt($input["password"]),
-                    "created_by" => Auth::id(),
-                ]);
-                $user->syncRoles(["Normal User"]);
-                $officer->user_id = $user->id;
-                $officer->save();
-            }else{
-                if(!empty($input["password"])){
-                    User::where('id', $officer->user_id)->update([
-                        "password" => bcrypt($input["password"])
-                    ]);
-                }
-            }
-            $message = trans('common.msg_update_successfully');
-            $data = array(
-                "success" => true,
-                "message" => $message
-            );
-            return response()->json($data);
-        }
-
-        public function getOfficerGroupByEntities(Request $request){
-            $input = $request->all();
-            $entity_id = $input["entity_id"];
-            $issueFromDate = date("Y-m-d", strtotime($input["issue_from_date"]));
-            $issueToDate = date("Y-m-d", strtotime($input["issue_to_date"]));
-            $allowCalTax = $input["allow_cal_tax"];
-            $numMonth = CommonService::GetNumberOfMonth($issueFromDate, $issueToDate);
-            $activeOfficerInPeriod = 1; //Officer::activeOfficerInPeriod();
-            if($activeOfficerInPeriod){
-                $getIncentiveOfficerByEntities = Officer::getOfficerGroupByEntities($entity_id);
-                $dataObj = array();
-                $total_offier = 0;
-                foreach($getIncentiveOfficerByEntities as $row){
-                    $incentiveOfficers = $row["officers"];
-                    $total_offier += count($incentiveOfficers);
-                    $officers = array();
-                    $i = 1;
-                    foreach($incentiveOfficers as $incentiveOfficer){
-                        $officers[] = array(
-                            "no" => $this->convertToKhmerNumber($i),
-                            "id" => $incentiveOfficer["id"],
-                            "user_id" => $incentiveOfficer["user_id"],
-                            "first_name" => $incentiveOfficer["first_name"],
-                            "last_name" => $incentiveOfficer["last_name"],
-                            "duty" => $incentiveOfficer["duty"],
-                            "bank_id" => $incentiveOfficer["bank_id"],
-                            "bank_name" => $incentiveOfficer["bank_name"],
-                            "bank_code" => $incentiveOfficer["bank_code"],
-                            "entity" => $incentiveOfficer["entity"],
-                            "entity_id" => $incentiveOfficer["entity_id"],
-                            "position" => $incentiveOfficer["position"],
-                            "duty" => $incentiveOfficer["duty"],
-                            "bank_account_no" => $incentiveOfficer["bank_account_no"],
-                            "updated_bank_acc" => $incentiveOfficer["updated_bank_acc"],
-                            "tax" => $this->convertToKhmerNumber(number_format($this->calTaxableSalary(round($incentiveOfficer["incentive"]) * $numMonth, $allowCalTax))),
-                            "return_amount" => $this->convertToKhmerNumber(number_format(0, 0)),
-                            "incentive" => $incentiveOfficer["incentive"],
-                            "incentive_kh" => $this->convertToKhmerNumber(number_format($incentiveOfficer["incentive"]), 0),
-                            "incentive_after_tax" => $this->convertToKhmerNumber(number_format(floatval($incentiveOfficer["incentive"]) - floatval($this->calTaxableSalary(round($incentiveOfficer["incentive"]) * $numMonth, $allowCalTax)), 0)),
-                            "reminder_amount" => $this->convertToKhmerNumber(number_format(round($incentiveOfficer["incentive"] * ($numMonth - 1)), 0)),
-                            "total_incentive" => $this->convertToKhmerNumber(number_format(floatval(round($incentiveOfficer["incentive"]) * $numMonth), 0)),
-                            "total_incentive_after_tax" => $this->convertToKhmerNumber(number_format((floatval(round($incentiveOfficer["incentive"]) * $numMonth) - floatval($this->calTaxableSalary(round($incentiveOfficer["incentive"]) * $numMonth, $allowCalTax))), 0))
-                        );
-                        $i++;
-                    }
-                    $dataObj[] = array(
-                        "entity" => $row["entity"],
-                        "officers" => $officers
-                    );
-
-                }
-
-                $data = array(
-                    "data" => $dataObj,
-                    "total" => $total_offier
-                );
-                $status = 200;
-                return response()->json($data, $status);
-            }
-        }
-
-        public function calTaxableSalary($incentive, $allowCalTax){
-            $taxableSalaries = TaxableSalary::get();
-            $taxToPay = 0;
-            if($allowCalTax == 'true'){
-                if($incentive > 0){
-                    switch ($incentive) {
-                        case ($incentive >= 0 && $incentive <= 1300000):
-                            $taxToPay = ((floatval($incentive) / 100) * 0);
-                        break;
-                        case ($incentive >= 1300001 && $incentive <= 2000000):
-                            $taxToPay = (((floatval($incentive) / 100) * 5) - 60000);
-                        break;
-                        case ($incentive >= 2000001 && $incentive <= 8500000):
-                            ($taxToPay = ((floatval($incentive) / 100) * 10) - 160000);
-                        break;
-                        case ($incentive >= 8500001 && $incentive <= 12500000):
-                            $taxToPay = (((floatval($incentive) / 100) * 15) - 585000);
-                        break;
-                        case ($incentive > 12500000):
-                            $taxToPay = (((floatval($incentive) / 100) * 20) - 1210000);
-                        break;
-                        // default:
-                        //     # code...
-                        //     break;
-                    }
-                }
-            }
-            return $taxToPay;
-        }
-
-        public function convertToKhmerNumber($number){
-            $khmerNumber = [
-            '1' => '១',
-            '2' => '២',
-            '3' => '៣',
-            '4' => '៤',
-            '5' => '៥',
-            '6' => '៦',
-            '7' => '៧',
-            '8' => '៨',
-            '9' => '៩',
-            '0' => '០',
-            '' => '០',
-            'null' => '០'
-            ];
-            $arrNumbers = str_split($number);
-            $newKhmerNumber = '';
-            foreach ($arrNumbers as $number){
-                if(isset($khmerNumber[$number])){
-                    $newKhmerNumber .= $khmerNumber[$number];
-                }else{
-                    $newKhmerNumber .= ',';
-                }
-            }
-            return $newKhmerNumber;
-        }
-
-        public function getOfficerByEntities(Request $request){
-            $input = $request->all();
-            $entity_id = $input["entity_id"];
-            $getIncentiveOfficerByEntities = Officer::getOfficerByEntities($entity_id);
-            $data = array(
-                "data" => $getIncentiveOfficerByEntities,
-                "total" => count($getIncentiveOfficerByEntities)
-            );
-            $status = 200;
-            return response()->json($data, $status);
-        }
-
-        public function getOfficerListByEntities(Request $request){
-            $input = $request->all();
-            $entity_id = $input["entity_id"];
-            $getIncentiveOfficerByEntities = Officer::getOfficerListByEntities($entity_id);
-            $data = array(
-                "data" => $getIncentiveOfficerByEntities,
-                "total" => count($getIncentiveOfficerByEntities)
-            );
-            $status = 200;
-            return response()->json($data, $status);
         }
 
         public function createOfficer(Request $request)

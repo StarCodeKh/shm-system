@@ -3,15 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\FileManager;
-
-// PB
-// BM = Budget Monitoring
-
-use App\Imports\OfficerImport;
-use App\Imports\IncomeImport;
-
-use File;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Auth;
@@ -23,37 +14,21 @@ class FileManagerController extends Controller
     // File types the file manager accepts (documents and images; no scripts or archives)
     const UPLOAD_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv'];
 
-    // Spreadsheet imports: the caller needs $permission and the file must be a real Excel / CSV file (max 10 MB).
-    // Returns a response to send back when refused, otherwise null.
-    protected function guardSpreadsheetImport(Request $request, string $permission)
-    {
-        if (!CommonService::can($permission)) {
-            return response()->json(['success' => false, 'message' => trans('common.msg_no_permission_access')], 403);
-        }
-        $request->validate(['file' => 'required|file|max:10240|mimes:xlsx,xls,csv']);
-        return null;
-    }
-
     protected $PERMISSION_ACTION_LIST;
     protected $PERMISSION_ACTION_CREATE;
     protected $PERMISSION_ACTION_SHOW;
-    protected $PERMISSION_ACTION_EDIT;
     protected $PERMISSION_ACTION_UPDATE;
     protected $PERMISSION_ACTION_DELETE;
     protected $db_table;
-    public $path = "admin/setting";
 
     public function __construct()
     {
         $this->middleware('auth');
-        $this->view_title = $this->path.'.entry_role';
         $this->db_table = new FileManager;
-        $this->lang_path = $this->path;
 
         $this->PERMISSION_ACTION_LIST = "list_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_CREATE = "create_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_SHOW = "show_".$this->db_table->getTable();
-        $this->PERMISSION_ACTION_EDIT = "edit_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_UPDATE = "update_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_DELETE = "delete_".$this->db_table->getTable();
     }
@@ -90,16 +65,6 @@ class FileManagerController extends Controller
             $data["message"] = trans('common.msg_no_permission_access');
             return response()->json($data, $status);
         }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-
     }
 
     /**
@@ -173,17 +138,6 @@ class FileManagerController extends Controller
         return response()->json($data, $status);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
     // Only the label and caption can change; the stored file, its path and type stay as uploaded
     public function update(Request $request, $id)
     {
@@ -226,20 +180,6 @@ class FileManagerController extends Controller
         $file->update(['status' => Status::DELETED, 'modified_by' => Auth::id()]);
         return response()->json(['success' => true, 'message' => trans('common.msg_delete_successfully')]);
     }
-
-    public function fileUploadService(Request $request){
-        if ($denied = $this->guardSpreadsheetImport($request, 'import_officer')) return $denied;
-        return CommonService::importSpreadsheet(new OfficerImport, $request);
-    }
-
-    //
-
-    public function fileIncomeUploadService(Request $request){
-        if ($denied = $this->guardSpreadsheetImport($request, 'create_income')) return $denied;
-        return CommonService::importSpreadsheet(new IncomeImport, $request);
-    }
-
-    // PB
 
     public function fileImageUploadService(Request $request){
         if (!CommonService::can('file_manager_upload')) {

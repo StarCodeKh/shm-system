@@ -13,25 +13,18 @@ class RoleController extends Controller
     protected $PERMISSION_ACTION_LIST;
     protected $PERMISSION_ACTION_CREATE;
     protected $PERMISSION_ACTION_SHOW;
-    protected $PERMISSION_ACTION_EDIT;
     protected $PERMISSION_ACTION_UPDATE;
     protected $PERMISSION_ACTION_DELETE;
     protected $db_table;
-    protected $lang_path;
-    protected $view_title;
-    public $path = "admin/setting";
 
     public function __construct()
     {
         $this->middleware('auth');
-        $this->view_title = $this->path.'.entry_role';
         $this->db_table = new RoleUser;
-        $this->lang_path = $this->path;
 
         $this->PERMISSION_ACTION_LIST = "list_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_CREATE = "create_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_SHOW = "show_".$this->db_table->getTable();
-        $this->PERMISSION_ACTION_EDIT = "edit_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_UPDATE = "update_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_DELETE = "delete_".$this->db_table->getTable();
     }
@@ -67,16 +60,6 @@ class RoleController extends Controller
             $data["message"] = trans('common.msg_no_permission_access');
             return response()->json($data, $status);
         }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-
     }
 
     /**
@@ -149,17 +132,6 @@ class RoleController extends Controller
             "data" => $data,
         );
         return response()->json($data, $status);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
@@ -276,19 +248,4 @@ class RoleController extends Controller
         return response()->json($data, $status);
     }
 
-    public function createPermission(Request $request){
-        if (!CommonService::can('role_permissions')) {
-            return response()->json(['success' => false, 'message' => trans('common.msg_no_permission_access')], 403);
-        }
-        $input = $request->all();
-        $check = RoleUser::createPermission($input);
-        $status = 200;
-        $boolen = true;
-        $message = trans('common.msg_successfully');
-        $data = array(
-            "success" => $boolen,
-            "message" => $message
-        );
-        return response()->json($data, $status);
-    }
 }

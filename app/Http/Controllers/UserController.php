@@ -21,23 +21,18 @@ class UserController extends Controller
     protected $PERMISSION_ACTION_LIST;
     protected $PERMISSION_ACTION_CREATE;
     protected $PERMISSION_ACTION_SHOW;
-    protected $PERMISSION_ACTION_EDIT;
     protected $PERMISSION_ACTION_UPDATE;
     protected $PERMISSION_ACTION_DELETE;
     protected $db_table;
-    public $path = "admin/setting";
 
     public function __construct()
     {
         $this->middleware('auth');
-        $this->view_title = $this->path.'.en_user';
         $this->db_table = new User;
-        $this->lang_path = $this->path;
 
         $this->PERMISSION_ACTION_LIST = "list_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_CREATE = "create_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_SHOW = "show_".$this->db_table->getTable();
-        $this->PERMISSION_ACTION_EDIT = "edit_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_UPDATE = "update_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_DELETE = "delete_".$this->db_table->getTable();
     }

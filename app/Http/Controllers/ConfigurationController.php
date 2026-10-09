@@ -6,22 +6,16 @@ use App\Models\Configuration;
 use App\Models\Settings\Currency;
 use App\Models\Settings\Planning;
 use Illuminate\Http\Request;
-use Auth;
 use CommonService;
 
 class ConfigurationController extends Controller
 {
     protected $db_table;
-    protected $view_title;
-    protected $lang_path;
-    public $path = "admin/setting";
 
     public function __construct()
     {
         $this->middleware('auth');
-        $this->view_title = $this->path . '.entry_position_title';
         $this->db_table = new Configuration;
-        $this->lang_path = $this->path;
     }
 
     // Settings whose value never goes to the browser (the form shows them empty: blank on save = keep)
@@ -107,16 +101,6 @@ class ConfigurationController extends Controller
             "success" => true,
             "message" => trans('common.msg_update_successfully'),
         ], 200);
-    }
-
-    public function dataForm($input)
-    {
-        $arr = $input;
-        $push_array = array_merge(array(["created_by" => Auth::user()->id]));
-        $arraySingle = array_merge($arr, $push_array);
-        $result = call_user_func_array('array_merge', $arraySingle);
-        $dataFields = $result;
-        return $dataFields;
     }
 
     /**

@@ -16,16 +16,11 @@ class TitleController extends Controller
      * Display a listing of the resource.
      */
     protected $dbTable;
-    protected $view_title;
-    protected $langPath;
-    public $path = "admin/setting";
 
     public function __construct()
     {
         $this->middleware('auth');
-        $this->view_title = $this->path . '.entry_title';
         $this->dbTable = new Title;
-        $this->langPath = $this->path;
     }
 
     /**
@@ -46,11 +41,6 @@ class TitleController extends Controller
         );
         return response()->json($data);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create() {}
 
     /**
      * Store a newly created resource in storage.
@@ -87,14 +77,6 @@ class TitleController extends Controller
             "data" => $table
         );
         return response()->json($data);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**

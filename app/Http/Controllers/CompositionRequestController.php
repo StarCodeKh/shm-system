@@ -17,14 +17,11 @@ class CompositionRequestController extends Controller
      * @return \Illuminate\Http\Response
      */
     protected $db_table;
-    public $path = "admin/setting";
 
     public function __construct()
     {
         $this->middleware('auth');
-        $this->view_title = $this->path.'.entry_title';
         $this->dbTable = new CompositionRequest;
-        $this->langPath = $this->path;
     }
 
     /**
@@ -43,16 +40,6 @@ class CompositionRequestController extends Controller
             "data_fields" => $this->dbTable::dataFields(),
         );
         return response()->json($data);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -140,17 +127,6 @@ class CompositionRequestController extends Controller
             "incentiveComposition" => $compositionOfficers
         );
         return response()->json($data);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**

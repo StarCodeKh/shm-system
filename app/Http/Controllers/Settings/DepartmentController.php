@@ -21,23 +21,16 @@ class DepartmentController extends Controller
     protected $PERMISSION_ACTION_LIST;
     protected $PERMISSION_ACTION_CREATE;
     protected $PERMISSION_ACTION_SHOW;
-    protected $PERMISSION_ACTION_EDIT;
     protected $PERMISSION_ACTION_UPDATE;
     protected $PERMISSION_ACTION_DELETE;
-    protected $view_title;
-    protected $lang_path;
-    public $path = "admin/setting";
 
     public function __construct()
     {
         $this->middleware('auth');
-        $this->view_title = $this->path.'.entry_entity_title';
         $this->db_table = new Department;
-        $this->lang_path = $this->path;
         $this->PERMISSION_ACTION_LIST = "list_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_CREATE = "create_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_SHOW = "show_".$this->db_table->getTable();
-        $this->PERMISSION_ACTION_EDIT = "edit_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_UPDATE = "update_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_DELETE = "delete_".$this->db_table->getTable();
     }
@@ -86,11 +79,6 @@ class DepartmentController extends Controller
             return response()->json($data, $status);
         }
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create() {}
 
     /**
      * Store a newly created resource in storage.
@@ -156,14 +144,6 @@ class DepartmentController extends Controller
             "data" => $data,
         );
         return response()->json($data, $status);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**

@@ -15,20 +15,13 @@ use App\Models\Settings\Status;
 class AccountGroupController extends Controller
 {
     protected $db_table;
-    protected $view_title;
-    protected $lang_path;
-    public $path = "admin/setting";
 
     public function __construct()
     {
         $this->middleware('auth');
-        $this->view_title = $this->path.'.entry_account_group_title';
         $this->db_table = new AccountGroup;
-        $this->lang_path = $this->path;
         $this->PERMISSION_ACTION_LIST = "list_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_CREATE = "create_".$this->db_table->getTable();
-        $this->PERMISSION_ACTION_SHOW = "show_".$this->db_table->getTable();
-        $this->PERMISSION_ACTION_EDIT = "edit_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_UPDATE = "update_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_DELETE = "delete_".$this->db_table->getTable();
     }
@@ -75,11 +68,6 @@ class AccountGroupController extends Controller
         }
     }
 
-    public function create()
-    {
-
-    }
-
     public function store(Request $request)
     {
         $input = $request->all();
@@ -109,11 +97,6 @@ class AccountGroupController extends Controller
             "data" => $table
         );
         return response()->json($data);
-    }
-
-    public function edit($id)
-    {
-        //
     }
 
     public function update(Request $request, $id)

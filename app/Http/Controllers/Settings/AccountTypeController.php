@@ -13,24 +13,17 @@ class AccountTypeController extends Controller
     protected $PERMISSION_ACTION_LIST;
     protected $PERMISSION_ACTION_CREATE;
     protected $PERMISSION_ACTION_SHOW;
-    protected $PERMISSION_ACTION_EDIT;
     protected $PERMISSION_ACTION_UPDATE;
     protected $PERMISSION_ACTION_DELETE;
     protected $PERMISSION_ACTION_ACTIVITY_DETAIL;
     protected $db_table;
-    protected $view_title;
-    protected $lang_path;
-    public $path = "admin/setting";
 
     public function __construct()
     {
-        $this->view_title = $this->path.'.entry_account_type_title';
         $this->db_table = new AccountType;
-        $this->lang_path = $this->path;
         $this->PERMISSION_ACTION_LIST = "list_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_CREATE = "create_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_SHOW = "show_".$this->db_table->getTable();
-        $this->PERMISSION_ACTION_EDIT = "edit_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_UPDATE = "update_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_DELETE = "delete_".$this->db_table->getTable();
         $this->PERMISSION_ACTION_DELETE = "activity_detail_".$this->db_table->getTable();
@@ -68,11 +61,6 @@ class AccountTypeController extends Controller
             $data["message"] = trans('common.msg_no_permission_access');
             return response()->json($data, $status);
         }
-    }
-
-    public function create()
-    {
-
     }
 
     public function store(Request $request)
@@ -133,11 +121,6 @@ class AccountTypeController extends Controller
             "data" => $data,
         );
         return response()->json($data, $status);
-    }
-
-    public function edit($id)
-    {
-        //
     }
 
     public function update(Request $request, $id)

@@ -170,11 +170,6 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
         });
     });
 
-    Route::post('update_officer_user', [OfficerController::class, 'updateIncentiveOfficer']);
-    Route::get('officer_group_by_entities', [OfficerController::class, 'getOfficerGroupByEntities']);
-    Route::get('officer_by_entities', [OfficerController::class, 'getOfficerByEntities']);
-    Route::get('officer_list_by_entities', [OfficerController::class, 'getOfficerListByEntities']);
-
     // Chart of account
     Route::post('account/chart_account/search', [COAController::class, 'index']);
     Route::post('account/chart_account/import', [COAController::class, 'import']);
@@ -191,7 +186,6 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
     Route::apiResource('income', IncomeController::class);
 
     // Incentive
-    Route::post('incentive/officer_by_bank', [IncentiveController::class, 'getIncentiveOfficerByBanks']);
     Route::post('incentive/search', [IncentiveController::class, 'index']);
     Route::apiResource('incentive', IncentiveController::class);
 
@@ -223,8 +217,6 @@ Route::post('account_type_group/search', [AccountTypeGroupController::class, 'in
         Route::post('account_group/search', [AccountGroupController::class, 'index']);
         Route::apiResource('account_group', AccountGroupController::class);
 
-        Route::post('account/get_account_by_group', [AccountController::class, 'getAccountByGroup']);
-        Route::post('account/get_sub_account', [AccountController::class, 'getSubAccount']);
         Route::post('account/search', [AccountController::class, 'index']);
         Route::apiResource('account', AccountController::class);
 
@@ -304,19 +296,10 @@ Route::post('letter_type/search', [LetterTypeController::class, 'index']);
 
     Route::post('user/device', [UserController::class, 'getUserDevice']);
     Route::post('user/profile', [UserController::class, 'getProfile']);
-    Route::post('user_index', [UserController::class, 'index']);
     Route::apiResource('user', UserController::class);
 
     // Report
     Route::prefix('report')->controller(ReportController::class)->group(function () {
-        Route::get('summary', 'summary');
-        Route::get('summary_income_outcome', 'summaryIncomeOutcome');
-        Route::get('income_by_sector', 'incomeBySector');
-        Route::get('income_by_entity', 'incomeByEntity');
-        Route::get('expense_by_entity', 'expenseByEntity');
-        Route::get('expense_by_sector', 'expenseBySector');
-        Route::get('income_outcome_by_quarter', 'getIncomeOutcomeByQuarter');
-
         // PDF reports: officers, income, expense, officer_incentive, officers_payment, ...
         Route::get('types', 'types');
         Route::post('{type}/data', 'preview')->where('type', '[a-z_]+');
@@ -337,6 +320,4 @@ Route::post('letter_type/search', [LetterTypeController::class, 'index']);
     Route::post('file_manager/search', [FileManagerController::class, 'index']);
     Route::post('file_manager/upload', [FileManagerController::class, 'fileImageUploadService']);
     Route::apiResource('file_manager', FileManagerController::class);
-    Route::post('file_upload', [FileManagerController::class, 'fileUploadService']);
-    Route::post('file_income_upload', [FileManagerController::class, 'fileIncomeUploadService']);
 });

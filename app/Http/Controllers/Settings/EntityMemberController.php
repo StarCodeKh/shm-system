@@ -19,14 +19,11 @@ class EntityMemberController extends Controller
      * @return \Illuminate\Http\Response
      */
     protected $db_table;
-    public $path = "admin/setting";
 
     public function __construct()
     {
         $this->middleware('auth');
-        $this->view_title = $this->path.'.entry_entity_member_title';
         $this->db_table = new EntityMember;
-        $this->lang_path = $this->path;
     }
 
     /**
@@ -77,11 +74,6 @@ class EntityMemberController extends Controller
         return response()->json($data);
     }
 
-    public function create()
-    {
-
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -123,17 +115,6 @@ class EntityMemberController extends Controller
             "data" => $table
         );
         return response()->json($data);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**

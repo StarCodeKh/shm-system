@@ -13,14 +13,11 @@ class AuditController extends Controller
      * Display a listing of the resource.
      */
     protected $db_table;
-    public $path = "admin/setting";
 
     public function __construct()
     {
         $this->middleware('auth');
-        $this->view_title = $this->path.'.entry_title';
         $this->dbTable = new Audit;
-        $this->langPath = $this->path;
     }
 
     /**
@@ -68,16 +65,6 @@ class AuditController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -118,17 +105,6 @@ class AuditController extends Controller
             "data" => $table
         );
         return response()->json($data);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**

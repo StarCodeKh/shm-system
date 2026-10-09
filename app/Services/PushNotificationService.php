@@ -4,9 +4,6 @@
     use DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Settings\Status;
-    use Kreait\Firebase\Messaging\CloudMessage;
-    use Kreait\Firebase\Messaging\Notification;
-    use App\User;
     use Google\Auth\Credentials\ServiceAccountCredentials;
     use Kreait\Firebase\Factory;
     class PushNotificationService{

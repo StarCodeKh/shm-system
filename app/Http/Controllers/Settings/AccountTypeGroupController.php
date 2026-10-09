@@ -13,14 +13,11 @@ use App\Models\Settings\Status;
 class AccountTypeGroupController extends Controller
 {
     protected $db_table;
-    public $path = "admin/setting";
 
     public function __construct()
     {
         $this->middleware('auth');
-        $this->view_title = $this->path.'.entry_account_type_group_title';
         $this->db_table = new AccountTypeGroup;
-        $this->lang_path = $this->path;
     }
     public function dataFields(){
         // Loop Data Field From Table to put in array for mapping data field to search data table
@@ -54,16 +51,6 @@ class AccountTypeGroupController extends Controller
             "total" => $this->db_table::getCount($filter)
         );
         return response()->json($data);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -107,17 +94,6 @@ class AccountTypeGroupController extends Controller
             "data" => $table
         );
         return response()->json($data);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**

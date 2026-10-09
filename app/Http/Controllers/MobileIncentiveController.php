@@ -94,16 +94,6 @@ class MobileIncentiveController extends Controller
         return $taxToPay;
     }
 
-    public function generateRandomString($length = 10) {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-        return $randomString;
-    }
-
     /**
      * Display the specified resource.
      *
@@ -215,98 +205,6 @@ class MobileIncentiveController extends Controller
         );
         $data = array(
             "data" => $dataArray
-        );
-        return response()->json($data);
-    }
-
-    public function getIncentiveOfficerByBanks(Request $request){
-        $input = $request->all();
-        $getIncentiveByBanks = Incentive::getIncentiveOfficerByBanks($input["incentiveId"], $input["bankId"]);
-        $getIncentiveByEntities = Incentive::getIncentiveByEntities($input["incentiveId"], $input["bankId"]);
-        $getIncentiveListByEntities = Incentive::getIncentiveListByEntities($input["incentiveId"], $input["bankId"]);
-
-        $incentiveByBanks = array();
-        foreach($getIncentiveByBanks as $getIncentiveByBank){
-            $incentiveByBanks[] = array(
-                "no" => $this->convertToKhmerNumber($getIncentiveByBank["no"]),
-                "entity" => $getIncentiveByBank["entity"],
-                "total_incentive_after_tax" => $this->convertToKhmerNumber(number_format($getIncentiveByBank["total_incentive_after_tax"]), 0),
-                "total_incentive" => $this->convertToKhmerNumber(number_format($getIncentiveByBank["total_incentive"]), 0),
-                "total_incentive_in_word" => $this->num2khtext($getIncentiveByBank["total_incentive"], true),
-                "exchange_rate" => $this->convertToKhmerNumber($getIncentiveByBank["exchange_rate"])
-            );
-        }
-
-        $entityData = array();
-        $total_officer_entity = 0;
-        $sum_incentive_after_tax = 0;
-        foreach($getIncentiveByEntities as $getIncentiveByEntity){
-            $officerData = array();
-            $total_officer_entity += count($getIncentiveByEntity["officers"]);
-            foreach($getIncentiveByEntity["officers"] as $officer){
-                $officerData[] = array(
-                    "no" => $this->convertToKhmerNumber($officer["no"]),
-                    "identity_no" => $officer["identity_no"],
-                    "title" => $officer["title"],
-                    "first_name" => $officer["first_name"],
-                    "last_name" => $officer["last_name"],
-                    "bank" => $officer["bank"],
-                    "bank_account_no" => $officer["bank_account_no"],
-                    "latin" => $officer["latin"],
-                    "position" => $officer["position"],
-                    "duty" => $officer["duty"],
-                    "index" => $officer["index"],
-                    "incentive" => $this->convertToKhmerNumber(number_format($officer["incentive"]), 0),
-                    "tax" => $this->convertToKhmerNumber(number_format($officer["tax"]), 0),
-                    "return_amount" => $this->convertToKhmerNumber(number_format($officer["return_amount"]), 0),
-                    "reminder_amount" => $this->convertToKhmerNumber(number_format($officer["reminder_amount"]), 0),
-                    "incentive_after_tax" => $this->convertToKhmerNumber(number_format($officer["incentive_after_tax"], 0)),
-                );
-            }
-            $sum_incentive_after_tax += $getIncentiveByEntity["total_incentive_after_tax"];
-            $entityData[] = array(
-                "no" => $this->convertToKhmerNumber($getIncentiveByEntity["no"]),
-                "id" => $getIncentiveByEntity["id"],
-                "label" => $getIncentiveByEntity["label"],
-                "code" => $getIncentiveByEntity["code"],
-                "entity" => $getIncentiveByEntity["label"],
-                "total_incentive" => $this->convertToKhmerNumber(number_format($getIncentiveByEntity["total_incentive"], 0)),
-                "total_incentive_after_tax" => $this->convertToKhmerNumber(number_format($getIncentiveByEntity["total_incentive_after_tax"], 0)),
-                "total_officer" => $this->convertToKhmerNumber(number_format($getIncentiveByEntity["total_officer"], 0)),
-                "officers" => $officerData
-            );
-        }
-
-        // Row Officers #################
-        $rawOfficerData = array();
-        foreach($getIncentiveListByEntities as $officerRaw){
-            $rawOfficerData[] = array(
-                "no" => $this->convertToKhmerNumber($officerRaw["no"]),
-                "identity_no" => $officerRaw["identity_no"],
-                "title" => $officerRaw["title"],
-                "first_name" => $officerRaw["first_name"],
-                "last_name" => $officerRaw["last_name"],
-                "bank" => $officerRaw["bank"],
-                "bank_account_no" => $officerRaw["bank_account_no"],
-                "latin" => $officerRaw["latin"],
-                "position" => $officerRaw["position"],
-                "duty" => $officerRaw["duty"],
-                "index" => $officerRaw["index"],
-                "incentive" => $this->convertToKhmerNumber(number_format($officerRaw["incentive"]), 0),
-                "tax" => $this->convertToKhmerNumber(number_format($officerRaw["tax"]), 0),
-                "return_amount" => $this->convertToKhmerNumber(number_format($officerRaw["return_amount"]), 0),
-                "reminder_amount" => $this->convertToKhmerNumber(number_format($officerRaw["reminder_amount"]), 0),
-                "incentive_after_tax" => $this->convertToKhmerNumber(number_format($officerRaw["incentive_after_tax"], 0)),
-            );
-        }
-
-        $data = array(
-            "incentiveByBanks" => $incentiveByBanks,
-            "incentiveByEntities" => $entityData,
-            "incentiveOfficerListByEntities" => $rawOfficerData,
-            "totalBank" => $this->convertToKhmerNumber(count($incentiveByBanks)),
-            "sum_incentive_after_tax" => $this->convertToKhmerNumber(number_format($sum_incentive_after_tax, 0)),
-            "sum_incentive_after_tax_inword" => $this->num2khtext($sum_incentive_after_tax, true),
         );
         return response()->json($data);
     }

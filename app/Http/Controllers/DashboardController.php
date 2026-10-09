@@ -113,20 +113,6 @@ class DashboardController extends BaseController
         }
     }
 
-    public function getRequestInfo()
-    {
-        try {
-            $requestInfo = Dashboard::getRequestInfo();
-            return $this->successResponse(
-                [
-                    'requestInfo' => $requestInfo
-                ]
-            );
-        } catch (Exception $e) {
-            return $this->errorResponse($e->getMessage());
-        }
-    }
-
     public function getTotalOfficers()
     {
         try {
