@@ -1,9 +1,10 @@
 <template>
-    <transition :name="transitionName">
-        <div v-if="active || opened" v-show="active" class="con-tab vs-tabs--content">
-            <slot />
-        </div>
-    </transition>
+    <!-- No <transition>: the content fades up with the same motion as every tab in the app -->
+    <!-- (tab-content-in in custom.css restarts each time the tab is shown). Vuesax's sideways slide -->
+    <!-- ran on top of it, so switching tabs jumped sideways and briefly overlapped the old tab. -->
+    <div v-if="active || opened" v-show="active" class="con-tab vs-tabs--content">
+        <slot />
+    </div>
 </template>
 
 <script>
@@ -23,14 +24,11 @@ export default {
         iconPack: { type: String, default: 'material-icons' },
     },
     data() {
-        return { vertical: false, active: false, invert: false, opened: false }
+        return { active: false, opened: false }
     },
     computed: {
         uid() {
             return this.$.uid
-        },
-        transitionName() {
-            return `fade-tab${this.vertical ? '-vertical' : ''}${this.invert ? '-invert' : ''}`
         },
     },
     watch: {

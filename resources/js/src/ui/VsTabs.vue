@@ -109,19 +109,10 @@ export default {
                 setTimeout(() => { elem.classList.remove('isActive'); this.these = false }, 200)
             }
             this.tabs.forEach((item, i) => { if (i != index) item.active = false })
-            const previous = this.tabs[this.childActive]
-            if (this.childActive > index) {
-                tab.invert = true
-                if (previous) previous.invert = false
-            } else {
-                if (previous) previous.invert = true
-                tab.invert = false
-            }
             tab.active = true
             this.childActive = index
             this.$emit('update:modelValue', index)
             this.$emit('input', index)
-            if (this.position == 'left' || this.position == 'right') tab.vertical = true
             if (elem) this.changePositionLine(elem, initialAnimation)
         },
         changePositionLine(elem, initialAnimation) {
