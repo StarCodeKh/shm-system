@@ -1,3 +1,5 @@
+{{-- Name from Settings › General (same as the app), the built-in one if none is set or the database is down --}}
+@php($siteName = rescue(fn () => trim((string) setting('config_name')), '', false) ?: 'SHM-System')
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,7 +8,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>SHM-System</title>
+    <title>{{ $siteName }}</title>
     <!-- Fonts are self-hosted, see resources/sass/vuexy/_fonts.scss -->
     <link rel="preload" href="{{ asset('fonts/KantumruyPro.woff2') }}" as="font" type="font/woff2" crossorigin>
     <!-- Styles: Material Icons is a static file; the rest is built by Vite (see vite.config.js) -->
@@ -109,11 +111,11 @@
     </script>
     <div id="loading-bg" role="status" aria-label="Loading">
       <div class="loading-logo"><img src="{{ asset('images/logo/logo.png') }}" alt=""></div>
-      <div class="loading-title">SHM-System</div>
+      <div class="loading-title">{{ $siteName }}</div>
       <div class="loading-dots"><span></span><span></span><span></span></div>
     </div>
     <noscript>
-      <strong>SHM-System needs JavaScript. Please enable it to continue. · សូមបើក JavaScript ដើម្បីប្រើប្រព័ន្ធ SHM។</strong>
+      <strong>{{ $siteName }} needs JavaScript. Please enable it to continue. · សូមបើក JavaScript ដើម្បីប្រើប្រព័ន្ធ SHM។</strong>
     </noscript>
     <div id="app">
     </div>

@@ -564,7 +564,7 @@ export default {
         brand_expand: 'ពង្រីកម៉ឺនុយ',
         // Dashboard & footer
         footer_rights: 'រក្សាសិទ្ធិគ្រប់យ៉ាង។',
-        brand_name_fallback: 'SHM System',
+        brand_name_fallback: 'SHM-System',
         footer_ministry: 'ក្រសួងសេដ្ឋកិច្ច និងហិរញ្ញវត្ថុ',
         dash_data_range: 'ទិន្នន័យពី {start} ដល់ {end}',
         dash_updated_at: 'ធ្វើបច្ចុប្បន្នភាព {time}',
@@ -2203,7 +2203,7 @@ export default {
         brand_expand: 'Expand menu',
         // Dashboard & footer
         footer_rights: 'All rights reserved.',
-        brand_name_fallback: 'SHM System',
+        brand_name_fallback: 'SHM-System',
         footer_ministry: 'Ministry of Economy and Finance',
         dash_data_range: 'Data from {start} to {end}',
         dash_updated_at: 'Updated {time}',
@@ -2275,7 +2275,7 @@ export default {
         time_years_ago: '{n} years ago',
         // Login page
         login: 'Sign in',
-        welcome: 'Welcome to SHM-System',
+        welcome: 'Welcome to {name}',
         remember_me: 'Remember me',
         login_signing_in: 'Signing in...',
         login_err_title_credentials: 'Sign-in failed',

@@ -9,9 +9,9 @@
 
                 <div class="login-brand__content">
                     <div class="login-brand__logo">
-                        <img src="@assets/images/pages/logo.png" alt="logo">
+                        <logo :src="site.logo" :alt="siteName" />
                     </div>
-                    <h2 class="login-brand__title">{{ $t('welcome') }}</h2>
+                    <h2 class="login-brand__title">{{ $t('welcome', { name: siteName }) }}</h2>
                     <div class="login-brand__divider"></div>
                 </div>
 
@@ -26,7 +26,7 @@
                 </div>
 
                 <div class="login-form__inner">
-                    <img src="@assets/images/pages/logo.png" alt="logo" class="login-form__mobile-logo">
+                    <logo :src="site.logo" :alt="siteName" class="login-form__mobile-logo" />
 
                     <h1 class="login-form__title">{{ $t('login') }}</h1>
                     <p class="login-form__subtitle">{{ $t('Authentication') }}</p>
@@ -43,16 +43,29 @@
 <script>
 import LoginJwt from "./LoginJWT.vue"
 import I18n from "@/layouts/components/navbar/components/I18n.vue"
+import Logo from "@/layouts/components/Logo.vue"
+import { site, loadSite } from "@/site.js"
 
 export default {
     components: {
         LoginJwt,
-        I18n
+        I18n,
+        Logo
     },
     data() {
         return {
+            site,
             year: new Date().getFullYear()
         }
+    },
+    computed: {
+        // Name from Settings › General, same as the sidebar
+        siteName() {
+            return this.site.name || this.$t('brand_name_fallback')
+        }
+    },
+    created() {
+        loadSite()
     }
 }
 </script>
@@ -147,9 +160,15 @@ $login-blue-dark: #324693;
         justify-content: center;
         box-shadow: 0 0 0 10px rgba(255, 255, 255, .08), 0 20px 40px rgba(0, 0, 0, .25);
 
+        // Logo.vue wraps the image in a div
+        > div {
+            width: 100%;
+            height: 100%;
+        }
+
         img {
-            max-width: 100%;
-            max-height: 100%;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
         }
     }
