@@ -2198,7 +2198,7 @@ export default {
         fm_empty: 'No files yet',
         fm_empty_hint: 'Upload your first file above',
         // Sidebar brand
-        brand_subtitle: 'Data Management System',
+        brand_subtitle: 'SHM-System',
         brand_collapse: 'Collapse menu',
         brand_expand: 'Expand menu',
         // Dashboard & footer
@@ -2275,7 +2275,7 @@ export default {
         time_years_ago: '{n} years ago',
         // Login page
         login: 'Sign in',
-        welcome: 'Welcome to the data management system',
+        welcome: 'Welcome to SHM-System',
         remember_me: 'Remember me',
         login_signing_in: 'Signing in...',
         login_err_title_credentials: 'Sign-in failed',
