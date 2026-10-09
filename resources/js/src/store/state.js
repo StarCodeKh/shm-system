@@ -20,6 +20,9 @@ export function deviceTheme() {
     return typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
 }
 
+// From this window width up the side menu stays open beside the page; below it, it opens over the page
+export const NAV_MENU_BREAKPOINT = 1200
+
 export const SIDEBAR_COLLAPSED_KEY = "sidebarCollapsed"
 const savedSidebarCollapsed = (() => {
     try {
@@ -79,7 +82,7 @@ const state = {
 
     // Can be used to get current window with
     // Note: Above breakpoint state is for internal use of sidebar & navbar component
-    windowWidth: null,
+    windowWidth: typeof window !== "undefined" ? window.innerWidth : null,
 }
 
 export default state

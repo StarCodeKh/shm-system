@@ -1,32 +1,30 @@
 <template>
-    <teleport :to="parent || 'body'" :disabled="!parent" defer>
-        <transition name="vs-sidebar-animate">
-            <div v-show="staticPosition || modelValue" ref="sidebarbackground" v-bind="$attrs" class="vs-content-sidebar">
-                <div v-if="!hiddenBackground" class="vs-sidebar--background" />
-                <div
-                    ref="sidebarContainer"
-                    class="vs-sidebar"
-                    :class="['vs-sidebar-' + color, {
-                        'vs-sidebar-parent': parent != 'body',
-                        'vs-sidebar-staticPosition': staticPosition,
-                        'vs-sidebar-position-right': positionRight,
-                        'vs-sidebar-reduce': reduce,
-                        'vs-sidebar-reduceNotRebound': reduceNotRebound,
-                        'vs-sidebar-reduceNotHoverExpand': reduceNotHoverExpand,
-                    }]">
-                    <header v-if="$slots.header" class="vs-sidebar--header"><slot name="header" /></header>
-                    <div class="vs-sidebar--items"><slot /></div>
-                    <vs-spacer v-if="spacer" />
-                    <footer v-if="$slots.footer" class="vs-sidebar--footer"><slot name="footer" /></footer>
-                </div>
+    <transition name="vs-sidebar-animate">
+        <div v-show="staticPosition || modelValue" ref="sidebarbackground" v-bind="$attrs" class="vs-content-sidebar">
+            <div v-if="!hiddenBackground" class="vs-sidebar--background" />
+            <div
+                ref="sidebarContainer"
+                class="vs-sidebar"
+                :class="['vs-sidebar-' + color, {
+                    'vs-sidebar-parent': parent != 'body',
+                    'vs-sidebar-staticPosition': staticPosition,
+                    'vs-sidebar-position-right': positionRight,
+                    'vs-sidebar-reduce': reduce,
+                    'vs-sidebar-reduceNotRebound': reduceNotRebound,
+                    'vs-sidebar-reduceNotHoverExpand': reduceNotHoverExpand,
+                }]">
+                <header v-if="$slots.header" class="vs-sidebar--header"><slot name="header" /></header>
+                <div class="vs-sidebar--items"><slot /></div>
+                <vs-spacer v-if="spacer" />
+                <footer v-if="$slots.footer" class="vs-sidebar--footer"><slot name="footer" /></footer>
             </div>
-        </transition>
-    </teleport>
+        </div>
+    </transition>
 </template>
 
 <script>
-// Slide-in panel. `parent` is where it is drawn (a selector such as "body" or ".layout--main").
-// A click outside the panel closes it, unless click-not-close is set.
+// Slide-in panel, drawn where it is used (the panel itself is position: fixed).
+// A click outside the panel (inside `parent`, a selector such as ".layout--main") closes it, unless click-not-close is set.
 export default {
     name: 'VsSidebar',
     inheritAttrs: false,

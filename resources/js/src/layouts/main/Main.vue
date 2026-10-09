@@ -120,7 +120,6 @@ export default {
             }
         },
         verticalNavMenuWidth() { return this.$store.state.verticalNavMenuWidth },
-        windowWidth()          { return this.$store.state.windowWidth }
     },
     methods: {
         changeRouteTitle(title) {
@@ -136,13 +135,7 @@ export default {
         loadSite()
         const color = this.navbarColor == "#fff" && this.isThemeDark ? "#10163a" : this.navbarColor
         this.updateNavbarColor(color)
-        // Below 1200px the side menu starts closed and opens over the page
-        if (this.windowWidth < 1200) {
-            this.$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', false)
-            this.$store.dispatch('updateVerticalNavMenuWidth', 'no-nav-menu')
-        } else {
-            this.$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', true)
-        }
+        // The side menu opens or closes itself for the window size (VerticalNavMenu)
     },
 }
 </script>

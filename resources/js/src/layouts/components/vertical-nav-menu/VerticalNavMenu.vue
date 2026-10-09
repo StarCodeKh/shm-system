@@ -108,7 +108,7 @@ import VNavMenuItem from './VerticalNavMenuItem.vue'
 
 import Logo from "../Logo.vue"
 import { fetchPermissions, storedMenu, fetchMenu } from './menuPermissions.js'
-import { SIDEBAR_COLLAPSED_KEY } from "@/store/state.js"
+import { SIDEBAR_COLLAPSED_KEY, NAV_MENU_BREAKPOINT } from "@/store/state.js"
 
 export default {
     name: 'v-nav-menu',
@@ -164,13 +164,9 @@ export default {
         '$route'() {
             if (this.isVerticalNavMenuActive && this.showCloseButton) this.$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', false)
         },
-        reduce(val) {
-            const verticalNavMenuWidth = val ? "reduced" : this.$store.state.windowWidth < 1200 ? "no-nav-menu" : "default"
-            this.$store.dispatch('updateVerticalNavMenuWidth', verticalNavMenuWidth)
-
-            setTimeout(function() {
-                window.dispatchEvent(new Event('resize'))
-            }, 100)
+        // The width itself is set by setVerticalNavMenuWidth(); charts and tables re-measure once the page has moved
+        reduce() {
+            setTimeout(() => window.dispatchEvent(new Event('resize')), 100)
         },
         layoutType()   { this.setVerticalNavMenuWidth() },
         reduceButton() { this.setVerticalNavMenuWidth() },
@@ -219,7 +215,7 @@ export default {
         },
         setVerticalNavMenuWidth() {
 
-            if(this.windowWidth > 1200) {
+            if(this.windowWidth >= NAV_MENU_BREAKPOINT) {
                 if(this.layoutType === 'vertical') {
 
                     // Set reduce
@@ -246,8 +242,8 @@ export default {
             // Close NavMenu
             this.$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', false)
 
-            // Reduce button
-            if (this.reduceButton) this.reduce = false
+            // The menu opens full width over the page
+            this.reduce = false
 
             // Menu Action buttons
             this.showCloseButton = true
@@ -258,25 +254,6 @@ export default {
 
             // Remove Only Icon in Menu
             this.$store.commit('UPDATE_VERTICAL_NAV_MENU_ITEMS_MIN', false)
-
-            //   // Close NavMenu
-            //   this.$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', false)
-
-            //   // Reduce button
-            //   if (this.reduceButton) this.reduce = false
-
-            //   // Update NavMenu Width
-            //   this.$store.dispatch('updateVerticalNavMenuWidth', 'no-nav-menu')
-
-            //   // Remove Only Icon in Menu
-            //   this.$store.commit('UPDATE_VERTICAL_NAV_MENU_ITEMS_MIN', false)
-
-            //   // Set reduce
-            //   this.reduce = this.reduceButton ? true : false
-
-            //   // Open NavMenu
-            //   this.$store.commit('TOGGLE_IS_VERTICAL_NAV_MENU_ACTIVE', true)
-
         },
         toggleReduce(val) {
             this.reduceButton = val
@@ -292,8 +269,7 @@ export default {
         fetchPermissions().catch(() => {})
         // Administration › Menus changed something: show it without a reload
         window.addEventListener('menu-changed', this.loadMenu)
-    },
-    mounted() {
+        // Open or close the menu for this window before the first render, so it never starts in the wrong state
         this.setVerticalNavMenuWidth()
     },
 }
