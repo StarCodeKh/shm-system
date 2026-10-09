@@ -52,14 +52,16 @@
 </template>
 
 <script>
+import { markRaw } from "vue";
 import axios, { retryAfterSeconds } from "@/axios.js";
 
-// i18n keys for each failure kind shown in the inline alert
+// i18n keys for each failure kind shown in the inline alert.
+// markRaw: kept out of reactivity so `this.alert === ALERTS.x` compares the same object, not a proxy of it
 const ALERTS = {
-    credentials: { type: 'danger', title: 'login_err_title_credentials', text: 'login_err_credentials' },
-    network: { type: 'danger', title: 'login_err_title_network', text: 'login_err_network' },
-    server: { type: 'danger', title: 'login_err_title_server', text: 'login_err_server' },
-    throttle: { type: 'warning', title: 'login_err_title_throttle', text: 'login_err_throttle_wait' },
+    credentials: markRaw({ type: 'danger', title: 'login_err_title_credentials', text: 'login_err_credentials' }),
+    network: markRaw({ type: 'danger', title: 'login_err_title_network', text: 'login_err_network' }),
+    server: markRaw({ type: 'danger', title: 'login_err_title_server', text: 'login_err_server' }),
+    throttle: markRaw({ type: 'warning', title: 'login_err_title_throttle', text: 'login_err_throttle_wait' }),
 }
 
 export default {

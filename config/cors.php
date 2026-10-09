@@ -30,7 +30,8 @@ return [
 
     'allowed_headers' => ['*'],
 
-    'exposed_headers' => [],
+    // Lets the sign-in page count down the real wait after too many attempts
+    'exposed_headers' => ['Retry-After'],
 
     'max_age' => 0,
 
