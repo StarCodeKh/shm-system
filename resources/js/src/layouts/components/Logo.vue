@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import builtIn from "@assets/images/logo/logo.png"
+import builtIn from "@assets/images/logo/logo.svg"
 
 // The logo from Settings › General (src), or the built-in one when none is set or the file can't load
 export default {

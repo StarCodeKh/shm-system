@@ -1,7 +1,7 @@
 <template>
     <main class="error-page" :class="'error-page--' + code">
         <div class="error-page__inner">
-            <img class="error-page__logo" src="@assets/images/logo/logo.png" alt="">
+            <img class="error-page__logo" src="@assets/images/logo/logo.svg" alt="">
 
             <p class="error-page__code" aria-hidden="true">{{ code }}</p>
             <h1 class="error-page__title">{{ $t(`error_${code}_title`) }}</h1>

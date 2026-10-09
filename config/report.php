@@ -39,7 +39,7 @@ return [
     'print_max_rows' => 1000,
 
     // Fallback logo when the settings have none
-    'default_logo' => 'images/logo.png',
+    'default_logo' => 'images/logo/logo.png',
 
     // Text sizes (pt) of the printed documents, one place for all of them.
     // PDF uses them as they are; Excel (read on screen) multiplies them by excel_scale.

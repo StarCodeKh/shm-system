@@ -1645,7 +1645,6 @@ import axios from "@/axios.js";
 import { onLocaleChange } from "@/i18n/i18n.js";
 import DSearch from '@/views/form-builder/DSearch.vue';
 import DModalForm from '@/views/form-builder/DModalForm.vue';
-import DHeadingWizard from '@/views/form-builder/DHeadingWizard.vue';
 import DFileManager from '@/views/form-builder/DFileManager.vue';
 import DFileUploader from '@/views/form-builder/DFileUploader.vue';
 import StatisticsCardLine from '@/components/statistics-cards/StatisticsCardLine.vue'
@@ -1775,7 +1774,6 @@ export default {
     components: {
         DSearch,
         DModalForm,
-        DHeadingWizard,
         // DForm,
         DFileManager,
         vSelect,

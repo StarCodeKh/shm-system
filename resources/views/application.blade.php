@@ -10,7 +10,7 @@
 
     <title>{{ $siteName }}</title>
     <!-- Fonts are self-hosted, see resources/sass/shm/_fonts.scss -->
-    <link rel="preload" href="{{ asset('fonts/KantumruyPro.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ \Illuminate\Support\Facades\Vite::asset('resources/assets/fonts/KantumruyPro.woff2') }}" as="font" type="font/woff2" crossorigin>
     <!-- Styles: Material Icons is a static file; the rest is built by Vite (see vite.config.js) -->
     <link rel="stylesheet" href="{{ asset('css/material-icons/material-icons.css') }}">
     @vite(['resources/assets/css/vuesax.css', 'node_modules/vue-select/dist/vue-select.css', 'resources/assets/css/main.css', 'resources/sass/app.scss', 'resources/js/app.js'])
@@ -111,7 +111,7 @@
       document.body.classList.add(document.documentElement.getAttribute('data-theme') === 'dark' ? 'theme-dark' : 'theme-semi-dark')
     </script>
     <div id="loading-bg" role="status" aria-label="Loading">
-      <div class="loading-logo"><img src="{{ asset('images/logo/logo.png') }}" alt=""></div>
+      <div class="loading-logo"><img src="{{ asset('images/logo/logo.svg') }}" alt=""></div>
       <div class="loading-title">{{ $siteName }}</div>
       <div class="loading-dots"><span></span><span></span><span></span></div>
     </div>
