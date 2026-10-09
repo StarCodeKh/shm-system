@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'entry_title' => "Objective"
+    'entry_title' => 'Objective',
 ];

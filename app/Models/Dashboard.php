@@ -1,19 +1,26 @@
 <?php
 
 namespace App\Models;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Model;
+
 use App\Models\Settings\Currency;
-use DB;
 use App\Models\Settings\Status;
 use App\Services\DataScope;
+use DB;
+use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
+
 class Dashboard extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
+
     protected $table = 'account';
+
     protected $primaryKey = 'id';
+
     protected $fillable = [];
+
     protected $guarded = [];
+
     public $timestamps = true;
 
     /**
@@ -28,12 +35,13 @@ class Dashboard extends Model implements Auditable
         if ($condition === '1 = 1') {
             return $alias ? "$table $alias" : $table;
         }
+
         return "(SELECT * FROM $table scoped WHERE $condition) ".($alias ?: $table);
     }
 
     public static function getOfficerGrowth()
-        {
-            $query = "
+    {
+        $query = '
             SELECT 
                 YEAR(register_date) AS year,
                 COUNT(*) AS total_officers,
@@ -44,113 +52,115 @@ class Dashboard extends Model implements Auditable
                     ) * 100,
                     0
                 ) AS growth_rate
-            FROM ".self::table('officer')."
+            FROM '.self::table('officer').'
             WHERE YEAR(register_date) >= YEAR(CURDATE()) - 5
             GROUP BY YEAR(register_date)
             ORDER BY YEAR(register_date)
-        ";
+        ';
 
-            return collect(DB::select($query))->map(function ($item) {
-                return [
-                    'year' => (int) $item->year,
-                    'total_officers' => (int) $item->total_officers,
-                    'growth_rate' => (float) $item->growth_rate ?? null,
-                ];
-            });
+        return collect(DB::select($query))->map(function ($item) {
+            return [
+                'year' => (int) $item->year,
+                'total_officers' => (int) $item->total_officers,
+                'growth_rate' => (float) $item->growth_rate ?? null,
+            ];
+        });
+    }
+
+    public static function getTotalExpenseKHR($start_date = null, $end_date = null)
+    {
+        // Auto default date handling
+        if (empty($start_date) || empty($end_date)) {
+            $year = date('Y');
+            $start_date = "$year-01-01";
+            $end_date = "$year-12-31";
         }
-
-        public static function getTotalExpenseKHR($start_date = null, $end_date = null)
-        {
-            // Auto default date handling
-            if (empty($start_date) || empty($end_date)) {
-                $year = date('Y');
-                $start_date = "$year-01-01";
-                $end_date   = "$year-12-31";
-            }
-            $result = DB::select("
+        $result = DB::select('
             SELECT 
-                SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS total_in_khr,
-                SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS total_in_usd
+                SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::KHR).' THEN amount ELSE 0 END) AS total_in_khr,
+                SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::USD).' THEN amount ELSE 0 END) AS total_in_usd
             FROM (
-                SELECT amount, currency_id AS currency_id FROM ".self::table('expense')."
+                SELECT amount, currency_id AS currency_id FROM '.self::table('expense').'
                 WHERE issue_date BETWEEN ? AND ?
                 UNION ALL
-                SELECT amount, currency_id FROM ".self::table('officer_incentive')."
+                SELECT amount, currency_id FROM '.self::table('officer_incentive').'
                 WHERE issue_date BETWEEN ? AND ?
             ) AS total_expense_khr
-        ", [
-                $start_date . ' 00:00:00',
-                $end_date   . ' 23:59:59',
-                $start_date . ' 00:00:00',
-                $end_date   . ' 23:59:59',
-            ]);
-            return $result[0] ?? (object)[
-                'total_in_khr' => 0,
-                'total_in_usd' => 0,
-            ];
-        }
+        ', [
+            $start_date.' 00:00:00',
+            $end_date.' 23:59:59',
+            $start_date.' 00:00:00',
+            $end_date.' 23:59:59',
+        ]);
 
-        public static function getRequestInfo()
-        {
-            $result = DB::select("
+        return $result[0] ?? (object) [
+            'total_in_khr' => 0,
+            'total_in_usd' => 0,
+        ];
+    }
+
+    public static function getRequestInfo()
+    {
+        $result = DB::select('
             SELECT 
             (
-                SELECT COUNT(*) FROM ".self::table('officer_request')." WHERE status = '11'
+                SELECT COUNT(*) FROM '.self::table('officer_request')." WHERE status = '11'
             ) AS pending_request,
             (
             SELECT COUNT(*) FROM ".self::table('officer_request')." WHERE status = '3'
             ) AS completed_request
         ");
-            return $result[0] ?? (object)[
-                'pending_request' => 0,
-                'completed_request' => 0,
-            ];
-        }
 
-        public static function getTotalIncomeKHR($start_date = null, $end_date = null)
-        {
-            // Auto default date handling
-            if (empty($start_date) || empty($end_date)) {
-                $year = date('Y');
-                $start_date = "$year-01-01";
-                $end_date   = "$year-12-31";
-            }
-            $result = DB::select("
+        return $result[0] ?? (object) [
+            'pending_request' => 0,
+            'completed_request' => 0,
+        ];
+    }
+
+    public static function getTotalIncomeKHR($start_date = null, $end_date = null)
+    {
+        // Auto default date handling
+        if (empty($start_date) || empty($end_date)) {
+            $year = date('Y');
+            $start_date = "$year-01-01";
+            $end_date = "$year-12-31";
+        }
+        $result = DB::select('
             SELECT 
-                SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS total_in_khr,
-                SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS total_in_usd
+                SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::KHR).' THEN amount ELSE 0 END) AS total_in_khr,
+                SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::USD).' THEN amount ELSE 0 END) AS total_in_usd
             FROM (
-                SELECT amount, currency_id as currency_id FROM ".self::table('income')."
+                SELECT amount, currency_id as currency_id FROM '.self::table('income').'
                 WHERE issue_date BETWEEN ? AND ?
                 UNION ALL
-                SELECT amount, currency_id FROM ".self::table('officer_payment')."
+                SELECT amount, currency_id FROM '.self::table('officer_payment').'
                 WHERE issue_date BETWEEN ? AND ?
             ) AS total_income_khr
-        ", [
-                $start_date . ' 00:00:00',
-                $end_date   . ' 23:59:59',
-                $start_date . ' 00:00:00',
-                $end_date   . ' 23:59:59',
-            ]);
+        ', [
+            $start_date.' 00:00:00',
+            $end_date.' 23:59:59',
+            $start_date.' 00:00:00',
+            $end_date.' 23:59:59',
+        ]);
 
-            return $result[0] ?? (object)[
-                'total_in_khr' => 0,
-                'total_in_usd' => 0,
-            ];
+        return $result[0] ?? (object) [
+            'total_in_khr' => 0,
+            'total_in_usd' => 0,
+        ];
 
-            return $results[0] ?? null;
+        return $results[0] ?? null;
+    }
+
+    public static function getTotalRemainingBalanceKHR($start_date = null, $end_date = null)
+    {
+        // Auto default date handling
+        if (empty($start_date) || empty($end_date)) {
+            $year = date('Y');
+            $start_date = "$year-01-01";
+            $end_date = "$year-12-31";
         }
 
-        public static function getTotalRemainingBalanceKHR($start_date = null, $end_date = null)
-        {
-            // Auto default date handling
-            if (empty($start_date) || empty($end_date)) {
-                $year = date('Y');
-                $start_date = "$year-01-01";
-                $end_date   = "$year-12-31";
-            }
-
-            $result = DB::select("
+        $result = DB::select('
             SELECT
                 COALESCE(A.khr,0) - COALESCE(B.khr,0) AS remaining_balance_khr,
                 COALESCE(A.usd,0) - COALESCE(B.usd,0) AS remaining_balance_usd
@@ -158,15 +168,15 @@ class Dashboard extends Model implements Auditable
             (
                 -- income totals by currency
                 SELECT
-                    SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS khr,
-                    SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS usd
+                    SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::KHR).' THEN amount ELSE 0 END) AS khr,
+                    SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::USD).' THEN amount ELSE 0 END) AS usd
                 FROM (
-                    SELECT amount, currency_id FROM ".self::table('income')."
+                    SELECT amount, currency_id FROM '.self::table('income').'
                     WHERE issue_date BETWEEN ? AND ?
 
                     UNION ALL
 
-                    SELECT amount, currency_id FROM ".self::table('officer_payment')."
+                    SELECT amount, currency_id FROM '.self::table('officer_payment').'
                     WHERE issue_date BETWEEN ? AND ?
                 ) AS income_all
             ) AS A
@@ -174,86 +184,87 @@ class Dashboard extends Model implements Auditable
             (
                 -- expense totals by currency
                 SELECT
-                    SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS khr,
-                    SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS usd
+                    SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::KHR).' THEN amount ELSE 0 END) AS khr,
+                    SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::USD).' THEN amount ELSE 0 END) AS usd
                 FROM (
-                    SELECT amount, currency_id FROM ".self::table('expense')."
+                    SELECT amount, currency_id FROM '.self::table('expense').'
                     WHERE issue_date BETWEEN ? AND ?
 
                     UNION ALL
 
-                    SELECT amount, currency_id FROM ".self::table('officer_incentive')."
+                    SELECT amount, currency_id FROM '.self::table('officer_incentive').'
                     WHERE issue_date BETWEEN ? AND ?
                 ) AS expense_all
             ) AS B
-        ", [
-                $start_date . ' 00:00:00',
-                $end_date   . ' 23:59:59',
-                $start_date . ' 00:00:00',
-                $end_date   . ' 23:59:59',
-                $start_date . ' 00:00:00',
-                $end_date   . ' 23:59:59',
-                $start_date . ' 00:00:00',
-                $end_date   . ' 23:59:59'
-            ]);
-            return $result[0] ?? (object)[
-                'remaining_balance_khr' => 0,
-                'remaining_balance_usd' => 0,
-            ];
-        }
+        ', [
+            $start_date.' 00:00:00',
+            $end_date.' 23:59:59',
+            $start_date.' 00:00:00',
+            $end_date.' 23:59:59',
+            $start_date.' 00:00:00',
+            $end_date.' 23:59:59',
+            $start_date.' 00:00:00',
+            $end_date.' 23:59:59',
+        ]);
 
-        public static function getTotalIncentiveByCategory()
-        {
-            $result = "
+        return $result[0] ?? (object) [
+            'remaining_balance_khr' => 0,
+            'remaining_balance_usd' => 0,
+        ];
+    }
+
+    public static function getTotalIncentiveByCategory()
+    {
+        $result = '
             SELECT
                 B.id AS payment_type_id,
                 B.name_en AS payment_type_name,
                 -- Total KHR
                 SUM(
                     CASE
-                        WHEN A.currency_id = ".Currency::idOf(Currency::KHR)." THEN A.amount
+                        WHEN A.currency_id = '.Currency::idOf(Currency::KHR).' THEN A.amount
                         ELSE 0
                     END
                 ) AS total_amount_khr,
                 -- Total USD
                 SUM(
                     CASE
-                        WHEN A.currency_id = ".Currency::idOf(Currency::USD)." THEN A.amount
+                        WHEN A.currency_id = '.Currency::idOf(Currency::USD).' THEN A.amount
                         ELSE 0
                     END
                 ) AS total_amount_usd
             FROM
-                ".self::table('officer_incentive', 'A')." 
+                '.self::table('officer_incentive', 'A').' 
             INNER JOIN
-                ".self::table('payment_type', 'B')."  ON A.request_title = B.name_en -- should join by payment request id (need to add new field)
+                '.self::table('payment_type', 'B').'  ON A.request_title = B.name_en -- should join by payment request id (need to add new field)
             GROUP BY
                 B.id, B.name_en
             ORDER BY
                 B.id
-        ";
+        ';
 
-                return collect(DB::select($result))->map(function ($item) {
-                    return [
-                        'payment_type_id' => (int) $item->payment_type_id,
-                        'payment_type_name' => $item->payment_type_name,
-                        'total_amount_khr' => (float) $item->total_amount_khr,
-                        'total_amount_usd' => (float) $item->total_amount_usd,
-                    ];
-            });
-        }
+        return collect(DB::select($result))->map(function ($item) {
+            return [
+                'payment_type_id' => (int) $item->payment_type_id,
+                'payment_type_name' => $item->payment_type_name,
+                'total_amount_khr' => (float) $item->total_amount_khr,
+                'total_amount_usd' => (float) $item->total_amount_usd,
+            ];
+        });
+    }
 
-/**
- * @param int|null $year The year to report on. Defaults to current year.
- * @param int|null $quarter Specific quarter (1-4) to filter by, or null for all.
- * @return array
- */
-public static function getQuarterlyIncomeExpense($year = null, $quarter = null)
-{
-    // Default to current year if not provided
-    $year = $year ?? date('Y');
+    /**
+     * @param  int|null  $year  The year to report on. Defaults to current year.
+     * @param  int|null  $quarter  Specific quarter (1-4) to filter by, or null for all.
+     * @return array
+     */
+    public static function getQuarterlyIncomeExpense($year = null, $quarter = null)
+    {
+        // Default to current year if not provided
+        $year = $year ?? date('Y');
 
-    // Build SQL with positional '?' parameters
-    $sql = "
+        // Build SQL with positional '?' parameters
+        $sql = "
         SELECT
             Q.Q AS quarter,
             CONCAT('Q', Q.Q) AS quarter_label,
@@ -304,35 +315,35 @@ public static function getQuarterlyIncomeExpense($year = null, $quarter = null)
         ORDER BY Q.Q
     ";
 
-    $results = DB::select($sql, [
-        $year,
-        $year,
-        $quarter,
-        $quarter
-    ]);
+        $results = DB::select($sql, [
+            $year,
+            $year,
+            $quarter,
+            $quarter,
+        ]);
 
-    return $results;
-}
+        return $results;
+    }
 
-public static function getOfficerPaymentSummary()
-{
-    $sql = "
+    public static function getOfficerPaymentSummary()
+    {
+        $sql = '
         WITH payments AS (
             SELECT 
                 officer_id,
-                MAX(CASE WHEN status = ".Status::PAID." THEN 1 ELSE 0 END) AS has_paid,
-                SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS paid_khr,
-                SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS paid_usd
-            FROM ".self::table('officer_payment')."
+                MAX(CASE WHEN status = '.Status::PAID.' THEN 1 ELSE 0 END) AS has_paid,
+                SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::KHR).' THEN amount ELSE 0 END) AS paid_khr,
+                SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::USD).' THEN amount ELSE 0 END) AS paid_usd
+            FROM '.self::table('officer_payment').'
             GROUP BY officer_id
         ),
         payables AS (
             SELECT
                 officer_id,
-                SUM(CASE WHEN status = ".Status::UNPAID." AND currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS unpaid_khr,
-                SUM(CASE WHEN status = ".Status::UNPAID." AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS unpaid_usd,
+                SUM(CASE WHEN status = '.Status::UNPAID.' AND currency_id = '.Currency::idOf(Currency::KHR).' THEN amount ELSE 0 END) AS unpaid_khr,
+                SUM(CASE WHEN status = '.Status::UNPAID.' AND currency_id = '.Currency::idOf(Currency::USD).' THEN amount ELSE 0 END) AS unpaid_usd,
                 MAX(payment_term) AS payment_term
-            FROM ".self::table('officer_payable')."
+            FROM '.self::table('officer_payable').'
             GROUP BY officer_id
         )
         SELECT
@@ -347,25 +358,26 @@ public static function getOfficerPaymentSummary()
                 ROUND(100.0 * SUM(COALESCE(p.has_paid,0)) / NULLIF(COUNT(*),0))
                 AS UNSIGNED
             ) AS percent_paid
-        FROM ".self::table('officer', 'o')." 
+        FROM '.self::table('officer', 'o').' 
         LEFT JOIN payments p ON o.id = p.officer_id
         LEFT JOIN payables pay ON o.id = pay.officer_id
-        where o.status = ".Status::ACTIVE."
-    ";
+        where o.status = '.Status::ACTIVE.'
+    ';
 
-    // Execute SQL with an empty array, as this query has no parameters.
-    $results = DB::select($sql, []);
-    return $results[0] ?? (object)[
-        'total_officers' => 0,
-        'officers_paid' => 0,
-        'officers_unpaid' => 0,
-        'total_paid_khr' => 0,
-        'total_paid_usd' => 0,
-        'total_unpaid_khr' => 0,
-        'total_unpaid_usd' => 0,
-        'percent_paid' => 0
-    ];
-}
+        // Execute SQL with an empty array, as this query has no parameters.
+        $results = DB::select($sql, []);
+
+        return $results[0] ?? (object) [
+            'total_officers' => 0,
+            'officers_paid' => 0,
+            'officers_unpaid' => 0,
+            'total_paid_khr' => 0,
+            'total_paid_usd' => 0,
+            'total_unpaid_khr' => 0,
+            'total_unpaid_usd' => 0,
+            'percent_paid' => 0,
+        ];
+    }
 
     /**
      * Income and expense per month for the date range, split by currency.
@@ -376,7 +388,7 @@ public static function getOfficerPaymentSummary()
         if (empty($start_date) || empty($end_date)) {
             $year = date('Y');
             $start_date = "$year-01-01";
-            $end_date   = "$year-12-31";
+            $end_date = "$year-12-31";
         }
 
         $sumByMonth = function (array $tables) use ($start_date, $end_date) {
@@ -391,8 +403,8 @@ public static function getOfficerPaymentSummary()
 
             return collect(DB::select("
                 SELECT DATE_FORMAT(issue_date, '%Y-%m') AS month,
-                    SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS khr,
-                    SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS usd
+                    SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR).' THEN amount ELSE 0 END) AS khr,
+                    SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS usd
                 FROM ($union) AS t
                 GROUP BY month
             ", $bindings))->keyBy('month');
@@ -417,26 +429,26 @@ public static function getOfficerPaymentSummary()
         ];
     }
 
-public static function getOfficerPaymentSummaryFilterByDate($start_date = null, $end_date = null)
-{
+    public static function getOfficerPaymentSummaryFilterByDate($start_date = null, $end_date = null)
+    {
 
-    // Auto default date handling
-    if (empty($start_date) || empty($end_date)) {
-        $year = date('Y');
-        $start_date = "$year-01-01";
-        $end_date   = "$year-12-31";
-    }
+        // Auto default date handling
+        if (empty($start_date) || empty($end_date)) {
+            $year = date('Y');
+            $start_date = "$year-01-01";
+            $end_date = "$year-12-31";
+        }
 
-    $sql = "
+        $sql = '
         WITH payables AS (
             SELECT
                 officer_id,
                 COUNT(*) AS total_payables_range,
-                SUM(CASE WHEN status = ".Status::UNPAID." THEN 1 ELSE 0 END) AS unpaid_count,
+                SUM(CASE WHEN status = '.Status::UNPAID.' THEN 1 ELSE 0 END) AS unpaid_count,
                 -- Unpaid amounts
-                SUM(CASE WHEN status = ".Status::UNPAID." AND currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END) AS unpaid_khr,
-                SUM(CASE WHEN status = ".Status::UNPAID." AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS unpaid_usd
-            FROM ".self::table('officer_payable')."
+                SUM(CASE WHEN status = '.Status::UNPAID.' AND currency_id = '.Currency::idOf(Currency::KHR).' THEN amount ELSE 0 END) AS unpaid_khr,
+                SUM(CASE WHEN status = '.Status::UNPAID.' AND currency_id = '.Currency::idOf(Currency::USD).' THEN amount ELSE 0 END) AS unpaid_usd
+            FROM '.self::table('officer_payable').'
             -- Period is by due date: unpaid payables have no payment_date yet.
             WHERE due_date >= ?
             AND due_date <= ?
@@ -446,10 +458,10 @@ public static function getOfficerPaymentSummaryFilterByDate($start_date = null, 
             SELECT 
                 p.officer_id,
                 -- Only successful payments in the same period
-                SUM(CASE WHEN p.status = ".Status::PAID." AND p.currency_id = ".Currency::idOf(Currency::KHR)." THEN p.amount ELSE 0 END) AS paid_khr,
-                SUM(CASE WHEN p.status = ".Status::PAID." AND p.currency_id = ".Currency::idOf(Currency::USD)." THEN p.amount ELSE 0 END) AS paid_usd
-            FROM ".self::table('officer_payment', 'p')." 
-            INNER JOIN ".self::table('officer_payable', 'pa')."  
+                SUM(CASE WHEN p.status = '.Status::PAID.' AND p.currency_id = '.Currency::idOf(Currency::KHR).' THEN p.amount ELSE 0 END) AS paid_khr,
+                SUM(CASE WHEN p.status = '.Status::PAID.' AND p.currency_id = '.Currency::idOf(Currency::USD).' THEN p.amount ELSE 0 END) AS paid_usd
+            FROM '.self::table('officer_payment', 'p').' 
+            INNER JOIN '.self::table('officer_payable', 'pa').'  
                 ON p.ref_payable_id = pa.id
             AND pa.due_date >= ?
             AND pa.due_date <= ?
@@ -484,47 +496,49 @@ public static function getOfficerPaymentSummaryFilterByDate($start_date = null, 
                     ),
                     0
                 ) AS percent_paid
-        FROM ".self::table('officer', 'o')." 
+        FROM '.self::table('officer', 'o').' 
         LEFT JOIN payables pb ON o.id = pb.officer_id
         LEFT JOIN payments pm ON o.id = pm.officer_id
-        WHERE o.status = ".Status::ACTIVE."
-    ";
-     $results = DB::select($sql, [
-        $start_date,
-        $end_date,
-        $start_date,
-        $end_date
-    ]);
-    return $results[0] ?? null;
-}
+        WHERE o.status = '.Status::ACTIVE.'
+    ';
+        $results = DB::select($sql, [
+            $start_date,
+            $end_date,
+            $start_date,
+            $end_date,
+        ]);
 
-public static function getTotalOfficer()
-{
-    $sql = "
+        return $results[0] ?? null;
+    }
+
+    public static function getTotalOfficer()
+    {
+        $sql = "
         SELECT
             CAST(COUNT(*) AS SIGNED) AS totalMembers,
             CAST(SUM(CASE WHEN A.gender = 'male' THEN 1 ELSE 0 END) AS SIGNED) AS totalMales,
             CAST(SUM(CASE WHEN A.gender = 'female' THEN 1 ELSE 0 END) AS SIGNED) AS totalFemales,
-            CAST(SUM(CASE WHEN A.status = ".Status::ACTIVE." THEN 1 ELSE 0 END) AS SIGNED) AS activeMembers,
+            CAST(SUM(CASE WHEN A.status = ".Status::ACTIVE.' THEN 1 ELSE 0 END) AS SIGNED) AS activeMembers,
             CAST(SUM(CASE WHEN A.status = 14 THEN 1 ELSE 0 END) AS SIGNED) AS inactiveMembers,
             CAST(SUM(CASE WHEN A.status = 26 THEN 1 ELSE 0 END) AS SIGNED) AS deadMembers,
             CAST(SUM(CASE WHEN A.status = 27 THEN 1 ELSE 0 END) AS SIGNED) AS retiredMembers
-        FROM ".self::table('officer', 'A')." 
-        INNER JOIN ".self::table('mef_status', 'B')."  
+        FROM '.self::table('officer', 'A').' 
+        INNER JOIN '.self::table('mef_status', 'B')."  
             ON A.status = B.id 
         AND B.`group` IN ('STATUS','OFFICER')
     ";
-    $results = DB::select($sql, []);
-    return $results[0] ?? (object)[
-        'totalMembers' => 0,
-        'totalMales' => 0,
-        'totalFemales' => 0
-    ];
-}
+        $results = DB::select($sql, []);
 
-public static function getUserDetail($userID = null)
-{
-    $sql = "
+        return $results[0] ?? (object) [
+            'totalMembers' => 0,
+            'totalMales' => 0,
+            'totalFemales' => 0,
+        ];
+    }
+
+    public static function getUserDetail($userID = null)
+    {
+        $sql = '
         SELECT 
             B.identity_member_no                        AS memberId,
             COALESCE(A.`position`, B.`position`)        AS position,
@@ -534,14 +548,15 @@ public static function getUserDetail($userID = null)
             COALESCE(A.telephone_2, B.telephone_2)      AS telephone2,
             COALESCE(A.gender, B.gender)                AS gender,
             COALESCE(A.email, B.email)                  AS email
-        FROM ".self::table('users', 'A')." 
-        LEFT JOIN ".self::table('officer', 'B')." 
+        FROM '.self::table('users', 'A').' 
+        LEFT JOIN '.self::table('officer', 'B').' 
             ON A.officer_id = B.id
         WHERE A.id = :userID
-    ";
-    $result = DB::select($sql, ['userID' => $userID]);
-    return $result[0] ?? null;
-}
+    ';
+        $result = DB::select($sql, ['userID' => $userID]);
+
+        return $result[0] ?? null;
+    }
 
     /**
      * Fetch paginated notifications for a user
@@ -549,10 +564,10 @@ public static function getUserDetail($userID = null)
     public static function getNotificationListByUserId($userID = null, $limit = 10, $offset = 0)
     {
         // Ensure integers for safety
-        $limit  = (int) $limit;
+        $limit = (int) $limit;
         $offset = (int) $offset;
 
-        $sql = "
+        $sql = '
             SELECT 
                 notifiable_id   AS userId,
                 notifiable_type AS notifiableType,
@@ -561,7 +576,7 @@ public static function getUserDetail($userID = null)
                 created_at      AS notificationDateTime,
                 read_at         AS readDateTime,
                 status          AS status 
-            FROM ".self::table('notifications')."
+            FROM '.self::table('notifications')."
             WHERE notifiable_id = :userID
             ORDER BY created_at DESC
             LIMIT $limit OFFSET $offset
@@ -575,17 +590,18 @@ public static function getUserDetail($userID = null)
      */
     public static function countNotificationsByUserId($userID = null)
     {
-        $sql = "SELECT COUNT(*) AS total FROM ".self::table('notifications')." WHERE notifiable_id = :userID";
+        $sql = 'SELECT COUNT(*) AS total FROM '.self::table('notifications').' WHERE notifiable_id = :userID';
         $result = DB::selectOne($sql, ['userID' => $userID]);
+
         return $result->total ?? 0;
     }
 
-public static function getIncomeListing($limit = 10, $offset = 0)
-{
-    $limit  = (int) $limit;
-    $offset = (int) $offset;
+    public static function getIncomeListing($limit = 10, $offset = 0)
+    {
+        $limit = (int) $limit;
+        $offset = (int) $offset;
 
-    $sql = "
+        $sql = '
         SELECT
             title_kh          AS title,
             amount            AS amount,
@@ -595,42 +611,43 @@ public static function getIncomeListing($limit = 10, $offset = 0)
             reference         AS reference,
             issue_date        AS dateTime,
             status            AS status
-        FROM ".self::table('income')."
-        WHERE status = ".Status::ACTIVE."
+        FROM '.self::table('income').'
+        WHERE status = '.Status::ACTIVE."
         ORDER BY issue_date DESC
         LIMIT $limit OFFSET $offset
     ";
 
-    return collect(DB::select($sql))->map(function ($item) {
-        return [
-            'title'     => $item->title,
-            'amount'          => (float)$item->amount,
-            'currency'        => (int)$item->currency,
-            'exchangeRate'    => (float)$item->exchangeRate,
-            'remark'          => $item->remark,
-            'reference'       => $item->reference,
-            'dateTime'  => $item->dateTime,
-            'status'          => (int)$item->status,
-        ];
-    });
-}
+        return collect(DB::select($sql))->map(function ($item) {
+            return [
+                'title' => $item->title,
+                'amount' => (float) $item->amount,
+                'currency' => (int) $item->currency,
+                'exchangeRate' => (float) $item->exchangeRate,
+                'remark' => $item->remark,
+                'reference' => $item->reference,
+                'dateTime' => $item->dateTime,
+                'status' => (int) $item->status,
+            ];
+        });
+    }
 
-/**
- * Optional: count total for pagination
- */
-public static function countIncome()
-{
-    $sql = "SELECT COUNT(*) AS total FROM ".self::table('income')." WHERE status = ".Status::ACTIVE."";
-    $result = DB::selectOne($sql);
-    return $result->total ?? 0;
-}
+    /**
+     * Optional: count total for pagination
+     */
+    public static function countIncome()
+    {
+        $sql = 'SELECT COUNT(*) AS total FROM '.self::table('income').' WHERE status = '.Status::ACTIVE.'';
+        $result = DB::selectOne($sql);
 
-public static function getExpenseListing($limit = 10, $offset = 0)
-{
-    $limit  = (int) $limit;
-    $offset = (int) $offset;
+        return $result->total ?? 0;
+    }
 
-    $sql = "
+    public static function getExpenseListing($limit = 10, $offset = 0)
+    {
+        $limit = (int) $limit;
+        $offset = (int) $offset;
+
+        $sql = '
         SELECT
             title_kh          AS title,
             amount            AS amount,
@@ -640,42 +657,43 @@ public static function getExpenseListing($limit = 10, $offset = 0)
             reference         AS reference,
             issue_date        AS dateTime,
             status            AS status
-        FROM ".self::table('expense')."
-        WHERE status = ".Status::ACTIVE."
+        FROM '.self::table('expense').'
+        WHERE status = '.Status::ACTIVE."
         ORDER BY issue_date DESC
         LIMIT $limit OFFSET $offset
     ";
 
-    return collect(DB::select($sql))->map(function ($item) {
-        return [
-            'title'            => $item->title,
-            'amount'           => (float)$item->amount,
-            'currency'         => (int)$item->currency,
-            'exchangeRate'     => (float)$item->exchangeRate,
-            'remark'           => $item->remark,
-            'reference'        => $item->reference,
-            'dateTime'         => $item->dateTime,
-            'status'           => (int)$item->status,
-        ];
-    });
-}
+        return collect(DB::select($sql))->map(function ($item) {
+            return [
+                'title' => $item->title,
+                'amount' => (float) $item->amount,
+                'currency' => (int) $item->currency,
+                'exchangeRate' => (float) $item->exchangeRate,
+                'remark' => $item->remark,
+                'reference' => $item->reference,
+                'dateTime' => $item->dateTime,
+                'status' => (int) $item->status,
+            ];
+        });
+    }
 
-/**
- * Optional: total count for pagination
- */
-public static function countExpenses()
-{
-    $sql = "SELECT COUNT(*) AS total FROM ".self::table('expense')." WHERE status = ".Status::ACTIVE."";
-    $result = DB::selectOne($sql);
-    return $result->total ?? 0;
-}
+    /**
+     * Optional: total count for pagination
+     */
+    public static function countExpenses()
+    {
+        $sql = 'SELECT COUNT(*) AS total FROM '.self::table('expense').' WHERE status = '.Status::ACTIVE.'';
+        $result = DB::selectOne($sql);
 
-public static function getOfficerPaymentListing($limit = 10, $offset = 0)
-{
-    $limit  = (int) $limit;
-    $offset = (int) $offset;
+        return $result->total ?? 0;
+    }
 
-    $sql = "
+    public static function getOfficerPaymentListing($limit = 10, $offset = 0)
+    {
+        $limit = (int) $limit;
+        $offset = (int) $offset;
+
+        $sql = "
         SELECT 
             A.officer_id                               AS officerId,
             CONCAT(B.first_name , ' ', B.last_name)    AS memberFullName,
@@ -685,43 +703,44 @@ public static function getOfficerPaymentListing($limit = 10, $offset = 0)
             A.currency_id                              AS currency,
             A.note                                     AS remark,
             A.status                                   AS status
-        FROM ".self::table('officer_payment', 'A')." 
-        INNER JOIN ".self::table('officer', 'B')." 
+        FROM ".self::table('officer_payment', 'A').' 
+        INNER JOIN '.self::table('officer', 'B')." 
             ON A.officer_id = B.id
         ORDER BY A.payment_date DESC
         LIMIT $limit OFFSET $offset
     ";
 
-    return collect(DB::select($sql))->map(function ($item) {
-        return [
-            'officerId'       => (int) $item->officerId,
-            'memberFullName'  => $item->memberFullName,
-            'receiptNo'       => $item->receiptNo,
-            'dateTime'        => $item->dateTime,
-            'amount'          => (float) $item->amount,
-            'currency'        => (int) $item->currency,
-            'remark'          => $item->remark,
-            'status'          => (int) $item->status
-        ];
-    });
-}
+        return collect(DB::select($sql))->map(function ($item) {
+            return [
+                'officerId' => (int) $item->officerId,
+                'memberFullName' => $item->memberFullName,
+                'receiptNo' => $item->receiptNo,
+                'dateTime' => $item->dateTime,
+                'amount' => (float) $item->amount,
+                'currency' => (int) $item->currency,
+                'remark' => $item->remark,
+                'status' => (int) $item->status,
+            ];
+        });
+    }
 
-/**
- * Optional: total count for pagination
- */
-public static function countOfficerPayments()
-{
-    $sql = "SELECT COUNT(*) AS total FROM ".self::table('officer_payment')."";
-    $result = DB::selectOne($sql);
-    return $result->total ?? 0;
-}
+    /**
+     * Optional: total count for pagination
+     */
+    public static function countOfficerPayments()
+    {
+        $sql = 'SELECT COUNT(*) AS total FROM '.self::table('officer_payment').'';
+        $result = DB::selectOne($sql);
 
-public static function getOfficerIncentiveListing($limit = 10, $offset = 0)
-{
-    $limit  = (int) $limit;
-    $offset = (int) $offset;
+        return $result->total ?? 0;
+    }
 
-    $sql = "
+    public static function getOfficerIncentiveListing($limit = 10, $offset = 0)
+    {
+        $limit = (int) $limit;
+        $offset = (int) $offset;
+
+        $sql = "
         SELECT 
             A.officer_id                                 AS officerId,
             CONCAT(B.first_name , ' ', B.last_name)      AS memberFullName,
@@ -731,72 +750,74 @@ public static function getOfficerIncentiveListing($limit = 10, $offset = 0)
             A.amount                                     AS amount,
             A.currency_id                                AS currency,
             A.remark                                     AS remark
-        FROM ".self::table('officer_incentive', 'A')." 
-        LEFT JOIN ".self::table('officer', 'B')." 
+        FROM ".self::table('officer_incentive', 'A').' 
+        LEFT JOIN '.self::table('officer', 'B').' 
             ON A.officer_id = B.id
-        LEFT JOIN ".self::table('officer_request', 'C')." 
+        LEFT JOIN '.self::table('officer_request', 'C')." 
             ON A.ref_request_id = C.id
         ORDER BY A.issue_date DESC
         LIMIT $limit OFFSET $offset
     ";
 
-    return collect(DB::select($sql))->map(function ($item) {
-        return [
-            'officerId'       => (int) $item->officerId,
-            'memberFullName'  => $item->memberFullName,
-            'requestId'       => $item->requestId,
-            'title'           => $item->title,
-            'issueDateTime'   => $item->issueDateTime,
-            'amount'          => (float) $item->amount,
-            'currency'        => (int) $item->currency,
-            'remark'          => $item->remark
-        ];
-    });
-}
+        return collect(DB::select($sql))->map(function ($item) {
+            return [
+                'officerId' => (int) $item->officerId,
+                'memberFullName' => $item->memberFullName,
+                'requestId' => $item->requestId,
+                'title' => $item->title,
+                'issueDateTime' => $item->issueDateTime,
+                'amount' => (float) $item->amount,
+                'currency' => (int) $item->currency,
+                'remark' => $item->remark,
+            ];
+        });
+    }
 
-/**
- * Optional: total count for pagination
- */
-public static function countOfficerIncentives()
-{
-    $sql = "SELECT COUNT(*) AS total FROM ".self::table('officer_incentive')."";
-    $result = DB::selectOne($sql);
-    return $result->total ?? 0;
-}
+    /**
+     * Optional: total count for pagination
+     */
+    public static function countOfficerIncentives()
+    {
+        $sql = 'SELECT COUNT(*) AS total FROM '.self::table('officer_incentive').'';
+        $result = DB::selectOne($sql);
 
-public static function getOfficerRequestSummary()
-{
-    $sql = "
+        return $result->total ?? 0;
+    }
+
+    public static function getOfficerRequestSummary()
+    {
+        $sql = '
         SELECT 
             S.title_en AS statusNameEn,
             S.title_kh AS statusNameKh,
             COUNT(R.id) AS totalRequests,
-            SUM(CASE WHEN R.currency_id = ".Currency::idOf(Currency::KHR)." THEN R.amount ELSE 0 END) AS total_amount_khr,
-            SUM(CASE WHEN R.currency_id = ".Currency::idOf(Currency::USD)." THEN R.amount ELSE 0 END) AS total_amount_usd
-        FROM ".self::table('officer_request', 'R')." 
-        INNER JOIN ".self::table('mef_status', 'S')."  
+            SUM(CASE WHEN R.currency_id = '.Currency::idOf(Currency::KHR).' THEN R.amount ELSE 0 END) AS total_amount_khr,
+            SUM(CASE WHEN R.currency_id = '.Currency::idOf(Currency::USD).' THEN R.amount ELSE 0 END) AS total_amount_usd
+        FROM '.self::table('officer_request', 'R').' 
+        INNER JOIN '.self::table('mef_status', 'S')."  
             ON R.status = S.id
         WHERE S.`group` = 'CEILING'
         GROUP BY S.id, S.title_en, S.title_kh
         ORDER BY S.id
     ";
-    return collect(DB::select($sql))->map(function ($item) {
-        return [
-            'statusNameEn' => $item->statusNameEn,
-            'statusNameKh' => $item->statusNameKh,
-            'totalRequests' => (int) $item->totalRequests,
-            'totalAmountKhr' => (float) $item->total_amount_khr,
-            'totalAmountUsd' => (float) $item->total_amount_usd
-        ];
-    });
-}
 
-public static function getOfficerRequestListing($limit = 10, $offset = 0)
-{
-    $limit  = (int) $limit;
-    $offset = (int) $offset;
+        return collect(DB::select($sql))->map(function ($item) {
+            return [
+                'statusNameEn' => $item->statusNameEn,
+                'statusNameKh' => $item->statusNameKh,
+                'totalRequests' => (int) $item->totalRequests,
+                'totalAmountKhr' => (float) $item->total_amount_khr,
+                'totalAmountUsd' => (float) $item->total_amount_usd,
+            ];
+        });
+    }
 
-    $sql = "
+    public static function getOfficerRequestListing($limit = 10, $offset = 0)
+    {
+        $limit = (int) $limit;
+        $offset = (int) $offset;
+
+        $sql = "
         SELECT 
             A.officer_id                              AS officerId,
             CONCAT(B.first_name , ' ', B.last_name)   AS memberFullName,
@@ -807,44 +828,45 @@ public static function getOfficerRequestListing($limit = 10, $offset = 0)
             A.request_date                            AS requestDateTime,
             A.remark                                  AS remark,
             A.status                                  AS status
-        FROM ".self::table('officer_request', 'A')." 
-        LEFT JOIN ".self::table('officer', 'B')." 
+        FROM ".self::table('officer_request', 'A').' 
+        LEFT JOIN '.self::table('officer', 'B')." 
             ON A.officer_id = B.id
         ORDER BY A.request_date DESC
         LIMIT $limit OFFSET $offset
     ";
 
-    return collect(DB::select($sql))->map(function ($item) {
-        return [
-            'officerId'       => (int) $item->officerId,
-            'memberFullName'  => $item->memberFullName,
-            'title'           => $item->requestTitle,
-            'amount'          => (float) $item->amount,
-            'currency'        => (int) $item->currency,
-            'issueDateTime'   => $item->issueDateTime,
-            'requestDateTime' => $item->requestDateTime,
-            'remark'          => $item->remark,
-            'status'          => $item->status,
-        ];
-    });
-}
+        return collect(DB::select($sql))->map(function ($item) {
+            return [
+                'officerId' => (int) $item->officerId,
+                'memberFullName' => $item->memberFullName,
+                'title' => $item->requestTitle,
+                'amount' => (float) $item->amount,
+                'currency' => (int) $item->currency,
+                'issueDateTime' => $item->issueDateTime,
+                'requestDateTime' => $item->requestDateTime,
+                'remark' => $item->remark,
+                'status' => $item->status,
+            ];
+        });
+    }
 
-/**
- * Optional: get total count for pagination
- */
-public static function countOfficerRequests()
-{
-    $sql = "SELECT COUNT(*) AS total FROM ".self::table('officer_request')."";
-    $result = DB::selectOne($sql);
-    return $result->total ?? 0;
-}
+    /**
+     * Optional: get total count for pagination
+     */
+    public static function countOfficerRequests()
+    {
+        $sql = 'SELECT COUNT(*) AS total FROM '.self::table('officer_request').'';
+        $result = DB::selectOne($sql);
 
-public static function getOfficersListing($limit = 10, $offset = 0)
-{
-    $limit  = (int) $limit;
-    $offset = (int) $offset;
+        return $result->total ?? 0;
+    }
 
-    $sql = "
+    public static function getOfficersListing($limit = 10, $offset = 0)
+    {
+        $limit = (int) $limit;
+        $offset = (int) $offset;
+
+        $sql = "
         SELECT 
             A.id                                      AS officerId,
             CONCAT(A.first_name, ' ', A.last_name)    AS fullName,
@@ -858,144 +880,144 @@ public static function getOfficersListing($limit = 10, $offset = 0)
             A.address                                 AS address,
             A.email                                   AS email,
             A.photo                                   AS photo
-        FROM ".self::table('officer', 'A')." 
-        LEFT JOIN ".self::table('department', 'D')."  ON D.id = A.department_id
-        WHERE A.status = ".Status::ACTIVE."
+        FROM ".self::table('officer', 'A').' 
+        LEFT JOIN '.self::table('department', 'D').'  ON D.id = A.department_id
+        WHERE A.status = '.Status::ACTIVE."
         ORDER BY A.id DESC
         LIMIT $limit OFFSET $offset
     ";
 
-    return collect(DB::select($sql))->map(function ($item) {
-        return [
-            'officerId'        => (int) $item->officerId,
-            'fullName'         => $item->fullName,
-            'latin'            => $item->latin,
-            'identityMemberNo' => $item->identityMemberNo,
-            'dob'              => $item->dateOfBirth,
-            'nationality'      => $item->nationality,
-            'title'            => $item->title,
-            'department'       => $item->department,
-            'gender'           => $item->gender,
-            'address'          => $item->address,
-            'email'            => $item->email,
-            'photo'            => $item->photo,
-        ];
-    });
-}
+        return collect(DB::select($sql))->map(function ($item) {
+            return [
+                'officerId' => (int) $item->officerId,
+                'fullName' => $item->fullName,
+                'latin' => $item->latin,
+                'identityMemberNo' => $item->identityMemberNo,
+                'dob' => $item->dateOfBirth,
+                'nationality' => $item->nationality,
+                'title' => $item->title,
+                'department' => $item->department,
+                'gender' => $item->gender,
+                'address' => $item->address,
+                'email' => $item->email,
+                'photo' => $item->photo,
+            ];
+        });
+    }
 
-public static function countOfficers()
-{
-    $sql = "SELECT COUNT(*) AS total FROM ".self::table('officer')." WHERE status = ".Status::ACTIVE."";
-    $result = DB::selectOne($sql);
-    return $result->total ?? 0;
-}
+    public static function countOfficers()
+    {
+        $sql = 'SELECT COUNT(*) AS total FROM '.self::table('officer').' WHERE status = '.Status::ACTIVE.'';
+        $result = DB::selectOne($sql);
 
-public static function countOfficersByGender()
-{
-    $sql = "
+        return $result->total ?? 0;
+    }
+
+    public static function countOfficersByGender()
+    {
+        $sql = "
         SELECT 
             SUM(CASE WHEN gender = 'M' THEN 1 ELSE 0 END) AS totalMale,
             SUM(CASE WHEN gender = 'F' THEN 1 ELSE 0 END) AS totalFemale,
             COUNT(*) AS total
-        FROM ".self::table('officer')."
-        WHERE status = ".Status::ACTIVE."
-    ";
+        FROM ".self::table('officer').'
+        WHERE status = '.Status::ACTIVE.'
+    ';
 
-    $result = DB::selectOne($sql);
+        $result = DB::selectOne($sql);
 
-    return [
-        'totalMale'   => (int) ($result->totalMale ?? 0),
-        'totalFemale' => (int) ($result->totalFemale ?? 0),
-        'total'       => (int) ($result->total ?? 0),
-    ];
-}
+        return [
+            'totalMale' => (int) ($result->totalMale ?? 0),
+            'totalFemale' => (int) ($result->totalFemale ?? 0),
+            'total' => (int) ($result->total ?? 0),
+        ];
+    }
 
-public static function getStatusList($group)
-{
-    return DB::table('mef_status')
-        ->select(
-            'id as id',
-            'title_en as name_en',
-            'title_kh as name_kh'
-        )
-        ->where('group', $group)
-        ->get();
-}
+    public static function getStatusList($group)
+    {
+        return DB::table('mef_status')
+            ->select(
+                'id as id',
+                'title_en as name_en',
+                'title_kh as name_kh'
+            )
+            ->where('group', $group)
+            ->get();
+    }
 
-public static function getListitles()
-{
-    return DB::table('title')
-        ->select(
-            'id',
-            'name_en as title_en',
-            'name_kh as title_kh'
-        )
-        ->get();
-}
+    public static function getListitles()
+    {
+        return DB::table('title')
+            ->select(
+                'id',
+                'name_en as title_en',
+                'name_kh as title_kh'
+            )
+            ->get();
+    }
 
-public static function getAllPaymentMethods()
-{
-    return DB::table('payment_method')
-        ->select(
-            'id',
-            'name_en',
-            'name_kh'
-        )
-        ->orderByLevel()
-        ->orderBy('id')
-        ->get();
-}
+    public static function getAllPaymentMethods()
+    {
+        return DB::table('payment_method')
+            ->select(
+                'id',
+                'name_en',
+                'name_kh'
+            )
+            ->orderByLevel()
+            ->orderBy('id')
+            ->get();
+    }
 
-public static function getAllAccounts()
-{
-    return DB::table('account')
-        ->select(
-            'code',
-            'name_en',
-            'name_kh'
-        )
-        ->orderBy('code')
-        ->get();
-}
+    public static function getAllAccounts()
+    {
+        return DB::table('account')
+            ->select(
+                'code',
+                'name_en',
+                'name_kh'
+            )
+            ->orderBy('code')
+            ->get();
+    }
 
-public static function getDutyList()
-{
-    return DB::table('duty')
-        ->select(
-            'id',
-            'name_en',
-            'name_kh'
-        )
-        ->orderByLevel()
-        ->orderBy('id')
-        ->get();
-}
+    public static function getDutyList()
+    {
+        return DB::table('duty')
+            ->select(
+                'id',
+                'name_en',
+                'name_kh'
+            )
+            ->orderByLevel()
+            ->orderBy('id')
+            ->get();
+    }
 
-public static function getPositionList()
-{
-    return DB::table('position')
-        ->select(
-            'id',
-            'name_en',
-            'name_kh'
-        )
-        ->orderByLevel()
-        ->orderBy('id')
-        ->get();
-}
+    public static function getPositionList()
+    {
+        return DB::table('position')
+            ->select(
+                'id',
+                'name_en',
+                'name_kh'
+            )
+            ->orderByLevel()
+            ->orderBy('id')
+            ->get();
+    }
 
-public static function getEntityList()
-{
-    return DB::table('entity')
-        ->select(
-            'id',
-            'parent_id',
-            'code',
-            'department_id',
-            'name_kh',
-            'name_en'
-        )
-        ->get();
-}
-
+    public static function getEntityList()
+    {
+        return DB::table('entity')
+            ->select(
+                'id',
+                'parent_id',
+                'code',
+                'department_id',
+                'name_kh',
+                'name_en'
+            )
+            ->get();
+    }
 }

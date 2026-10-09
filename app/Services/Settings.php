@@ -34,6 +34,7 @@ class Settings
     public static function get(string $key, $default = null)
     {
         $value = static::all()[$key] ?? null;
+
         return $value ?? $default ?? (static::DEFAULTS[$key] ?? null);
     }
 

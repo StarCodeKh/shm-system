@@ -35,7 +35,9 @@ class RolePermissionSeeder extends Seeder
                         ?? DB::table('permission_group')->insertGetId(['name' => $groupName, 'order_level' => ++$order, 'created_at' => $now, 'updated_at' => $now]);
                 }
                 foreach ($permissions as $name) {
-                    if (DB::table('permissions')->where('name', $name)->where('guard_name', self::GUARD)->exists()) continue;
+                    if (DB::table('permissions')->where('name', $name)->where('guard_name', self::GUARD)->exists()) {
+                        continue;
+                    }
                     $added[$name] = DB::table('permissions')->insertGetId(['group' => $groupId, 'name' => $name, 'guard_name' => self::GUARD, 'created_at' => $now, 'updated_at' => $now]);
                 }
             }
@@ -44,7 +46,9 @@ class RolePermissionSeeder extends Seeder
                 $roleId = DB::table('roles')->where('name', $roleName)->where('guard_name', self::GUARD)->value('id')
                     ?? DB::table('roles')->insertGetId(['name' => $roleName, 'guard_name' => self::GUARD, 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now]);
 
-                if (!$permissions) continue;
+                if (! $permissions) {
+                    continue;
+                }
                 if (DB::table('role_has_permissions')->where('role_id', $roleId)->exists()) {
                     // Role already set up: only the permissions created in this run that it has by default
                     $ids = collect(array_intersect_key($added, array_flip($permissions)))->values();

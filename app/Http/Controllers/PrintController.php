@@ -69,10 +69,12 @@ class PrintController extends Controller
                 $value = $row[$key] ?? null;
                 $clean[$key] = is_scalar($value) ? (string) $value : null;
             }
+
             return $clean;
         }, $input['rows']);
 
         $total = $input['total'] ?? count($rows);
+
         return [
             'title' => $input['title'],
             'description' => $input['description'] ?? '',

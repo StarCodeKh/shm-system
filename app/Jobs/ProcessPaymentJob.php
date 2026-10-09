@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\OfficerPayable;
 use App\Models\OfficerPayment;
+use App\Models\Settings\Status;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -12,7 +13,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use App\Models\Settings\Status;
 
 // Assuming you have a PaymentGateway service/facade
 // use App\Services\PaymentGateway;
@@ -53,12 +53,13 @@ class ProcessPaymentJob implements ShouldQueue
         // Ensure the payable is still pending and not being processed by another job
         DB::transaction(function () {
             $payable = OfficerPayable::where('id', $this->payable->id)
-                                ->where('status', Status::UNPAID) // Check Unpaid Status
-                                ->lockForUpdate()
-                                ->first();
+                ->where('status', Status::UNPAID) // Check Unpaid Status
+                ->lockForUpdate()
+                ->first();
 
-            if (!$payable) {
-                Log::info('Payable ' . $this->payable->id . ' already processed or not pending.');
+            if (! $payable) {
+                Log::info('Payable '.$this->payable->id.' already processed or not pending.');
+
                 return; // Already processed or status changed
             }
 
@@ -68,7 +69,7 @@ class ProcessPaymentJob implements ShouldQueue
         try {
             // Simulate payment gateway interaction
             // In a real application, this would call your PaymentGateway service
-            $transactionId = 'txn_' . Str::random(20);
+            $transactionId = 'txn_'.Str::random(20);
             $paymentSuccessful = (bool) random_int(0, 1); // Simulate success/failure
 
             if ($paymentSuccessful) {
@@ -88,7 +89,7 @@ class ProcessPaymentJob implements ShouldQueue
                         'currency_id' => $payable->currency_id,
                         'exchange_rate' => $payable->exchange_rate,
                         'payment_method_id' => $payable->payment_method_id,
-                        'note' => 'Payment successful for ' . $payable->description,
+                        'note' => 'Payment successful for '.$payable->description,
                         'attach' => $payable->attach,
                         'created_by' => $payable->created_by,
                         'modified_by' => $payable->modified_by,
@@ -101,7 +102,7 @@ class ProcessPaymentJob implements ShouldQueue
                     }
                 });
 
-                Log::info('Payment for payable ' . $payable->id . ' successful. Transaction ID: ' . $transactionId);
+                Log::info('Payment for payable '.$payable->id.' successful. Transaction ID: '.$transactionId);
             } else {
                 // Payment failed at gateway
                 DB::transaction(function () use ($payable, $transactionId) {
@@ -123,12 +124,12 @@ class ProcessPaymentJob implements ShouldQueue
                         'attach' => $payable->attach,
                         'created_by' => $payable->created_by,
                         'modified_by' => $payable->modified_by,
-                        'note' => 'Payment failed for ' . $payable->description,
+                        'note' => 'Payment failed for '.$payable->description,
                         'status' => 24, // Status = 24 means error status
                     ]);
                 });
 
-                Log::warning('Payment for payable ' . $payable->id . ' failed. Transaction ID: ' . $transactionId);
+                Log::warning('Payment for payable '.$payable->id.' failed. Transaction ID: '.$transactionId);
                 // Optionally, re-throw to trigger job retry based on $tries
                 // throw new Exception('Payment gateway declined transaction.');
             }
@@ -151,13 +152,11 @@ class ProcessPaymentJob implements ShouldQueue
                     'created_by' => $payable->created_by,
                     'modified_by' => $payable->modified_by,
                     'status' => 24, // Status = 24 means error status
-                    'note' => 'Payment processing error: ' . $e->getMessage(),
+                    'note' => 'Payment processing error: '.$e->getMessage(),
                 ]);
             });
-            Log::error('Error processing payment for payable ' . $payable->id . ': ' . $e->getMessage());
+            Log::error('Error processing payment for payable '.$payable->id.': '.$e->getMessage());
             $this->fail($e); // Mark job as failed and move to failed_jobs table
         }
     }
 }
-
-?>

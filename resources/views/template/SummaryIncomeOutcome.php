@@ -1,13 +1,14 @@
 <?php
-    header("Content-type: application/vnd.ms-excel");
-    header("Content-Disposition: attachment;Filename=document_name.xls");
-    echo "<html>";
-    echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
-    echo '<body style="font-family: Khmer MEF1">';
-        echo '<center><br> <span class="font-mef2" style="color: rgb(13, 114, 162); font-size: 10pt;">
+
+header('Content-type: application/vnd.ms-excel');
+header('Content-Disposition: attachment;Filename=document_name.xls');
+echo '<html>';
+echo '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">';
+echo '<body style="font-family: Khmer MEF1">';
+echo '<center><br> <span class="font-mef2" style="color: rgb(13, 114, 162); font-size: 10pt;">
         របាយការណ៍សង្ខេបនៃការប្រើប្រាស់ចំណូលមិនមែនសារពើពន្ធរបស់ក្រសួង-ស្ថាប័ន<br>
         ប្រមូលសម្រាប់ការផ្តល់ការលើកទឹកចិត្តលើការងារកែទម្រង់ការគ្រប់គ្រងហិរញ្ញវត្ថុសាធារណៈ ឆ្នាំ២០២១<br></span> <div class="clearfix"></div> <br></center>';
-        echo '<table border="1" class="table"><thead><tr style="background: rgb(227, 227, 227);"><th><center>ល.រ</center></th> <th><center>កូដ+អង្គភាព</center></th> <th colspan="2"><center>បណ្តាឆ្នាំមុន <span class="color-blue">*</span></center></th> <th colspan="2"><center>ក្នុងឆ្នាំ <span class="color-blue">**</span></center></th> <th colspan="2"><center>បូកយោង</center></th> <th rowspan="1"><center>សមតុល្យ</center></th></tr> <tr><th colspan="2"><center></center></th> <th style="color: green;"><center>ចំណូល</center></th> <th style="color: red;"><center>ចំណាយ</center></th> <th style="color: green;"><center>ចំណូល</center></th> <th style="color: red;"><center>ចំណាយ</center></th> <th style="color: green;"><center>ចំណូល</center></th> <th style="color: red;"><center>ចំណាយ</center></th> <th></th></tr></thead> <tr data="[object Object]"><td><center>1</center></td> <td><b>17-គណៈកម្មការមូលបត្រកម្ពុជា</b></td> <td><span><center>-</center></span></td> <td><span>297,200,000</span></td> <td><span><center>-</center></span></td> <td><span><center>-</center></span></td> <td><span><center>-</center></span></td> <td><span>297,200,000</span></td> <td><span style="color: red;">
+echo '<table border="1" class="table"><thead><tr style="background: rgb(227, 227, 227);"><th><center>ល.រ</center></th> <th><center>កូដ+អង្គភាព</center></th> <th colspan="2"><center>បណ្តាឆ្នាំមុន <span class="color-blue">*</span></center></th> <th colspan="2"><center>ក្នុងឆ្នាំ <span class="color-blue">**</span></center></th> <th colspan="2"><center>បូកយោង</center></th> <th rowspan="1"><center>សមតុល្យ</center></th></tr> <tr><th colspan="2"><center></center></th> <th style="color: green;"><center>ចំណូល</center></th> <th style="color: red;"><center>ចំណាយ</center></th> <th style="color: green;"><center>ចំណូល</center></th> <th style="color: red;"><center>ចំណាយ</center></th> <th style="color: green;"><center>ចំណូល</center></th> <th style="color: red;"><center>ចំណាយ</center></th> <th></th></tr></thead> <tr data="[object Object]"><td><center>1</center></td> <td><b>17-គណៈកម្មការមូលបត្រកម្ពុជា</b></td> <td><span><center>-</center></span></td> <td><span>297,200,000</span></td> <td><span><center>-</center></span></td> <td><span><center>-</center></span></td> <td><span><center>-</center></span></td> <td><span>297,200,000</span></td> <td><span style="color: red;">
         -297,200,000
     </span></td></tr><tr data="[object Object]"><td><center>2</center></td> <td><b>20-ក្រសួងអប់រំ យុវជន និងកីឡា</b></td> <td><span>17,303,500</span></td> <td><span>401,200,000</span></td> <td><span><center>-</center></span></td> <td><span><center>-</center></span></td> <td><span>17,303,500</span></td> <td><span>401,200,000</span></td> <td><span style="color: red;">
         -383,896,500
@@ -90,6 +91,5 @@
     </span></td></tr><tr data="[object Object]"><td><center>41</center></td> <td><b>59-ក្រសួងព័ត៌មាន</b></td> <td><span>52,546,841.5</span></td> <td><span>309,200,000</span></td> <td><span><center>-</center></span></td> <td><span><center>-</center></span></td> <td><span>52,546,841.5</span></td> <td><span>309,200,000</span></td> <td><span style="color: red;">
         -256,653,158.5
     </span></td></tr> <tr style="background-color: rgb(179, 230, 255);"><td colspan="2"><span class="font-mef2"><center>សរុប(គិតជារៀល)</center></span></td> <td><b style="text-decoration: underline;">25,419,931,485.92</b></td> <td><b style="text-decoration: underline;">14,098,200,000</b></td> <td><b style="text-decoration: underline;">0</b></td> <td><b style="text-decoration: underline;">0</b></td> <td><b style="text-decoration: underline;">25,419,931,485.92</b></td> <td><b style="text-decoration: underline;">14,098,200,000</b></td> <td><b style="text-decoration: underline;">11,321,731,485.92</b></td></tr> <tr style="background-color: rgb(179, 230, 255);"><td colspan="2"><span class="font-mef2"><center>សរុប(គិតជាដុល្លា)</center></span></td> <td><b style="text-decoration: underline;">$ 6,354,982.871</b></td> <td><b style="text-decoration: underline;">$ 3,524,550</b></td> <td><b style="text-decoration: underline;">$ 0</b></td> <td><b style="text-decoration: underline;">$ 0</b></td> <td><b style="text-decoration: underline;">$ 6,354,982.871</b></td> <td><b style="text-decoration: underline;">$ 3,524,550</b></td> <td><b style="text-decoration: underline;">$ 2,830,432.871</b></td></tr></table>';
-    echo "</body>";
-    echo "</html>";
-?>
+echo '</body>';
+echo '</html>';

@@ -1,20 +1,28 @@
 <?php
 
 namespace App\Models\Settings;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Model;
-use DB;
-use Spatie\Permission\Traits\HasRoles;
+
 use CommonService;
+use DB;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Enumerable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Permission\Traits\HasRoles;
+
 class AccountType extends Model implements Auditable, FromCollection, WithHeadings
 {
-    use \OwenIt\Auditing\Auditable, HasRoles;
+    use HasRoles, \OwenIt\Auditing\Auditable;
+
     protected $table = 'account_type';
+
     protected $guarded = [];
+
     protected $primaryKey = 'id';
+
     protected $fillable = [];
+
     public $timestamps = false;
 
     public function AccountTypeGroup()
@@ -25,86 +33,95 @@ class AccountType extends Model implements Auditable, FromCollection, WithHeadin
     // public static function
     public static function dataFields()
     {
-        $data["tables"] = DB::select('show columns from ' . DB::getTablePrefix() . (new AccountType)->getTable());
-        $str = "";
-        for ($i = 0; $i < count($data["tables"]); $i++) {
-            if ($data["tables"][$i]->Null == "NO" && $data["tables"][$i]->Field != 'id') {
-                $str .= $data["tables"][$i]->Field . ",";
+        $data['tables'] = DB::select('show columns from '.DB::getTablePrefix().(new AccountType)->getTable());
+        $str = '';
+        for ($i = 0; $i < count($data['tables']); $i++) {
+            if ($data['tables'][$i]->Null == 'NO' && $data['tables'][$i]->Field != 'id') {
+                $str .= $data['tables'][$i]->Field.',';
             }
         }
-        $newArr = explode(",", $str);
+        $newArr = explode(',', $str);
         array_pop($newArr);
         $dataFields = $newArr;
+
         return $dataFields;
     }
 
-    public static function getSingleOpt(){
+    public static function getSingleOpt()
+    {
         $query = AccountType::whereNotDeleted()->get();
-        $data = array();
-        foreach($query as $row){
-            $data[] = array(
-                "label" => $row->name_en,
-                "value" => $row->type_code
-            );
+        $data = [];
+        foreach ($query as $row) {
+            $data[] = [
+                'label' => $row->name_en,
+                'value' => $row->type_code,
+            ];
         }
+
         return $data;
     }
 
-    public static function formAttributes(){
-        $formAttributes = array();
-        $data["tables"] = DB::select('show columns from ' . DB::getTablePrefix() . (new AccountType)->getTable());
-        for ($i = 0; $i < count($data["tables"]); $i++) {
-            if ($data["tables"][$i]->Field != "id" && $data["tables"][$i]->Field != "created_by" && $data["tables"][$i]->Field != "modified_by" && $data["tables"][$i]->Field != "created_at" && $data["tables"][$i]->Field != "updated_at") {
-                $formAttributes[] = array(
-                    "name" => $data["tables"][$i]->Field,
-                    "type" => CommonService::convertDataType($data["tables"][$i]),
-                    "required" => $data["tables"][$i]->Null == "NO" ? true : false,
-                );
+    public static function formAttributes()
+    {
+        $formAttributes = [];
+        $data['tables'] = DB::select('show columns from '.DB::getTablePrefix().(new AccountType)->getTable());
+        for ($i = 0; $i < count($data['tables']); $i++) {
+            if ($data['tables'][$i]->Field != 'id' && $data['tables'][$i]->Field != 'created_by' && $data['tables'][$i]->Field != 'modified_by' && $data['tables'][$i]->Field != 'created_at' && $data['tables'][$i]->Field != 'updated_at') {
+                $formAttributes[] = [
+                    'name' => $data['tables'][$i]->Field,
+                    'type' => CommonService::convertDataType($data['tables'][$i]),
+                    'required' => $data['tables'][$i]->Null == 'NO' ? true : false,
+                ];
             }
         }
+
         return $formAttributes;
     }
 
     public static function getAccTypes()
     {
         $query = AccountType::orderByLevel()->whereNotDeleted()->get();
-        $data = array();
+        $data = [];
         foreach ($query as $row) {
-            $data[] = array(
-                "label" => CommonService::localName($row),
-                "value" => $row->id,
-            );
+            $data[] = [
+                'label' => CommonService::localName($row),
+                'value' => $row->id,
+            ];
         }
+
         return $data;
     }
 
-    public static function getAccTypeCode(){
+    public static function getAccTypeCode()
+    {
         $query = AccountType::orderByLevel()->whereNotDeleted()->get();
-        $data = array();
-        foreach($query as $row){
-            $data[] = array(
-                "label" => $row->type_code.': '.$row->name_en,
-                "value" => $row->type_code,
-            );
+        $data = [];
+        foreach ($query as $row) {
+            $data[] = [
+                'label' => $row->type_code.': '.$row->name_en,
+                'value' => $row->type_code,
+            ];
         }
+
         return $data;
     }
 
-    public static function checkQuery($filter){
-        $whereClause = "";
+    public static function checkQuery($filter)
+    {
+        $whereClause = '';
         $query = AccountType::orderByFilter($filter);
         $whereClause = $query;
-        if ($filter["search_field"]) {
-            $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
+        if ($filter['search_field']) {
+            $arraySingle = call_user_func_array('array_merge', $filter['search_field']);
             $dataFields = $arraySingle;
-            if (isset($filter["search_field"])) {
-                for ($i = 0; $i < count($filter["search_field"]); $i++) {
-                    $field = array_key_first($filter["search_field"][$i]); //array('key1', 'key2', 'key3');
+            if (isset($filter['search_field'])) {
+                for ($i = 0; $i < count($filter['search_field']); $i++) {
+                    $field = array_key_first($filter['search_field'][$i]); // array('key1', 'key2', 'key3');
                     if (array_key_exists($field, $dataFields)) {
-                        if (isset($filter["search_field"][$i][$field]["value"])) {
-                            $whereClause->Where($field, 'Like', '%' . $filter["search_field"][$i][$field]["value"] . '%');
+                        if (isset($filter['search_field'][$i][$field]['value'])) {
+                            $whereClause->Where($field, 'Like', '%'.$filter['search_field'][$i][$field]['value'].'%');
                         } else {
-                            $whereClause->Where($field, 'Like', '%' . $filter["search_field"][$i][$field] . '%');
+                            $whereClause->Where($field, 'Like', '%'.$filter['search_field'][$i][$field].'%');
                         }
                     }
                 }
@@ -112,6 +129,7 @@ class AccountType extends Model implements Auditable, FromCollection, WithHeadin
         }
 
         $whereClause->whereNotDeleted();
+
         return $whereClause;
     }
 
@@ -119,19 +137,20 @@ class AccountType extends Model implements Auditable, FromCollection, WithHeadin
     {
         $data = [];
         $whereClause = AccountType::checkQuery($filter);
-        $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);
-        $whereClause->limit($filter["limit"]);
+        $whereClause->offset(($filter['page_number'] - 1) * $filter['limit']);
+        $whereClause->limit($filter['limit']);
         $results = collect($whereClause->get());
         foreach ($results as $row) {
-            $data[] = array(
+            $data[] = [
                 'id' => $row->id,
                 'type_code' => $row->type_code,
-                "name_en" => $row->name_en?$row->name_en:"",
-                "name_kh" => $row->name_kh?$row->name_kh:"",
+                'name_en' => $row->name_en ? $row->name_en : '',
+                'name_kh' => $row->name_kh ? $row->name_kh : '',
                 'description' => $row->description,
                 'order_level' => $row->order_level,
-            );
+            ];
         }
+
         return $data;
     }
 
@@ -140,36 +159,38 @@ class AccountType extends Model implements Auditable, FromCollection, WithHeadin
         $total = 0;
         $whereClause = AccountType::checkQuery($filter);
         $total = $whereClause->count();
+
         return $total;
     }
 
-    public function collection(): \Illuminate\Support\Enumerable
+    public function collection(): Enumerable
     {
-        $filter = array(
-            "sort" => "id",
-            "order" => "asc",
-            "page_number" => 1,
-            "limit" => 100,
-            "search_field" => array()
-        );
+        $filter = [
+            'sort' => 'id',
+            'order' => 'asc',
+            'page_number' => 1,
+            'limit' => 100,
+            'search_field' => [],
+        ];
         $data = [];
         $whereClause = AccountType::checkQuery($filter);
-        $whereClause->select("id", "type_code", "name_en", "name_kh", "description", "order_level");
-        $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);
-        $whereClause->limit($filter["limit"]);
+        $whereClause->select('id', 'type_code', 'name_en', 'name_kh', 'description', 'order_level');
+        $whereClause->offset(($filter['page_number'] - 1) * $filter['limit']);
+        $whereClause->limit($filter['limit']);
         $results = collect($whereClause->get());
+
         return $results;
     }
 
-        public function headings(): array
-        {
-            return [
-                'id',
-                'type_code',
-                'name_en',
-                'name_kh',
-                'description',
-                'order_level'
-            ];
-        }
+    public function headings(): array
+    {
+        return [
+            'id',
+            'type_code',
+            'name_en',
+            'name_kh',
+            'description',
+            'order_level',
+        ];
+    }
 }

@@ -4,13 +4,14 @@ namespace App\Console\Commands;
 
 use App\Jobs\ProcessPaymentJob;
 use App\Models\OfficerPayable;
+use App\Models\Settings\Status;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
-use App\Models\Settings\Status;
 
 class DispatchPendingPayments extends Command
 {
     protected $signature = 'payments:dispatch {--month= : The month to dispatch payments for (YYYY-MM)}';
+
     protected $description = 'Dispatches pending payment jobs for payables.';
 
     public function handle()
@@ -18,7 +19,7 @@ class DispatchPendingPayments extends Command
         $targetMonth = $this->option('month')
             ? Carbon::parse($this->option('month'))->startOfMonth()
             : Carbon::now()->startOfMonth();
-        $this->info('Dispatching pending payments for: ' . $targetMonth->format('Y-m'));
+        $this->info('Dispatching pending payments for: '.$targetMonth->format('Y-m'));
 
         $count = 0;
         OfficerPayable::where('status', Status::UNPAID) // Status pending = 15
@@ -29,8 +30,8 @@ class DispatchPendingPayments extends Command
                 }
             });
 
-        $this->info('Dispatched ' . $count . ' payment jobs.');
+        $this->info('Dispatched '.$count.' payment jobs.');
+
         return Command::SUCCESS;
     }
 }
-?>

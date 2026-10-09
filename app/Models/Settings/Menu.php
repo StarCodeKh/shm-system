@@ -22,17 +22,23 @@ class Menu extends Model implements Auditable
         $rows = self::get(['id', 'parent_id', 'url'])->keyBy('id');
         $ids = [];
         foreach ($rows as $row) {
-            if (!in_array($row->url, self::LOCKED_URLS, true)) continue;
+            if (! in_array($row->url, self::LOCKED_URLS, true)) {
+                continue;
+            }
             for ($node = $row; $node; $node = $rows->get($node->parent_id)) {
                 $ids[$node->id] = true;
             }
         }
+
         return array_keys($ids);
     }
 
     protected $table = 'menu';
+
     protected $fillable = ['parent_id', 'type', 'name', 'i18n', 'url', 'slug', 'icon', 'permission', 'order_level', 'is_active', 'created_by', 'modified_by'];
+
     protected $casts = ['is_active' => 'boolean', 'order_level' => 'integer', 'parent_id' => 'integer'];
+
     protected $appends = ['parent_name'];
 
     public function parent()
@@ -95,6 +101,7 @@ class Menu extends Model implements Auditable
                 }
             }
         }
+
         return ($filter['sort'] ?? 'id') === 'id'
             ? $query->orderByRaw('COALESCE(parent_id, id), parent_id IS NOT NULL, order_level, id')
             : $query->orderByFilter($filter);
@@ -117,25 +124,34 @@ class Menu extends Model implements Auditable
     public static function tree($permissions): array
     {
         $rows = self::where('is_active', true)->orderBy('order_level')->orderBy('id')->get()->groupBy('parent_id');
-        $allowed = fn ($m) => !$m->permission || !empty($permissions['*']) || !empty($permissions[$m->permission]);
+        $allowed = fn ($m) => ! $m->permission || ! empty($permissions['*']) || ! empty($permissions[$m->permission]);
 
         $build = function ($parentId) use (&$build, $rows, $allowed) {
             $list = [];
             foreach ($rows->get($parentId ?? '', collect()) as $m) {
-                if (!$allowed($m)) continue;
+                if (! $allowed($m)) {
+                    continue;
+                }
                 $base = ['name' => $m->name, 'i18n' => $m->i18n, 'slug' => $m->slug, 'icon' => $m->icon];
                 if ($m->type === 'link') {
-                    if ($m->url) $list[] = $base + ['url' => $m->url];
+                    if ($m->url) {
+                        $list[] = $base + ['url' => $m->url];
+                    }
+
                     continue;
                 }
                 $children = $build($m->id);
-                if (!$children) continue;
+                if (! $children) {
+                    continue;
+                }
                 $list[] = $m->type === 'section'
                     ? ['header' => $m->name, 'i18n' => $m->i18n, 'slug' => $m->slug, 'items' => $children]
                     : $base + ['submenu' => $children];
             }
+
             return $list;
         };
+
         return $build(null);
     }
 }

@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'entry_program' => "Program/Sub Program/Cluster Activity"
+    'entry_program' => 'Program/Sub Program/Cluster Activity',
 ];

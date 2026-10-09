@@ -1,22 +1,23 @@
 <?php
-    header("Content-type: application/vnd.ms-excel");
-    header("Content-Disposition: attachment;Filename=document_name.xls");
-    echo "<html>";
-    echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
-    echo '<body style="font-family: Khmer MEF1">';
-        echo '<div class="consolidate-payroll-container rotate-screen" style="margin: 0px auto;"><center><span class="font-mef2" style="color: rgb(13, 114, 162); font-size: 10pt;">
+
+header('Content-type: application/vnd.ms-excel');
+header('Content-Disposition: attachment;Filename=document_name.xls');
+echo '<html>';
+echo '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">';
+echo '<body style="font-family: Khmer MEF1">';
+echo '<div class="consolidate-payroll-container rotate-screen" style="margin: 0px auto;"><center><span class="font-mef2" style="color: rgb(13, 114, 162); font-size: 10pt;">
         បញ្ជីរាយនាម <br>
         មន្រ្តីរាជការទទួលប្រាក់ឧបត្ថម្ភមុខងារក្រុមការងារកែទម្រង់ការគ្រប់គ្រងហិរញ្ញវត្ថុសាធារណៈ';
-        if($incentiveInfo["data"]["general"]["count_month"] > 1){
-            echo '<span>
-                    សម្រាប់ខែ '.$incentiveInfo["data"]["general"]["khmer_from_month"].' ដល់ '.$incentiveInfo["data"]["general"]["khmer_to_month"].'
+if ($incentiveInfo['data']['general']['count_month'] > 1) {
+    echo '<span>
+                    សម្រាប់ខែ '.$incentiveInfo['data']['general']['khmer_from_month'].' ដល់ '.$incentiveInfo['data']['general']['khmer_to_month'].'
                 </span>';
-        }else{
-            echo '<span>
-                សម្រាប់ខែ'.$incentiveInfo["data"]["general"]["khmer_month"].'
+} else {
+    echo '<span>
+                សម្រាប់ខែ'.$incentiveInfo['data']['general']['khmer_month'].'
             </span>';
-        }
-        echo 'ឆ្នាំ'.$incentiveInfo["data"]["general"]["khmer_year"].'
+}
+echo 'ឆ្នាំ'.$incentiveInfo['data']['general']['khmer_year'].'
          <br></span> <div class="clearfix"></div></center> <div id="content">
          <table border="1" class="table">
             <thead>
@@ -53,13 +54,13 @@
                 </tr>
             </thead>
             <tbody data="[object Object]" style="width: 100%;">';
-                foreach($incentiveInfo["data"]["incentiveByEntities"] as $incentiveByEntity){
-                    echo '<tr style="background: rgb(189, 215, 238);">
+foreach ($incentiveInfo['data']['incentiveByEntities'] as $incentiveByEntity) {
+    echo '<tr style="background: rgb(189, 215, 238);">
                             <td colspan="5">
-                                <b>'.$incentiveByEntity["code"].'-'.$incentiveByEntity["entity"].'</b>
+                                <b>'.$incentiveByEntity['code'].'-'.$incentiveByEntity['entity'].'</b>
                             </td>
                             <td></td>
-                            <td><center>សរុប '.$incentiveByEntity["total_officer"].'រូប</center></td>
+                            <td><center>សរុប '.$incentiveByEntity['total_officer'].'រូប</center></td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -69,27 +70,26 @@
                             <td></td>
                         </tr> ';
 
-                    foreach($incentiveByEntity["officers"] as $officer){
-                        echo '<tr data="[object Object]">
+    foreach ($incentiveByEntity['officers'] as $officer) {
+        echo '<tr data="[object Object]">
                                 <td><center></center></td>
-                                <td><center>'.$officer["no"].'</center></td>
-                                <td>'.$officer["first_name"].' '.$officer["last_name"].'</td>
-                                <td>'.$officer["duty"].'</td>
-                                <td>'.$officer["bank"].'</td>
-                                <td>&#8203;'.$officer["bank_account_no"].'</td>
-                                <td>'.$officer["index"].'</td>
-                                <td>'.$officer["incentive"].'</td>
-                                <td>'.$officer["return_amount"].'</td>
-                                <td>'.$officer["reminder_amount"].'</td>
-                                <td>'.$officer["total_incentive_with_reminder"].'</td>
-                                <td>'.$officer["tax"].'</td>
-                                <td>'.$officer["incentive_after_tax"].'</td>
+                                <td><center>'.$officer['no'].'</center></td>
+                                <td>'.$officer['first_name'].' '.$officer['last_name'].'</td>
+                                <td>'.$officer['duty'].'</td>
+                                <td>'.$officer['bank'].'</td>
+                                <td>&#8203;'.$officer['bank_account_no'].'</td>
+                                <td>'.$officer['index'].'</td>
+                                <td>'.$officer['incentive'].'</td>
+                                <td>'.$officer['return_amount'].'</td>
+                                <td>'.$officer['reminder_amount'].'</td>
+                                <td>'.$officer['total_incentive_with_reminder'].'</td>
+                                <td>'.$officer['tax'].'</td>
+                                <td>'.$officer['incentive_after_tax'].'</td>
                                 <td></td>
                             </tr>';
-                    }
-                }
-         echo '</table>
+    }
+}
+echo '</table>
          </div>';
-    echo "</body>";
-    echo "</html>";
-?>
+echo '</body>';
+echo '</html>';

@@ -28,7 +28,6 @@ return [
     |
     */
 
-
     /*
     |--------------------------------------------------------------------------
     | Personal Access Client
@@ -39,7 +38,6 @@ return [
     | get used while issuing fresh personal access tokens to your users.
     |
     */
-
 
     /*
     |--------------------------------------------------------------------------

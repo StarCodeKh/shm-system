@@ -27,8 +27,11 @@ use Illuminate\Support\Facades\DB;
 class DataScope
 {
     const ALL = 'all';
+
     const ENTITY = 'entity';
+
     const OWN = 'own';
+
     const MEMBER = 'member';
 
     // Widest first: with several roles the first one found wins
@@ -53,10 +56,13 @@ class DataScope
     public static function current(): ?array
     {
         $user = Auth::user();
-        if (!$user) return null;
-        if (!array_key_exists($user->id, self::$cache)) {
+        if (! $user) {
+            return null;
+        }
+        if (! array_key_exists($user->id, self::$cache)) {
             self::$cache[$user->id] = self::resolve($user);
         }
+
         return self::$cache[$user->id];
     }
 
@@ -68,10 +74,15 @@ class DataScope
 
     protected static function resolve($user): ?array
     {
-        if (Common::isSuperAdmin($user)) return null;
+        if (Common::isSuperAdmin($user)) {
+            return null;
+        }
         $scopes = User::find($user->id)?->roles()->pluck('data_scope')->map(fn ($scope) => $scope ?: self::ALL)->all() ?? [];
         $scope = collect(self::LEVELS)->first(fn ($level) => in_array($level, $scopes, true)) ?? self::ALL;
-        if ($scope === self::ALL) return null;
+        if ($scope === self::ALL) {
+            return null;
+        }
+
         return [
             'scope' => $scope,
             'user' => (int) $user->id,
@@ -89,7 +100,9 @@ class DataScope
     {
         $scope = self::current();
         $kind = self::TABLES[$table] ?? null;
-        if (!$scope || !$kind) return null;
+        if (! $scope || ! $kind) {
+            return null;
+        }
 
         ['scope' => $level, 'user' => $user, 'entity' => $entity, 'officer' => $officer] = $scope;
         $none = '1 = 0';
@@ -98,7 +111,10 @@ class DataScope
 
         switch ($level) {
             case self::ENTITY:
-                if (!$entity) return $none;
+                if (! $entity) {
+                    return $none;
+                }
+
                 return match ($kind) {
                     'officer', 'unit_record' => $column('entity_id').' = '.$entity,
                     'member_record' => $column('officer_id').' IN ('.$officersOfUnit().')',
@@ -114,6 +130,7 @@ class DataScope
                     'unit_record' => $none, // income / expense are not a member's own data
                 };
         }
+
         return null;
     }
 
@@ -124,7 +141,9 @@ class DataScope
         $grammar = $base->getGrammar();
         $alias ??= $table;
         $sql = self::condition($table, fn ($name) => $grammar->wrap($alias.'.'.$name), fn ($name) => $grammar->wrapTable($name));
-        if ($sql !== null) $query->whereRaw($sql);
+        if ($sql !== null) {
+            $query->whereRaw($sql);
+        }
     }
 
     /** The condition for raw SQL, where $alias is written as-is (already prefixed or a short alias); '1 = 1' when none */

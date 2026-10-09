@@ -1,24 +1,25 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Dashboard;
-use Illuminate\Http\Request;
-use App\Models\Income;
 use App\Models\Expense;
-use App\User;
+use App\Models\Income;
 use CommonService;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class DashboardController extends BaseController
 {
-
     public function getOfficerGrowth()
     {
         try {
             $growthData = Dashboard::getOfficerGrowth();
+
             return $this->successResponse(
                 [
-                    'totalMembers' => $growthData
+                    'totalMembers' => $growthData,
                 ]
             );
         } catch (Exception $e) {
@@ -30,12 +31,13 @@ class DashboardController extends BaseController
     {
         try {
             $total = Dashboard::getTotalExpenseKHR();
+
             return $this->successResponse([
-                'totalExpense' => $total
+                'totalExpense' => $total,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->errorResponse('Failed to get total expense', '004', [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -44,12 +46,13 @@ class DashboardController extends BaseController
     {
         try {
             $total = Dashboard::getTotalIncomeKHR();
+
             return $this->successResponse([
-                'totalIncome' => $total
+                'totalIncome' => $total,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->errorResponse('Failed to get total income', '004', [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -58,12 +61,13 @@ class DashboardController extends BaseController
     {
         try {
             $total = Dashboard::getTotalRemainingBalanceKHR();
+
             return $this->successResponse([
-                'totalRemainingBalance' => $total
+                'totalRemainingBalance' => $total,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->errorResponse('Failed to get total remaining balance', '004', [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -73,9 +77,10 @@ class DashboardController extends BaseController
         try {
 
             $totalIncentive = Dashboard::getTotalIncentiveByCategory();
+
             return $this->successResponse(
                 [
-                    'totalIncentive' => $totalIncentive
+                    'totalIncentive' => $totalIncentive,
                 ]
             );
         } catch (Exception $e) {
@@ -87,9 +92,10 @@ class DashboardController extends BaseController
     {
         try {
             $officerPaymentSummary = Dashboard::getOfficerPaymentSummary();
+
             return $this->successResponse([
-                'officerPaymentInfo' => $officerPaymentSummary
-              ]
+                'officerPaymentInfo' => $officerPaymentSummary,
+            ]
             );
         } catch (Exception $e) {
             return $this->errorResponse($e->getMessage());
@@ -102,13 +108,14 @@ class DashboardController extends BaseController
             $year = $request->input('year');     // optional
             $quarter = $request->input('quarter'); // optional
             $data = Dashboard::getQuarterlyIncomeExpense($year, $quarter);
+
             return $this->successResponse([
-                'quarterlySummary' => $data
+                'quarterlySummary' => $data,
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->errorResponse('Failed to get quarterly summary', '004', [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -117,9 +124,10 @@ class DashboardController extends BaseController
     {
         try {
             $totalOfficer = Dashboard::getTotalOfficer();
+
             return $this->successResponse(
                 [
-                    'totalMember' => $totalOfficer
+                    'totalMember' => $totalOfficer,
                 ]
             );
         } catch (Exception $e) {
@@ -171,8 +179,8 @@ class DashboardController extends BaseController
                 $totalIncome->total_in_usd = CommonService::formatDoubleNum($totalIncome->total_in_usd);
                 $data['totalIncome'] = $totalIncome;
                 $data['incomeByDepartments'] = [
-                    "incomes" => Income::getIncomeByDpts(),
-                    "departments" => Income::getDptsByIncome(),
+                    'incomes' => Income::getIncomeByDpts(),
+                    'departments' => Income::getDptsByIncome(),
                 ];
                 $data['monthlyIncomes'] = Income::getMonthlyIncome();
             }
@@ -191,12 +199,13 @@ class DashboardController extends BaseController
                     foreach (['total_income_khr', 'total_income_usd', 'total_expense_khr', 'total_expense_usd', 'remaining_balance_khr', 'remaining_balance_usd'] as $field) {
                         $item->$field = CommonService::formatDoubleNum($item->$field);
                     }
+
                     return $item;
                 });
                 $data['monthlyTrend'] = Dashboard::getMonthlyTrend($start_date, $end_date);
                 $data['incomeExpComparations'] = [
-                    "income" => Income::getMonthlyIncome(),
-                    "expense" => Expense::getMonthlyExpense(),
+                    'income' => Income::getMonthlyIncome(),
+                    'expense' => Expense::getMonthlyExpense(),
                 ];
             }
 
@@ -205,6 +214,7 @@ class DashboardController extends BaseController
                     $item['total_amount_khr_kh'] = $khr($item['total_amount_khr']);
                     $item['total_amount_khr'] = CommonService::formatDoubleNum($item['total_amount_khr']);
                     $item['total_amount_usd'] = CommonService::formatDoubleNum($item['total_amount_usd']);
+
                     return $item;
                 });
             }
@@ -219,16 +229,16 @@ class DashboardController extends BaseController
 
             return $this->successResponse($data);
 
-        }catch (Exception $e) {
+        } catch (Exception $e) {
             return $this->errorResponse($e->getMessage());
         }
     }
 
     public function convertToKhmerNumber($number)
     {
-        return strtr((string)$number, [
-            '0'=>'០','1'=>'១','2'=>'២','3'=>'៣','4'=>'៤',
-            '5'=>'៥','6'=>'៦','7'=>'៧','8'=>'៨','9'=>'៩'
+        return strtr((string) $number, [
+            '0' => '០', '1' => '១', '2' => '២', '3' => '៣', '4' => '៤',
+            '5' => '៥', '6' => '៦', '7' => '៧', '8' => '៨', '9' => '៩',
         ]);
     }
 
@@ -237,11 +247,12 @@ class DashboardController extends BaseController
         try {
             $userID = $request->input('userID');
             $userDetail = Dashboard::getUserDetail($userID);
-            if (!$userDetail) {
-                return $this->errorResponse("User not found", "404");
+            if (! $userDetail) {
+                return $this->errorResponse('User not found', '404');
             }
+
             return $this->successResponse([
-                'userDetail' => $userDetail
+                'userDetail' => $userDetail,
             ]);
         } catch (Exception $e) {
             return $this->errorResponse($e->getMessage());
@@ -252,8 +263,8 @@ class DashboardController extends BaseController
     {
         try {
             $userID = $request->input('userID');           // required
-            $limit  = $request->input('limit', 10);       // default 10 per page
-            $page   = $request->input('page', 1);         // default page 1
+            $limit = $request->input('limit', 10);       // default 10 per page
+            $page = $request->input('page', 1);         // default page 1
             // Calculate offset from page number
             $offset = ($page - 1) * $limit;
             // Fetch paginated notifications
@@ -264,11 +275,11 @@ class DashboardController extends BaseController
 
             return $this->successResponse([
                 'list' => $notifications,
-                'page'             => (int)$page,
-                'limit'            => (int)$limit,
-                'offset'           => (int)$offset,
-                'totalItems'       => (int)$totalItems,
-                'totalPages'       => (int)$totalPages,
+                'page' => (int) $page,
+                'limit' => (int) $limit,
+                'offset' => (int) $offset,
+                'totalItems' => (int) $totalItems,
+                'totalPages' => (int) $totalPages,
             ]);
 
         } catch (Exception $e) {
@@ -280,7 +291,7 @@ class DashboardController extends BaseController
     {
         try {
             $limit = $request->input('limit', 10);  // Default 10 per page
-            $page  = $request->input('page', 1);    // Default page 1
+            $page = $request->input('page', 1);    // Default page 1
             $offset = ($page - 1) * $limit;
             $list = Dashboard::getIncomeListing($limit, $offset);
             $totalItems = Dashboard::countIncome();
@@ -288,13 +299,13 @@ class DashboardController extends BaseController
             $totalPages = ceil($totalItems / $limit);
 
             return $this->successResponse([
-                'totalIncome'   => $totalIncome,
-                'list'          => $list,
-                'page'          => (int)$page,
-                'limit'         => (int)$limit,
-                'offset'        => (int)$offset,
-                'totalItems'    => (int)$totalItems,
-                'totalPages'    => (int)$totalPages
+                'totalIncome' => $totalIncome,
+                'list' => $list,
+                'page' => (int) $page,
+                'limit' => (int) $limit,
+                'offset' => (int) $offset,
+                'totalItems' => (int) $totalItems,
+                'totalPages' => (int) $totalPages,
             ]);
 
         } catch (Exception $e) {
@@ -306,7 +317,7 @@ class DashboardController extends BaseController
     {
         try {
             $limit = $request->input('limit', 10);  // default 10 per page
-            $page  = $request->input('page', 1);    // default page 1
+            $page = $request->input('page', 1);    // default page 1
             // Calculate offset
             $offset = ($page - 1) * $limit;
             // Fetch paginated expenses
@@ -318,12 +329,12 @@ class DashboardController extends BaseController
 
             return $this->successResponse([
                 'totalExpense' => $totalExpense,
-                'list'       => $list,
-                'page'       => (int)$page,
-                'limit'      => (int)$limit,
-                'offset'     => (int)$offset,
-                'totalItems' => (int)$totalItems,
-                'totalPages' => (int)$totalPages,
+                'list' => $list,
+                'page' => (int) $page,
+                'limit' => (int) $limit,
+                'offset' => (int) $offset,
+                'totalItems' => (int) $totalItems,
+                'totalPages' => (int) $totalPages,
             ]);
 
         } catch (Exception $e) {
@@ -335,7 +346,7 @@ class DashboardController extends BaseController
     {
         try {
             $limit = $request->input('limit', 10);  // default 10
-            $page  = $request->input('page', 1);    // default page 1
+            $page = $request->input('page', 1);    // default page 1
             // Calculate offset from page number
             $offset = ($page - 1) * $limit;
             // Fetch paginated payment list
@@ -347,12 +358,12 @@ class DashboardController extends BaseController
 
             return $this->successResponse([
                 'officerPaymentInfo' => $officerPaymentInfo,
-                'list'       => $list,
-                'page'       => (int)$page,
-                'limit'      => (int)$limit,
-                'offset'     => (int)$offset,
-                'totalItems' => (int)$totalItems,
-                'totalPages' => (int)$totalPages,
+                'list' => $list,
+                'page' => (int) $page,
+                'limit' => (int) $limit,
+                'offset' => (int) $offset,
+                'totalItems' => (int) $totalItems,
+                'totalPages' => (int) $totalPages,
             ]);
 
         } catch (Exception $e) {
@@ -364,7 +375,7 @@ class DashboardController extends BaseController
     {
         try {
             $limit = $request->input('limit', 10);  // default 10
-            $page  = $request->input('page', 1);    // default page 1
+            $page = $request->input('page', 1);    // default page 1
             // Calculate offset
             $offset = ($page - 1) * $limit;
             // Fetch paginated incentives
@@ -376,12 +387,12 @@ class DashboardController extends BaseController
 
             return $this->successResponse([
                 'officerIncentiveInfo' => $officerIncentiveInfo,
-                'list'       => $list,
-                'page'       => (int)$page,
-                'limit'      => (int)$limit,
-                'offset'     => (int)$offset,
-                'totalItems' => (int)$totalItems,
-                'totalPages' => (int)$totalPages
+                'list' => $list,
+                'page' => (int) $page,
+                'limit' => (int) $limit,
+                'offset' => (int) $offset,
+                'totalItems' => (int) $totalItems,
+                'totalPages' => (int) $totalPages,
             ]);
         } catch (Exception $e) {
             return $this->errorResponse($e->getMessage());
@@ -392,7 +403,7 @@ class DashboardController extends BaseController
     {
         try {
             $limit = $request->input('limit', 10);   // default 10
-            $page  = $request->input('page', 1);     // default page 1
+            $page = $request->input('page', 1);     // default page 1
             // Calculate offset
             $offset = ($page - 1) * $limit;
             // Fetch paginated officer requests
@@ -404,12 +415,12 @@ class DashboardController extends BaseController
 
             return $this->successResponse([
                 'officerRequestInfo' => $officerRequestInfo,
-                'list'       => $list,
-                'page'       => (int)$page,
-                'limit'      => (int)$limit,
-                'offset'     => (int)$offset,
-                'totalItems' => (int)$totalItems,
-                'totalPages' => (int)$totalPages
+                'list' => $list,
+                'page' => (int) $page,
+                'limit' => (int) $limit,
+                'offset' => (int) $offset,
+                'totalItems' => (int) $totalItems,
+                'totalPages' => (int) $totalPages,
             ]);
 
         } catch (Exception $e) {
@@ -421,7 +432,7 @@ class DashboardController extends BaseController
     {
         try {
             $limit = (int) $request->input('limit', 10); // default 10
-            $page  = (int) $request->input('page', 1);   // default 1
+            $page = (int) $request->input('page', 1);   // default 1
             $offset = ($page - 1) * $limit;
             $list = Dashboard::getOfficersListing($limit, $offset);
             $totalItems = Dashboard::countOfficers();
@@ -429,15 +440,15 @@ class DashboardController extends BaseController
             $totalPages = ceil($totalItems / $limit);
 
             return $this->successResponse([
-                'list'       => $list,
-                'page'       => $page,
-                'limit'      => $limit,
-                'offset'     => $offset,
+                'list' => $list,
+                'page' => $page,
+                'limit' => $limit,
+                'offset' => $offset,
                 'totalItems' => $totalItems,
                 'totalPages' => $totalPages,
-                'totalMale'  => $membercounts['totalMale'],
+                'totalMale' => $membercounts['totalMale'],
                 'totalFemale' => $membercounts['totalFemale'],
-                'totalMembers' => $membercounts['total']
+                'totalMembers' => $membercounts['total'],
             ]);
         } catch (Exception $e) {
             return $this->errorResponse($e->getMessage());
@@ -449,7 +460,7 @@ class DashboardController extends BaseController
         try {
             // Validate group param
             $request->validate([
-                'group' => 'required|string'
+                'group' => 'required|string',
             ]);
 
             $group = $request->group;
@@ -462,7 +473,7 @@ class DashboardController extends BaseController
                 __('common.msg_successfully')
             );
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return $this->errorResponse(__('common.validation_failed'), 422, $e->errors());
 
         } catch (Exception $e) {

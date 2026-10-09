@@ -10,6 +10,7 @@ use Database\Seeders\PassportClientSeeder;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\PermissionRegistrar;
 
 /**
  * Copies all data from the old database into the database built by the standard migrations.
@@ -39,14 +40,18 @@ class TransferLegacyDatabase extends Command
     protected $description = 'Copy all data from the old database into the current (migrated) database and verify it';
 
     private const TEXT_TYPES = ['char', 'varchar', 'tinytext', 'text', 'mediumtext', 'longtext'];
+
     private const NUMERIC_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'decimal', 'float', 'double'];
+
     private const DATE_TYPES = ['date', 'datetime', 'timestamp'];
 
     private const RENAMED_TABLES = [
         'incentive_to_stakeholder' => 'incentive_to_stackholder',
     ];
+
     // Built from the seeders and the old user roles instead of copied (see above)
     private const NOT_COPIED = ['migrations', 'roles', 'permissions', 'permission_group', 'role_has_permissions', 'model_has_roles', 'model_has_permissions'];
+
     // Least powerful first
     private const ROLES = ['Normal User', 'Admin', 'Super Admin'];
 
@@ -58,10 +63,11 @@ class TransferLegacyDatabase extends Command
     {
         $source = $this->argument('source');
         $target = DB::getDatabaseName();
-        $migrations = DB::getTablePrefix() . 'migrations';
+        $migrations = DB::getTablePrefix().'migrations';
 
         if ($source === $target) {
             $this->error('The source and target databases are the same. Point DB_DATABASE at the new database.');
+
             return 1;
         }
 
@@ -82,18 +88,20 @@ class TransferLegacyDatabase extends Command
         $failed = 0;
         foreach ($tables as $table) {
             $plain = substr($table, strlen($prefix));
-            $sourceTable = isset(self::RENAMED_TABLES[$plain]) ? $prefix . self::RENAMED_TABLES[$plain] : $table;
+            $sourceTable = isset(self::RENAMED_TABLES[$plain]) ? $prefix.self::RENAMED_TABLES[$plain] : $table;
             $renamedColumns = self::RENAMED_COLUMNS[$plain] ?? [];
             $sourceColumns = $this->columns($source, $sourceTable);
-            if (!$sourceColumns) {
+            if (! $sourceColumns) {
                 $this->line("  <comment>skip</comment>  {$table} (not in {$source})");
+
                 continue;
             }
             $targetColumns = $this->columns($target, $table);
 
             $existing = DB::table(DB::raw("`{$target}`.`{$table}`"))->count();
-            if ($existing > 0 && !$this->option('fresh')) {
+            if ($existing > 0 && ! $this->option('fresh')) {
                 $this->line("  <comment>skip</comment>  {$table} (already has {$existing} rows, use --fresh to recopy)");
+
                 continue;
             }
             if ($this->option('fresh')) {
@@ -104,7 +112,7 @@ class TransferLegacyDatabase extends Command
             $selects = [];
             foreach ($targetColumns as $column => $targetType) {
                 $from = $renamedColumns[$column] ?? $column;
-                if (!isset($sourceColumns[$from])) {
+                if (! isset($sourceColumns[$from])) {
                     continue; // new column (added id / timestamps): let the default fill it
                 }
                 $names[] = "`{$column}`";
@@ -118,14 +126,15 @@ class TransferLegacyDatabase extends Command
                 ));
             } catch (\Throwable $e) {
                 $failed++;
-                $this->line("  <error>FAIL</error>  {$table}: " . strtok($e->getMessage(), "\n"));
+                $this->line("  <error>FAIL</error>  {$table}: ".strtok($e->getMessage(), "\n"));
+
                 continue;
             }
 
             $problems = $this->verify($source, $target, $table, $sourceTable, $sourceColumns, $targetColumns);
             if ($problems) {
                 $failed++;
-                $this->line("  <error>CHECK</error> {$table}: " . implode('; ', $problems));
+                $this->line("  <error>CHECK</error> {$table}: ".implode('; ', $problems));
             } else {
                 $rows = DB::table(DB::raw("`{$target}`.`{$table}`"))->count();
                 $this->line("  <info>ok</info>    {$table} ({$rows} rows)");
@@ -141,9 +150,11 @@ class TransferLegacyDatabase extends Command
 
         if ($failed) {
             $this->error("{$failed} table(s) need attention, see above.");
+
             return 1;
         }
         $this->info('All tables copied and verified.');
+
         return 0;
     }
 
@@ -168,14 +179,17 @@ class TransferLegacyDatabase extends Command
             $names = $linked->get($id, collect())->pluck('name')->all();
             $role = in_array($named->get($id), self::ROLES, true) ? $named->get($id)
                 : (collect(self::ROLES)->first(fn ($r) => in_array($r, $names, true)));
-            if (!$role) { $role = self::ROLES[0]; $fallback++; }
+            if (! $role) {
+                $role = self::ROLES[0];
+                $fallback++;
+            }
             DB::table('model_has_roles')->insert(['role_id' => $roleIds[$role], 'model_type' => $type, 'model_id' => $id]);
             $counts[$role]++;
         }
-        app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         $summary = collect($counts)->map(fn ($n, $r) => "{$r} {$n}")->implode(', ');
-        $this->line("  <info>ok</info>    user roles: {$summary}" . ($fallback ? " ({$fallback} had no standard role: Normal User)" : ''));
+        $this->line("  <info>ok</info>    user roles: {$summary}".($fallback ? " ({$fallback} had no standard role: Normal User)" : ''));
     }
 
     /** column name => data type, in table order */
@@ -194,11 +208,13 @@ class TransferLegacyDatabase extends Command
             if (in_array($from, self::TEXT_TYPES)) {
                 return "CASE WHEN {$c} REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}' THEN LEFT({$c}, 19) END";
             }
+
             return "CASE WHEN CAST({$c} AS CHAR) LIKE '0000-00-00%' THEN NULL ELSE {$c} END";
         }
         if (in_array($to, self::NUMERIC_TYPES) && in_array($from, self::TEXT_TYPES)) {
             return "NULLIF(TRIM({$c}), '')";
         }
+
         return $c;
     }
 
@@ -212,7 +228,7 @@ class TransferLegacyDatabase extends Command
             $problems[] = "rows {$before} -> {$after}";
         }
         foreach ($targetColumns as $column => $type) {
-            if ($type !== 'decimal' || !isset($sourceColumns[$column])) {
+            if ($type !== 'decimal' || ! isset($sourceColumns[$column])) {
                 continue;
             }
             $sum = fn ($schema, $t) => (float) DB::selectOne("select round(coalesce(sum(`{$column}`), 0), 2) as s from `{$schema}`.`{$t}`")->s;
@@ -223,6 +239,7 @@ class TransferLegacyDatabase extends Command
                 $problems[] = "sum({$column}) {$a} -> {$b}";
             }
         }
+
         return $problems;
     }
 }

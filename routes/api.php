@@ -6,8 +6,10 @@ use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FileManagerController;
+use App\Http\Controllers\ImportController;
 use App\Http\Controllers\IncentiveController;
 use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\LookupController;
 use App\Http\Controllers\MobileIncentiveController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OfficerController;
@@ -17,17 +19,14 @@ use App\Http\Controllers\OfficerPayableController;
 use App\Http\Controllers\OfficerPaymentController;
 use App\Http\Controllers\OfficerPaymentRecurringController;
 use App\Http\Controllers\OfficerRequestController;
+use App\Http\Controllers\PrintController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\LookupController;
 use App\Http\Controllers\RoleMenuController;
 use App\Http\Controllers\Settings\AccountController;
 use App\Http\Controllers\Settings\AccountGroupController;
 use App\Http\Controllers\Settings\AccountTypeController;
 use App\Http\Controllers\Settings\AccountTypeGroupController;
 use App\Http\Controllers\Settings\AuditController;
-use App\Http\Controllers\PrintController;
-use App\Http\Controllers\SiteController;
-use App\Http\Controllers\ImportController;
 use App\Http\Controllers\Settings\BankController;
 use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\CurrencyExchangeController;
@@ -43,6 +42,7 @@ use App\Http\Controllers\Settings\PlanningController;
 use App\Http\Controllers\Settings\PositionController;
 use App\Http\Controllers\Settings\RoleController;
 use App\Http\Controllers\Settings\TitleController;
+use App\Http\Controllers\SiteController;
 use App\Http\Controllers\TaxableSalaryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -202,7 +202,7 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
     // Settings
     Route::prefix('setting')->group(function () {
 
-Route::post('account_type_group/search', [AccountTypeGroupController::class, 'index']);
+        Route::post('account_type_group/search', [AccountTypeGroupController::class, 'index']);
         Route::apiResource('account_type_group', AccountTypeGroupController::class);
 
         Route::post('account_type/search', [AccountTypeController::class, 'index']);
@@ -232,7 +232,7 @@ Route::post('account_type_group/search', [AccountTypeGroupController::class, 'in
         Route::post('title/search', [TitleController::class, 'index']);
         Route::apiResource('title', TitleController::class);
 
-Route::post('currency/search', [CurrencyController::class, 'index']);
+        Route::post('currency/search', [CurrencyController::class, 'index']);
         Route::apiResource('currency', CurrencyController::class);
 
         Route::post('currency_exchange/search', [CurrencyExchangeController::class, 'index']);
@@ -245,14 +245,14 @@ Route::post('currency/search', [CurrencyController::class, 'index']);
         Route::post('role/search', [RoleController::class, 'index']);
         Route::apiResource('role', RoleController::class);
 
-Route::post('planning/search', [PlanningController::class, 'index']);
+        Route::post('planning/search', [PlanningController::class, 'index']);
         Route::apiResource('planning', PlanningController::class);
 
-Route::post('audit/search', [AuditController::class, 'index']);
+        Route::post('audit/search', [AuditController::class, 'index']);
         Route::post('audit/clear', [AuditController::class, 'clear']);
         Route::apiResource('audit', AuditController::class);
 
-Route::post('letter_type/search', [LetterTypeController::class, 'index']);
+        Route::post('letter_type/search', [LetterTypeController::class, 'index']);
         Route::apiResource('letter_type', LetterTypeController::class);
 
         Route::post('payment_method/search', [PaymentMethodController::class, 'index']);

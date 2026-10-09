@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'entry_title' => 'Account Group'
+    'entry_title' => 'Account Group',
 ];

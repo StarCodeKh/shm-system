@@ -20,7 +20,6 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
@@ -28,20 +27,20 @@ class Kernel extends ConsoleKernel
 
         // Generate payables on the 1st of every month at 1 AM
         $schedule->command('payables:generate')
-                ->monthlyOn(1, '01:00')
-                ->withoutOverlapping();
+            ->monthlyOn(1, '01:00')
+            ->withoutOverlapping();
 
         // Dispatch pending payments every hour, starting from 2 AM on the 1st
         // This allows a buffer after payable generation and handles retries/newly pending items
         $schedule->command('payments:dispatch')
-                ->hourly()
-                ->between('02:00', '23:00') // Run during business hours or when queues are less busy
-                ->withoutOverlapping();
+            ->hourly()
+            ->between('02:00', '23:00') // Run during business hours or when queues are less busy
+            ->withoutOverlapping();
 
         // Ensure queue workers are running
         $schedule->command('queue:work --stop-when-empty --queue=payments,default')
-                ->everyMinute()
-                ->withoutOverlapping();
+            ->everyMinute()
+            ->withoutOverlapping();
 
     }
 

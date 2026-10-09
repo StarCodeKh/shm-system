@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
@@ -31,7 +32,7 @@ class ExcelDocument
         $moneyPattern = config('report.columns.money');
         $type = PdfDocument::typography(count($columns), config('report.typography.excel_scale'));
 
-        $book = new Spreadsheet();
+        $book = new Spreadsheet;
         $book->getProperties()->setCreator($organization['system'] ?: config('app.name'))->setTitle($data['title']);
         $book->getDefaultStyle()->getFont()->setName(config('report.excel_font'))->setSize($type['td']);
         $sheet = $book->getActiveSheet();
@@ -49,7 +50,9 @@ class ExcelDocument
             $style = $sheet->getStyle($range);
             $style->getFont()->setSize($size)->setBold($bold)->getColor()->setRGB($rgb);
             $style->getAlignment()->setHorizontal($align)->setVertical(Alignment::VERTICAL_CENTER)->setIndent($align === Alignment::HORIZONTAL_LEFT ? 1 : 0);
-            if ($fill) $style->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB($fill);
+            if ($fill) {
+                $style->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB($fill);
+            }
             $sheet->getRowDimension($row)->setRowHeight(max(18, $size * 1.9));
             $row++;
         };
@@ -60,12 +63,16 @@ class ExcelDocument
             $line(trans('report.motto'), $type['motto'], true, '1F2140');
         }
         $line($organization['name'], $type['org'], true, '1F2140', Alignment::HORIZONTAL_LEFT);
-        if ($organization['system']) $line($organization['system'], $type['system'], false, '8A8CA5', Alignment::HORIZONTAL_LEFT);
+        if ($organization['system']) {
+            $line($organization['system'], $type['system'], false, '8A8CA5', Alignment::HORIZONTAL_LEFT);
+        }
         $row++;
 
         // Title
         $line($data['title'], $type['title'], true, strtoupper($color));
-        if ($data['description']) $line($data['description'], $type['subtitle'], false, '8A8CA5');
+        if ($data['description']) {
+            $line($data['description'], $type['subtitle'], false, '8A8CA5');
+        }
         $row++;
 
         // Info, filters, summary
@@ -104,14 +111,18 @@ class ExcelDocument
             foreach ($columns as $i => $column) {
                 $value = self::display(data_get($item, $column['key']));
                 $cell = Coordinate::stringFromColumnIndex($i + 2).$row;
-                if ($value === null || $value === '') continue;
+                if ($value === null || $value === '') {
+                    continue;
+                }
                 if ($column['numeric'] && is_numeric($number = str_replace(',', '', (string) $value))) {
                     $sheet->setCellValue($cell, (float) $number);
-                    if (floor((float) $number) != (float) $number) $decimals[$i] = true;
+                    if (floor((float) $number) != (float) $number) {
+                        $decimals[$i] = true;
+                    }
                     $value = number_format((float) $number, 2);
                 } else {
                     $value = $column['date'] ? substr((string) $value, 0, 10) : (string) $value;
-                    $sheet->setCellValueExplicit($cell, $value, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+                    $sheet->setCellValueExplicit($cell, $value, DataType::TYPE_STRING);
                 }
                 $widths[$i + 1] = max($widths[$i + 1], mb_strwidth($value));
             }
@@ -143,9 +154,13 @@ class ExcelDocument
                     $sheet->getStyle($range)->getNumberFormat()->setFormatCode($formats[$letter]);
                     $sheet->getStyle($range)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
                     $sheet->getStyle("{$letter}{$headerRow}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
-                    if (preg_match($moneyPattern, $column['key'])) $sums[$letter] = "=SUM({$range})";
+                    if (preg_match($moneyPattern, $column['key'])) {
+                        $sums[$letter] = "=SUM({$range})";
+                    }
                 }
-                if ($column['date']) $sheet->getStyle($range)->getFont()->getColor()->setRGB('6B6D7A');
+                if ($column['date']) {
+                    $sheet->getStyle($range)->getFont()->getColor()->setRGB('6B6D7A');
+                }
             }
             $sheet->getStyle("A{$firstData}:A{$lastData}")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $sheet->getStyle("A{$firstData}:A{$lastData}")->getFont()->getColor()->setRGB('8A8CA5');
@@ -222,6 +237,7 @@ class ExcelDocument
         ob_start();
         (new Xlsx($book))->save('php://output');
         $book->disconnectWorksheets();
+
         return ob_get_clean();
     }
 
@@ -231,14 +247,18 @@ class ExcelDocument
         if (is_array($value) || is_object($value)) {
             $value = data_get($value, 'title_kh') ?? data_get($value, 'name_kh') ?? data_get($value, 'label') ?? '';
         }
+
         return $value;
     }
 
     /** Hex colour mixed with white (0 = colour, 1 = white), as RRGGBB */
     protected static function tint(string $hex, float $amount): string
     {
-        if (strlen($hex) !== 6) return 'F6F7FB';
+        if (strlen($hex) !== 6) {
+            return 'F6F7FB';
+        }
         $mix = fn ($i) => (int) round(hexdec(substr($hex, $i, 2)) + (255 - hexdec(substr($hex, $i, 2))) * $amount);
+
         return strtoupper(sprintf('%02x%02x%02x', $mix(0), $mix(2), $mix(4)));
     }
 
@@ -246,6 +266,7 @@ class ExcelDocument
     protected static function sheetTitle(string $title): string
     {
         $title = trim(preg_replace('/[:\\\\\/?*\[\]]/u', ' ', $title));
+
         return mb_substr($title !== '' ? $title : 'Sheet', 0, 31);
     }
 

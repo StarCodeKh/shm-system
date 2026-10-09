@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'kpi_objective' => "KPIs Objective"
+    'kpi_objective' => 'KPIs Objective',
 ];

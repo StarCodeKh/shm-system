@@ -1,63 +1,56 @@
 <?php
 
 // Permission groups (order as in the role editor) and their permissions. Key "" = no group.
-return array (
-    'bank' =>
-    array (
+return [
+    'bank' => [
         0 => 'list_bank',
         1 => 'create_bank',
         2 => 'show_bank',
         3 => 'edit_bank',
         4 => 'update_bank',
         5 => 'delete_bank',
-    ),
-    'position' =>
-    array (
+    ],
+    'position' => [
         0 => 'list_position',
         1 => 'create_position',
         2 => 'show_position',
         3 => 'edit_position',
         4 => 'update_position',
         5 => 'delete_position',
-    ),
-    'currency' =>
-    array (
+    ],
+    'currency' => [
         0 => 'list_currency',
         1 => 'create_currency',
         2 => 'show_currency',
         3 => 'edit_currency',
         4 => 'update_currency',
         5 => 'delete_currency',
-    ),
-    'unit' =>
-    array (
+    ],
+    'unit' => [
         0 => 'list_unit',
         1 => 'create_unit',
         2 => 'show_unit',
         3 => 'edit_unit',
         4 => 'update_unit',
         5 => 'delete_unit',
-    ),
-    'file_manager' =>
-    array (
+    ],
+    'file_manager' => [
         0 => 'list_file_manager',
         1 => 'create_file_manager',
         2 => 'show_file_manager',
         3 => 'edit_file_manager',
         4 => 'update_file_manager',
         5 => 'delete_file_manager',
-    ),
-    'notifications' =>
-    array (
+    ],
+    'notifications' => [
         0 => 'list_notifications',
         1 => 'create_notifications',
         2 => 'show_notifications',
         3 => 'edit_notifications',
         4 => 'update_notifications',
         5 => 'delete_notifications',
-    ),
-    'officer_incentive' =>
-    array (
+    ],
+    'officer_incentive' => [
         0 => 'list_officer_incentive',
         1 => 'create_officer_incentive',
         2 => 'show_officer_incentive',
@@ -66,18 +59,16 @@ return array (
         5 => 'delete_officer_incentive',
         6 => 'download_officer_incentive',
         7 => 'import_officer_incentive',
-    ),
-    'chart_account' =>
-    array (
+    ],
+    'chart_account' => [
         0 => 'list_chart_account',
         1 => 'create_chart_account',
         2 => 'show_chart_account',
         3 => 'edit_chart_account',
         4 => 'update_chart_account',
         5 => 'delete_chart_account',
-    ),
-    'account_type' =>
-    array (
+    ],
+    'account_type' => [
         0 => 'list_account_type',
         1 => 'create_account_type',
         2 => 'show_account_type',
@@ -86,13 +77,11 @@ return array (
         5 => 'delete_account_type',
         6 => 'import_account_type',
         7 => 'view_report_account_type',
-    ),
-    'report' =>
-    array (
+    ],
+    'report' => [
         0 => 'report_sale',
-    ),
-    'officer_payment_recurring' =>
-    array (
+    ],
+    'officer_payment_recurring' => [
         0 => 'list_officer_payment_recurring',
         1 => 'create_officer_payment_recurring',
         2 => 'show_officer_payment_recurring',
@@ -100,27 +89,24 @@ return array (
         4 => 'update_officer_payment_recurring',
         5 => 'delete_officer_payment_recurring',
         6 => 'execute_officer_payment_recurring',
-    ),
-    'payment_method' =>
-    array (
+    ],
+    'payment_method' => [
         0 => 'list_payment_method',
         1 => 'create_payment_method',
         2 => 'show_payment_method',
         3 => 'edit_payment_method',
         4 => 'update_payment_method',
         5 => 'delete_payment_method',
-    ),
-    'payment_term' =>
-    array (
+    ],
+    'payment_term' => [
         0 => 'list_payment_term',
         1 => 'create_payment_term',
         2 => 'show_payment_term',
         3 => 'edit_payment_term',
         4 => 'update_payment_term',
         5 => 'delete_payment_term',
-    ),
-    'payment_type' =>
-    array (
+    ],
+    'payment_type' => [
         0 => 'list_payment_type',
         1 => 'create_payment_type',
         2 => 'show_payment_type',
@@ -130,9 +116,8 @@ return array (
         6 => 'import_payment_type',
         7 => 'download_payment_type',
         8 => 'print_payment_type',
-    ),
-    'officer_payable' =>
-    array (
+    ],
+    'officer_payable' => [
         0 => 'list_officer_payable',
         1 => 'create_officer_payable',
         2 => 'show_officer_payable',
@@ -142,18 +127,16 @@ return array (
         6 => 'notify_officer_payable',
         7 => 'download_officer_payable',
         8 => 'import_officer_payable',
-    ),
-    'officer_request' =>
-    array (
+    ],
+    'officer_request' => [
         0 => 'list_officer_request',
         1 => 'create_officer_request',
         2 => 'show_officer_request',
         3 => 'edit_officer_request',
         4 => 'update_officer_request',
         5 => 'delete_officer_request',
-    ),
-    'roles' =>
-    array (
+    ],
+    'roles' => [
         0 => 'list_roles',
         1 => 'create_roles',
         2 => 'show_roles',
@@ -161,18 +144,16 @@ return array (
         4 => 'update_roles',
         5 => 'delete_roles',
         6 => 'permission_roles',
-    ),
-    'currency_exchange' =>
-    array (
+    ],
+    'currency_exchange' => [
         0 => 'list_currency_exchange',
         1 => 'create_currency_exchange',
         2 => 'show_currency_exchange',
         3 => 'edit_currency_exchange',
         4 => 'update_currency_exchange',
         5 => 'delete_currency_exchange',
-    ),
-    'account' =>
-    array (
+    ],
+    'account' => [
         0 => 'list_account',
         1 => 'create_account',
         2 => 'show_account',
@@ -182,27 +163,24 @@ return array (
         6 => 'export_account',
         7 => 'import_account',
         8 => 'download_account',
-    ),
-    'income' =>
-    array (
+    ],
+    'income' => [
         0 => 'list_income',
         1 => 'create_income',
         2 => 'show_income',
         3 => 'edit_income',
         4 => 'update_income',
         5 => 'delete_income',
-    ),
-    'expense' =>
-    array (
+    ],
+    'expense' => [
         0 => 'list_expense',
         1 => 'create_expense',
         2 => 'show_expense',
         3 => 'edit_expense',
         4 => 'update_expense',
         5 => 'delete_expense',
-    ),
-    'officer_payment' =>
-    array (
+    ],
+    'officer_payment' => [
         0 => 'list_officer_payment',
         1 => 'create_officer_payment',
         2 => 'show_officer_payment',
@@ -211,9 +189,8 @@ return array (
         5 => 'delete_officer_payment',
         6 => 'download_officer_payment',
         7 => 'import_officer_payment',
-    ),
-    'department' =>
-    array (
+    ],
+    'department' => [
         0 => 'list_department',
         1 => 'create_department',
         2 => 'show_department',
@@ -222,9 +199,8 @@ return array (
         5 => 'delete_department',
         6 => 'import_department',
         7 => 'download_department',
-    ),
-    'entity' =>
-    array (
+    ],
+    'entity' => [
         0 => 'list_entity',
         1 => 'create_entity',
         2 => 'show_entity',
@@ -233,9 +209,8 @@ return array (
         5 => 'delete_entity',
         6 => 'import_entity',
         7 => 'download_entity',
-    ),
-    'status' =>
-    array (
+    ],
+    'status' => [
         0 => 'list_status',
         1 => 'create_status',
         2 => 'show_status',
@@ -244,9 +219,8 @@ return array (
         5 => 'delete_status',
         6 => 'import_status',
         7 => 'download_status',
-    ),
-    'mef_status' =>
-    array (
+    ],
+    'mef_status' => [
         0 => 'list_mef_status',
         1 => 'create_mef_status',
         2 => 'show_mef_status',
@@ -255,27 +229,24 @@ return array (
         5 => 'delete_mef_status',
         6 => 'import_mef_status',
         7 => 'download_mef_status',
-    ),
-    'officer_document' =>
-    array (
+    ],
+    'officer_document' => [
         0 => 'list_officer_document',
         1 => 'create_officer_document',
         2 => 'show_officer_document',
         3 => 'edit_officer_document',
         4 => 'update_officer_document',
         5 => 'delete_officer_document',
-    ),
-    'user' =>
-    array (
+    ],
+    'user' => [
         0 => 'list_users',
         1 => 'create_users',
         2 => 'show_users',
         3 => 'edit_users',
         4 => 'update_users',
         5 => 'delete_users',
-    ),
-    'officer' =>
-    array (
+    ],
+    'officer' => [
         0 => 'list_officer',
         1 => 'create_officer',
         2 => 'show_officer',
@@ -285,66 +256,59 @@ return array (
         6 => 'import_officer',
         7 => 'download_officer',
         8 => 'filemanager_officer',
-    ),
-    'letter_type' =>
-    array (
+    ],
+    'letter_type' => [
         0 => 'list_letter_type',
         1 => 'create_letter_type',
         2 => 'show_letter_type',
         3 => 'edit_letter_type',
         4 => 'update_letter_type',
         5 => 'delete_letter_type',
-    ),
-    'menu' =>
-    array (
+    ],
+    'menu' => [
         0 => 'list_menu',
         1 => 'create_menu',
         2 => 'show_menu',
         3 => 'edit_menu',
         4 => 'update_menu',
         5 => 'delete_menu',
-    ),
-    'account_type_group' =>
-    array (
+    ],
+    'account_type_group' => [
         0 => 'list_account_type_group',
         1 => 'create_account_type_group',
         2 => 'show_account_type_group',
         3 => 'edit_account_type_group',
         4 => 'update_account_type_group',
         5 => 'delete_account_type_group',
-    ),
-    'account_group' =>
-    array (
+    ],
+    'account_group' => [
         0 => 'list_account_group',
         1 => 'create_account_group',
         2 => 'show_account_group',
         3 => 'edit_account_group',
         4 => 'update_account_group',
         5 => 'delete_account_group',
-    ),
-    'title' =>
-    array (
+    ],
+    'title' => [
         0 => 'list_title',
         1 => 'create_title',
         2 => 'show_title',
         3 => 'edit_title',
         4 => 'update_title',
         5 => 'delete_title',
-    ),
-    'mef_planning' =>
-    array (
+    ],
+    'mef_planning' => [
         0 => 'list_mef_planning',
         1 => 'create_mef_planning',
         2 => 'show_mef_planning',
         3 => 'edit_mef_planning',
         4 => 'update_mef_planning',
         5 => 'delete_mef_planning',
-    ),
+    ],
     // Settings › General (system settings) and Backup
-    'setting' =>
-    array (
+    'setting' => [
         0 => 'list_setting',
         1 => 'update_setting',
         2 => 'backup_setting',
-    ),
-);
+    ],
+];

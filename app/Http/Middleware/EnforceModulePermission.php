@@ -34,12 +34,12 @@ class EnforceModulePermission
     {
         $route = $request->route();
         $action = $route ? (self::ACTIONS[$route->getActionMethod()] ?? null) : null;
-        if (!$action || !is_object($controller = $route->getController())) {
+        if (! $action || ! is_object($controller = $route->getController())) {
             return $next($request);
         }
 
         $permission = (fn () => $this->{'PERMISSION_ACTION_'.$action} ?? null)->call($controller);
-        if (is_string($permission) && $this->exists($permission) && !Common::can($permission)) {
+        if (is_string($permission) && $this->exists($permission) && ! Common::can($permission)) {
             return response()->json([
                 'success' => false,
                 'message' => trans('common.msg_no_permission_access'),

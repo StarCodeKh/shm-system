@@ -1,12 +1,10 @@
 <?php
 
 // Default permissions of each role. Super Admin needs none: it has every permission (config/access.php).
-return array (
-    'Super Admin' =>
-    array (
-    ),
-    'Admin' =>
-    array (
+return [
+    'Super Admin' => [
+    ],
+    'Admin' => [
         0 => 'list_officer',
         1 => 'create_officer',
         2 => 'show_officer',
@@ -152,13 +150,12 @@ return array (
         142 => 'list_setting',
         143 => 'update_setting',
         144 => 'backup_setting',
-    ),
-    'Normal User' =>
-    array (
+    ],
+    'Normal User' => [
         0 => 'list_officer',
         1 => 'list_users',
         2 => 'list_letter_type',
         3 => 'list_bank',
         4 => 'list_position',
-    ),
-);
+    ],
+];

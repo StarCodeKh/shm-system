@@ -1,105 +1,122 @@
 <?php
 
 namespace App\Models\Settings;
-use Spatie\Permission\Models\Role;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Permission\Models\Permission;
-use DB;
+
 use CommonService;
+use DB;
+use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
+
 class RoleUser extends Model implements Auditable
 {
-    use \OwenIt\Auditing\Auditable,HasRoles;
+    use HasRoles,\OwenIt\Auditing\Auditable;
 
     protected $table = 'roles';
+
     protected $primaryKey = 'id';
+
     protected $fillable = [];
+
     protected $guarded = [];
+
     public $timestamps = true;
 
     // public static function
-    public static function dataFields(){
+    public static function dataFields()
+    {
         // Loop Data Field From Table to put in array for mapping data field to search data table
-        $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new Role)->getTable());
-        $str = "";
-        for($i=0; $i < count($data["tables"]); $i++){
-            if($data["tables"][$i]->Null == "NO" && $data["tables"][$i]->Field != 'id'){
-                $str .= $data["tables"][$i]->Field.",";
+        $data['tables'] = DB::select('show columns from '.DB::getTablePrefix().(new Role)->getTable());
+        $str = '';
+        for ($i = 0; $i < count($data['tables']); $i++) {
+            if ($data['tables'][$i]->Null == 'NO' && $data['tables'][$i]->Field != 'id') {
+                $str .= $data['tables'][$i]->Field.',';
             }
         }
-        $newArr = explode(",", $str);
+        $newArr = explode(',', $str);
         array_pop($newArr);
         $dataFields = $newArr;
+
         return $dataFields;
     }
 
-    public static function formAttributes(){
-        $formAttributes = array();
-        $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new Role)->getTable());
-        for($i=0; $i < count($data["tables"]); $i++){
-            if($data["tables"][$i]->Field != "id" && $data["tables"][$i]->Field != "created_by" && $data["tables"][$i]->Field != "modified_by" && $data["tables"][$i]->Field != "created_at" && $data["tables"][$i]->Field != "updated_at"){
-                $formAttributes[] = array(
-                    "name" => $data["tables"][$i]->Field,
-                    "type" => CommonService::convertDataType($data["tables"][$i]),
-                    "required" => $data["tables"][$i]->Null=="NO"?true:false,
-                );
+    public static function formAttributes()
+    {
+        $formAttributes = [];
+        $data['tables'] = DB::select('show columns from '.DB::getTablePrefix().(new Role)->getTable());
+        for ($i = 0; $i < count($data['tables']); $i++) {
+            if ($data['tables'][$i]->Field != 'id' && $data['tables'][$i]->Field != 'created_by' && $data['tables'][$i]->Field != 'modified_by' && $data['tables'][$i]->Field != 'created_at' && $data['tables'][$i]->Field != 'updated_at') {
+                $formAttributes[] = [
+                    'name' => $data['tables'][$i]->Field,
+                    'type' => CommonService::convertDataType($data['tables'][$i]),
+                    'required' => $data['tables'][$i]->Null == 'NO' ? true : false,
+                ];
             }
         }
+
         return $formAttributes;
     }
 
-    public static function getSingleOpt(){
+    public static function getSingleOpt()
+    {
         $query = RoleUser::orderByLevel()->whereNotDeleted()->get();
-        $data = array();
-        foreach($query as $row){
-            $data[] = array(
-                "label" => $row->name,
-                "value" => $row->id,
-            );
+        $data = [];
+        foreach ($query as $row) {
+            $data[] = [
+                'label' => $row->name,
+                'value' => $row->id,
+            ];
         }
+
         return $data;
     }
 
-    public static function getSingleValueOpt(){
+    public static function getSingleValueOpt()
+    {
         $query = RoleUser::orderByLevel()->whereNotDeleted()->get();
-        $data = array();
-        foreach($query as $row){
-            $data[] = array(
-                "label" => $row->name,
-                "value" => $row->name,
-            );
+        $data = [];
+        foreach ($query as $row) {
+            $data[] = [
+                'label' => $row->name,
+                'value' => $row->name,
+            ];
         }
+
         return $data;
     }
 
-    public static function getSingleOptById($param){
-        $query = RoleUser::orderByLevel()->where("id", $param)->get();
-        $data = array();
-        foreach($query as $row){
-            $data[] = array(
-                "label" => $row->first_name . $row->last_name . " (".$row->identity_no.")",
-                "value" => $row->id,
-            );
+    public static function getSingleOptById($param)
+    {
+        $query = RoleUser::orderByLevel()->where('id', $param)->get();
+        $data = [];
+        foreach ($query as $row) {
+            $data[] = [
+                'label' => $row->first_name.$row->last_name.' ('.$row->identity_no.')',
+                'value' => $row->id,
+            ];
         }
+
         return $data;
     }
 
-    public static function checkQuery($filter){
-        $whereClause = "";
+    public static function checkQuery($filter)
+    {
+        $whereClause = '';
         $query = RoleUser::orderByFilter($filter);
         $whereClause = $query;
-        if($filter["search_field"]){
-            $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
+        if ($filter['search_field']) {
+            $arraySingle = call_user_func_array('array_merge', $filter['search_field']);
             $dataFields = $arraySingle;
-            if(isset($filter["search_field"])){
-                for($i=0 ; $i < count($filter["search_field"]); $i++){
-                    $field = array_key_first($filter["search_field"][$i]); //array('key1', 'key2', 'key3');
+            if (isset($filter['search_field'])) {
+                for ($i = 0; $i < count($filter['search_field']); $i++) {
+                    $field = array_key_first($filter['search_field'][$i]); // array('key1', 'key2', 'key3');
                     if (array_key_exists($field, $dataFields)) {
-                        if(isset($filter["search_field"][$i][$field]["value"])){
-                            $whereClause->Where($field, 'Like', '%'.$filter["search_field"][$i][$field]["value"].'%');
-                        }else{
-                            $whereClause->Where($field, 'Like', '%'.$filter["search_field"][$i][$field].'%');
+                        if (isset($filter['search_field'][$i][$field]['value'])) {
+                            $whereClause->Where($field, 'Like', '%'.$filter['search_field'][$i][$field]['value'].'%');
+                        } else {
+                            $whereClause->Where($field, 'Like', '%'.$filter['search_field'][$i][$field].'%');
                         }
                     }
                 }
@@ -107,27 +124,33 @@ class RoleUser extends Model implements Auditable
         }
 
         $whereClause->whereNotDeleted();
+
         return $whereClause;
     }
 
-    public static function getData($filter){
+    public static function getData($filter)
+    {
         $data = [];
         $whereClause = RoleUser::checkQuery($filter);
-        $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);
-        $whereClause->limit($filter["limit"]);
+        $whereClause->offset(($filter['page_number'] - 1) * $filter['limit']);
+        $whereClause->limit($filter['limit']);
         $data = collect($whereClause->get());
+
         return $data;
     }
 
-    public static function getTotal($filter){
+    public static function getTotal($filter)
+    {
         $total = 0;
         $whereClause = RoleUser::checkQuery($filter);
         $total = $whereClause->count();
+
         return $total;
     }
 
     // Set Permission
-    public static function setPermission($input){
+    public static function setPermission($input)
+    {
         // $permissions = [
         //   'list_roles',
         //   'create_roles',
@@ -185,17 +208,17 @@ class RoleUser extends Model implements Auditable
         //   // $role->givePermissionTo($permission);
         // }
         // dd($input["role_info"]["name"]);
-        $role = Role::where("name", $input["role_info"]["name"] ?? null)->first();
-        if (!$role) {
+        $role = Role::where('name', $input['role_info']['name'] ?? null)->first();
+        if (! $role) {
             return false;
         }
         // { permission_name: true|false }; names that are missing or false are revoked
-        $granted = collect($input["permission"] ?? [])
-            ->filter(fn ($value) => $value === true || $value === 1 || $value === "1" || $value === "true")
+        $granted = collect($input['permission'] ?? [])
+            ->filter(fn ($value) => $value === true || $value === 1 || $value === '1' || $value === 'true')
             ->keys();
-        $names = Permission::where("guard_name", $role->guard_name)->whereIn("name", $granted)->pluck("name")->all();
+        $names = Permission::where('guard_name', $role->guard_name)->whereIn('name', $granted)->pluck('name')->all();
         $role->syncPermissions($names);
+
         return true;
     }
-
 }

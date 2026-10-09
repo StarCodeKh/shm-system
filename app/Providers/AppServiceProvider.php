@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Channels\DatabaseChannel;
+use App\Models\Settings\Status;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
-use App\Models\Settings\Status;
+use Laravel\Passport\Passport;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         // notify() rows fit tbl_notifications (auto-increment id, subject / message)
-        $this->app->bind(\Illuminate\Notifications\Channels\DatabaseChannel::class, \App\Channels\DatabaseChannel::class);
+        $this->app->bind(\Illuminate\Notifications\Channels\DatabaseChannel::class, DatabaseChannel::class);
     }
 
     /**
@@ -28,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         // oauth_clients uses auto-increment integer ids
-        \Laravel\Passport\Passport::$clientUuids = false;
+        Passport::$clientUuids = false;
 
         $this->registerQueryMacros();
     }
@@ -52,18 +54,19 @@ class AppServiceProvider extends ServiceProvider
             $from = is_string($this->from) ? preg_split('/\s+as\s+/i', $this->from) : [null];
             $table = $from[0];
             $alias = $from[1] ?? $table;
-            if ($table && !isset($columns[$table])) {
+            if ($table && ! isset($columns[$table])) {
                 $columns[$table] = Schema::getColumnListing($table);
             }
             $known = $columns[$table] ?? [];
             if (in_array('order_level', $known)) {
-                $this->orderBy($alias . '.order_level', $direction);
+                $this->orderBy($alias.'.order_level', $direction);
             } elseif ($this->joins) {
                 $this->orderBy('order_level', $direction); // may come from a joined table
             }
             if (in_array('id', $known)) {
-                $this->orderBy($alias . '.id');
+                $this->orderBy($alias.'.id');
             }
+
             return $this;
         });
 
@@ -74,7 +77,7 @@ class AppServiceProvider extends ServiceProvider
             $from = is_string($this->from) ? preg_split('/\s+as\s+/i', $this->from) : [null];
             $table = $from[0];
             $alias = $from[1] ?? $table;
-            if ($table && !isset($columns[$table])) {
+            if ($table && ! isset($columns[$table])) {
                 $columns[$table] = Schema::getColumnListing($table);
             }
             $known = $columns[$table] ?? [];
@@ -82,12 +85,13 @@ class AppServiceProvider extends ServiceProvider
             $sort = $filter['sort'] ?? null;
             $order = strtolower($filter['order'] ?? 'asc') === 'desc' ? 'desc' : 'asc';
             $plain = is_string($sort) && strpos($sort, '.') === false;
-            if ($sort && (!$plain || $this->joins || in_array($sort, $known))) {
+            if ($sort && (! $plain || $this->joins || in_array($sort, $known))) {
                 $this->orderBy($sort, $order);
             }
-            if (in_array('id', $known) && $sort !== 'id' && $sort !== $alias . '.id') {
-                $this->orderBy($alias . '.id', 'desc');
+            if (in_array('id', $known) && $sort !== 'id' && $sort !== $alias.'.id') {
+                $this->orderBy($alias.'.id', 'desc');
             }
+
             return $this;
         });
     }

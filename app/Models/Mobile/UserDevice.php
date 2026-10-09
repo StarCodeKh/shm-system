@@ -1,11 +1,15 @@
 <?php
 
 namespace App\Models\Mobile;
+
 use Illuminate\Database\Eloquent\Model;
+
 class UserDevice extends Model
 {
     protected $table = 'user_device';
+
     protected $primaryKey = 'id';
+
     protected $fillable = [
         'user_id',
         'device_type',
@@ -13,17 +17,18 @@ class UserDevice extends Model
         'device_type',
         'device_token',
         'remark',
-        'created_at'
-        ];
+        'created_at',
+    ];
 
-    public static function CheckUserDevice($request){
-        $query = UserDevice::where("device_token", $request["device_token"])->first();
-        if($query){
+    public static function CheckUserDevice($request)
+    {
+        $query = UserDevice::where('device_token', $request['device_token'])->first();
+        if ($query) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
-        public $timestamps = false;
 
+    public $timestamps = false;
 }

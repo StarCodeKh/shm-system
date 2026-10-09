@@ -3,5 +3,5 @@
 return [
 
     'entry_title' => 'Composition Request',
-    'entry_description' => ''
+    'entry_description' => '',
 ];

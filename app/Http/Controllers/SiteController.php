@@ -31,9 +31,10 @@ class SiteController extends Controller
             $site[$name] = $value !== '' ? $value : null;
         }
         // A website without a scheme ("www.mef.gov.kh") still opens as a link
-        if ($site['website'] && !preg_match('#^https?://#i', $site['website'])) {
+        if ($site['website'] && ! preg_match('#^https?://#i', $site['website'])) {
             $site['website'] = 'https://'.$site['website'];
         }
+
         return response()->json(['data' => $site]);
     }
 }

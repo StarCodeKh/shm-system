@@ -1,18 +1,24 @@
 <?php
 
 namespace App\Models\Settings;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Model;
-use DB;
+
 use CommonService;
+use DB;
+use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
 class CurrencyExchange extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
+
     protected $table = 'currency_exchange';
+
     protected $primaryKey = 'id';
+
     protected $fillable = [];
+
     protected $guarded = [];
+
     public $timestamps = true;
 
     // Used only when no USD -> KHR rate has been entered yet
@@ -28,78 +34,97 @@ class CurrencyExchange extends Model implements Auditable
     {
         $from = strtoupper($from);
         $to = strtoupper($to);
-        if ($from === $to) return 1.0;
+        if ($from === $to) {
+            return 1.0;
+        }
+
         return self::$rates["$from>$to"] ??= (function () use ($from, $to) {
             $fromId = Currency::idOf($from);
             $toId = Currency::idOf($to);
             $latest = fn ($a, $b) => (float) self::query()->whereNotDeleted()->where('from_currency', $a)->where('to_currency', $b)
                 ->where('exchange_rate', '>', 0)->orderByDesc('issue_date')->orderByDesc('id')->value('exchange_rate');
-            if ($rate = $latest($fromId, $toId)) return $rate;
-            if ($rate = $latest($toId, $fromId)) return 1 / $rate;
-            if ($from === Currency::USD && $to === Currency::KHR) return (float) self::DEFAULT_USD_KHR;
-            if ($from === Currency::KHR && $to === Currency::USD) return 1 / self::DEFAULT_USD_KHR;
+            if ($rate = $latest($fromId, $toId)) {
+                return $rate;
+            }
+            if ($rate = $latest($toId, $fromId)) {
+                return 1 / $rate;
+            }
+            if ($from === Currency::USD && $to === Currency::KHR) {
+                return (float) self::DEFAULT_USD_KHR;
+            }
+            if ($from === Currency::KHR && $to === Currency::USD) {
+                return 1 / self::DEFAULT_USD_KHR;
+            }
+
             return 1.0;
         })();
     }
 
-    public static function dataFields(){
+    public static function dataFields()
+    {
         // Loop Data Field From Table to put in array for mapping data field to search data table
-        $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new CurrencyExchange)->getTable());
-        $str = "";
-        for($i=0; $i < count($data["tables"]); $i++){
-            if($data["tables"][$i]->Null == "NO" && $data["tables"][$i]->Field != 'id'){
-                $str .= $data["tables"][$i]->Field.",";
+        $data['tables'] = DB::select('show columns from '.DB::getTablePrefix().(new CurrencyExchange)->getTable());
+        $str = '';
+        for ($i = 0; $i < count($data['tables']); $i++) {
+            if ($data['tables'][$i]->Null == 'NO' && $data['tables'][$i]->Field != 'id') {
+                $str .= $data['tables'][$i]->Field.',';
             }
         }
-        $newArr = explode(",", $str);
+        $newArr = explode(',', $str);
         array_pop($newArr);
         $dataFields = $newArr;
+
         return $dataFields;
     }
 
-    public static function formAttributes(){
-        $formAttributes = array();
-        $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new CurrencyExchange)->getTable());
-        for($i=0; $i < count($data["tables"]); $i++){
-            if($data["tables"][$i]->Field != "id" && $data["tables"][$i]->Field != "created_by" && $data["tables"][$i]->Field != "modified_by" && $data["tables"][$i]->Field != "created_at" && $data["tables"][$i]->Field != "updated_at"){
-                $formAttributes[] = array(
-                    "name" => $data["tables"][$i]->Field,
-                    "type" => CommonService::convertDataType($data["tables"][$i]),
-                    "required" => $data["tables"][$i]->Null=="NO"?true:false,
-                );
+    public static function formAttributes()
+    {
+        $formAttributes = [];
+        $data['tables'] = DB::select('show columns from '.DB::getTablePrefix().(new CurrencyExchange)->getTable());
+        for ($i = 0; $i < count($data['tables']); $i++) {
+            if ($data['tables'][$i]->Field != 'id' && $data['tables'][$i]->Field != 'created_by' && $data['tables'][$i]->Field != 'modified_by' && $data['tables'][$i]->Field != 'created_at' && $data['tables'][$i]->Field != 'updated_at') {
+                $formAttributes[] = [
+                    'name' => $data['tables'][$i]->Field,
+                    'type' => CommonService::convertDataType($data['tables'][$i]),
+                    'required' => $data['tables'][$i]->Null == 'NO' ? true : false,
+                ];
             }
         }
+
         return $formAttributes;
     }
 
-    public static function getSingleOpt(){
+    public static function getSingleOpt()
+    {
         $query = CurrencyExchange::whereNotDeleted()->get();
-        $data = array();
-        foreach($query as $row){
-            $data[] = array(
-                "label" => Currency::codeOf($row->from_currency)." → ".Currency::codeOf($row->to_currency)." ".(float) $row->exchange_rate,
-                "value" => $row->id,
-            );
+        $data = [];
+        foreach ($query as $row) {
+            $data[] = [
+                'label' => Currency::codeOf($row->from_currency).' → '.Currency::codeOf($row->to_currency).' '.(float) $row->exchange_rate,
+                'value' => $row->id,
+            ];
         }
+
         return $data;
     }
 
-    public static function checkQuery($filter){
+    public static function checkQuery($filter)
+    {
         $query = CurrencyExchange::orderByFilter($filter);
         $whereClause = $query;
         $whereClause->orderByFilter($filter);
-        $d = "";
-        if($filter["search_field"]){
-            $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
+        $d = '';
+        if ($filter['search_field']) {
+            $arraySingle = call_user_func_array('array_merge', $filter['search_field']);
             $dataFields = $arraySingle;
-            if(isset($filter["search_field"])){
-                for($i=0 ; $i < count($filter["search_field"]); $i++){
-                    $field = array_key_first($filter["search_field"][$i]);
+            if (isset($filter['search_field'])) {
+                for ($i = 0; $i < count($filter['search_field']); $i++) {
+                    $field = array_key_first($filter['search_field'][$i]);
                     if (array_key_exists($field, $dataFields)) {
-                        if(isset($filter["search_field"][$i][$field]["value"])){
-                            $whereClause->Where($field, 'Like', '%'.$filter["search_field"][$i][$field]["value"].'%');
-                        }else{
-                            $whereClause->Where($field, 'Like', '%'.$filter["search_field"][$i][$field].'%');
+                        if (isset($filter['search_field'][$i][$field]['value'])) {
+                            $whereClause->Where($field, 'Like', '%'.$filter['search_field'][$i][$field]['value'].'%');
+                        } else {
+                            $whereClause->Where($field, 'Like', '%'.$filter['search_field'][$i][$field].'%');
                         }
                     }
                 }
@@ -107,20 +132,25 @@ class CurrencyExchange extends Model implements Auditable
         }
 
         $whereClause->whereNotDeleted();
+
         return $whereClause;
     }
 
-    public static function getData($filter){
+    public static function getData($filter)
+    {
         $whereClause = CurrencyExchange::checkQuery($filter);
-        $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);
-        $whereClause->limit($filter["limit"]);
+        $whereClause->offset(($filter['page_number'] - 1) * $filter['limit']);
+        $whereClause->limit($filter['limit']);
         $data = collect($whereClause->get());
+
         return $data;
     }
 
-    public static function getTotal($filter){
+    public static function getTotal($filter)
+    {
         $whereClause = CurrencyExchange::checkQuery($filter);
         $total = $whereClause->count();
+
         return $total;
     }
 }

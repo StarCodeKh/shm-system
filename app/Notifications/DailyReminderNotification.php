@@ -9,14 +9,18 @@ use Illuminate\Notifications\Notification;
 class DailyReminderNotification extends Notification
 {
     use Queueable;
+
     public $incrementing = true;
+
     protected $keyType = 'int';
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
     protected $message;
+
     public function __construct($message)
     {
         $this->message = $message;
@@ -30,21 +34,21 @@ class DailyReminderNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['database','broadcast'];  // or ['database', 'mail', 'broadcast']
+        return ['database', 'broadcast'];  // or ['database', 'mail', 'broadcast']
     }
 
     /**
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
     }
 
     // Optional: Save to database

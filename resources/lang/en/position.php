@@ -3,6 +3,6 @@
 return [
 
     'entry_title' => 'Position',
-    'entry_description' => ''
+    'entry_description' => '',
 
 ];

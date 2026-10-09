@@ -1,10 +1,11 @@
 <?php
-    header("Content-type: application/vnd.ms-excel");
-    header("Content-Disposition: attachment;Filename=document_name.xls");
-    echo "<html>";
-    echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
-    echo '<body style="font-family: Khmer MEF1">';
-        echo '<div class="container" style="margin-top: 50px;"><center><span class="font-mef2" style="font-size: 10pt;"><span>
+
+header('Content-type: application/vnd.ms-excel');
+header('Content-Disposition: attachment;Filename=document_name.xls');
+echo '<html>';
+echo '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">';
+echo '<body style="font-family: Khmer MEF1">';
+echo '<div class="container" style="margin-top: 50px;"><center><span class="font-mef2" style="font-size: 10pt;"><span>
         មន្ត្រីរាជការទទួលប្រាក់ឧត្ថម្ភមុខងារក្រុមការងារកែទម្រង់ការគ្រប់គ្រងហិរញ្ញវត្ថុសារធារណៈរបស់<br>
         ក្រសួង&zwj;&zwj;&#8203;&#8203;~ស្ថាប័ន<br></span> <span>
         ប្រចាំខែធ្នូ 
@@ -35,6 +36,5 @@
             ឆ្នាំ២០២១ <br> <span class="font-mef2">រដ្ឋលេខាធិការ<br>
             និងជាអគ្គលេខាធិការ នៃអគ្គលេខាធិការដ្ឋាន<br>
             គណៈកម្មាធិការដឹកនាំការងារកែទម្រង់ការគ្រប់គ្រងហិរញ្ញវត្ថុសាធារណៈ</span></center></span></div></div></div>';
-    echo "</body>";
-    echo "</html>";
-?>
+echo '</body>';
+echo '</html>';

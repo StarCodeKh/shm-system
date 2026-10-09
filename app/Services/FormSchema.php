@@ -34,12 +34,14 @@ class FormSchema
     private const FILES = ['attach', 'file', 'photo', 'image', 'thumbnail'];
 
     /**
-     * @param string $table      table name without prefix, e.g. "bank"
-     * @param bool   $withStatus include the Active / Inactive status (a quick "+ Add" form leaves it to the server)
+     * @param  string  $table  table name without prefix, e.g. "bank"
+     * @param  bool  $withStatus  include the Active / Inactive status (a quick "+ Add" form leaves it to the server)
      */
     public static function fields(string $table, bool $withStatus = true): array
     {
-        if (!Schema::hasTable($table)) return [];
+        if (! Schema::hasTable($table)) {
+            return [];
+        }
 
         $hidden = array_merge(self::BOOKKEEPING, self::HIDDEN[$table] ?? [], $withStatus ? [] : ['status']);
         $columns = collect(DB::select('show columns from '.DB::getTablePrefix().$table))
@@ -69,7 +71,9 @@ class FormSchema
                 $field['type'] = 'select';
                 $field['lookup'] = 'record_status';
                 $active = DB::table('mef_status')->where('group', 'STATUS')->where('title_en', 'Active')->value('id');
-                if ($active) $field['default'] = $active;
+                if ($active) {
+                    $field['default'] = $active;
+                }
             }
             $fields[] = $field;
         }
@@ -77,9 +81,16 @@ class FormSchema
         $rank = function ($field) {
             $order = ['name_kh', 'name_en', 'name', 'title_kh', 'title_en', 'title', 'code', 'abbreviation'];
             $at = array_search($field['name'], $order, true);
-            if ($at !== false) return $at;
-            if ($field['name'] === 'status') return 65;
-            if ($field['name'] === 'order_level') return 60;
+            if ($at !== false) {
+                return $at;
+            }
+            if ($field['name'] === 'status') {
+                return 65;
+            }
+            if ($field['name'] === 'order_level') {
+                return 60;
+            }
+
             return ['select' => 20, 'text' => 30, 'date' => 30, 'number' => 40, 'checkbox' => 70, 'textarea' => 80, 'file' => 90][$field['type']] ?? 50;
         };
         usort($fields, fn ($a, $b) => $rank($a) <=> $rank($b)); // stable: ties keep the table's order
@@ -93,11 +104,21 @@ class FormSchema
         $name = strtolower($column->Field);
         $type = strtolower(preg_replace('/\(.+$/', '', $column->Type));
 
-        if (in_array($name, self::FILES, true)) return 'file';
-        if (LookupController::has($name)) return 'select';
-        if (preg_match('/^(is|has)_/', $name) || str_starts_with(strtolower($column->Type), 'tinyint(1)')) return 'checkbox';
-        if (preg_match('/^(remark|description|address|note)s?$/', $name)) return 'textarea';
-        if (preg_match('/^(name|title|code|abbreviation|symbol)(_|$)/', $name)) return 'text';
+        if (in_array($name, self::FILES, true)) {
+            return 'file';
+        }
+        if (LookupController::has($name)) {
+            return 'select';
+        }
+        if (preg_match('/^(is|has)_/', $name) || str_starts_with(strtolower($column->Type), 'tinyint(1)')) {
+            return 'checkbox';
+        }
+        if (preg_match('/^(remark|description|address|note)s?$/', $name)) {
+            return 'textarea';
+        }
+        if (preg_match('/^(name|title|code|abbreviation|symbol)(_|$)/', $name)) {
+            return 'text';
+        }
 
         return match ($type) {
             'int', 'bigint', 'smallint', 'mediumint', 'tinyint', 'decimal', 'float', 'double', 'year' => 'number',

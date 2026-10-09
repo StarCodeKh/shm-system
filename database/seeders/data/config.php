@@ -2,12 +2,12 @@
 
 // Site settings (tbl_config), loaded as constants on every request (GlobalSite middleware).
 // Secrets are empty here: set them on each server.
-return array (
+return [
     'OTP_config_limit' => '122',
     'config_meta_tag_keyword' => 'Meta MEF Keyword',
     'config_meta_tag_description' => 'Meta MEF Descripiton',
     'config_footer' => '@រក្សាសិទ្ធគ្រប់យ៉ាងដោយក្រសួងសេដ្ឋកិច្ច និងហិរញ្ញវត្ថុ ២០២២.',
-    'config_dir_image' => NULL,
+    'config_dir_image' => null,
     'config_logo' => '/images/uploads/22-Feb-2026/logo.png',
     'config_name' => 'SHM-System',
     'config_owner' => 'ក្រសួងសេដ្ឋកិច្ច និងហិរញ្ញវត្ថុរាជធានី-ខេត្ត',
@@ -71,4 +71,4 @@ return array (
     'config_noti_allow_receive_email' => '1',
     'config_noti_allow_to_user' => '1',
     'config_noti_receiving_news' => '0',
-);
+];

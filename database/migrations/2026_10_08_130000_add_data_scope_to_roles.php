@@ -12,7 +12,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (Schema::hasColumn('roles', 'data_scope')) return;
+        if (Schema::hasColumn('roles', 'data_scope')) {
+            return;
+        }
         Schema::table('roles', function (Blueprint $table) {
             $table->string('data_scope', 20)->default('all')->after('guard_name');
         });
@@ -20,7 +22,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (!Schema::hasColumn('roles', 'data_scope')) return;
+        if (! Schema::hasColumn('roles', 'data_scope')) {
+            return;
+        }
         Schema::table('roles', function (Blueprint $table) {
             $table->dropColumn('data_scope');
         });

@@ -3,6 +3,6 @@
 return [
 
     'entry_title' => 'Sector',
-    'entry_description' => ''
+    'entry_description' => '',
 
 ];

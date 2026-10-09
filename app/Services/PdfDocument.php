@@ -63,6 +63,7 @@ class PdfDocument
         set_error_handler(fn ($severity, $message, $file) => str_contains($file, '/mpdf/'), E_WARNING | E_NOTICE);
         try {
             $mpdf->WriteHTML($html);
+
             return $mpdf->Output('', 'S');
         } finally {
             restore_error_handler();
@@ -79,7 +80,10 @@ class PdfDocument
         $config = config('report.typography');
         $factor = 1.0;
         foreach ($config['table_scale'] as $max => $value) {
-            if ($columns <= $max) { $factor = $value; break; }
+            if ($columns <= $max) {
+                $factor = $value;
+                break;
+            }
         }
         $sizes = [];
         foreach ($config['sizes'] as $role => $size) {
@@ -88,6 +92,7 @@ class PdfDocument
             $sizes[$role] = $scale == 1.0 ? round($size, 1) : round($size * 2) / 2;
         }
         $sizes['table'] = $factor;
+
         return $sizes;
     }
 
@@ -95,7 +100,9 @@ class PdfDocument
     public static function organization(): array
     {
         static $organization = null;
-        if ($organization !== null) return $organization;
+        if ($organization !== null) {
+            return $organization;
+        }
 
         $settings = Settings::all();
         $logo = ltrim((string) ($settings['config_logo'] ?? ''), '/');
@@ -130,8 +137,8 @@ class PdfDocument
 
     protected static function make(string $orientation): Mpdf
     {
-        $fontDirs = (new ConfigVariables())->getDefaults()['fontDir'];
-        $fontData = (new FontVariables())->getDefaults()['fontdata'];
+        $fontDirs = (new ConfigVariables)->getDefaults()['fontDir'];
+        $fontData = (new FontVariables)->getDefaults()['fontdata'];
 
         return new Mpdf([
             'mode' => 'utf-8',

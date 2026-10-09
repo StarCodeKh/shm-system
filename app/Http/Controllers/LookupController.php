@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Officer;
 use App\Models\Settings\Account;
 use App\Models\Settings\AccountGroup;
 use App\Models\Settings\AccountType;
@@ -16,6 +17,7 @@ use App\Models\Settings\PaymentType;
 use App\Models\Settings\RoleUser;
 use App\Models\Settings\Status;
 use App\Models\Settings\Title;
+use App\Services\DataScope;
 use App\Services\FormSchema;
 use CommonService;
 use Illuminate\Support\Facades\Schema;
@@ -65,10 +67,10 @@ class LookupController extends Controller
             'account_type' => fn () => AccountType::query()->whereNotDeleted()->orderByLevel()->get()
                 ->map(fn ($row) => ['label' => $row->type_code.' - '.CommonService::localName($row), 'value' => $row->type_code])->values()->all(),
             // Roles: which records the role may see (App\Services\DataScope)
-            'data_scope' => fn () => collect(\App\Services\DataScope::LEVELS)
+            'data_scope' => fn () => collect(DataScope::LEVELS)
                 ->map(fn ($level) => ['label' => trans('common.data_scope_'.$level), 'value' => $level])->all(),
             // Users: the member record a login belongs to (members see their own data with the "member" scope)
-            'officer_id' => fn () => \App\Models\Officer::getSingleOpt(),
+            'officer_id' => fn () => Officer::getSingleOpt(),
             // Active / Inactive of a settings row (its "status" field asks for this list by name, see FormSchema)
             'record_status' => fn () => Status::query()->where('group', 'STATUS')->whereNotDeleted()->orderByLevel()->get()
                 ->map(fn ($row) => ['label' => CommonService::localName($row, 'title'), 'value' => $row->id])->values()->all(),
@@ -79,6 +81,7 @@ class LookupController extends Controller
     protected function byId(string $model): array
     {
         $kh = app()->getLocale() === 'kh';
+
         return $model::query()->whereNotDeleted()->orderByLevel()->get()
             ->map(fn ($row) => [
                 'label' => ($kh ? ($row->name_kh ?: $row->name_en) : ($row->name_en ?: $row->name_kh)) ?: (string) $row->id,
@@ -96,6 +99,7 @@ class LookupController extends Controller
     public static function choices(string $field): ?array
     {
         $lookup = (new static)->lookups()[$field] ?? null;
+
         return $lookup ? $lookup() : null;
     }
 
@@ -115,13 +119,13 @@ class LookupController extends Controller
      */
     public function form(string $table)
     {
-        if (!Schema::hasTable($table)) {
+        if (! Schema::hasTable($table)) {
             return response()->json(['message' => trans('common.lookup_no_form')], 404);
         }
         // Same rule as saving (EnforceModulePermission): a create permission that exists is required
         $permission = 'create_'.$table;
         $declared = app(PermissionRegistrar::class)->getPermissions()->contains('name', $permission);
-        if ($declared && !CommonService::can($permission)) {
+        if ($declared && ! CommonService::can($permission)) {
             return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
         }
 

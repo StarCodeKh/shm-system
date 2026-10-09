@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use App\Models\Settings\Status;
+use Carbon\Carbon;
 use CommonService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -43,6 +43,7 @@ class ImportController extends Controller
 
     // Rows sent back for the table (all rows are still checked and counted)
     private const MAX_PREVIEW = 500;
+
     private const MAX_ROWS = 10000;
 
     // Choice lists longer than this are still checked, but not offered as a dropdown
@@ -64,16 +65,22 @@ class ImportController extends Controller
     {
         $this->useLocale($request);
         $read = $this->read($request);
-        if (!is_array($read)) return $read;
+        if (! is_array($read)) {
+            return $read;
+        }
         [, $sheet, $columns, $schema] = $read;
         $table = $request->input('table');
 
         // Fixes made in the preview count as if they were in the file
         $edits = $this->edits($request, $sheet, $columns);
         foreach ($edits['cells'] as $line => $cells) {
-            foreach ($cells as $i => $value) $sheet[$line - 1][$i] = $value;
+            foreach ($cells as $i => $value) {
+                $sheet[$line - 1][$i] = $value;
+            }
         }
-        foreach ($edits['removed'] as $line) unset($sheet[$line - 1]);
+        foreach ($edits['removed'] as $line) {
+            unset($sheet[$line - 1]);
+        }
 
         // Id columns with a choice list (status, currency_id, ...): a value must be one of the choices
         $choices = $this->choices($table, $columns);
@@ -81,14 +88,14 @@ class ImportController extends Controller
         $links = $this->links($table, $columns, $choices, $sheet);
 
         $present = array_column($columns, 'name');
-        $missing = array_values(array_filter(array_keys($schema), fn ($name) => $schema[$name]['required'] && !in_array($name, $present, true)));
+        $missing = array_values(array_filter(array_keys($schema), fn ($name) => $schema[$name]['required'] && ! in_array($name, $present, true)));
 
         $truncated = count($sheet) > self::MAX_ROWS;
         $sheet = array_slice($sheet, 0, self::MAX_ROWS, true);
 
         // Rows already in the table, by id, for new / update / same
         $ids = collect($sheet)->map(fn ($row) => $this->cell($row, $columns, 'id'))->filter(fn ($id) => is_numeric($id))->map(fn ($id) => (int) $id)->unique()->values();
-        $existing = $ids->isEmpty() || !isset($schema['id']) ? collect() : $ids->chunk(1000)
+        $existing = $ids->isEmpty() || ! isset($schema['id']) ? collect() : $ids->chunk(1000)
             ->flatMap(fn ($chunk) => DB::table($table)->whereIn('id', $chunk->all())->get())
             ->keyBy('id');
 
@@ -111,23 +118,27 @@ class ImportController extends Controller
                     $match = $choices[$i]['aliases'][$this->normal($value)] ?? null;
                     if ($match === null || $this->normal($match) !== $this->normal($value)) {
                         $errors[$column['name']] = trans('import.not_in_list');
-                        if ($match !== null) $suggest[$column['name']] = $match;
+                        if ($match !== null) {
+                            $suggest[$column['name']] = $match;
+                        }
                     } else {
                         $value = $match;
                     }
                 } elseif ($column['known'] && $value !== null && $value !== '') {
                     [$value, $error] = $this->check($value, $column['type']);
-                    if (!$error && isset($links[$i]) && !isset($links[$i]['found'][$this->normal($value)])) {
+                    if (! $error && isset($links[$i]) && ! isset($links[$i]['found'][$this->normal($value)])) {
                         $error = trans('import.not_found', ['table' => $links[$i]['table']]);
                     }
-                    if ($error) $errors[$column['name']] = $error;
+                    if ($error) {
+                        $errors[$column['name']] = $error;
+                    }
                 }
                 $values[$column['name']] = $value === '' ? null : $value;
             }
 
             $id = $values['id'] ?? null;
             $current = is_numeric($id) ? $existing->get((int) $id) : null;
-            if (!$current) {
+            if (! $current) {
                 // A new row needs every required value
                 foreach ($columns as $column) {
                     if ($column['required'] && $column['name'] !== 'id' && ($values[$column['name']] ?? null) === null) {
@@ -148,7 +159,7 @@ class ImportController extends Controller
             }
             $signature = $this->signature($raw, $columns);
             $first = $signature === null ? null : ($seen['rows'][$signature] ?? null);
-            if (!$duplicateOf && $first !== null && $first !== $n + 1) {
+            if (! $duplicateOf && $first !== null && $first !== $n + 1) {
                 $errors[$seen['label']] = trans('import.duplicate_row', ['line' => $first]);
                 $duplicateOf = $first;
             }
@@ -156,21 +167,27 @@ class ImportController extends Controller
             // (a repeat inside the file is reported as that: removing it fixes both)
             foreach ($duplicateOf ? [] : $keys as $i => $name) {
                 $other = $taken[$i][$this->normal($raw[$i] ?? '')] ?? null;
-                if (!$other || ($current && (int) $current->id === (int) $other['id'])) continue;
+                if (! $other || ($current && (int) $current->id === (int) $other['id'])) {
+                    continue;
+                }
                 $errors[$name] = trans('import.exists', ['record' => $other['label']]);
                 // With an id column the row can update that record instead
-                if (!$current && $this->hasColumn($columns, 'id')) {
+                if (! $current && $this->hasColumn($columns, 'id')) {
                     $errors['id'] = trans('import.link', ['id' => $other['id']]);
                     $suggest['id'] = $other['id'];
                 }
             }
 
             $changed = [];
-            if ($current && !$errors) {
+            if ($current && ! $errors) {
                 foreach ($columns as $column) {
                     $name = $column['name'];
-                    if (!$column['known'] || $name === 'id') continue;
-                    if ((string) ($values[$name] ?? '') !== (string) ($current->$name ?? '')) $changed[] = $name;
+                    if (! $column['known'] || $name === 'id') {
+                        continue;
+                    }
+                    if ((string) ($values[$name] ?? '') !== (string) ($current->$name ?? '')) {
+                        $changed[] = $name;
+                    }
                 }
             }
 
@@ -193,7 +210,7 @@ class ImportController extends Controller
             'shown' => count($rows),
             'truncated' => $truncated,
             // The file can be imported only when nothing is wrong in it
-            'ready' => !$missing && $summary['error'] === 0 && !$truncated,
+            'ready' => ! $missing && $summary['error'] === 0 && ! $truncated,
         ]);
     }
 
@@ -205,7 +222,9 @@ class ImportController extends Controller
     {
         $this->useLocale($request);
         $read = $this->read($request);
-        if (!is_array($read)) return $read;
+        if (! is_array($read)) {
+            return $read;
+        }
         [$book, $rows, $columns] = $read;
 
         $edits = $this->edits($request, $rows, $columns);
@@ -218,7 +237,7 @@ class ImportController extends Controller
                     $sheet->setCellValue($cell, null);
                 } elseif ($columns[$i]['type'] === 'number' && is_numeric($number)) {
                     $sheet->setCellValueExplicit($cell, $number + 0, DataType::TYPE_NUMERIC);
-                } elseif ($columns[$i]['type'] === 'date' && !$this->check($value, 'date')[1]) {
+                } elseif ($columns[$i]['type'] === 'date' && ! $this->check($value, 'date')[1]) {
                     // A real Excel date, as typed in Excel (some imports read dates as Excel day numbers)
                     $sheet->setCellValue($cell, ExcelDate::PHPToExcel(Carbon::parse($this->check($value, 'date')[0])));
                     $sheet->getStyle($cell)->getNumberFormat()->setFormatCode('yyyy-mm-dd');
@@ -230,12 +249,17 @@ class ImportController extends Controller
         }
         // Bottom first, so the rows above keep their numbers
         rsort($edits['removed']);
-        foreach ($edits['removed'] as $line) $sheet->removeRow($line);
+        foreach ($edits['removed'] as $line) {
+            $sheet->removeRow($line);
+        }
         // Only the first sheet is imported
-        while ($book->getSheetCount() > 1) $book->removeSheetByIndex(1);
+        while ($book->getSheetCount() > 1) {
+            $book->removeSheetByIndex(1);
+        }
 
         ob_start();
         (new Xlsx($book))->save('php://output');
+
         return response(ob_get_clean(), 200)
             ->header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     }
@@ -244,25 +268,28 @@ class ImportController extends Controller
     public function template(Request $request)
     {
         $table = (string) $request->query('table');
-        if ($denied = $this->refuse($table)) return $denied;
+        if ($denied = $this->refuse($table)) {
+            return $denied;
+        }
 
         $schema = $this->schema($table);
         $names = collect($schema)->reject(fn ($c, $name) => in_array($name, self::SERVER_COLUMNS, true))
             ->sortByDesc(fn ($c, $name) => $name === 'id' ? 2 : (int) $c['required'])->keys()->all();
 
-        $book = new Spreadsheet();
+        $book = new Spreadsheet;
         $sheet = $book->getActiveSheet();
         $sheet->setTitle(Str::limit($table, 28, ''));
         foreach ($names as $i => $name) {
-            $cell = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 1).'1';
+            $cell = Coordinate::stringFromColumnIndex($i + 1).'1';
             $sheet->setCellValue($cell, $name);
-            $sheet->getColumnDimension(\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 1))->setWidth(max(12, strlen($name) + 4));
+            $sheet->getColumnDimension(Coordinate::stringFromColumnIndex($i + 1))->setWidth(max(12, strlen($name) + 4));
         }
-        $sheet->getStyle('A1:'.\PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(max(1, count($names))).'1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:'.Coordinate::stringFromColumnIndex(max(1, count($names))).'1')->getFont()->setBold(true);
         $sheet->freezePane('A2');
 
         ob_start();
         (new Xlsx($book))->save('php://output');
+
         return response(ob_get_clean(), 200)
             ->header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             ->header('Content-Disposition', 'attachment; filename="'.$table.'-template.xlsx"');
@@ -280,7 +307,9 @@ class ImportController extends Controller
             'edits' => 'nullable|json|max:2000000',
         ]);
         $table = $request->input('table');
-        if ($denied = $this->refuse($table)) return $denied;
+        if ($denied = $this->refuse($table)) {
+            return $denied;
+        }
 
         try {
             $book = IOFactory::load($request->file('file')->getRealPath());
@@ -301,15 +330,18 @@ class ImportController extends Controller
         unset($sheet[$headKey]);
         $columns = [];
         foreach ($headings as $i => $name) {
-            if ($name === '') continue;
+            if ($name === '') {
+                continue;
+            }
             $columns[$i] = [
                 'name' => $name,
-                'known' => isset($schema[$name]) && !in_array($name, self::SERVER_COLUMNS, true)
-                    && !in_array($name, self::NOT_IMPORTED[$table] ?? [], true),
+                'known' => isset($schema[$name]) && ! in_array($name, self::SERVER_COLUMNS, true)
+                    && ! in_array($name, self::NOT_IMPORTED[$table] ?? [], true),
                 'required' => $schema[$name]['required'] ?? false,
                 'type' => $schema[$name]['type'] ?? null,
             ];
         }
+
         return [$book, $sheet, $columns, $schema];
     }
 
@@ -324,21 +356,28 @@ class ImportController extends Controller
         $edits = is_array($edits) ? $edits : [];
         $index = [];
         foreach ($columns as $i => $column) {
-            if ($column['known']) $index[$column['name']] = $i;
+            if ($column['known']) {
+                $index[$column['name']] = $i;
+            }
         }
 
         $cells = [];
         foreach ((array) ($edits['cells'] ?? []) as $line => $values) {
             $line = (int) $line;
-            if (!isset($rows[$line - 1]) || !is_array($values)) continue;
+            if (! isset($rows[$line - 1]) || ! is_array($values)) {
+                continue;
+            }
             foreach ($values as $name => $value) {
-                if (!isset($index[$name]) || !(is_scalar($value) || $value === null)) continue;
+                if (! isset($index[$name]) || ! (is_scalar($value) || $value === null)) {
+                    continue;
+                }
                 $value = $value === null ? '' : mb_substr(trim((string) $value), 0, 2000);
                 $cells[$line][$index[$name]] = $value === '' ? null : $value;
             }
         }
         $removed = array_map('intval', array_filter((array) ($edits['removed'] ?? []), 'is_numeric'));
         $removed = array_values(array_unique(array_filter($removed, fn ($line) => isset($rows[$line - 1]))));
+
         return ['cells' => $cells, 'removed' => $removed];
     }
 
@@ -352,27 +391,40 @@ class ImportController extends Controller
         $locale = App::getLocale();
         $choices = [];
         foreach ($columns as $i => $column) {
-            if (!$column['known'] || $column['type'] !== 'number') continue;
+            if (! $column['known'] || $column['type'] !== 'number') {
+                continue;
+            }
             $name = $column['name'];
-            if ($name !== 'status' && !LookupController::has($name)) continue;
+            if ($name !== 'status' && ! LookupController::has($name)) {
+                continue;
+            }
 
             $lists = [];
             foreach (array_unique([$locale, 'en', 'kh']) as $lang) {
                 App::setLocale($lang);
                 $lists[] = $name === 'status' ? $this->statuses($table) : (LookupController::choices($name) ?? []);
                 // A long list (every officer) is checked by id only
-                if (count($lists[0]) > self::MAX_OPTIONS) break;
+                if (count($lists[0]) > self::MAX_OPTIONS) {
+                    break;
+                }
             }
             App::setLocale($locale);
-            if (!$lists[0]) continue; // nothing to choose from yet: don't block the import
+            if (! $lists[0]) {
+                continue;
+            } // nothing to choose from yet: don't block the import
 
             $aliases = [];
             foreach (array_reverse($lists) as $list) {
-                foreach ($list as $option) $aliases[$this->normal($option['label'])] = $option['value'];
+                foreach ($list as $option) {
+                    $aliases[$this->normal($option['label'])] = $option['value'];
+                }
             }
-            foreach ($lists[0] as $option) $aliases[$this->normal($option['value'])] = $option['value'];
+            foreach ($lists[0] as $option) {
+                $aliases[$this->normal($option['value'])] = $option['value'];
+            }
             $choices[$i] = ['options' => $lists[0], 'aliases' => $aliases];
         }
+
         return $choices;
     }
 
@@ -385,9 +437,13 @@ class ImportController extends Controller
         $prefix = DB::getTablePrefix();
         $links = [];
         foreach (Schema::getForeignKeys($table) as $key) {
-            if (count($key['columns']) !== 1) continue;
+            if (count($key['columns']) !== 1) {
+                continue;
+            }
             $i = collect($columns)->search(fn ($column) => $column['name'] === $key['columns'][0] && $column['known']);
-            if ($i === false || isset($choices[$i])) continue;
+            if ($i === false || isset($choices[$i])) {
+                continue;
+            }
 
             $linked = $prefix !== '' && str_starts_with($key['foreign_table'], $prefix) ? substr($key['foreign_table'], strlen($prefix)) : $key['foreign_table'];
             $target = $key['foreign_columns'][0];
@@ -397,6 +453,7 @@ class ImportController extends Controller
                 ->mapWithKeys(fn ($v) => [$this->normal($v) => true]);
             $links[$i] = ['table' => $linked, 'found' => $found->all()];
         }
+
         return $links;
     }
 
@@ -406,13 +463,18 @@ class ImportController extends Controller
      */
     private function keyColumns(string $table, array $columns, array $choices, array $links): array
     {
-        $unique = collect(Schema::getIndexes($table))->filter(fn ($index) => $index['unique'] && !$index['primary'] && count($index['columns']) === 1)
+        $unique = collect(Schema::getIndexes($table))->filter(fn ($index) => $index['unique'] && ! $index['primary'] && count($index['columns']) === 1)
             ->map(fn ($index) => $index['columns'][0])->all();
         $keys = [];
         foreach ($columns as $i => $column) {
-            if (!$column['known'] || $column['name'] === 'id' || isset($choices[$i]) || isset($links[$i])) continue;
-            if (in_array($column['name'], $unique, true) || preg_match('/^(code|email|username)$|_no$/', $column['name'])) $keys[$i] = $column['name'];
+            if (! $column['known'] || $column['name'] === 'id' || isset($choices[$i]) || isset($links[$i])) {
+                continue;
+            }
+            if (in_array($column['name'], $unique, true) || preg_match('/^(code|email|username)$|_no$/', $column['name'])) {
+                $keys[$i] = $column['name'];
+            }
         }
+
         return $keys;
     }
 
@@ -423,13 +485,18 @@ class ImportController extends Controller
         foreach ($rows as $n => $raw) {
             foreach ($keys as $i => $name) {
                 $key = $this->normal($raw[$i] ?? '');
-                if ($key !== '') $seen['keys'][$i][$key] ??= $n + 1;
+                if ($key !== '') {
+                    $seen['keys'][$i][$key] ??= $n + 1;
+                }
             }
             $signature = $this->signature($raw, $columns);
-            if ($signature !== null) $seen['rows'][$signature] ??= $n + 1;
+            if ($signature !== null) {
+                $seen['rows'][$signature] ??= $n + 1;
+            }
         }
         // A repeated row is marked on its first known column
         $seen['label'] = collect($columns)->first(fn ($column) => $column['known'] && $column['name'] !== 'id')['name'] ?? 'id';
+
         return $seen;
     }
 
@@ -442,15 +509,23 @@ class ImportController extends Controller
     {
         $values = [];
         foreach ($columns as $i => $column) {
-            if (!$column['known']) continue;
+            if (! $column['known']) {
+                continue;
+            }
             $value = $this->normal($raw[$i] ?? '');
             if ($column['name'] === 'id') {
-                if ($value !== '') return null;
+                if ($value !== '') {
+                    return null;
+                }
+
                 continue;
             }
             $values[] = $value;
         }
-        if (count($values) < 3 || count(array_filter($values, fn ($v) => $v !== '')) < 2) return null;
+        if (count($values) < 3 || count(array_filter($values, fn ($v) => $v !== '')) < 2) {
+            return null;
+        }
+
         return md5(json_encode($values));
     }
 
@@ -460,18 +535,23 @@ class ImportController extends Controller
      */
     private function taken(string $table, array $schema, array $rows, array $keys): array
     {
-        if (!isset($schema['id'])) return [];
+        if (! isset($schema['id'])) {
+            return [];
+        }
         $taken = [];
         foreach ($keys as $i => $name) {
             $values = collect($rows)->pluck($i)->map(fn ($v) => is_string($v) ? trim($v) : $v)->filter(fn ($v) => $v !== null && $v !== '')->unique()->values();
             foreach ($values->chunk(1000) as $chunk) {
                 $query = DB::table($table)->whereIn($name, $chunk->all());
-                if (isset($schema['status'])) $query->whereNotDeleted();
+                if (isset($schema['status'])) {
+                    $query->whereNotDeleted();
+                }
                 foreach ($query->get() as $record) {
                     $taken[$i][$this->normal($record->$name)] ??= ['id' => $record->id, 'label' => $this->recordLabel($record)];
                 }
             }
         }
+
         return $taken;
     }
 
@@ -482,6 +562,7 @@ class ImportController extends Controller
         $names = $kh ? ['name_kh', 'title_kh', 'name_en', 'title_en', 'name'] : ['name_en', 'title_en', 'name_kh', 'title_kh', 'name'];
         $name = collect($names)->map(fn ($field) => $record->$field ?? null)->first(fn ($v) => is_string($v) && trim($v) !== '');
         $person = trim(($record->last_name ?? '').' '.($record->first_name ?? ''));
+
         return trim('#'.$record->id.' '.($name ?: $person));
     }
 
@@ -494,6 +575,7 @@ class ImportController extends Controller
     private function statuses(string $table): array
     {
         $kh = App::getLocale() === 'kh';
+
         return DB::table('mef_status')->whereIn('group', self::STATUS_GROUPS[$table] ?? ['STATUS'])->where('id', '!=', Status::DELETED)
             ->orderBy('id')->get()
             ->map(fn ($row) => ['label' => ($kh ? ($row->title_kh ?: $row->title_en) : ($row->title_en ?: $row->title_kh)) ?: (string) $row->id, 'value' => $row->id])
@@ -503,19 +585,23 @@ class ImportController extends Controller
     /** A value as compared with choices: text, trimmed, lower case, single spaces ("13.0" and 13 are the same id) */
     private function normal($value): string
     {
-        if (is_float($value) && floor($value) == $value) $value = (int) $value;
+        if (is_float($value) && floor($value) == $value) {
+            $value = (int) $value;
+        }
+
         return mb_strtolower(preg_replace('/\s+/u', ' ', trim((string) $value)));
     }
 
     /** null when the user may import into $table, else the refusal */
     private function refuse(string $table)
     {
-        if (!in_array($table, self::TABLES, true)) {
+        if (! in_array($table, self::TABLES, true)) {
             return response()->json(['message' => trans('import.not_supported')], 404);
         }
-        if (!CommonService::can('import_'.$table) && !CommonService::can('create_'.$table)) {
+        if (! CommonService::can('import_'.$table) && ! CommonService::can('create_'.$table)) {
             return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
         }
+
         return null;
     }
 
@@ -531,10 +617,11 @@ class ImportController extends Controller
                     in_array($type, ['date', 'datetime', 'timestamp'], true) => 'date',
                     default => 'text',
                 },
-                'required' => !$column['nullable'] && $column['default'] === null && !$column['auto_increment']
-                    && !in_array($column['name'], self::SERVER_COLUMNS, true),
+                'required' => ! $column['nullable'] && $column['default'] === null && ! $column['auto_increment']
+                    && ! in_array($column['name'], self::SERVER_COLUMNS, true),
             ];
         }
+
         return $schema;
     }
 
@@ -543,25 +630,31 @@ class ImportController extends Controller
     {
         if ($type === 'number') {
             $number = str_replace([',', ' '], '', (string) $value);
+
             return is_numeric($number) ? [$number + 0, null] : [$value, trans('import.not_number')];
         }
         if ($type === 'date') {
             try {
                 // Excel stores dates as day numbers; text dates are read as written
                 $date = is_numeric($value) ? Carbon::instance(ExcelDate::excelToDateTimeObject($value)) : Carbon::parse((string) $value);
+
                 return [$date->format('Y-m-d'), null];
             } catch (\Throwable $e) {
                 return [$value, trans('import.not_date')];
             }
         }
+
         return [$value, null];
     }
 
     private function cell(array $row, array $columns, string $name)
     {
         foreach ($columns as $i => $column) {
-            if ($column['name'] === $name) return $row[$i] ?? null;
+            if ($column['name'] === $name) {
+                return $row[$i] ?? null;
+            }
         }
+
         return null;
     }
 

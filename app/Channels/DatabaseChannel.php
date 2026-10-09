@@ -19,6 +19,7 @@ class DatabaseChannel extends BaseDatabaseChannel
         $payload['subject'] = $data['title'] ?? class_basename($notification);
         $payload['message'] = $data['message'] ?? null;
         $payload['notifiable_type'] = $notifiable->getMorphClass();
+
         return $payload;
     }
 }

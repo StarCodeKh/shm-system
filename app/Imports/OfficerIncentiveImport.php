@@ -1,39 +1,43 @@
 <?php
 
 namespace App\Imports;
-use OwenIt\Auditing\Contracts\Auditable;
+
 use App\Models\OfficerIncentive;
+use Auth;
+use Carbon\Carbon;
+use DB;
+use Illuminate\Database\Eloquent\Model;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use DB;
-use Auth;
+use OwenIt\Auditing\Contracts\Auditable;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
-use Carbon\Carbon;
-class OfficerIncentiveImport implements ToModel,WithHeadingRow,Auditable
+
+class OfficerIncentiveImport implements Auditable, ToModel, WithHeadingRow
 {
     use \OwenIt\Auditing\Auditable;
+
     /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
-    public function model(array $row): \Illuminate\Database\Eloquent\Model|array|null
+     * @return Model|null
+     */
+    public function model(array $row): Model|array|null
     {
-        $queryCheck = OfficerIncentive::where("id", (int)($row["id"] ?? null))->first();
-        $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new OfficerIncentive)->getTable());
-        $str = "";
-        $arr = array();
-        for($i=0; $i < count($data["tables"]); $i++){
+        $queryCheck = OfficerIncentive::where('id', (int) ($row['id'] ?? null))->first();
+        $data['tables'] = DB::select('show columns from '.DB::getTablePrefix().(new OfficerIncentive)->getTable());
+        $str = '';
+        $arr = [];
+        for ($i = 0; $i < count($data['tables']); $i++) {
             // A column not in the file is left alone: an update keeps its value, a new row gets the table's default
-            if (!array_key_exists($data["tables"][$i]->Field, $row)) continue;
-            $field = $data["tables"][$i]->Field;
+            if (! array_key_exists($data['tables'][$i]->Field, $row)) {
+                continue;
+            }
+            $field = $data['tables'][$i]->Field;
             $value = $row[$field] ?? null;
-            if(isset($data["tables"][$i]->Field)){
+            if (isset($data['tables'][$i]->Field)) {
                 // A column missing from the sheet is imported as empty instead of stopping the import
                 $arr[] = [$field => $value];
             }
 
-            if(in_array($data["tables"][$i]->Field,["issue_date", "request_date", "created_at"])){
+            if (in_array($data['tables'][$i]->Field, ['issue_date', 'request_date', 'created_at'])) {
                 if (is_numeric($value)) {
                     // ONLY call this if it's a numeric Excel serial (e.g. 20150)
                     $date = Date::excelToDateTimeObject($value);
@@ -46,23 +50,24 @@ class OfficerIncentiveImport implements ToModel,WithHeadingRow,Auditable
                     }
                 }
 
-                $arr[] = [$data["tables"][$i]->Field => $date ? $date->format('Y-m-d') : null];
+                $arr[] = [$data['tables'][$i]->Field => $date ? $date->format('Y-m-d') : null];
             }
         }
 
-        if(!$queryCheck){
-            $pushArray = array_merge(array(["created_by" => Auth::user()->id]));
+        if (! $queryCheck) {
+            $pushArray = array_merge([['created_by' => Auth::user()->id]]);
             $arraySingle = array_merge($arr, $pushArray);
             $result = call_user_func_array('array_merge', $arraySingle);
             $dataFields = $result;
             OfficerIncentive::insert($dataFields);
-        }else{
-            $pushArray = array_merge(array(["modified_by" => Auth::user()->id]));
+        } else {
+            $pushArray = array_merge([['modified_by' => Auth::user()->id]]);
             $arraySingle = array_merge($arr, $pushArray);
             $result = call_user_func_array('array_merge', $arraySingle);
             $dataFields = $result;
-            OfficerIncentive::find((int)($row["id"] ?? null))->update($dataFields);
+            OfficerIncentive::find((int) ($row['id'] ?? null))->update($dataFields);
         }
+
         return null; // the row is saved above, nothing for Laravel Excel to save
     }
 }

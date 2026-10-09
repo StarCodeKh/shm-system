@@ -1,13 +1,18 @@
 <?php
 
 namespace App\Models;
-use OwenIt\Auditing\Contracts\Auditable;
+
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
+
 class NotificationUser extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
+
     protected $table = 'notification_user';
-    protected  $primaryKey = 'id';
+
+    protected $primaryKey = 'id';
+
     protected $fillable = [
         'user_id',
         'title',
@@ -16,8 +21,8 @@ class NotificationUser extends Model implements Auditable
         'status',
         'push_count',
         'notification_type',
-        'remark'
-        ];
-    public $timestamps = false;
+        'remark',
+    ];
 
+    public $timestamps = false;
 }

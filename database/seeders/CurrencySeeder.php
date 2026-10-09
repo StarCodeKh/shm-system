@@ -29,9 +29,13 @@ class CurrencySeeder extends Seeder
         $codes = DB::table('currency')->pluck('abbreviation')->map(fn ($code) => strtoupper(trim((string) $code)))->all();
 
         foreach (self::CURRENCIES as $order => $row) {
-            if (in_array($row['abbreviation'], $codes, true)) continue;
+            if (in_array($row['abbreviation'], $codes, true)) {
+                continue;
+            }
             // Keep the usual id when it is free, so data moved from an older server still matches
-            if (DB::table('currency')->where('id', $row['id'])->exists()) unset($row['id']);
+            if (DB::table('currency')->where('id', $row['id'])->exists()) {
+                unset($row['id']);
+            }
             DB::table('currency')->insert($row + [
                 'status' => $active,
                 'order_level' => $order + 1,
@@ -46,7 +50,7 @@ class CurrencySeeder extends Seeder
             ->where(fn ($q) => $q->where('from_currency', $usd)->where('to_currency', $khr))
             ->orWhere(fn ($q) => $q->where('from_currency', $khr)->where('to_currency', $usd))
             ->exists();
-        if ($khr && $usd && !$hasRate) {
+        if ($khr && $usd && ! $hasRate) {
             DB::table('currency_exchange')->insert([
                 'from_currency' => $usd,
                 'to_currency' => $khr,

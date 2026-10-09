@@ -1,74 +1,88 @@
 <?php
 
 namespace App\Models;
-use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\Settings\Account;
-use App\Models\Settings\Entity;
-use App\Models\Settings\Department;
-use App\Models\Settings\Status;
-use App\Models\Settings\Currency;
-use App\Models\Settings\PaymentMethod;
-use Illuminate\Database\Eloquent\Model;
-use DB;
-use CommonService;
+
 use App\Models\Concerns\HasDataScope;
+use App\Models\Settings\Account;
+use App\Models\Settings\Currency;
+use App\Models\Settings\Department;
+use App\Models\Settings\Entity;
+use App\Models\Settings\PaymentMethod;
+use App\Models\Settings\Status;
 use App\Services\DataScope;
+use CommonService;
+use DB;
+use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
+
 class OfficerPayable extends Model implements Auditable
 {
-    use \OwenIt\Auditing\Auditable, HasDataScope;
+    use HasDataScope, \OwenIt\Auditing\Auditable;
+
     protected $table = 'officer_payable';
+
     protected $primaryKey = 'id';
+
     protected $fillable = [];
+
     protected $guarded = [];
+
     public $timestamps = true;
+
     protected $casts = [
-        'due_date' => 'datetime:'.("Y-m-d"),
-        'payment_date' => 'datetime:'.("Y-m-d"),
+        'due_date' => 'datetime:'.('Y-m-d'),
+        'payment_date' => 'datetime:'.('Y-m-d'),
     ];
-    public function officer(){
+
+    public function officer()
+    {
         return $this->belongsTo(Officer::class, 'officer_id');
     }
 
-    public function department(){
+    public function department()
+    {
         return $this->belongsTo(Department::class, 'department_id');
     }
 
-    public function entity(){
+    public function entity()
+    {
         return $this->belongsTo(Entity::class, 'entity_id');
     }
 
     public function status()
     {
-        return $this->belongsTo(Status::class, "status");
+        return $this->belongsTo(Status::class, 'status');
     }
 
     public function currency()
     {
-        return $this->belongsTo(Currency::class, "currency_id");
+        return $this->belongsTo(Currency::class, 'currency_id');
     }
 
     public function account()
     {
-        return $this->belongsTo(Account::class, "account_id");
+        return $this->belongsTo(Account::class, 'account_id');
     }
 
     public function paymentMethod()
     {
-        return $this->belongsTo(PaymentMethod::class, "payment_method_id");
+        return $this->belongsTo(PaymentMethod::class, 'payment_method_id');
     }
 
-    public static function dataFields(){
+    public static function dataFields()
+    {
         // Loop Data Field From Table to put in array for mapping data field to search data table
-        $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new OfficerPayable)->getTable());
-        $str = "";
-        for($i=0; $i < count($data["tables"]); $i++){
-            if($data["tables"][$i]->Null == "NO" && $data["tables"][$i]->Field != 'id'){
-                $str .= $data["tables"][$i]->Field.",";
+        $data['tables'] = DB::select('show columns from '.DB::getTablePrefix().(new OfficerPayable)->getTable());
+        $str = '';
+        for ($i = 0; $i < count($data['tables']); $i++) {
+            if ($data['tables'][$i]->Null == 'NO' && $data['tables'][$i]->Field != 'id') {
+                $str .= $data['tables'][$i]->Field.',';
             }
         }
-        $newArr = explode(",", $str);
+        $newArr = explode(',', $str);
         array_pop($newArr);
         $dataFields = $newArr;
+
         return $dataFields;
     }
 
@@ -80,110 +94,123 @@ class OfficerPayable extends Model implements Auditable
     //     AND COLUMN_NAME IN ({$columns_list})
     //   ");
 
-    public static function formAttributes(){
-        $formAttributes = array();
-        $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new OfficerPayable)->getTable());
-        for($i=0; $i < count($data["tables"]); $i++){
-            if($data["tables"][$i]->Field != "id" && $data["tables"][$i]->Field != "created_by" && $data["tables"][$i]->Field != "modified_by" && $data["tables"][$i]->Field != "created_at" && $data["tables"][$i]->Field != "updated_at"){
-                $formAttributes[] = array(
-                    "name" => $data["tables"][$i]->Field,
-                    "type" => CommonService::convertDataTypeWay1($data["tables"][$i]),
-                    "required" => $data["tables"][$i]->Null=="NO"?true:false,
-                );
+    public static function formAttributes()
+    {
+        $formAttributes = [];
+        $data['tables'] = DB::select('show columns from '.DB::getTablePrefix().(new OfficerPayable)->getTable());
+        for ($i = 0; $i < count($data['tables']); $i++) {
+            if ($data['tables'][$i]->Field != 'id' && $data['tables'][$i]->Field != 'created_by' && $data['tables'][$i]->Field != 'modified_by' && $data['tables'][$i]->Field != 'created_at' && $data['tables'][$i]->Field != 'updated_at') {
+                $formAttributes[] = [
+                    'name' => $data['tables'][$i]->Field,
+                    'type' => CommonService::convertDataTypeWay1($data['tables'][$i]),
+                    'required' => $data['tables'][$i]->Null == 'NO' ? true : false,
+                ];
             }
         }
+
         return $formAttributes;
     }
 
-    public static function getSingleOpt(){
+    public static function getSingleOpt()
+    {
         $query = OfficerPayable::orderByLevel()->whereNotDeleted()->get();
-        $data = array();
-        foreach($query as $row){
-            $data[] = array(
-                "label" => CommonService::localName($row),
-                "value" => $row->id,
-            );
+        $data = [];
+        foreach ($query as $row) {
+            $data[] = [
+                'label' => CommonService::localName($row),
+                'value' => $row->id,
+            ];
         }
+
         return $data;
     }
 
-    public static function checkQuery($filter){
-        $query = OfficerPayable::with("currency")->with("account")->with("officer")->with("status")->with("paymentMethod");
+    public static function checkQuery($filter)
+    {
+        $query = OfficerPayable::with('currency')->with('account')->with('officer')->with('status')->with('paymentMethod');
         $whereClause = $query;
-        if(isset($filter["data"]["officer_id"])){
-            $whereClause->where("officer_id", $filter["data"]["officer_id"]);
+        if (isset($filter['data']['officer_id'])) {
+            $whereClause->where('officer_id', $filter['data']['officer_id']);
         }
         $whereClause->orderByFilter($filter);
-        if($filter["search_field"]){
-            $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
+        if ($filter['search_field']) {
+            $arraySingle = call_user_func_array('array_merge', $filter['search_field']);
             $dataFields = $arraySingle;
-            if(isset($filter["search_field"])){
-                for($i=0 ; $i < count($filter["search_field"]); $i++){
-                    $field = array_key_first($filter["search_field"][$i]);
+            if (isset($filter['search_field'])) {
+                for ($i = 0; $i < count($filter['search_field']); $i++) {
+                    $field = array_key_first($filter['search_field'][$i]);
                     if (array_key_exists($field, $dataFields)) {
-                        if(isset($filter["search_field"][$i][$field]["value"])){
-                            $whereClause->Where($field, 'Like', '%'.$filter["search_field"][$i][$field]["value"].'%');
-                        }else{
-                            $whereClause->Where($field, 'Like', '%'.$filter["search_field"][$i][$field].'%');
+                        if (isset($filter['search_field'][$i][$field]['value'])) {
+                            $whereClause->Where($field, 'Like', '%'.$filter['search_field'][$i][$field]['value'].'%');
+                        } else {
+                            $whereClause->Where($field, 'Like', '%'.$filter['search_field'][$i][$field].'%');
                         }
                     }
                 }
             }
         }
-        $whereClause->whereIn("status", [Status::UNPAID, Status::PAID]);
+        $whereClause->whereIn('status', [Status::UNPAID, Status::PAID]);
         $whereClause = $query;
+
         return $whereClause;
     }
 
-    public static function getData($filter){
+    public static function getData($filter)
+    {
         $whereClause = OfficerPayable::checkQuery($filter);
-        $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);
-        $whereClause->limit($filter["limit"]);
+        $whereClause->offset(($filter['page_number'] - 1) * $filter['limit']);
+        $whereClause->limit($filter['limit']);
         $data = collect($whereClause->get());
+
         return $data;
     }
 
-    public static function getTotal($filter){
+    public static function getTotal($filter)
+    {
         $whereClause = OfficerPayable::checkQuery($filter);
         $total = $whereClause->count();
+
         return $total;
     }
 
-    public static function getSummary($filter){
+    public static function getSummary($filter)
+    {
 
-        $summary = ["currency" => "រៀល",
-            "paid" => "២២២២២",
-            "unpaid" => "២២២"
-            ];
+        $summary = ['currency' => 'រៀល',
+            'paid' => '២២២២២',
+            'unpaid' => '២២២',
+        ];
+
         return $summary;
     }
 
     // Report rows before paging: shared by the paged rows and the exact count
-    public static function getOfficerPayablesQuery($filter){
-        $query = DB::table("officer_payable as of")
-            ->select("of.*", DB::raw("CONCAT(first_name, ' ', last_name, '-', identity_member_no) AS officer_id"), "c.name_kh as currency_id", "ms.title_kh as status" ,"pm.name_kh as payment_method_id")
-            ->LeftJoin("officer as f", "f.id", "=", "of.officer_id")
-            ->LeftJoin("payment_method as pm", "pm.id", "=", "of.payment_method_id")
-            ->LeftJoin("mef_status as ms", "ms.id", "=", "of.status")
-            ->LeftJoin("currency as c", "c.id", "=", "of.currency_id")
-            ->where("of.status", Status::UNPAID);
+    public static function getOfficerPayablesQuery($filter)
+    {
+        $query = DB::table('officer_payable as of')
+            ->select('of.*', DB::raw("CONCAT(first_name, ' ', last_name, '-', identity_member_no) AS officer_id"), 'c.name_kh as currency_id', 'ms.title_kh as status', 'pm.name_kh as payment_method_id')
+            ->LeftJoin('officer as f', 'f.id', '=', 'of.officer_id')
+            ->LeftJoin('payment_method as pm', 'pm.id', '=', 'of.payment_method_id')
+            ->LeftJoin('mef_status as ms', 'ms.id', '=', 'of.status')
+            ->LeftJoin('currency as c', 'c.id', '=', 'of.currency_id')
+            ->where('of.status', Status::UNPAID);
         $whereClause = $query;
         DataScope::where($whereClause, 'officer_payable', 'of'); // only what the role may see
-        if(isset($filter["data"]["officer_id"])){
+        if (isset($filter['data']['officer_id'])) {
         }
         $whereClause->orderByFilter($filter);
-        $d = "";
-        if($filter["search_field"]){
-            $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
+        $d = '';
+        if ($filter['search_field']) {
+            $arraySingle = call_user_func_array('array_merge', $filter['search_field']);
             $dataFields = $arraySingle;
-            if(isset($filter["search_field"])){
-                for($i=0 ; $i < count($filter["search_field"]); $i++){
-                    $field = array_key_first($filter["search_field"][$i]);
+            if (isset($filter['search_field'])) {
+                for ($i = 0; $i < count($filter['search_field']); $i++) {
+                    $field = array_key_first($filter['search_field'][$i]);
                     if (array_key_exists($field, $dataFields)) {
-                        if(isset($filter["search_field"][$i][$field]["value"])){
-                            $whereClause->Where($field, 'Like', '%'.$filter["search_field"][$i][$field]["value"].'%');
-                        }else{
-                            $whereClause->Where($field, 'Like', '%'.$filter["search_field"][$i][$field].'%');
+                        if (isset($filter['search_field'][$i][$field]['value'])) {
+                            $whereClause->Where($field, 'Like', '%'.$filter['search_field'][$i][$field]['value'].'%');
+                        } else {
+                            $whereClause->Where($field, 'Like', '%'.$filter['search_field'][$i][$field].'%');
                         }
                     }
                 }
@@ -193,40 +220,44 @@ class OfficerPayable extends Model implements Auditable
         return $whereClause;
     }
 
-    public static function getOfficerPayables($filter){
+    public static function getOfficerPayables($filter)
+    {
         return collect(self::getOfficerPayablesQuery($filter)
-            ->offset(($filter["page_number"] - 1) * $filter["limit"])
-            ->limit($filter["limit"])
+            ->offset(($filter['page_number'] - 1) * $filter['limit'])
+            ->limit($filter['limit'])
             ->get());
     }
 
-    public static function countOfficerPayables($filter){
+    public static function countOfficerPayables($filter)
+    {
         return self::getOfficerPayablesQuery($filter)->count();
     }
 
-    public static function getPayableInfoByOfficer($request){
-        $officerId = $request["value"];
-        $findOfficer = Officer::with("department")->with("entity")->find($officerId);
-        $paymentHistories = array();
-        if($findOfficer){
-            $whereClause = OfficerPayable::where("officer_id", $officerId)->whereNotIn("status", [Status::UNPAID])->orderby("due_date", "desc");
+    public static function getPayableInfoByOfficer($request)
+    {
+        $officerId = $request['value'];
+        $findOfficer = Officer::with('department')->with('entity')->find($officerId);
+        $paymentHistories = [];
+        if ($findOfficer) {
+            $whereClause = OfficerPayable::where('officer_id', $officerId)->whereNotIn('status', [Status::UNPAID])->orderby('due_date', 'desc');
             $paymentHistories = collect($whereClause->get());
             // Get Payable
-            $payables = OfficerPayable::with("currency")->where("officer_id", $officerId)->where("status", Status::UNPAID)->orderby("due_date", "desc")->get();
-            $payableArr = array();
-            foreach($payables as $payable){
-                $payableArr[] = array(
-                    "label" => "បង់ប្រាក់ក្នុងឆ្នាំ-".date("Y", strtotime($payable->due_date))."- ចំនួន ".$payable->amount."(".$payable->currency->name_kh.")",
-                    "value" => $payable->amount,
-                    "id" => $payable->id
-                );
+            $payables = OfficerPayable::with('currency')->where('officer_id', $officerId)->where('status', Status::UNPAID)->orderby('due_date', 'desc')->get();
+            $payableArr = [];
+            foreach ($payables as $payable) {
+                $payableArr[] = [
+                    'label' => 'បង់ប្រាក់ក្នុងឆ្នាំ-'.date('Y', strtotime($payable->due_date)).'- ចំនួន '.$payable->amount.'('.$payable->currency->name_kh.')',
+                    'value' => $payable->amount,
+                    'id' => $payable->id,
+                ];
             }
         }
-        $data = array(
-            "officerDetail" => $findOfficer,
-            "payables" => $payableArr,
-            "paymentHistories" => $paymentHistories
-        );
+        $data = [
+            'officerDetail' => $findOfficer,
+            'payables' => $payableArr,
+            'paymentHistories' => $paymentHistories,
+        ];
+
         return $data;
     }
 }

@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Expense;
+use App\Models\Income;
 use App\Models\Officer;
+use App\Models\OfficerIncentive;
 use App\Models\OfficerPayable;
 use App\Models\OfficerPayment;
 use App\Models\OfficerRequest;
-use App\Models\OfficerIncentive;
-use App\Models\Income;
-use App\Models\Expense;
 use App\Services\ExcelDocument;
 use App\Services\PdfDocument;
 use CommonService;
-use Illuminate\Support\Facades\Lang;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Str;
 
 class ReportController extends Controller
@@ -111,7 +111,7 @@ class ReportController extends Controller
     public function types(Request $request)
     {
         $this->useRequestLocale($request);
-        if (!CommonService::can('reports')) {
+        if (! CommonService::can('reports')) {
             return response()->json([]);
         }
         $reports = collect($this->reports())->filter(fn ($report) => $this->allowed($report))->map(fn ($report, $key) => [
@@ -134,7 +134,7 @@ class ReportController extends Controller
     {
         $this->useRequestLocale($request);
         $report = $this->reports()[$type] ?? abort(404);
-        if (!$this->allowed($report)) {
+        if (! $this->allowed($report)) {
             return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
         }
         $sizes = config('report.page_sizes');
@@ -173,7 +173,7 @@ class ReportController extends Controller
     {
         $this->useRequestLocale($request);
         $report = $this->reports()[$type] ?? abort(404);
-        if (!$this->allowed($report)) {
+        if (! $this->allowed($report)) {
             return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
         }
         $data = $this->document($request, $type, $report);
@@ -198,7 +198,7 @@ class ReportController extends Controller
     {
         $this->useRequestLocale($request);
         $report = $this->reports()[$type] ?? abort(404);
-        if (!$this->allowed($report)) {
+        if (! $this->allowed($report)) {
             return response()->json(['message' => trans('common.msg_no_permission_access')], 403);
         }
         $xlsx = ExcelDocument::render($this->document($request, $type, $report));
@@ -252,13 +252,14 @@ class ReportController extends Controller
     protected function text(string $key, string $part): string
     {
         $id = "report.types.$key.$part";
+
         return Lang::has($id) ? trans($id) : ($part === 'title' ? Str::headline($key) : '');
     }
 
     /** Summary tiles: the report's own counts (labelled from translations) or the row total */
     protected function summaryTiles(string $type, array $report, array $filter, ?int $total): array
     {
-        if (!isset($report['summary'])) {
+        if (! isset($report['summary'])) {
             return [trans('report.total') => $total];
         }
         $labels = [];
@@ -266,6 +267,7 @@ class ReportController extends Controller
             $id = "report.types.$type.summary.$key";
             $labels[Lang::has($id) ? trans($id) : Str::headline($key)] = $value;
         }
+
         return $labels;
     }
 
@@ -281,9 +283,9 @@ class ReportController extends Controller
         return collect($fields)->map(function ($field) use ($rows) {
             $isDate = (bool) preg_match(config('report.columns.date'), $field);
             $values = $rows->map(fn ($row) => data_get($row, $field))
-                ->filter(fn ($value) => $value !== null && $value !== '' && !is_array($value) && !is_object($value));
-            $numeric = !$isDate
-                && !preg_match(config('report.columns.not_numeric'), $field)
+                ->filter(fn ($value) => $value !== null && $value !== '' && ! is_array($value) && ! is_object($value));
+            $numeric = ! $isDate
+                && ! preg_match(config('report.columns.not_numeric'), $field)
                 && $values->isNotEmpty()
                 && $values->every(fn ($value) => is_numeric(str_replace(',', '', (string) $value)));
 
@@ -306,11 +308,14 @@ class ReportController extends Controller
         foreach ($filters as $item) {
             foreach ((array) $item as $field => $value) {
                 $text = is_array($value) ? ($value['label'] ?? $value['value'] ?? '') : $value;
-                if ($text === null || $text === '') continue;
+                if ($text === null || $text === '') {
+                    continue;
+                }
                 $label = Lang::has('common.'.$field) ? trans('common.'.$field) : Str::headline($field);
                 $labels[$label] = (string) $text;
             }
         }
+
         return $labels;
     }
 }

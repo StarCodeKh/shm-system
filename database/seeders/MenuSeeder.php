@@ -36,7 +36,9 @@ class MenuSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            if (!empty($row[7])) $this->insert($row[7], $id);
+            if (! empty($row[7])) {
+                $this->insert($row[7], $id);
+            }
         }
     }
 }

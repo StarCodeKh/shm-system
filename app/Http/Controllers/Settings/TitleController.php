@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
-use App\Services\FormSchema;
+use App\Models\Settings\Status;
 use App\Models\Settings\Title;
-use Illuminate\Http\Request;
+use App\Services\FormSchema;
 use Auth;
 use CommonService;
-use App\Models\Settings\Status;
+use Illuminate\Http\Request;
 
 class TitleController extends Controller
 {
@@ -27,15 +27,16 @@ class TitleController extends Controller
     {
         $input = $request->all();
         $filter = CommonService::getFilter($input);
-        $data = array(
-            "data" => $this->dbTable::getData($filter),
-            "limit" => $filter["limit"],
-            "total" => $this->dbTable::getTotal($filter),
-            "data_fields" => $this->dbTable::dataFields(),
-            "form_attributes" => FormSchema::fields($this->dbTable->getTable()),
-            "permissions" => CommonService::permission($this->dbTable),
-            "model_name" => $this->dbTable->getTable()
-        );
+        $data = [
+            'data' => $this->dbTable::getData($filter),
+            'limit' => $filter['limit'],
+            'total' => $this->dbTable::getTotal($filter),
+            'data_fields' => $this->dbTable::dataFields(),
+            'form_attributes' => FormSchema::fields($this->dbTable->getTable()),
+            'permissions' => CommonService::permission($this->dbTable),
+            'model_name' => $this->dbTable->getTable(),
+        ];
+
         return response()->json($data);
     }
 
@@ -56,11 +57,12 @@ class TitleController extends Controller
             $boolen = false;
             $message = trans('common.error_msg');
         }
-        $data = array(
-            "success" => $boolen,
-            "message" => $message,
-            "data" => $table,
-        );
+        $data = [
+            'success' => $boolen,
+            'message' => $message,
+            'data' => $table,
+        ];
+
         return response()->json($data, $status);
     }
 
@@ -70,9 +72,10 @@ class TitleController extends Controller
     public function show($id)
     {
         $table = $table = $this->dbTable::find($id);
-        $data = array(
-            "data" => $table
-        );
+        $data = [
+            'data' => $table,
+        ];
+
         return response()->json($data);
     }
 
@@ -94,21 +97,23 @@ class TitleController extends Controller
             $boolen = false;
             $message = trans('common.error_msg');
         }
-        $data = array(
-            "success" => $boolen,
-            "message" => $message,
-            "data" => $this->dbTable::findOrFail($id)
-        );
+        $data = [
+            'success' => $boolen,
+            'message' => $message,
+            'data' => $this->dbTable::findOrFail($id),
+        ];
+
         return response()->json($data, $status);
     }
 
     public function dataForm($input)
     {
         $arr = $input;
-        $pushArray = array_merge(array(["created_by" => Auth::user()->id]));
+        $pushArray = array_merge([['created_by' => Auth::user()->id]]);
         $arraySingle = array_merge($arr, $pushArray);
         $result = call_user_func_array('array_merge', $arraySingle);
         $dataFields = $result;
+
         return $dataFields;
     }
 
@@ -118,7 +123,7 @@ class TitleController extends Controller
     public function destroy($id)
     {
         $table = $this->dbTable::find($id);
-        $table->update(["status" => Status::DELETED]);
+        $table->update(['status' => Status::DELETED]);
         if ($table) {
             $status = 200;
             $boolen = true;
@@ -128,10 +133,11 @@ class TitleController extends Controller
             $boolen = false;
             $message = trans('common.error_msg');
         }
-        $data = array(
-            "success" => $boolen,
-            "message" => $message
-        );
+        $data = [
+            'success' => $boolen,
+            'message' => $message,
+        ];
+
         return response()->json($data, $status);
     }
 }

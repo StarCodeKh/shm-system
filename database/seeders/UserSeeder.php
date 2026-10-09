@@ -28,7 +28,9 @@ class UserSeeder extends Seeder
     public function run()
     {
         foreach ([['Active', 'សកម្ម', 8], ['Inactive', 'អសកម្ម', 9]] as [$titleEn, $titleKh, $order]) {
-            if (DB::table('mef_status')->where('group', 'STATUS')->where('title_en', $titleEn)->exists()) continue;
+            if (DB::table('mef_status')->where('group', 'STATUS')->where('title_en', $titleEn)->exists()) {
+                continue;
+            }
             DB::table('mef_status')->insert(['group' => 'STATUS', 'title_en' => $titleEn, 'title_kh' => $titleKh, 'order_level' => $order]);
         }
 
@@ -37,14 +39,17 @@ class UserSeeder extends Seeder
         }
 
         $password = env('SEED_USER_PASSWORD') ?: (app()->environment('production') ? null : 'Password@123');
-        if (!$password) {
+        if (! $password) {
             $this->command?->warn('Users not created: set SEED_USER_PASSWORD in .env, then run: php artisan db:seed --class=UserSeeder');
+
             return;
         }
         $active = DB::table('mef_status')->where('group', 'STATUS')->where('title_en', 'Active')->value('id');
 
         foreach (self::USERS as $row) {
-            if (User::where('email', $row['email'])->orWhere('username', $row['username'])->exists()) continue;
+            if (User::where('email', $row['email'])->orWhere('username', $row['username'])->exists()) {
+                continue;
+            }
             $user = User::create([
                 'fullname' => $row['fullname'],
                 'latin' => $row['latin'],

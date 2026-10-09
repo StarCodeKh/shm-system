@@ -15,9 +15,9 @@ class RoleMenuController extends Controller
     public function index()
     {
         return response()->json([
-            "permissions" => CommonService::permission(),
-            "is_display" => true,
-            "message" => trans('common.msg_successfully'),
+            'permissions' => CommonService::permission(),
+            'is_display' => true,
+            'message' => trans('common.msg_successfully'),
         ], 200);
     }
 }
