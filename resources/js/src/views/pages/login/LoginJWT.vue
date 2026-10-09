@@ -6,7 +6,7 @@
                 <span class="login-alert__icon"><feather-icon :icon="alertIcon" svgClasses="h-4 w-4" /></span>
                 <div class="login-alert__body">
                     <p class="login-alert__title">{{ $t(alert.title) }}</p>
-                    <p class="login-alert__text">{{ $t(alert.text, { seconds: waitSeconds }) }}</p>
+                    <p class="login-alert__text">{{ $t(alert.text, { seconds: waitLabel }) }}</p>
                 </div>
                 <button type="button" class="login-alert__close" @click="alert = null">
                     <feather-icon icon="XIcon" svgClasses="h-3 w-3" />
@@ -46,7 +46,7 @@
 
         <button type="submit" class="login-submit" :disabled="!validateForm || loading || waitSeconds > 0">
             <span v-if="loading" class="login-submit__spinner"></span>
-            <span>{{ loading ? $t('login_signing_in') : waitSeconds > 0 ? $t('login_wait_seconds', { seconds: waitSeconds }) : $t('login') }}</span>
+            <span>{{ loading ? $t('login_signing_in') : waitSeconds > 0 ? $t('login_wait_seconds', { seconds: waitLabel }) : $t('login') }}</span>
         </button>
     </form>
 </template>
@@ -54,6 +54,7 @@
 <script>
 import { markRaw } from "vue";
 import axios, { retryAfterSeconds } from "@/axios.js";
+import { localDigits } from "@/i18n/i18n";
 
 // i18n keys for each failure kind shown in the inline alert.
 // markRaw: kept out of reactivity so `this.alert === ALERTS.x` compares the same object, not a proxy of it
@@ -87,6 +88,10 @@ export default {
         },
         waitSeconds() {
             return Math.max(0, Math.ceil((this.waitUntil - this.now) / 1000))
+        },
+        // The seconds as the reader writes them (Khmer digits in Khmer)
+        waitLabel() {
+            return localDigits(this.waitSeconds)
         },
         alertIcon() {
             return this.alert && this.alert.type === 'warning' ? 'AlertTriangleIcon' : 'AlertCircleIcon'

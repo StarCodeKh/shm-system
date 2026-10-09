@@ -60,6 +60,18 @@ export function setLocale(i18nInstance, locale) {
     try { localStorage.setItem(LOCALE_STORAGE_KEY, locale) } catch (e) { /* storage unavailable */ }
 }
 
+// A count in the reader's digits: Khmer digits in Khmer text (or the Khmer locale), 0-9 otherwise
+const KHMER_DIGITS = '០១២៣៤៥៦៧៨៩'
+export function localDigits(value, text = null) {
+    const khmer = text != null ? /[\u1780-\u17FF]/.test(text) : t.locale === 'kh'
+    return khmer ? String(value).replace(/\d/g, d => KHMER_DIGITS[d]) : String(value)
+}
+
+// "Please wait {seconds}s" with the seconds filled in, in the text's own digits
+export function fillSeconds(text, seconds) {
+    return typeof text === 'string' ? text.replace('{seconds}', localDigits(seconds, text)) : text
+}
+
 // Translate inline source text (route titles, toast messages) via phrases.js.
 // Unknown text is returned unchanged.
 export function translatePhrase(text) {

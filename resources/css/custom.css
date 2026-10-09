@@ -622,6 +622,18 @@ input.flatpickr-input:has(+ span.text-danger.text-sm:not([style*='display: none'
 
     .filling { display: none; } /* the default solid color fill */
 
+    /* "Too many requests": a thin bar along the bottom shows the time left of the wait */
+    .noti-countdown {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 3px;
+        background: rgb(var(--noti));
+        transform-origin: left center;
+        transition: transform .25s linear;
+    }
+
     .content-noti {
         align-items: flex-start;
         gap: 12px;

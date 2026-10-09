@@ -78,15 +78,9 @@
         border-top-color: #fff;
         animation: loading-spin .9s linear infinite;
       }
-      .loading-title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        letter-spacing: .02em;
-      }
       .loading-dots {
         display: flex;
         gap: 6px;
-        margin-top: -6px;
       }
       .loading-dots span {
         width: 7px;
@@ -110,9 +104,8 @@
     <script>
       document.body.classList.add(document.documentElement.getAttribute('data-theme') === 'dark' ? 'theme-dark' : 'theme-semi-dark')
     </script>
-    <div id="loading-bg" role="status" aria-label="Loading">
+    <div id="loading-bg" role="status" aria-label="{{ $siteName }}">
       <div class="loading-logo"><img src="{{ asset('images/logo/logo.svg') }}" alt=""></div>
-      <div class="loading-title">{{ $siteName }}</div>
       <div class="loading-dots"><span></span><span></span><span></span></div>
     </div>
     <noscript>

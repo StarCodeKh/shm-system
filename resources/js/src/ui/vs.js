@@ -12,7 +12,7 @@ import VsLoading from './VsLoading.vue'
 import VsNotification from './VsNotification.vue'
 import VsDialog from './VsDialog.vue'
 import { translateNotify, translateDialog } from '@/i18n/i18n'
-import { recentErrorReason } from '@/axios'
+import { recentErrorReason, setRateLimitHandler } from '@/axios'
 
 let appContext = null
 
@@ -116,6 +116,11 @@ function notify(parameters) {
     if (reason && (GENERAL_FAILURES.includes(parameters.text) || (reason.until && parameters.color === 'danger'))) {
         parameters = { ...parameters, text: reason.text, countdownUntil: reason.until }
     }
+    // A wait, not a failure: an amber toast that says how long, whatever the screen asked for
+    if (parameters && parameters.countdownUntil) {
+        const { autoRetry, ...rest } = parameters
+        parameters = { ...rest, color: 'warning', title: 'msg.too_many_requests_title', text: autoRetry ? 'msg.auto_retry_in_seconds' : 'msg.retry_in_seconds' }
+    }
     // Many requests refused at once: one countdown toast, not one per request
     if (parameters && parameters.countdownUntil) {
         if (countdownUntil > Date.now()) return
@@ -175,6 +180,8 @@ export function installVs(app, options = {}) {
     const vs = reactive({ rtl: !!options.rtl, theme: options.theme || null })
     vs.loading = loading
     vs.notify = notify
+    // Requests waiting to send themselves again (see axios.js): one countdown toast for all of them
+    setRateLimitHandler(until => notify({ countdownUntil: until, autoRetry: true }))
     vs.dialog = dialog
     app.config.globalProperties.$vs = vs
     return vs

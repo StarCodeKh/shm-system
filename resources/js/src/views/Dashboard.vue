@@ -220,6 +220,25 @@ const cssColor = (name, fallback) => {
     return value ? `rgb(${value})` : fallback
 }
 const toNumber = (value) => Number(String(value || 0).replace(/,/g, "")) || 0
+// A local calendar day as Y-m-d (toISOString would move it to the UTC day)
+const ymd = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+// Quick ranges at the top of the date picker, counted from today. The current ones end today:
+// no days that have not happened yet.
+const PRESETS = {
+    dash_range_this_month: (t) => [new Date(t.getFullYear(), t.getMonth(), 1), t],
+    dash_range_last_month: (t) => [new Date(t.getFullYear(), t.getMonth() - 1, 1), new Date(t.getFullYear(), t.getMonth(), 0)],
+    dash_range_this_quarter: (t) => [new Date(t.getFullYear(), Math.floor(t.getMonth() / 3) * 3, 1), t],
+    dash_range_this_year: (t) => [new Date(t.getFullYear(), 0, 1), t],
+    dash_range_last_year: (t) => [new Date(t.getFullYear() - 1, 0, 1), new Date(t.getFullYear() - 1, 11, 31)],
+}
+const presetRange = (key) => PRESETS[key](new Date()).map(ymd)
+// The dashboard opens on this range, and goes back to it when the picker is cleared
+const DEFAULT_PRESET = "dash_range_this_year"
+// The quick-range row scrolls sideways: fade the edge on each side that has more buttons
+const updatePresetFades = (bar) => {
+    bar.classList.toggle("fade-start", bar.scrollLeft > 1)
+    bar.classList.toggle("fade-end", bar.scrollLeft + bar.clientWidth < bar.scrollWidth - 1)
+}
 // Where each dashboard item leads. A target only becomes a link when the user can see
 // that page in the sidebar menu, so the dashboard follows the same role permissions.
 const TARGETS = {
@@ -241,15 +260,20 @@ DashLink.inheritAttrs = false
 export default {
     components: { VueApexCharts, flatPickr, DashLink },
     data() {
-        const year = new Date().getFullYear()
         return {
             summary: null,
             loading: false,
             error: false,
             updatedAt: "",
             currency: "KHR",
-            dateRange: [`${year}-01-01`, `${year}-12-31`],
-            dateConfig: { mode: "range", dateFormat: "Y-m-d", allowInput: true },
+            dateRange: presetRange(DEFAULT_PRESET),
+            dateConfig: {
+                mode: "range",
+                dateFormat: "Y-m-d",
+                allowInput: true,
+                onReady: [(dates, text, fp) => this.addPresets(fp)],
+                onOpen: [(dates, text, fp) => this.markPresets(fp)],
+            },
         }
     },
     computed: {
@@ -481,6 +505,11 @@ export default {
     },
     watch: {
         range(value, old) {
+            // Cleared: back to the default range rather than a dashboard with no dates
+            if (!value.start && !value.end) {
+                this.dateRange = presetRange(DEFAULT_PRESET)
+                return
+            }
             if (value.start && value.end && (value.start !== old.start || value.end !== old.end)) this.load()
         },
     },
@@ -517,6 +546,54 @@ export default {
                 this.error = true
             }
             this.loading = false
+        },
+        // Quick range buttons above the calendar (the calendar is outside this component, so built here)
+        addPresets(fp) {
+            const calendar = fp.calendarContainer
+            if (!calendar || calendar.querySelector(".dash-presets")) return
+            const bar = document.createElement("div")
+            bar.className = "dash-presets"
+            Object.keys(PRESETS).forEach((key) => {
+                const button = document.createElement("button")
+                button.type = "button"
+                button.dataset.preset = key
+                // Keep focus in the input so flatpickr doesn't treat the click as "outside"
+                button.addEventListener("mousedown", (e) => e.preventDefault())
+                button.addEventListener("click", () => {
+                    fp.setDate(presetRange(key), true)
+                    fp.close()
+                })
+                bar.appendChild(button)
+            })
+            bar.addEventListener("scroll", () => updatePresetFades(bar), { passive: true })
+            // A mouse wheel (up / down) scrolls the row sideways too
+            bar.addEventListener("wheel", (e) => {
+                if (Math.abs(e.deltaY) <= Math.abs(e.deltaX) || bar.scrollWidth <= bar.clientWidth) return
+                e.preventDefault()
+                bar.scrollLeft += e.deltaY
+            }, { passive: false })
+            calendar.insertBefore(bar, calendar.firstChild)
+            this.markPresets(fp)
+        },
+        // Labels in the current language, and the quick range that matches the chosen dates marked
+        // and scrolled into the middle of the row
+        markPresets(fp) {
+            const bar = fp.calendarContainer.querySelector(".dash-presets")
+            if (!bar) return
+            const [start, end] = fp.selectedDates.map(ymd)
+            let active = null
+            bar.querySelectorAll("button").forEach((button) => {
+                const [presetStart, presetEnd] = presetRange(button.dataset.preset)
+                const on = presetStart === start && presetEnd === end
+                button.textContent = this.$t(button.dataset.preset)
+                button.classList.toggle("active", on)
+                if (on) active = button
+            })
+            // After the calendar is laid out (it is only measurable once open)
+            requestAnimationFrame(() => {
+                if (active) bar.scrollLeft = active.offsetLeft - (bar.clientWidth - active.offsetWidth) / 2
+                updatePresetFades(bar)
+            })
         },
         go(path) {
             if (path && this.$route.path !== path) this.$router.push(path).catch(() => {})
@@ -563,8 +640,10 @@ export default {
     margin-bottom: 1rem;
 }
 
-.dashboard-date {
-    min-width: 230px;
+/* The visible input is flatpickr's copy (outside this component's scope): wide enough for the whole range */
+.dashboard-toolbar :deep(.dashboard-date) {
+    width: 290px;
+    max-width: 100%;
 }
 
 /* Segmented switch: the white pill slides to the chosen currency (v-tab-pill) */
@@ -835,5 +914,64 @@ export default {
     .empty-state { color: #676d7d; }
     .skeleton,
     .skeleton-block { background: linear-gradient(90deg, #262c49 25%, #2f365a 37%, #262c49 63%); background-size: 400% 100%; }
+}
+</style>
+
+<style>
+/* Quick ranges on the dashboard's date picker (the calendar is added to the page body):
+   one row that scrolls sideways, edges fading where more buttons are hidden */
+.flatpickr-calendar .dash-presets {
+    --fade-start: 0px;
+    --fade-end: 0px;
+    position: relative;
+    display: flex;
+    gap: 6px;
+    padding: 12px 12px 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scroll-padding: 0 12px;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--fade-start), #000 calc(100% - var(--fade-end)), transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, #000 var(--fade-start), #000 calc(100% - var(--fade-end)), transparent 100%);
+    /* Thin scrollbar, only noticeable on hover (same as the tabs) */
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+}
+.flatpickr-calendar .dash-presets.fade-start { --fade-start: 24px; }
+.flatpickr-calendar .dash-presets.fade-end { --fade-end: 24px; }
+.flatpickr-calendar .dash-presets:hover { scrollbar-color: rgba(110, 112, 145, .35) transparent; }
+.flatpickr-calendar .dash-presets::-webkit-scrollbar { height: 4px; }
+.flatpickr-calendar .dash-presets::-webkit-scrollbar-thumb { border-radius: 4px; background: transparent; }
+.flatpickr-calendar .dash-presets:hover::-webkit-scrollbar-thumb { background: rgba(110, 112, 145, .35); }
+.flatpickr-calendar .dash-presets button {
+    flex: none;
+    white-space: nowrap;
+    scroll-snap-align: start;
+    padding: 5px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #4b4d5c;
+    background: #fff;
+    border: 1px solid #e3e5ea;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all .15s ease;
+}
+.flatpickr-calendar .dash-presets button:hover {
+    color: rgb(var(--vs-primary));
+    border-color: rgba(var(--vs-primary), .5);
+    background: rgba(var(--vs-primary), .06);
+}
+.flatpickr-calendar .dash-presets button.active {
+    color: #fff;
+    background: rgb(var(--vs-primary));
+    border-color: rgb(var(--vs-primary));
+}
+.theme-dark .flatpickr-calendar .dash-presets button:not(.active) {
+    color: #c2c6dc;
+    background: #10163a;
+    border-color: #414561;
 }
 </style>

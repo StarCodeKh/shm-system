@@ -17,11 +17,15 @@
                 <vs-icon v-if="icon" class="vs-icon-noti" :icon="icon" :icon-pack="iconPack" />
             </div>
             <span class="filling" :style="fillingStyle" />
+            <!-- Time left of the wait: shrinks to nothing as the countdown ends -->
+            <span v-if="countdownUntil" class="noti-countdown" :style="{ transform: `scaleX(${countdownLeft})` }" />
         </div>
     </transition>
 </template>
 
 <script>
+import { fillSeconds } from '@/i18n/i18n'
+
 // One toast from $vs.notify({ title, text, color, icon, position, time, fixed, click }) (see vs.js)
 export default {
     name: 'VsNotification',
@@ -42,12 +46,17 @@ export default {
         countdownUntil: { type: Number, default: null },
     },
     data() {
-        return { active: true, widthx: 0, cords: { top: null, left: null, right: null, bottom: null }, timer: null, remaining: 0, startedAt: 0, now: Date.now(), ticker: null }
+        return { active: true, widthx: 0, cords: { top: null, left: null, right: null, bottom: null }, timer: null, remaining: 0, startedAt: 0, now: Date.now(), ticker: null, countdownFrom: Date.now() }
     },
     computed: {
         shownText() {
             if (!this.countdownUntil || typeof this.text !== 'string') return this.text
-            return this.text.replace('{seconds}', Math.max(0, Math.ceil((this.countdownUntil - this.now) / 1000)))
+            return fillSeconds(this.text, Math.max(0, Math.ceil((this.countdownUntil - this.now) / 1000)))
+        },
+        // Share of the wait still left, 1 → 0
+        countdownLeft() {
+            const total = this.countdownUntil - this.countdownFrom
+            return total > 0 ? Math.min(1, Math.max(0, (this.countdownUntil - this.now) / total)) : 0
         },
         fillingStyle() {
             return {

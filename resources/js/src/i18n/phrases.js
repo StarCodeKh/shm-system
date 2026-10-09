@@ -281,7 +281,11 @@ export default {
     'msg.not_found': { kh: 'រកមិនឃើញទិន្នន័យនេះទេ។ វាប្រហែលជាត្រូវបានលុបរួចហើយ។', en: "This record couldn't be found. It may have been deleted." },
     'msg.session_expired': { kh: 'វគ្គប្រើប្រាស់បានផុតកំណត់។ សូមចូលម្តងទៀត។', en: 'Your session has expired. Please sign in again.' },
     'msg.too_many_requests': { kh: 'សំណើច្រើនពេក។ សូមរង់ចាំបន្តិច រួចព្យាយាមម្តងទៀត។', en: 'Too many requests. Please wait a moment and try again.' },
-    'msg.too_many_requests_wait': { kh: 'សំណើច្រើនពេក។ សូមរង់ចាំ {seconds} វិនាទី រួចព្យាយាមម្តងទៀត។', en: 'Too many requests. Please try again in {seconds} seconds.' },
+    'msg.too_many_requests_wait': { kh: 'សំណើច្រើនពេក។ សូមរង់ចាំ {seconds} វិនាទី រួចព្យាយាមម្តងទៀត។', en: 'Too many requests. Please wait {seconds}s and try again.' },
+    // The countdown toast: the title says what happened, the text only how long to wait
+    'msg.too_many_requests_title': { kh: 'សំណើច្រើនពេក', en: 'Too many requests' },
+    'msg.retry_in_seconds': { kh: 'សូមរង់ចាំ {seconds} វិនាទី រួចព្យាយាមម្តងទៀត។', en: 'Please wait {seconds}s and try again.' },
+    'msg.auto_retry_in_seconds': { kh: 'សូមរង់ចាំ {seconds} វិនាទី។ ទិន្នន័យនឹងបង្ហាញដោយស្វ័យប្រវត្តិ។', en: 'Please wait {seconds}s. Your data will load automatically.' },
     'msg.server_error': { kh: 'មានបញ្ហានៅលើម៉ាស៊ីនមេ។ សូមព្យាយាមម្តងទៀត។', en: 'Something went wrong on the server. Please try again.' },
     'msg.network_error': { kh: 'មិនអាចភ្ជាប់ទៅម៉ាស៊ីនមេបានទេ។ សូមពិនិត្យអ៊ីនធឺណិត។', en: "Couldn't reach the server. Please check your connection." },
     'msg.loading': { kh: 'កំពុងទាញយកទិន្នន័យ...', en: 'Loading data...' },

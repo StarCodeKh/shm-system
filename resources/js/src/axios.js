@@ -1,6 +1,6 @@
 // axios
 import axios from 'axios'
-import i18n, { translatePhrase } from './i18n/i18n'
+import i18n, { translatePhrase, fillSeconds } from './i18n/i18n'
 
 // API calls go to the same site the app is served from (/api/...), so no base URL is set
 const axiosApi = axios.create()
@@ -74,7 +74,29 @@ function errorReason(error, data) {
     return null
 }
 
+// After "too many requests" a request sends itself again once the wait is over, so the screen still
+// gets its data without a click. Safe for saves too: the server refused the request before doing anything.
+// Once per request and only for a short wait; never for sign-in (the sign-in page counts down itself).
+const AUTO_RETRY_MAX_SECONDS = 60
+let onRateLimited = null // shows the countdown toast (set by ui/vs.js)
+export const setRateLimitHandler = handler => { onRateLimited = handler }
+
+function autoRetryUntil(error) {
+    const { config, response } = error
+    if (!response || response.status !== 429 || !config || config.rateLimitRetried) return 0
+    if (/\/api\/auth\//.test(config.url || '')) return 0
+    const seconds = retryAfterSeconds(error)
+    return seconds <= AUTO_RETRY_MAX_SECONDS ? Date.now() + seconds * 1000 : 0
+}
+
 axiosApi.interceptors.response.use(response => response, async error => {
+    const retryAt = autoRetryUntil(error)
+    if (retryAt) {
+        if (onRateLimited) onRateLimited(retryAt)
+        // A moment past the wait, so the server's window has surely reopened
+        await new Promise(resolve => setTimeout(resolve, retryAt - Date.now() + 300))
+        return axiosApi({ ...error.config, rateLimitRetried: true })
+    }
     let data = error.response && error.response.data
     if (typeof Blob !== 'undefined' && data instanceof Blob && /json/.test(data.type)) {
         try { data = JSON.parse(await data.text()) } catch (e) { data = null }
@@ -91,7 +113,7 @@ export function errorMessage(error, fallback = 'msg.action_failed') {
     const reason = error && error.reason
     if (!reason) return translatePhrase(fallback)
     const text = translatePhrase(reason.text)
-    return reason.until ? text.replace('{seconds}', Math.max(1, Math.ceil((reason.until - Date.now()) / 1000))) : text
+    return reason.until ? fillSeconds(text, Math.max(1, Math.ceil((reason.until - Date.now()) / 1000))) : text
 }
 
 // Why a request failed within the last moment ({ text, until? }), or null
