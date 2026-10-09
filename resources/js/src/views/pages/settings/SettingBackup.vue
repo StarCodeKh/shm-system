@@ -39,10 +39,5 @@ export default {
             blog: true,
         }
     },
-    computed: {
-        activeUserInfo() {
-            return this.$store.state.AppActiveUser
-        },
-    }
 }
 </script>

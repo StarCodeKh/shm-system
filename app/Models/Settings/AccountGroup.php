@@ -3,7 +3,6 @@
 namespace App\Models\Settings;
 
 use Illuminate\Database\Eloquent\Model;
-use CommonService;
 
 class AccountGroup extends Model
 {
@@ -26,19 +25,6 @@ class AccountGroup extends Model
     {
         return $this->belongsTo(AccountTypeGroup::class, 'group');
     }
-    public static function getAccGroupOpts($filter)
-    {
-        $query = AccountGroup::orderByLevel()->get();
-        $data = array();
-        foreach ($query as $row) {
-            $data[] = array(
-                "label" => $row->code . "-" . CommonService::localName($row),
-                "value" => $row->id,
-            );
-        }
-        return $data;
-    }
-
     public static function getSingleOpt(){
         $query = AccountGroup::whereNotDeleted()->get();
         $data = array();

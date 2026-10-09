@@ -160,7 +160,5 @@
             this.$vs.loading();
             this.getData();
         },
-        watch: {
-        }
     }
 </script>

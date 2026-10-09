@@ -198,29 +198,4 @@ class RoleUser extends Model implements Auditable
         return true;
     }
 
-    public static function createPermission($input){
-        // $permissions = [
-            //     'list_roles',
-            //     'create_roles',
-            //     'show_roles',
-            //     'edit_roles',
-            //     'update_roles',
-            //     'delete_roles',
-        // ]
-        $check = DB::table("permission_group")->where("name", $input["permission_group"])->first();
-        $id = 0;
-        if(!$check){
-            $id = DB::table("permission_group")->insertGetId(
-                [
-                    "name" => $input["permission_group"],
-                ]);
-        }else{
-            $id = $check->id;
-        }
-        $permissions = $input["permissions"];
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['group' => $id, 'name' => $permission]);
-        }
-        return true;
-    }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Models\Settings;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\OfficerPayable;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 use CommonService;
@@ -41,16 +40,6 @@ class CurrencyExchange extends Model implements Auditable
             if ($from === Currency::KHR && $to === Currency::USD) return 1 / self::DEFAULT_USD_KHR;
             return 1.0;
         })();
-    }
-
-    public function paymentType()
-    {
-        return $this->hasMany(PaymentType::class);
-    }
-
-    public function officerPayable()
-    {
-        return $this->hasMany(OfficerPayable::class);
     }
 
     public static function dataFields(){

@@ -9,10 +9,7 @@ use CommonService;
 use App\Models\Settings\Status;
 class AuditController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    protected $db_table;
+    protected $dbTable;
 
     public function __construct()
     {

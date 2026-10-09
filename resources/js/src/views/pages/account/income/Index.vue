@@ -192,7 +192,5 @@ import DTableList from '@/views/form-builder/DTableList.vue'
         this.$vs.loading();
         this.getData();
     },
-    watch: {
-    }
 }
 </script>

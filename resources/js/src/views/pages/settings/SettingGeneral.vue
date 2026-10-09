@@ -877,12 +877,7 @@ this.$vs.notify({
         this.$vs.loading();
         this.getData();
     },
-    watch: {
-    },
     computed: {
-        activeUserInfo() {
-            return this.$store.state.AppActiveUser
-        },
     }
 }
 </script>

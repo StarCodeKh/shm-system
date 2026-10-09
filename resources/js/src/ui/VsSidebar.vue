@@ -57,12 +57,6 @@ export default {
         this.stopListening()
     },
     methods: {
-        getActive() {
-            return this.currentIndex
-        },
-        setIndexActive(index) {
-            this.currentIndex = index
-        },
         clickArea() {
             return (typeof this.parent == 'string' ? document.querySelector(this.parent) : this.parent) || window
         },

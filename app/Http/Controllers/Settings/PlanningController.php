@@ -13,6 +13,10 @@ use App\Models\Settings\Status;
 
 class PlanningController extends Controller
 {
+    protected $PERMISSION_ACTION_LIST;
+    protected $PERMISSION_ACTION_CREATE;
+    protected $PERMISSION_ACTION_UPDATE;
+    protected $PERMISSION_ACTION_DELETE;
     protected $db_table;
 
     public function __construct()

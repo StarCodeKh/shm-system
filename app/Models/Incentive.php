@@ -58,30 +58,6 @@ class Incentive extends Model implements Auditable
         return $incentiveArr;
     }
 
-    public static function getIncentiveOfficerByBanks($incentive_id, $bank_id){
-        $query = DB::table("incentive_to_officer as i2o")
-            ->Select('i2o.entity_id', DB::raw('sum(incentive) as total_incentive'), DB::raw('sum(incentive_after_tax) as total_incentive_after_tax'), 'e.name_kh as entity')
-            ->Join('entity as e', 'e.id', '=', 'i2o.entity_id')
-            ->Where('i2o.incentive_id', '=', $incentive_id)
-            ->Where('i2o.bank_id', '=', $bank_id)
-            ->OrderBy('e.order_level')
-            ->GroupBy('i2o.entity_id', 'e.name_kh')
-            ->get();
-        $incentiveArr = array();
-        $i = 1;
-        foreach($query as $row){
-            $incentiveArr[] = array(
-                "no" => $i,
-                "entity" => $row->entity,
-                "total_incentive" => $row->total_incentive,
-                "total_incentive_after_tax" => $row->total_incentive_after_tax,
-                "exchange_rate" => CurrencyExchange::rate()
-            );
-            $i++;
-        }
-        return $incentiveArr;
-    }
-
     public static function getIncentiveByEntities($incentive_id, $bank_id){
         if($bank_id > 0){
             $incentiveToEntities = DB::table("incentive_to_entity as i2e")
@@ -265,100 +241,9 @@ class Incentive extends Model implements Auditable
         return $entityData;
     }
 
-    public static function getIncentiveListByEntities($incentive_id, $bank_id){
-
-        $officers = DB::table("incentive_to_officer as i2o")
-            ->Select('i2o.*', "io.identity_no", "io.first_name", "io.last_name", "io.latin", "io.title")
-            ->Join('incentive_officer as io', 'io.id', '=', 'i2o.officer_id')
-            ->Join('duty as d', 'd.id', '=', 'io.duty_id')
-            ->Join('entity as e', 'e.id', '=', 'io.entity_id')
-            ->Where('i2o.incentive_id', '=', $incentive_id)
-            ->Where('i2o.bank_id', $bank_id)
-            ->OrderBy("i2o.entity_id")
-            ->OrderBy("d.order_level")
-            ->OrderBy("io.first_name")
-            ->get();
-
-        $subIncentive = DB::table("incentive_to_officer as i2o")
-            ->Select('i2o.*', "io.first_name", "io.last_name", "io.latin")
-            ->Join('incentive_officer as io', 'io.id', '=', 'i2o.officer_id')
-            ->Where('i2o.incentive_id', '=', $incentive_id)
-            ->Where('i2o.bank_id', $bank_id)
-            ->sum("i2o.incentive");
-
-        $sumTaxIncentive = DB::table("incentive_to_officer as i2o")
-            ->Select('i2o.*', "io.first_name", "io.last_name", "io.latin")
-            ->Join('incentive_officer as io', 'io.id', '=', 'i2o.officer_id')
-            ->Where('i2o.incentive_id', '=', $incentive_id)
-            ->Where('i2o.bank_id', $bank_id)
-            ->sum("i2o.tax");
-
-        $sumReturnIncentive = DB::table("incentive_to_officer as i2o")
-            ->Select('i2o.*', "io.first_name", "io.last_name", "io.latin")
-            ->Join('incentive_officer as io', 'io.id', '=', 'i2o.officer_id')
-            ->Where('i2o.incentive_id', '=', $incentive_id)
-            ->Where('i2o.bank_id', $bank_id)
-            ->sum("i2o.return_amount");
-
-        $sumIncentiveAterTax = DB::table("incentive_to_officer as i2o")
-            ->Select('i2o.*', "io.first_name", "io.last_name", "io.latin")
-            ->Join('incentive_officer as io', 'io.id', '=', 'i2o.officer_id')
-            ->Where('i2o.incentive_id', '=', $incentive_id)
-            ->Where('i2o.bank_id', $bank_id)
-            ->sum("i2o.incentive_after_tax");
-
-        $sumIncentiveReminder = DB::table("incentive_to_officer as i2o")
-            ->Select('i2o.*', "io.first_name", "io.last_name", "io.latin")
-            ->Join('incentive_officer as io', 'io.id', '=', 'i2o.officer_id')
-            ->Where('i2o.incentive_id', '=', $incentive_id)
-            ->Where('i2o.bank_id', $bank_id)
-            ->sum("i2o.reminder_amount");
-
-        $j = 0;
-        foreach($officers as $officer){
-            $bankAccOfficer = '';
-            if($officer->bank_account_no != null){
-                $bankAccOfficer = $officer->bank_account_no;
-            }else{
-                $bankAccOfficer = $officer->bank_account_no;
-            }
-            $officerData[] = array(
-                "no" => ($j + 1),
-                "identity_no" => $officer->identity_no,
-                "first_name" => $officer->first_name,
-                "last_name" => $officer->last_name,
-                "title" => $officer->title,
-                "bank" => $officer->bank,
-                "bank_account_no" => $officer->bank_account_no,
-                "latin" => $officer->latin,
-                "position" => $officer->position,
-                "duty" => $officer->duty,
-                "index" => $officer->index,
-                "incentive" => intval($officer->incentive),
-                "tax" => intval($officer->tax),
-                "return_amount" => intval($officer->return_amount),
-                "reminder_amount" => intval($officer->reminder_amount),
-                "incentive_after_tax" => intval($officer->incentive_after_tax)
-            );
-            $j++;
-        }
-
-        return $officerData;
-    }
-
     public static function getIncentiveByOfficers($incentive_id){
         $query = Officer::whereIn('entity_id', explode(',', $entity_id))->get();
         return $query;
-    }
-
-    public static function getIncentiveByStackholders($incentive_id){
-        $query = Officer::whereIn('entity_id', explode(',', $entity_id))->get();
-        return $query;
-    }
-
-    public static function getIncentiveData($id){
-
-            return CommonService::convertToKhmerNumber(222);
     }
 
     public static function dataFields(){

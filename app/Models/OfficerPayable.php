@@ -57,11 +57,6 @@ class OfficerPayable extends Model implements Auditable
         return $this->belongsTo(PaymentMethod::class, "payment_method_id");
     }
 
-    public function paymentHistory()
-    {
-        return $this->hasMany(OfficerPayment::class);
-    }
-
     public static function dataFields(){
         // Loop Data Field From Table to put in array for mapping data field to search data table
         $data["tables"] = DB::select('show columns from '.DB::getTablePrefix().(new OfficerPayable)->getTable());
@@ -151,28 +146,6 @@ class OfficerPayable extends Model implements Auditable
     public static function getTotal($filter){
         $whereClause = OfficerPayable::checkQuery($filter);
         $total = $whereClause->count();
-        return $total;
-    }
-
-    public static function getTotalAmount($filter, $status){
-        $whereClause = OfficerPayable::where("status", $status);
-        if($filter["search_field"]){
-            $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
-            $dataFields = $arraySingle;
-            if(isset($filter["search_field"])){
-                for($i=0 ; $i < count($filter["search_field"]); $i++){
-                    $field = array_key_first($filter["search_field"][$i]);
-                    if (array_key_exists($field, $dataFields)) {
-                        if(isset($filter["search_field"][$i][$field]["value"])){
-                            $whereClause->Where($field, $filter["search_field"][$i][$field]["value"]);
-                        }else{
-                            $whereClause->Where($field, 'Like', '%'.$filter["search_field"][$i][$field].'%');
-                        }
-                    }
-                }
-            }
-        }
-        $total = $whereClause->sum("amount");
         return $total;
     }
 

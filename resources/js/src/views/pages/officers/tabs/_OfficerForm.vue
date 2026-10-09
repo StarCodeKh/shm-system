@@ -380,15 +380,6 @@ export default {
         validateForm() {
             return !this.errors.any()
         },
-        currentPage() {
-            if(this.isMounted) {
-                return this.$refs.table.currentx
-            }
-            return 0
-        },
-        queriedItems() {
-            return this.$refs.table ? this.$refs.table.queriedResults.length : this.products.length
-        }
     },
     methods: {
         // Option labels in the current language; the stored value stays the same

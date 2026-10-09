@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\COAController;
-use App\Http\Controllers\CompositionRequestController;
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
@@ -43,7 +42,6 @@ use App\Http\Controllers\Settings\PaymentTypeController;
 use App\Http\Controllers\Settings\PlanningController;
 use App\Http\Controllers\Settings\PositionController;
 use App\Http\Controllers\Settings\RoleController;
-use App\Http\Controllers\Settings\StatusController;
 use App\Http\Controllers\Settings\TitleController;
 use App\Http\Controllers\TaxableSalaryController;
 use App\Http\Controllers\UserController;
@@ -189,10 +187,6 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
     Route::post('incentive/search', [IncentiveController::class, 'index']);
     Route::apiResource('incentive', IncentiveController::class);
 
-    // Composition request
-    Route::post('composition_request/search', [CompositionRequestController::class, 'index']);
-    Route::apiResource('composition_request', CompositionRequestController::class);
-
     // Role menu
     Route::post('role_menu/permission/index', [RoleMenuController::class, 'index']);
 
@@ -224,7 +218,6 @@ Route::post('account_type_group/search', [AccountTypeGroupController::class, 'in
         Route::post('department/search', [DepartmentController::class, 'index']);
         Route::apiResource('department', DepartmentController::class);
 
-        Route::post('get_member_by_entity', [EntityMemberController::class, 'getMemberByEntity']);
         Route::post('entity_member/search', [EntityMemberController::class, 'index']);
         Route::apiResource('entity_member', EntityMemberController::class);
 
@@ -247,8 +240,6 @@ Route::post('currency/search', [CurrencyController::class, 'index']);
 
         Route::post('bank/search', [BankController::class, 'index']);
         Route::apiResource('bank', BankController::class);
-
-        Route::apiResource('status', StatusController::class);
 
         Route::post('role/set_permission', [RoleController::class, 'setPermission']);
         Route::post('role/search', [RoleController::class, 'index']);

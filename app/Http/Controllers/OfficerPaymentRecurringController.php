@@ -11,11 +11,6 @@ use Illuminate\Http\Request;
 use CommonService;
 class OfficerPaymentRecurringController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-    */
     protected $PERMISSION_ACTION_LIST;
     protected $PERMISSION_ACTION_CREATE;
     protected $PERMISSION_ACTION_SHOW;

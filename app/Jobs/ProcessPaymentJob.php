@@ -132,7 +132,7 @@ class ProcessPaymentJob implements ShouldQueue
                 // Optionally, re-throw to trigger job retry based on $tries
                 // throw new Exception('Payment gateway declined transaction.');
             }
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             // Catch any exceptions during payment processing
             DB::transaction(function () use ($payable, $e) {
                 $payable->update(['status' => 'failed']);

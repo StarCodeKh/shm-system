@@ -198,8 +198,5 @@
             this.$vs.loading();
             this.getDataInfo();
         },
-        watch: {
-
-        }
     }
 </script>

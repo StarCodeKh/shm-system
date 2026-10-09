@@ -12,11 +12,6 @@ use DB;
 use CommonService;
 class DepartmentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     protected $db_table;
     protected $PERMISSION_ACTION_LIST;
     protected $PERMISSION_ACTION_CREATE;

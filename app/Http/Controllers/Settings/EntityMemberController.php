@@ -13,11 +13,6 @@ use App\Models\Settings\Status;
 
 class EntityMemberController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     protected $db_table;
 
     public function __construct()
@@ -56,20 +51,6 @@ class EntityMemberController extends Controller
             "entity_id" => $entities,
             "limit" => $filter["limit"],
             "total" => $this->db_table::getCount($filter)
-        );
-        return response()->json($data);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-    public function getMemberByEntity(Request $request){
-        $paramId = $request->all();
-        $data = array(
-            "data" => $this->db_table::getMemberByEntityID($paramId),
         );
         return response()->json($data);
     }

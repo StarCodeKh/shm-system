@@ -140,9 +140,6 @@ export default {
             },
         }
     },
-    watch: {
-
-    },
     computed: {
         // Filters with a value (shown as a count next to the title)
         activeCount() {
@@ -153,17 +150,6 @@ export default {
         },
         validateForm() {
             return !this.errors.any()
-        },
-        usersData() {
-            return this.$store.state.userManagement.users
-        },
-        paginationPageSize() {
-            if (this.gridApi) return this.gridApi.paginationGetPageSize()
-            else return 10
-        },
-        totalPages() {
-            if (this.gridApi) return this.gridApi.paginationGetTotalPages()
-            else return 0
         },
         currentPage: {
             get() {

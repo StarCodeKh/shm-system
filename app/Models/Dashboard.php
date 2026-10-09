@@ -4,7 +4,6 @@ namespace App\Models;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Settings\Currency;
-use App\Models\Settings\CurrencyExchange;
 use DB;
 use App\Models\Settings\Status;
 use App\Services\DataScope;
@@ -314,74 +313,6 @@ public static function getQuarterlyIncomeExpense($year = null, $quarter = null)
 
     return $results;
 }
-
-    /**
-     * @param int|null $year The year to report on. Defaults to current year.
-     * @param int|null $quarter Specific quarter (1-4) to filter by, or null for all.
-     * @return array
-     */
-    public static function getQuarterlyIncomeExpenseWay2($year = null, $quarter = null)
-    {
-        // Default to current year if not provided
-        $year = $year ?? date('Y');
-
-        // Build SQL using named parameters (preferred for CTEs)
-        $sql = "
-            WITH quarters AS (
-                SELECT 1 AS Q UNION ALL
-                SELECT 2 UNION ALL
-                SELECT 3 UNION ALL
-                SELECT 4
-            ),
-            total_income_expense AS (
-                SELECT
-                    QUARTER(created_at) AS quarter,
-                    YEAR(created_at) AS year,
-                    CASE
-                        WHEN src = 'income' AND currency_id = ".Currency::idOf(Currency::KHR)." THEN amount
-                        WHEN src = 'income' AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount * ".CurrencyExchange::rate()."
-                        ELSE 0
-                    END AS income_khr,
-                    CASE
-                        WHEN src = 'expense' AND currency_id = ".Currency::idOf(Currency::KHR)." THEN amount
-                        WHEN src = 'expense' AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount * ".CurrencyExchange::rate()."
-                        ELSE 0
-                    END AS expense_khr
-                FROM (
-                    -- Unified source data (UNION ALL)
-                    SELECT amount, currency_id, created_at, 'income' AS src FROM ".self::table('income')."
-                    UNION ALL
-                    SELECT amount, currency_id, created_at, 'income' AS src FROM ".self::table('officer_payment')."
-                    UNION ALL
-                    SELECT amount, currency_id, created_at, 'expense' AS src FROM ".self::table('expense')."
-                    UNION ALL
-                    SELECT amount, currency_id, created_at, 'expense' AS src FROM ".self::table('officer_incentive')."
-                ) AS all_data
-                WHERE YEAR(created_at) = :year
-            )
-            SELECT
-                Q.Q AS quarter,
-                CONCAT('Q', Q.Q) AS quarter_label,
-                COALESCE(SUM(d.income_khr), 0) AS total_income_khr,
-                COALESCE(SUM(d.expense_khr), 0) AS total_expense_khr,
-                COALESCE(SUM(d.income_khr), 0) - COALESCE(SUM(d.expense_khr), 0) AS remaining_balance_khr
-            FROM quarters Q
-            LEFT JOIN total_income_expense d
-                ON Q.Q = d.quarter AND d.year = :year_join
-            WHERE (:quarter_filter IS NULL OR Q.Q = :quarter_value)
-            GROUP BY Q.Q
-            ORDER BY Q.Q;
-        ";
-
-        $results = DB::select($sql, [
-            'year'          => $year,
-            'year_join'     => $year,
-            'quarter_filter'=> $quarter,
-            'quarter_value' => $quarter
-        ]);
-
-        return $results;
-    }
 
 public static function getOfficerPaymentSummary()
 {

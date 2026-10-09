@@ -73,22 +73,4 @@ class Department extends Model implements Auditable
         return $total;
     }
 
-    public static function getDepartments(){
-        $filter = array(
-            "page_number" => 1,
-            "limit" => 10,
-            "sort" => "order_level",
-            "order" => "asc",
-            "search_field" => []
-        );
-        $query = Department::getData($filter);
-        $data = array();
-        foreach($query as $row){
-            $data[] = array(
-                "id" => $row->id,
-                "name" => $row->name_kh
-            );
-        }
-        return $data;
-    }
 }

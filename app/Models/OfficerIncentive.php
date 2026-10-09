@@ -122,28 +122,6 @@ class OfficerIncentive extends Model implements Auditable
         return $total;
     }
 
-    public static function getTotalAmount($filter){
-        $whereClause = OfficerIncentive::where("status", Status::ACTIVE);
-        if($filter["search_field"]){
-            $arraySingle = call_user_func_array('array_merge', $filter["search_field"]);
-            $dataFields = $arraySingle;
-            if(isset($filter["search_field"])){
-                for($i=0 ; $i < count($filter["search_field"]); $i++){
-                    $field = array_key_first($filter["search_field"][$i]);
-                    if (array_key_exists($field, $dataFields)) {
-                        if(isset($filter["search_field"][$i][$field]["value"])){
-                            $whereClause->Where($field, $filter["search_field"][$i][$field]["value"]);
-                        }else{
-                            $whereClause->Where($field, 'Like', '%'.$filter["search_field"][$i][$field].'%');
-                        }
-                    }
-                }
-            }
-        }
-        $total = $whereClause->sum("amount");
-        return $total;
-    }
-
     // Report rows before paging: shared by the paged rows and the exact count
     public static function getOfficerReportsQuery($filter){
         $query = DB::table("officer as f")

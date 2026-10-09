@@ -432,13 +432,6 @@ export default {
         }
     },
     methods: {
-        loadErrorImage(form_name) {
-            this.form.attribute["photo"] = this.notFoundFile;
-            this.form.attribute["image"] = this.notFoundFile;
-            this.form.attribute["thumbnail"] = this.notFoundFile;
-            this.form.attribute["attach"] = this.iconFile;
-            this.form.attribute["file"] = this.iconFile;
-        },
         initPassProps(props) {
             switch (props.data.type) {
                 case "xlsx":
@@ -568,13 +561,6 @@ export default {
                 param: this.form.attribute[_formName]
             };
             this.form.attribute[_formAttribute] = this.form.attribute[_formName]["label"];
-        },
-        emitValue(e) {
-            let value = e.target.value
-            if (this.modelModifiers.capitalize) {
-                value = value.charAt(0).toUpperCase() + value.slice(1)
-            }
-            this.$emit('update:modelValue', value)
         },
         // Just test to create dynamic data table on form
         onChangeElement(e, form_name) {
@@ -724,10 +710,6 @@ export default {
                     this.form.attribute[name] = Number(value)
                 }
             })
-        },
-        onChange(e) {
-            this.$validator.validateAll().then(result => {
-            });
         },
         // Translated label, borrowing a related field's translation, else a readable name (see i18n.js)
         fieldLabel(name) {

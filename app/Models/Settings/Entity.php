@@ -22,10 +22,6 @@ class Entity extends Model implements Auditable
         return $this->belongsTo('App\Models\Entity','department_id');
     }
 
-    public function ParentEntity(){
-        return $this->belongsTo(Entity::class,'parent_id');
-    }
-
 public static function getSingleOpt(){
     $data = array();
     $query = Entity::whereNotDeleted();

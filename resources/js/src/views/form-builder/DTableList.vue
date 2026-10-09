@@ -1844,16 +1844,6 @@ export default {
             const tones = { pdf: '220, 53, 69', doc: '43, 87, 154', docx: '43, 87, 154', xls: '33, 115, 70', xlsx: '33, 115, 70', csv: '33, 115, 70' };
             return { url, ext, isImage, tone: tones[ext] || (isImage ? '115, 103, 240' : '92, 99, 120') };
         },
-        loadErrorImage(event) {
-            event.target.src = this.notFoundFile;
-        },
-        transformData(obj) {
-            let _str = JSON.parse(obj);
-            return _str;
-        },
-        getDocumentSize(obj) {
-            return obj ? obj.length : 0;
-        },
         style(obj) {
             if (obj.width) {
                 return "background-color: #7367f0; color: #ffffff; font-weight: bold;min-width:" + obj.width + "px";
@@ -1877,22 +1867,6 @@ export default {
         },
         viewUrl(obj) {
             this.$router.push(obj.path).catch(() => { });
-        },
-        initPushDataTable(obj) {
-            this.dataElements = [];
-            let _data = [
-                {
-                    id: 1,
-                    name: "tests"
-                },
-                {
-                    id: 2,
-                    name: "test2"
-                }
-            ];
-            _data.forEach(_obj => {
-                this.dataElements.push(_obj);
-            });
         },
         openPrivateForm(data) {
             this.$emit('clickPrivateForm', data);
@@ -1977,9 +1951,6 @@ export default {
         openForm() {
             this.$refs.refModalForm.openNewForm(this.dataInfo);
             this.$emit("emitDataForm", "test change form attribute");
-        },
-        openToggleForm() {
-            this.enableToggleForm = true
         },
         openFormByParent(obj) {
             this.$refs.refModalForm.openNewFormByParent(obj);

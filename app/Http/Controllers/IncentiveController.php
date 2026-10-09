@@ -14,12 +14,7 @@ use App\Models\Settings\Status;
 
 class IncentiveController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    protected $db_table;
+    protected $dbTable;
 
     public function __construct()
     {

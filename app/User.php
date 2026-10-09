@@ -7,10 +7,8 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\Settings\Entity;
 use App\Models\Settings\Status;
 use App\Models\Officer;
-use App\Models\UserDevice;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\DB;
 use Auth;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -41,19 +39,8 @@ class User extends Authenticatable implements Auditable
         return $this->belongsTo(Status::class,'status');
     }
 
-    public function devices()
-    {
-        return $this->hasMany(UserDevice::class, 'user_id');
-    }
-
     public function officer(){
         return $this->belongsTo(Officer::class,'officer_id');
-    }
-
-    // Add routeNotificationForFcm
-    public function routeNotificationForFcm()
-    {
-        return $this->device_token; // Must store device token in DB
     }
 
         // public static function
@@ -135,15 +122,6 @@ class User extends Authenticatable implements Auditable
         $whereClause = User::checkQuery($filter);
         $total = $whereClause->count();
         return $total;
-    }
-
-    public static function getOfficerInfo($userId){
-        $query = DB::table("incentive_officer as io")
-            ->Select("io.*")
-            ->Where("io.user_id", $userId)
-            ->Where('io.status', 1)
-            ->first();
-        return $query;
     }
 
     public static function getProfile($id){

@@ -13,11 +13,6 @@ use CommonService;
 
 class ExpenseController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-    */
     protected $PERMISSION_ACTION_LIST;
     protected $PERMISSION_ACTION_CREATE;
     protected $PERMISSION_ACTION_SHOW;
@@ -248,8 +243,9 @@ class ExpenseController extends BaseController
                 'exchange_rate' => 'nullable|numeric',
                 'currency_id'   => 'required|integer',
                 'status'        => 'required|integer',
-                'created_by'    => 'required|integer'
             ]);
+            // The signed-in user, never a value from the request
+            $validated['created_by'] = Auth::id();
             // ✅ Step 2: Insert into DB
             $inserted = Expense::insertExpense($validated);
             if ($inserted) {
@@ -262,9 +258,9 @@ class ExpenseController extends BaseController
         } catch (\Illuminate\Validation\ValidationException $e) {
             // ❌ Return validation errors
             return $this->errorResponse(__('common.validation_failed'), 422, $e->errors());
-        } catch (Exception $e) {
-            // ❌ Return unexpected error
-            return $this->errorResponse($e->getMessage(), 500);
+        } catch (\Exception $e) {
+            report($e); // details go to the log, not to the client
+            return $this->errorResponse(__('common.error_msg'), 500);
         }
     }
 

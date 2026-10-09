@@ -241,10 +241,5 @@ export default {
         this.$vs.loading();
         this.getData();
     },
-    computed: {
-        activeUserInfo() {
-            return this.$store.state.AppActiveUser
-        },
-    }
 }
 </script>

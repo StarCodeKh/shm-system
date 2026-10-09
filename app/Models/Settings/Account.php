@@ -22,25 +22,6 @@ class Account extends Model
         ];
     public $timestamps = false;
 
-    public static function getAcc($param)
-    {
-        $data = array();
-        $query = Account::whereNotDeleted();
-        $whereClause = $query;
-        $whereClause->orderByLevel();
-        if(!empty($param["param"]["value"])){
-            $whereClause->where("account_type", $param["param"]["value"]);
-        }
-        $result = collect($whereClause->get());
-        foreach ($result as $row) {
-            $data[] = array(
-                "label" => $row->code . "-" . CommonService::localName($row),
-                "value" => $row->id,
-            );
-        }
-        return $data;
-    }
-
     public static function getSingleOpt(){
         $query = AccountType::whereNotDeleted()->get();
         $data = array();
@@ -98,24 +79,6 @@ class Account extends Model
             $data[] = array(
                 "label" => $row->code.':'.$row->name_en,
                 "value" => $row->code,
-            );
-        }
-        return $data;
-    }
-
-    public static function getSubAccount($param){
-        $data = array();
-        $query = Account::whereNotDeleted();
-        $whereClause = $query;
-        $whereClause->orderByLevel();
-        if (!empty($param["param"]["value"])) {
-            $whereClause->where("parent_id", $param["param"]["value"]);
-        }
-        $result = collect($whereClause->get());
-        foreach ($result as $row) {
-            $data[] = array(
-                "label" => $row->code . "-" . CommonService::localName($row),
-                "value" => $row->id,
             );
         }
         return $data;

@@ -12,9 +12,6 @@ use App\Models\Settings\Status;
 
 class TitleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     protected $dbTable;
 
     public function __construct()

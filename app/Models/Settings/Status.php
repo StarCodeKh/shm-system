@@ -4,8 +4,6 @@ namespace App\Models\Settings;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Traits\HasRoles;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\OfficerPayable;
-use App\Models\OfficerRequest;
 use App\Models\OfficerPaymentRecurring;
 use App\Models\Notification;
 use DB;
@@ -26,21 +24,6 @@ class Status extends Model implements Auditable
     protected $fillable = [];
     protected $guarded = [];
     public $timestamps = true;
-
-    public function paymentType()
-    {
-        return $this->hasMany(PaymentType::class);
-    }
-
-    public function officerPayable()
-    {
-        return $this->hasMany(OfficerPayable::class);
-    }
-
-    public function officerRequest()
-    {
-        return $this->hasMany(OfficerRequest::class);
-    }
 
     public function officerPaymentRecurring()
     {

@@ -20,17 +20,13 @@ use App\Services\PushNotificationService;
 
 class OfficerPayableController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-    */
     protected $PERMISSION_ACTION_LIST;
     protected $PERMISSION_ACTION_CREATE;
     protected $PERMISSION_ACTION_SHOW;
     protected $PERMISSION_ACTION_UPDATE;
     protected $PERMISSION_ACTION_DELETE;
     protected $db_table;
+    protected $db_table_officer_payment;
 
     public function __construct()
     {

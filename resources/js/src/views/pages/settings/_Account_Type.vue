@@ -121,7 +121,5 @@ this.$vs.notify({
         this.$vs.loading();
         this.getData();
     },
-    watch: {
-    }
 }
 </script>

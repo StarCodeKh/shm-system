@@ -2,7 +2,6 @@
 
 namespace App\Models\Settings;
 use OwenIt\Auditing\Contracts\Auditable;
-use App\Models\OfficerPayable;
 use App\Models\Expense;
 use Illuminate\Database\Eloquent\Model;
 use DB;
@@ -37,16 +36,6 @@ class Currency extends Model implements Auditable
         self::idOf('');
         $code = array_search((int) $id, self::$ids, true);
         return $code === false ? null : $code;
-    }
-
-    public function paymentType()
-    {
-        return $this->hasMany(PaymentType::class);
-    }
-
-    public function officerPayable()
-    {
-        return $this->hasMany(OfficerPayable::class);
     }
 
     public function expense()

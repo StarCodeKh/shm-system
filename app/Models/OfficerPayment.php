@@ -155,14 +155,6 @@ class OfficerPayment extends Model implements Auditable
         return $data;
     }
 
-    public static function getResultData($filter, $status){
-        $whereClause = OfficerPayment::checkQueryResult($filter,$status);
-        $whereClause->offset(($filter["page_number"] - 1) * $filter["limit"]);
-        $whereClause->limit($filter["limit"]);
-        $data = collect($whereClause->get());
-        return $data;
-    }
-
     public static function getTotal($filter){
         $whereClause = OfficerPayment::checkQuery($filter);
         $total = $whereClause->count();

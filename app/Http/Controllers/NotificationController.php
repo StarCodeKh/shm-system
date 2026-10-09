@@ -4,20 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Notification;
 use App\Models\NotificationType;
-use App\Notifications\DailyReminderNotification;
 use Illuminate\Http\Request;
-use App\User;
 use Auth;
 use CommonService;
 use App\Services\PushNotificationService;
 use App\Models\Settings\Status;
 class NotificationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-    */
     protected $PERMISSION_ACTION_LIST;
     protected $PERMISSION_ACTION_CREATE;
     protected $PERMISSION_ACTION_SHOW;
@@ -252,27 +245,6 @@ class NotificationController extends Controller
         $title = $request->title;
         $body = $request->body;
         $sendPushNotification = PushNotificationService::sendToDevice($deviceToken, $title, $body, $data = []);
-    }
-
-    public function __sendNotification(Request $request){
-        $sendPushNotification = PushNotificationService::sendToDevice($request);
-        $data = array();
-        if($sendPushNotification){
-            $users = User::where('receive_daily_notifications', 1)->get(); // Optional condition
-            foreach ($users as $user) {
-                $user->notify(new DailyReminderNotification());
-            }
-            $data = array(
-                "success" => true,
-                "message" => __('common.notification_sent')
-            );
-        }else{
-            $data = array(
-                "success" => false,
-                "message" => __('common.notification_failed')
-            );
-        }
-        return response()->json($data);
     }
 
     // Bell menu: how many are unread, and the latest 20 of them

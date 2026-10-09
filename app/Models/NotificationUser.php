@@ -3,7 +3,6 @@
 namespace App\Models;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Model;
-use DB;
 class NotificationUser extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
@@ -21,30 +20,4 @@ class NotificationUser extends Model implements Auditable
         ];
     public $timestamps = false;
 
-    public static function getNotificationByUsers($userId, $filter){
-
-        $query = DB::table("notification_user as n2u")
-            ->Select('n2u.*')
-            ->Where('n2u.user_id', $userId)
-            ->OrderBy('id', 'desc')
-            ->offset($filter["offset"])
-            ->limit($filter["limit"])
-            ->get();
-        $notificationArr = array();
-        $i = 1;
-        foreach($query as $row){
-            $notificationArr[] = array(
-                "id" => 1,//$row->id,
-                "title" => $row->title,
-                "description" => $row->description,
-                // "image" =>
-                // "http://162.214.126.207:8080/files/filer_public/2f/74/2f7412a8-eaa0-4e0b-a2bf-807734f34b82/sunday_event.jpg",
-                "clubId" => 1,
-                "date" => "Apr 20, 2020 | 17:46:04",
-                "read" => true
-            );
-            $i++;
-        }
-        return $notificationArr;
-    }
 }

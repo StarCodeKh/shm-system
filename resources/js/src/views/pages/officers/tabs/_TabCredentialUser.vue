@@ -30,9 +30,6 @@ export default {
 
         }
     },
-    computed: {
-
-    },
     methods: {
 
     },

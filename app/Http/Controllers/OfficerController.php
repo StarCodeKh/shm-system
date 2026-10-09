@@ -356,8 +356,9 @@
                     'social_media_alt'     => 'nullable|string|max:255',
                     'remark'               => 'nullable|string',
                     'order_level'          => 'nullable|integer',
-                    'created_by'           => 'required|integer'
                 ]);
+                // The signed-in user, never a value from the request
+                $validated['created_by'] = Auth::id();
 
                 // ✅ Step 2: Insert into DB
                 $inserted = Officer::insertOfficer($validated);
@@ -375,8 +376,9 @@
                     422,
                     $e->errors()
                 );
-            } catch (Exception $e) {
-                return $this->errorResponse($e->getMessage(), 500);
+            } catch (\Exception $e) {
+                report($e); // details go to the log, not to the client
+                return $this->errorResponse(__('common.error_msg'), 500);
             }
         }
     }

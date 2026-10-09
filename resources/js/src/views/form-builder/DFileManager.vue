@@ -459,17 +459,6 @@ export default {
             }
             this.getDataTable(_search_criteria);
         },
-        initTableData(searchQuery) {
-            this.$vs.loading();
-            let _search_criteria = {
-                sort: "id",
-                order: "",
-                page_number: searchQuery.pageNum,
-                search_field: searchQuery.searchFields
-            }
-            this.getDataTable(_search_criteria);
-            return false;
-        },
         calPaginNumber(n) {
             let _newVal = 0;
             if (Number(n) === n && n % 1 === 0) {
@@ -483,48 +472,6 @@ export default {
             let _offset = (this.current_page - 1) * _page_limit;
             let _result = _offset + (index + 1);
             return _result;
-        },
-        onInitChange($event, _formAttribute, _formName, _apiRequest) {
-            let _data = {
-                autocomplete: true,
-                param: this.form.attribute[_formName]
-            };
-            this.form.attribute[_formAttribute] = null;
-            this.dataObj[_formAttribute] = [];
-            return new Promise((resolve, reject) => {
-                axios.post(_apiRequest, _data)
-                    .then((response) => {
-                        this.$vs.notify({
-                            title: 'Message',
-                            text: response.data.message,
-                            iconPack: 'feather',
-                            icon: 'icon-check-circle',
-                            color: 'primary',
-                            position: 'top-right'
-                        });
-                        for (let i = 0; i < response["data"]["data"].length; i++) {
-                            let _d = {
-                                "label": response["data"]["data"][i]["label"],
-                                "value": response["data"]["data"][i]["value"],
-                            }
-                            this.dataObj[_formAttribute].push(_d);
-                        }
-
-                        this.dataObj[_formAttribute].push();
-                    }).catch((error) => {
-                        reject(error)
-                        this.$vs.notify({
-                            title: 'Message',
-                            text: 'msg.save_failed',
-                            iconPack: 'feather',
-                            icon: 'icon-check-circle',
-                            color: 'danger',
-                            position: 'top-right'
-                        })
-                        this.$vs.loading.close();
-                    })
-            })
-
         },
         initSearch() {
             this._search_fields = [];

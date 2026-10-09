@@ -3,7 +3,6 @@
 namespace App\Models\Settings;
 
 use Illuminate\Database\Eloquent\Model;
-use CommonService;
 
 class AccountTypeGroup extends Model
 {
@@ -18,22 +17,6 @@ class AccountTypeGroup extends Model
         'modified_by'
     ];
     public $timestamps = false;
-
-    public static function getAccountTypeGroupOptions($filter)
-    {
-        $data = array();
-        $query = AccountTypeGroup::orderByFilter($filter);
-        $whereClause = $query;
-        $whereClause->whereNotDeleted();
-        $results = collect($whereClause->get());
-        foreach ($results as $row) {
-            $data[] = array(
-                "label" => CommonService::localName($row),
-                "value" => $row->id,
-            );
-        }
-        return $data;
-    }
 
     public static function getAccountTypeGroups($filter)
     {

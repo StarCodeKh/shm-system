@@ -17,9 +17,6 @@ export default {
 
         }
     },
-    computed: {
-
-    },
     methods: {
 
     },

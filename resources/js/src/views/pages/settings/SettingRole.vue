@@ -33,13 +33,7 @@ export default {
             tabs: allowedTabs("roles")
         }
     },
-    computed: {
-
-    },
     methods: {
-        toggleDataSidebar(val = false) {
-            this.addNewDataSidebar = val
-        },
     },
     mounted() {
         this.isMounted = true;

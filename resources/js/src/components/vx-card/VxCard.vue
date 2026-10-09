@@ -205,12 +205,6 @@ export default{
             this.tempHidden = true
             this.$emit("refresh", this)
         },
-        removeRefreshAnimation(time=100) {
-            setTimeout( ()=> {
-                this.$vs.loading.close(this.$refs.content)
-                this.tempHidden = false
-            }, time)
-        },
         removeCard() {
             let scrollHeight = this.$refs.card.scrollHeight
             this.cardMaxHeight = `${scrollHeight}px`

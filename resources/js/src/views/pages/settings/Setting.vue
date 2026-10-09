@@ -145,9 +145,6 @@ export default {
         },
     },
     computed: {
-        isSmallerScreen() {
-            return this.$store.state.windowWidth < 768
-        },
         // Sections in display order; who sees each one is decided in settingsAccess.js
         tabs() {
             return [
