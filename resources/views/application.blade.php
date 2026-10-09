@@ -15,7 +15,8 @@
     <link rel="stylesheet" href="{{ asset('css/material-icons/material-icons.css') }}">
     @vite(['resources/assets/css/vuesax.css', 'node_modules/vue-select/dist/vue-select.css', 'resources/assets/css/main.css', 'resources/sass/app.scss', 'resources/js/app.js'])
     <!-- Favicon -->
-    <link rel="shortcut icon" href="{{ asset('images/logo/favicon.png') }}">
+    <link rel="icon" type="image/png" sizes="64x64" href="{{ asset('images/logo/favicon.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo/apple-touch-icon.png') }}">
     <!-- Theme before first paint: saved choice, else device setting (same rule as store/state.js) -->
     <script>
       (function () {
