@@ -219,5 +219,5 @@ export default{
 </script>
 
 <style lang="scss">
-@import "@sass/vuexy/components/vxCard.scss"
+@import "@sass/shm/components/vxCard.scss"
 </style>

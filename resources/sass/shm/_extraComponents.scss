@@ -1,11 +1,10 @@
 /*=========================================================================================
-    File Name: moduleCalendarGetters.js
-    Description: Calendar Module Getters
+    File Name: _extraComponents.scss
+    Description: Styles for third-party components (vue-select, date picker)
     ----------------------------------------------------------------------------------------
-    Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template
-    Author: Pixinvent
-    Author URL: http://www.themeforest.net/user/pixinvent
+    Project: SHM-System
+    Author: Soeng Souy
 ==========================================================================================*/
 
-
-export default {}
+@import "shm/extraComponents/vueSelect";
+@import "shm/extraComponents/datePicker";

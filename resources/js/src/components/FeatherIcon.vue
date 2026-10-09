@@ -31,5 +31,5 @@ export default {
 </script>
 
 <style lang="scss">
-@import "@sass/vuexy/components/featherIcon.scss";
+@import "@sass/shm/components/featherIcon.scss";
 </style>

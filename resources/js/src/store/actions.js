@@ -13,9 +13,6 @@ const actions = {
     // UI
     // /////////////////////////////////////////////
 
-    toggleContentOverlay({ commit }) {
-        commit('TOGGLE_CONTENT_OVERLAY')
-    },
     updateTheme({ commit }, val) {
         commit('UPDATE_THEME', val)
     },
@@ -24,18 +21,6 @@ const actions = {
     // User/Account
     // /////////////////////////////////////////////
 
-    updateUserInfo({ commit }, payload) {
-        commit('UPDATE_USER_INFO', payload)
-    },
-    updateUserRole({ dispatch }, payload) {
-        // Change client side
-        payload.aclChangeRole(payload.userRole)
-
-        // Make API call to server for changing role
-
-        // Change userInfo in localStorage and store
-        dispatch('updateUserInfo', {userRole: payload.userRole})
-    },
 }
 
 export default actions

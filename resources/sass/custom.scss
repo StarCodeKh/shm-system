@@ -112,67 +112,6 @@
     }
 }
 
-// Legacy list pages: "Add new" is the filled primary button, same as .dt-btn--primary
-.data-list-container .btn-add-new.border {
-    color: #fff !important;
-    border-color: rgb(var(--vs-primary)) !important;
-    background: rgb(var(--vs-primary));
-    box-shadow: 0 6px 14px -6px rgba(var(--vs-primary), .7);
-
-    span,
-    .feather-icon {
-        color: #fff !important;
-    }
-
-    &:hover {
-        background: rgb(var(--vs-primary));
-        filter: brightness(.95);
-    }
-}
-
-// Legacy list header: Actions / page-size dropdowns and search, one control high
-.data-list-container {
-    .dd-actions > div,
-    .items-per-page-handler > div {
-        box-sizing: border-box;
-        height: var(--input-height);
-        padding: 0 16px !important;
-        font-size: .9rem !important;
-        font-weight: 500 !important;
-        color: #5e6078;
-        border: 1px solid var(--input-border) !important;
-        border-radius: var(--input-radius) !important;
-        background: #fff;
-        box-shadow: none !important;
-        transition: border-color .15s, color .15s;
-
-        &:hover {
-            color: rgb(var(--vs-primary));
-            border-color: rgba(var(--vs-primary), .5) !important;
-        }
-    }
-
-    .vs-con-table .vs-table--header .vs-table--search .vs-table--search-input {
-        box-sizing: border-box;
-        height: var(--input-height);
-        border: 1px solid var(--input-border);
-        border-radius: var(--input-radius);
-    }
-}
-
-.theme-dark .data-list-container {
-    .dd-actions > div,
-    .items-per-page-handler > div {
-        color: #c2c6dc;
-        border-color: #414561 !important;
-        background: #262c49;
-    }
-
-    .vs-con-table .vs-table--header .vs-table--search .vs-table--search-input {
-        border-color: #414561;
-    }
-}
-
 .vx-card{
     border-radius: 16px !important;
     border: 1px solid rgba(23, 23, 74, .05);
@@ -1250,7 +1189,7 @@ $select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
     }
 
     &--selected {
-        color: rgb(var(--vs-primary)) !important; // beats Vuexy's `.v-select .vs__dropdown-menu .vs__dropdown-option`
+        color: rgb(var(--vs-primary)) !important; // beats the theme's `.v-select .vs__dropdown-menu .vs__dropdown-option`
         font-weight: 600;
         background: rgba(var(--vs-primary), .08);
 
@@ -3500,7 +3439,7 @@ input.vs-input--input.large {
 }
 
 /* --- FORMS OUTSIDE .d-form: Vuesax labels, buttons and side panels follow the same standard as DForm --- */
-// Field labels (vs-input label="…", vs-select label="…", Vuexy's <span class="vs-input--label">)
+// Field labels (vs-input label="…", vs-select label="…", the theme's <span class="vs-input--label">)
 .vs-input--label,
 .con-select .vs-select--label,
 label.vs-select--label {

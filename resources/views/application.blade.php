@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ $siteName }}</title>
-    <!-- Fonts are self-hosted, see resources/sass/vuexy/_fonts.scss -->
+    <!-- Fonts are self-hosted, see resources/sass/shm/_fonts.scss -->
     <link rel="preload" href="{{ asset('fonts/KantumruyPro.woff2') }}" as="font" type="font/woff2" crossorigin>
     <!-- Styles: Material Icons is a static file; the rest is built by Vite (see vite.config.js) -->
     <link rel="stylesheet" href="{{ asset('css/material-icons/material-icons.css') }}">

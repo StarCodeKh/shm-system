@@ -293,7 +293,6 @@ import apiConfig from "@/apiConfig.js";
 import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
 import vSelect from 'vue-select';
-import moduleDataList from "@/store/data-list/moduleDataList.js";
 import DFileManager from '@/views/form-builder/DFileManager.vue';
 
 export default {
@@ -621,10 +620,6 @@ export default {
     },
     created() {
         this.getData();
-        if(!moduleDataList.isRegistered) {
-            this.$store.registerModule('dataList', moduleDataList)
-            moduleDataList.isRegistered = true
-        }
     },
     mounted() {
         this.isMounted = true;

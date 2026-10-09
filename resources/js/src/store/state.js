@@ -1,4 +1,3 @@
-import logo from '@assets/images/logo/logo.png'
 import themeConfig from "@/../themeConfig.js"
 import colors from "@/../themeConfig.js"
 
@@ -39,9 +38,6 @@ const savedSidebarCollapsed = (() => {
 const userDefaults = {
     uid         : 0,          // From Auth
     displayName : "Administrator", // From Auth
-    about       : "Dessert chocolate cake lemon drops jujubes. Biscuit cupcake ice cream bear claw brownie brownie marshmallow.",
-    photoURL    : logo, // From Auth
-    status      : "online",
     userRole    : "admin"
 }
 

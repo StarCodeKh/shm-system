@@ -6,15 +6,6 @@ const getters = {
     // COMPONENT
         // vx-autosuggest
     // starredPages: state => state.navbarSearchAndPinList.data.filter((page) => page.highlightAction),
-    windowBreakPoint: state => {
-
-        // This should be same as tailwind. So, it stays in sync with tailwind utility classes
-        if (state.windowWidth >= 1200) return "xl"
-        else if (state.windowWidth >= 992) return "lg"
-        else if (state.windowWidth >= 768) return "md"
-        else if (state.windowWidth >= 576) return "sm"
-        else return "xs"
-    },
 
     // Signed-in user, shown the same way as on their profile page: the person's name (Khmer, or Latin
     // when the app is in English), else the login name; photo from `avatar`; initials from the Latin name

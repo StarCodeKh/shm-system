@@ -898,7 +898,6 @@ export default {
         UserSettings: 'ការកំណត់អ្នកប្រើប្រាស់',
         View: 'ពិនិត្យមើលលម្អិត',
         Vuesax: 'Vuesax',
-        Vuexy: 'Vuexy',
         welcome: "ស្វាគមន៍មកកាន់ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យ", //Welcome back, please login to your account.
         year: "ឆ្នាំ",
         setting_expense:"ការចំណាយ",
@@ -1647,7 +1646,6 @@ export default {
         UserList: 'List of users',
         // V
         View: 'Check Details',
-        Vuexy: 'Vuexy',
             Vuesax: 'Vuesax',
         // W
         // X

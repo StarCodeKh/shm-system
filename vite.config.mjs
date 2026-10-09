@@ -38,9 +38,9 @@ export default defineConfig({
     css: {
         preprocessorOptions: {
             scss: {
-                // Partials are imported as "vuexy/..." from resources/sass
+                // Partials are imported as "shm/..." from resources/sass
                 loadPaths: [path.resolve(root, 'resources/sass'), path.resolve(root, 'node_modules')],
-                // The Vuexy theme still uses @import and global color functions; they compile, just deprecated
+                // The theme (resources/sass/shm) still uses @import and global color functions; they compile, just deprecated
                 silenceDeprecations: ['import', 'global-builtin', 'color-functions', 'slash-div', 'legacy-js-api'],
             },
         },

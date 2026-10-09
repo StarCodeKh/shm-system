@@ -3,7 +3,6 @@
     They keep Vuesax's tag names (<vs-input>, <vs-popup>, ...), props, events and HTML/class names,
     so the templates, vuesax.css and custom.scss work unchanged. Ported from Vuesax 3 (MIT).
 ==========================================================================================*/
-import VsAvatar from './VsAvatar.vue'
 import VsButton from './VsButton.vue'
 import VsCheckbox from './VsCheckbox.vue'
 import VsChip from './VsChip.vue'
@@ -15,15 +14,10 @@ import VsDropdownMenu from './VsDropdownMenu.vue'
 import VsIcon from './VsIcon.vue'
 import VsInput from './VsInput.vue'
 import VsInputNumber from './VsInputNumber.vue'
-import VsList from './VsList.vue'
-import VsListItem from './VsListItem.vue'
 import VsNavbar from './VsNavbar.vue'
-import VsNavbarItem from './VsNavbarItem.vue'
-import VsNavbarTitle from './VsNavbarTitle.vue'
 import VsPagination from './VsPagination.vue'
 import VsPopup from './VsPopup.vue'
 import VsProgress from './VsProgress.vue'
-import VsRadio from './VsRadio.vue'
 import VsSelect from './VsSelect.vue'
 import VsSelectItem from './VsSelectItem.vue'
 import VsSidebar from './VsSidebar.vue'
@@ -39,9 +33,9 @@ import VsTr from './VsTr.vue'
 import { installVs } from './vs'
 
 const components = {
-    VsAvatar, VsButton, VsCheckbox, VsChip, VsDivider, VsDropdown, VsDropdownItem, VsDropdownMenu, VsIcon,
-    VsInput, VsInputNumber, VsList, VsListItem, VsNavbar, VsNavbarItem, VsNavbarTitle, VsPagination, VsPopup,
-    VsProgress, VsPrompt: VsDialog, VsRadio, VsSelect, VsSelectItem, VsSidebar, VsSpacer, VsSwitch, VsTab,
+    VsButton, VsCheckbox, VsChip, VsDivider, VsDropdown, VsDropdownItem, VsDropdownMenu, VsIcon,
+    VsInput, VsInputNumber, VsNavbar, VsPagination, VsPopup,
+    VsProgress, VsPrompt: VsDialog, VsSelect, VsSelectItem, VsSidebar, VsSpacer, VsSwitch, VsTab,
     VsTable, VsTabs, VsTd, VsTextarea, VsTh, VsTr,
 }
 

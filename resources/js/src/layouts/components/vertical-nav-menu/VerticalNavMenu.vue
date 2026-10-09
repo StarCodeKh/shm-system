@@ -304,7 +304,7 @@ export default {
 .vs-sidebar-group, .navigation-header, .vs-sidebar--item, ul.vs-sidebar-group-items li,.content-wrapper, select, textarea, p, article, b, ul, li, button {
     font-family: var(--font-base);
 }
-@import "@sass/vuexy/components/verticalNavMenu.scss";
+@import "@sass/shm/components/verticalNavMenu.scss";
 
 // Header keeps its height, the menu scrolls in whatever space is left
 .v-nav-menu {
@@ -422,7 +422,7 @@ export default {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 !important; // Vuexy adds margin-right to every sidebar icon
+            margin: 0 !important; // the theme adds margin-right to every sidebar icon
             transition: transform .25s ease;
 
             svg {
@@ -626,7 +626,7 @@ $nav-active-text: #34468a;
     }
 }
 // ---------------------------------------------------------------- Motion
-// Row transforms are locked (no Vuexy sideways jump), so motion lives on the svg, pseudo-elements and list items.
+// Row transforms are locked (no sideways jump from the theme), so motion lives on the svg, pseudo-elements and list items.
 .theme-semi-dark .v-nav-menu,
 .theme-dark .v-nav-menu {
     // Light sweep across a link on hover

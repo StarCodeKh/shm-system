@@ -139,7 +139,6 @@
 <script>
 import axios from "@/axios.js";
 import apiConfig from "@/apiConfig.js";
-import moduleDataList from "@/store/data-list/moduleDataList.js";
 import vSelect from 'vue-select';
 import DFileManager from '@/views/form-builder/DFileManager.vue';
 export default {
@@ -376,10 +375,6 @@ export default {
     created() {
         let _search = null;
         this.getGeneralDataForPayable(_search);
-        if(!moduleDataList.isRegistered) {
-            this.$store.registerModule('dataList', moduleDataList)
-            moduleDataList.isRegistered = true
-        }
     },
     mounted() {
         this.isMounted = true;
