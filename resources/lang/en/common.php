@@ -85,4 +85,5 @@ return [
     'menu_locked' => 'This item is always on: it cannot be hidden or deleted.',
     'menu_bad_parent' => 'A section is top level; a group can only be in a section; a link cannot be inside another link.',
     'times' => ':n times',
+    'language_keep_one_active' => 'Keep at least one language active: the system needs a language to show.',
 ];

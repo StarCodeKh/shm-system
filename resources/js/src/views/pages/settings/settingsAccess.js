@@ -30,6 +30,7 @@ export const SETTINGS_ACCESS = {
         title: "list_title",
         position: "list_position",
     },
+    language: ["list_language"],
     backup: ["setting_backup"],
     notification: ["setting_notifications_view"],
     audit: ["audit"],

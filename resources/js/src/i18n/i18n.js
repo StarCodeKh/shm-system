@@ -9,6 +9,17 @@ const savedLocale = (() => {
     try { return localStorage.getItem(LOCALE_STORAGE_KEY) } catch (e) { return null }
 })()
 
+// Codes of the active languages last loaded by languages.js (Settings › Language), default first
+const savedLanguages = (() => {
+    try { return (JSON.parse(localStorage.getItem('languages')) || []).map(lang => lang.code) } catch (e) { return [] }
+})()
+
+// The saved language when it is still offered (a language without its own texts shows them in English),
+// else the default language: the first active one, Khmer until the list is known
+const startLocale = i18nData[savedLocale] || savedLanguages.includes(savedLocale)
+    ? savedLocale
+    : savedLanguages[0] || 'kh'
+
 // Legacy mode keeps the Options API: $t / $te in templates and this.$i18n.locale in components.
 // Outside components use i18n.global (i18n.global.locale, i18n.global.t(...)).
 // "officer_document" → "Officer document": the last resort for a key no language has
@@ -18,7 +29,7 @@ function keyAsWords(key) {
 
 const i18n = createI18n({
     legacy: true,
-    locale: i18nData[savedLocale] ? savedLocale : 'kh', // set default locale
+    locale: startLocale,
     messages: i18nData,
     warnHtmlMessage: false, // a few labels carry <small>/<br>, rendered with v-html
     // A text missing in one language shows in English rather than as its key ...

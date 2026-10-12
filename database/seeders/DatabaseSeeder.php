@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             PassportClientSeeder::class,
             MenuSeeder::class,
             CurrencySeeder::class,
+            LanguageSeeder::class,
             OfficerLookupSeeder::class,
             UserSeeder::class,
         ]);

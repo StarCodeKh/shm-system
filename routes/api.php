@@ -33,6 +33,7 @@ use App\Http\Controllers\Settings\CurrencyExchangeController;
 use App\Http\Controllers\Settings\DepartmentController;
 use App\Http\Controllers\Settings\EntityController;
 use App\Http\Controllers\Settings\EntityMemberController;
+use App\Http\Controllers\Settings\LanguageController;
 use App\Http\Controllers\Settings\LetterTypeController;
 use App\Http\Controllers\Settings\MenuController;
 use App\Http\Controllers\Settings\PaymentMethodController;
@@ -55,6 +56,9 @@ use Illuminate\Support\Facades\Route;
 
 // Public branding (name, organisation, website, footer) for the footer and sign-in page: no secrets
 Route::get('v1/site', [SiteController::class, 'show'])->middleware(['cors', 'throttle:60,1']);
+
+// Active languages for the language switch (top bar and sign-in page), default first
+Route::get('v1/languages', [LanguageController::class, 'active'])->middleware(['cors', 'throttle:60,1']);
 
 // Authentication
 Route::prefix('auth')->group(function () {
@@ -237,6 +241,9 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
 
         Route::post('currency_exchange/search', [CurrencyExchangeController::class, 'index']);
         Route::apiResource('currency_exchange', CurrencyExchangeController::class);
+
+        Route::post('language/search', [LanguageController::class, 'index']);
+        Route::apiResource('language', LanguageController::class);
 
         Route::post('bank/search', [BankController::class, 'index']);
         Route::apiResource('bank', BankController::class);

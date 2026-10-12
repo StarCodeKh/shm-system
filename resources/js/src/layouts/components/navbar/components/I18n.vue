@@ -1,12 +1,14 @@
 <template>
-    <div class="nav-lang-switch" :class="{ 'is-switching': switching }" role="group" :aria-label="$t('nav_language')"
-        :style="{ '--lang-index': activeIndex }">
+    <div class="nav-lang-switch" :class="{ 'is-switching': switching, 'is-compact': list.length > 3 }" role="group"
+        :aria-label="$t('nav_language')" :style="{ '--lang-index': activeIndex, '--lang-count': list.length }">
         <!-- Pill slides under the active language -->
         <span class="nav-lang-switch__pill" aria-hidden="true"></span>
-        <button v-for="lang in languages" :key="lang.code" type="button"
+        <button v-for="lang in list" :key="lang.code" type="button"
             :class="{ active: lang.code === current }" :aria-pressed="lang.code === current"
             :title="lang.name" @click="updateLocale(lang.code)">
-            <img :src="lang.flag" :alt="lang.code" />
+            <img v-if="lang.flag" :src="lang.flag" :alt="lang.code" />
+            <!-- No flag: the code in a small badge, the same size as a flag -->
+            <i v-else class="nav-lang-switch__badge" aria-hidden="true">{{ lang.code }}</i>
             <span>{{ lang.label }}</span>
         </button>
     </div>
@@ -14,33 +16,33 @@
 
 <script>
 import { setLocale } from '@/i18n/i18n'
-import flagKh from '@assets/images/flags/kh.svg'
-import flagEn from '@assets/images/flags/en.svg'
+import { languages, loadLanguages } from '@/i18n/languages'
 
-const LANGUAGES = [
-    { code: 'kh', label: 'ខ្មែរ', name: 'ភាសាខ្មែរ', flag: flagKh },
-    { code: 'en', label: 'EN', name: 'English', flag: flagEn },
-]
-
+// Languages come from Settings › Language (active ones, default first); see i18n/languages.js
 export default {
     data() {
         return {
-            languages: LANGUAGES,
             // Moves first so the pill reacts on the click, before the page re-renders
             current: this.$i18n.locale,
             switching: false,
         }
     },
     computed: {
+        list() {
+            return languages.list
+        },
         activeIndex() {
-            return Math.max(0, this.languages.findIndex(lang => lang.code === this.current))
+            return Math.max(0, this.list.findIndex(lang => lang.code === this.current))
         },
     },
     watch: {
-        // Locale changed elsewhere (e.g. login page)
+        // Locale changed elsewhere (e.g. login page, or the language in use was turned off)
         '$i18n.locale'(locale) {
             this.current = locale
         },
+    },
+    created() {
+        loadLanguages()
     },
     methods: {
         updateLocale(locale) {
@@ -62,7 +64,7 @@ export default {
 .nav-lang-switch {
     position: relative;
     display: inline-grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(var(--lang-count, 2), 1fr);
     padding: 3px;
     margin-right: 6px;
     border-radius: 999px;
@@ -73,7 +75,7 @@ export default {
         top: 3px;
         bottom: 3px;
         left: 3px;
-        width: calc(50% - 3px);
+        width: calc((100% - 6px) / var(--lang-count, 2));
         border-radius: 999px;
         background: #fff;
         box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
@@ -129,6 +131,37 @@ export default {
                 opacity: 1;
                 transform: scale(1.08);
             }
+        }
+    }
+
+    /* Flag stand-in for a language without an image */
+    &__badge {
+        display: inline-grid;
+        place-items: center;
+        width: 18px;
+        height: 13px;
+        border-radius: 2px;
+        font-size: 8px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 1;
+        text-transform: uppercase;
+        color: #fff;
+        background: rgba(var(--vs-primary), .55);
+        transition: background .2s ease, transform .3s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    button.active .nav-lang-switch__badge {
+        background: rgba(var(--vs-primary), 1);
+        transform: scale(1.08);
+    }
+
+    /* Many languages: flags only, the name shows on hover */
+    &.is-compact button {
+        padding: .4rem .6rem;
+
+        span {
+            display: none;
         }
     }
 

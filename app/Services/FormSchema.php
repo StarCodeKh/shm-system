@@ -31,6 +31,11 @@ class FormSchema
         'entity' => ['parent_id', 'deputy_commissionerofficer', 'professional_officer'], // set from the entity's own screens
     ];
 
+    // Columns the database lets be empty but a form must have
+    private const REQUIRED = [
+        'language' => ['code'], // the language switch goes by it
+    ];
+
     private const FILES = ['attach', 'file', 'photo', 'image', 'thumbnail'];
 
     /**
@@ -59,6 +64,7 @@ class FormSchema
                 'type' => $type,
                 // Required when the database can't fill it in itself, and always for the label column
                 'required' => $name === $labelColumn
+                    || in_array($name, self::REQUIRED[$table] ?? [], true)
                     || ($column->Null === 'NO' && $column->Default === null && $column->Extra === '' && $type !== 'checkbox'),
             ];
             if ($type === 'checkbox') {

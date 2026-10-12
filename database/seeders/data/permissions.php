@@ -305,6 +305,14 @@ return [
         4 => 'update_mef_planning',
         5 => 'delete_mef_planning',
     ],
+    'language' => [
+        0 => 'list_language',
+        1 => 'create_language',
+        2 => 'show_language',
+        3 => 'edit_language',
+        4 => 'update_language',
+        5 => 'delete_language',
+    ],
     // Settings › General (system settings) and Backup
     'setting' => [
         0 => 'list_setting',
