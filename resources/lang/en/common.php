@@ -86,4 +86,11 @@ return [
     'menu_bad_parent' => 'A section is top level; a group can only be in a section; a link cannot be inside another link.',
     'times' => ':n times',
     'language_keep_one_active' => 'Keep at least one language active: the system needs a language to show.',
+    'landing_section_hero' => 'Hero (top of the page)',
+    'landing_section_feature' => 'Feature card',
+    'landing_section_stat' => 'Live number',
+    'landing_stat_officers' => 'Members',
+    'landing_stat_entities' => 'Entities',
+    'landing_stat_departments' => 'Departments',
+    'landing_stat_users' => 'Users',
 ];

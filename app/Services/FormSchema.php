@@ -34,6 +34,7 @@ class FormSchema
     // Columns the database lets be empty but a form must have
     private const REQUIRED = [
         'language' => ['code'], // the language switch goes by it
+        'landing_content' => ['landing_section', 'language_code', 'headline'],
     ];
 
     private const FILES = ['attach', 'file', 'photo', 'image', 'thumbnail'];

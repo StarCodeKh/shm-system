@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             MenuSeeder::class,
             CurrencySeeder::class,
             LanguageSeeder::class,
+            LandingContentSeeder::class,
             OfficerLookupSeeder::class,
             UserSeeder::class,
         ]);

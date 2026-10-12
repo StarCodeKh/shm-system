@@ -2,6 +2,7 @@ export default {
     _apiConfiguration: "/api/v1/configuration",
     _apiSite: "/api/v1/site", // public branding: name, organisation, website (site.js)
     _apiLanguages: "/api/v1/languages", // public: active languages for the language switch (i18n/languages.js)
+    _apiLanding: "/api/v1/landing", // public: landing page content in the reader's language (/welcome)
     _apiPlanningYear: "/api/v1/configuration/planning",
     // Program Management
     // Notification
@@ -36,6 +37,7 @@ export default {
     _apiCurrency: "/api/v1/setting/currency",
     _apiCurrencyExchange: "/api/v1/setting/currency_exchange",
     _apiLanguage: "/api/v1/setting/language",
+    _apiLandingContent: "/api/v1/setting/landing_content",
     _apiPlanning: "/api/v1/setting/planning",
     _apiPaymentMethod: "/api/v1/setting/payment_method",
     _apiPaymentTerm: "/api/v1/setting/payment_term",

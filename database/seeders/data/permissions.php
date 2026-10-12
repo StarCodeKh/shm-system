@@ -313,6 +313,14 @@ return [
         4 => 'update_language',
         5 => 'delete_language',
     ],
+    'landing_content' => [
+        0 => 'list_landing_content',
+        1 => 'create_landing_content',
+        2 => 'show_landing_content',
+        3 => 'edit_landing_content',
+        4 => 'update_landing_content',
+        5 => 'delete_landing_content',
+    ],
     // Settings › General (system settings) and Backup
     'setting' => [
         0 => 'list_setting',

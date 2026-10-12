@@ -33,6 +33,7 @@ use App\Http\Controllers\Settings\CurrencyExchangeController;
 use App\Http\Controllers\Settings\DepartmentController;
 use App\Http\Controllers\Settings\EntityController;
 use App\Http\Controllers\Settings\EntityMemberController;
+use App\Http\Controllers\Settings\LandingContentController;
 use App\Http\Controllers\Settings\LanguageController;
 use App\Http\Controllers\Settings\LetterTypeController;
 use App\Http\Controllers\Settings\MenuController;
@@ -59,6 +60,9 @@ Route::get('v1/site', [SiteController::class, 'show'])->middleware(['cors', 'thr
 
 // Active languages for the language switch (top bar and sign-in page), default first
 Route::get('v1/languages', [LanguageController::class, 'active'])->middleware(['cors', 'throttle:60,1']);
+
+// Public landing page (/welcome) in the reader's language: hero, features, live numbers
+Route::get('v1/landing', [LandingContentController::class, 'page'])->middleware(['cors', 'throttle:60,1']);
 
 // Authentication
 Route::prefix('auth')->group(function () {
@@ -244,6 +248,9 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
 
         Route::post('language/search', [LanguageController::class, 'index']);
         Route::apiResource('language', LanguageController::class);
+
+        Route::post('landing_content/search', [LandingContentController::class, 'index']);
+        Route::apiResource('landing_content', LandingContentController::class);
 
         Route::post('bank/search', [BankController::class, 'index']);
         Route::apiResource('bank', BankController::class);

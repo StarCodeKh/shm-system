@@ -11,6 +11,8 @@ use App\Models\Settings\Bank;
 use App\Models\Settings\Currency;
 use App\Models\Settings\Department;
 use App\Models\Settings\Entity;
+use App\Models\Settings\LandingContent;
+use App\Models\Settings\Language;
 use App\Models\Settings\LetterType;
 use App\Models\Settings\PaymentMethod;
 use App\Models\Settings\PaymentType;
@@ -71,6 +73,13 @@ class LookupController extends Controller
                 ->map(fn ($level) => ['label' => trans('common.data_scope_'.$level), 'value' => $level])->all(),
             // Users: the member record a login belongs to (members see their own data with the "member" scope)
             'officer_id' => fn () => Officer::getSingleOpt(),
+            // Landing page blocks (Settings › Landing page)
+            'landing_section' => fn () => array_map(fn ($section) => ['label' => trans('common.landing_section_'.$section), 'value' => $section], LandingContent::SECTIONS),
+            'landing_stat' => fn () => array_map(fn ($stat) => ['label' => trans('common.landing_stat_'.$stat), 'value' => $stat], array_keys(LandingContent::stats())),
+            'landing_icon' => fn () => array_map(fn ($icon) => ['label' => $icon, 'value' => $icon], LandingContent::ICONS),
+            // Languages by code (Settings › Language)
+            'language_code' => fn () => Language::query()->whereNotDeleted()->orderBy('order_level')->get()
+                ->map(fn ($row) => ['label' => $row->name.' ('.$row->code.')', 'value' => $row->code])->values()->all(),
             // Active / Inactive of a settings row (its "status" field asks for this list by name, see FormSchema)
             'record_status' => fn () => Status::query()->where('group', 'STATUS')->whereNotDeleted()->orderByLevel()->get()
                 ->map(fn ($row) => ['label' => CommonService::localName($row, 'title'), 'value' => $row->id])->values()->all(),

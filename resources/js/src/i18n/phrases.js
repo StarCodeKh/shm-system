@@ -35,6 +35,7 @@ export default {
 
     // Browser tab titles (pages without a header)
     'ចូលប្រើប្រាស់ប្រព័ន្ធ': { en: 'Sign In' },
+    'ស្វាគមន៍': { en: 'Welcome' },
     'ចុះឈ្មោះ': { en: 'Register' },
     'ភ្លេចពាក្យសម្ងាត់': { en: 'Forgot Password' },
     'កំណត់ពាក្យសម្ងាត់ឡើងវិញ': { en: 'Reset Password' },

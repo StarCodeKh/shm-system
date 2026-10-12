@@ -17,7 +17,8 @@ const router = createRouter({
             // '/' matches this layout route itself (not a child), so the home redirect lives here.
             // As a child '/' route it never matched and the layout showed an empty page.
             // Home is the first page of the user's own menu (Administration › Menus), else the dashboard.
-            redirect: () => homePath(),
+            // Visitors who are not signed in see the public landing page instead.
+            redirect: () => (isSignedIn() ? homePath() : '/welcome'),
             meta: { authRequired: true },
             children: [
                 // Components
@@ -435,6 +436,16 @@ const router = createRouter({
         // PAGES
         // =============================================================================
                 {
+                    // Public landing page, content from Settings › Landing page
+                    path: '/welcome',
+                    name: 'landing',
+                    component: () => import('@/views/pages/landing/Landing.vue'),
+                    meta: {
+                        title: 'ស្វាគមន៍', // browser tab only (no page header)
+                        rule: 'editor'
+                    }
+                },
+                {
                     path: '/pages/login',
                     name: 'page-login',
                     component: () => import('@/views/pages/login/Login.vue'),
@@ -508,9 +519,14 @@ function currentUserId() {
     }
 }
 
+// As auth.isUserLoggedIn
+function isSignedIn() {
+    return Boolean(localStorage.getItem('accessToken') && localStorage.getItem('userInfo'))
+}
+
 router.beforeEach((to, from, next) => {
     // Pages marked authRequired need a signed-in user (the API checks every request as well)
-    const signedIn = localStorage.getItem('accessToken') && localStorage.getItem('userInfo') // as auth.isUserLoggedIn
+    const signedIn = isSignedIn()
     if (to.meta.authRequired && !signedIn) {
         return next({ path: '/pages/login', query: { to: to.path } })
     }

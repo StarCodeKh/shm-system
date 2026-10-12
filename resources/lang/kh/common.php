@@ -76,4 +76,11 @@ return [
     'menu_bad_parent' => 'ផ្នែកនៅកម្រិតខាងលើ ក្រុមនៅបានតែក្នុងផ្នែក ហើយតំណមិនអាចនៅក្នុងតំណផ្សេងទៀតបានទេ។',
     'times' => ':n លើក',
     'language_keep_one_active' => 'ត្រូវមានភាសាយ៉ាងហោចណាស់មួយដែលកំពុងប្រើ ដើម្បីបង្ហាញប្រព័ន្ធ។',
+    'landing_section_hero' => 'ផ្នែកខាងលើ (Hero)',
+    'landing_section_feature' => 'កាតមុខងារ',
+    'landing_section_stat' => 'លេខផ្ទាល់',
+    'landing_stat_officers' => 'សមាជិក',
+    'landing_stat_entities' => 'អង្គភាព',
+    'landing_stat_departments' => 'នាយកដ្ឋាន',
+    'landing_stat_users' => 'អ្នកប្រើប្រាស់',
 ];
