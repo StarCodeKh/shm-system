@@ -145,6 +145,14 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'code' => 'code',
+        'headline' => 'headline',
+        'landing_section' => 'section',
+        'language_code' => 'language',
+        'landing_icon' => 'icon',
+        'landing_stat' => 'number shown',
+        'order_level' => 'order',
+    ],
 
 ];

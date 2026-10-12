@@ -110,6 +110,13 @@ return [
 
     // Field names the API validates, so the message reads fully in Khmer
     'attributes' => [
+        'code' => 'កូដ',
+        'headline' => 'ចំណងជើង',
+        'landing_section' => 'ផ្នែក',
+        'language_code' => 'ភាសា',
+        'landing_icon' => 'រូបតំណាង',
+        'landing_stat' => 'លេខដែលបង្ហាញ',
+        'order_level' => 'លំដាប់',
         'account' => 'គណនី',
         'account_code' => 'លេខកូដគណនី',
         'amount' => 'ចំនួនទឹកប្រាក់',
