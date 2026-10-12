@@ -100,7 +100,7 @@ class LanguageController extends Controller
         if (array_key_exists('status', $fields) && (int) $fields['status'] !== Status::ACTIVE && $this->isLastActive($row)) {
             return $this->lastActive();
         }
-        $row->update($fields);
+        $row->update($fields + ['modified_by' => Auth::user()->id]);
 
         return response()->json(['success' => true, 'message' => trans('common.msg_update_successfully'), 'data' => $row->fresh()]);
     }
