@@ -136,7 +136,7 @@ The transfer creates the standard roles and permissions, gives each user one of 
 - Every API route needs a token except sign-in; sign-in is limited to 10 attempts a minute, the API to 60 requests.
 - Writes check the role's permission (`EnforceModulePermission`); requests cannot set `id`, timestamps or audit columns.
 - Uploads: images, PDF, Word, Excel and CSV only (checked by content, max 20 MB), named by the server, never executed.
-- Tokens expire (`AUTH_TOKEN_HOURS`, `AUTH_TOKEN_REMEMBER_DAYS`); CORS allows `APP_URL` and `CORS_ALLOWED_ORIGINS` only; security headers on every response.
+- Every sign-in (web, mobile, OTP) lasts `AUTH_TOKEN_DAYS` (90 days = 3 months), then the user signs in again; CORS allows `APP_URL` and `CORS_ALLOWED_ORIGINS` only; security headers on every response.
 
 Before going live: `APP_DEBUG=false`, `OTP_EXPOSE_CODE=false`, HTTPS only, and change the seeded passwords.
 Still open: mobile OTP codes are not sent by SMS yet (`OTPService`), and old keys in git history (Firebase demo config, a Google Maps key) should be rotated.

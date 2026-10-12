@@ -50,6 +50,7 @@
 
 <script>
 import { setAuthHeader } from '@/axios.js'
+import { clearSession } from '@/http/requests/auth/session.js'
 import { canOpenSettings } from '@/views/pages/settings/settingsAccess.js'
 
 export default {
@@ -75,8 +76,7 @@ export default {
     methods: {
         canOpenSettings,
         logout() {
-            localStorage.removeItem("accessToken")
-            localStorage.removeItem('userInfo')
+            clearSession()
             setAuthHeader(null)
 
             // Change role on logout. Same value as initialRole of acl.js

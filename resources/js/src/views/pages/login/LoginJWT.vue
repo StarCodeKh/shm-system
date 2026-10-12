@@ -40,9 +40,11 @@
             <span v-if="errors.has('password')" class="login-field__error">{{ fieldError('password') }}</span>
         </div>
 
-        <div class="flex items-center justify-between mt-2 mb-6">
-            <vs-checkbox v-model="checkbox_remember_me" class="login-remember">{{ $t('remember_me') }}</vs-checkbox>
-        </div>
+        <!-- How long this sign-in lasts (Settings: AUTH_TOKEN_DAYS, 3 months by default) -->
+        <p class="login-session">
+            <span class="login-session__icon"><feather-icon icon="ShieldIcon" svgClasses="h-4 w-4" /></span>
+            <span>{{ $t('login_session_note', { period: sessionPeriod }) }}</span>
+        </p>
 
         <button type="submit" class="login-submit" :disabled="!validateForm || loading || waitSeconds > 0">
             <span v-if="loading" class="login-submit__spinner"></span>
@@ -55,6 +57,7 @@
 import { markRaw } from "vue";
 import axios, { retryAfterSeconds } from "@/axios.js";
 import { localDigits } from "@/i18n/i18n";
+import { site } from "@/site.js";
 
 // i18n keys for each failure kind shown in the inline alert.
 // markRaw: kept out of reactivity so `this.alert === ALERTS.x` compares the same object, not a proxy of it
@@ -63,6 +66,7 @@ const ALERTS = {
     network: markRaw({ type: 'danger', title: 'login_err_title_network', text: 'login_err_network' }),
     server: markRaw({ type: 'danger', title: 'login_err_title_server', text: 'login_err_server' }),
     throttle: markRaw({ type: 'warning', title: 'login_err_title_throttle', text: 'login_err_throttle_wait' }),
+    expired: markRaw({ type: 'warning', title: 'login_session_expired_title', text: 'login_session_expired_text' }),
 }
 
 export default {
@@ -71,7 +75,6 @@ export default {
             // Pre-filled only on a developer machine (npm run dev); production builds leave these out entirely
             email: import.meta.env.DEV ? 'admin@admin.com' : '',
             password: import.meta.env.DEV ? 'Ibs@dmin123' : '',
-            checkbox_remember_me: true,
             showPassword: false,
             loading: false,
             alert: null,
@@ -83,6 +86,13 @@ export default {
         }
     },
     computed: {
+        // "3 months" / "45 days": how long a sign-in lasts, from the server (GET /api/v1/site)
+        sessionPeriod() {
+            const days = Number(site.session_days) || 90
+            return days % 30 === 0
+                ? this.$t('period_months', { n: localDigits(days / 30) })
+                : this.$t('period_days', { n: localDigits(days) })
+        },
         validateForm() {
             return !this.errors.any() && this.email != '' && this.password != '';
         },
@@ -104,6 +114,10 @@ export default {
     },
     beforeUnmount() {
         clearInterval(this.ticker)
+    },
+    created() {
+        // Sent here because the sign-in ran out (3 months) or was signed out elsewhere
+        if (this.$route.query.expired) this.alert = ALERTS.expired
     },
     methods: {
         // Translated replacement for vee-validate's English-only messages
@@ -155,7 +169,6 @@ export default {
             this.loading = true
 
             const payload = {
-                checkbox_remember_me: this.checkbox_remember_me,
                 userDetails: {
                     email: this.email,
                     password: this.password
@@ -214,34 +227,28 @@ export default {
 
 <style>
 .login-jwt {
-    /* "Remember me": the same checkbox as the forms (20px box, 6px corners, theme colour), inline under the fields */
-    .login-remember.con-vs-checkbox {
-        display: inline-flex;
+    /* How long the sign-in lasts: a quiet line under the fields */
+    .login-session {
+        display: flex;
         align-items: center;
         gap: 10px;
-        margin: 0 !important;
-        cursor: pointer;
-        user-select: none;
+        margin: 4px 0 22px;
+        padding: 10px 12px;
+        font-size: 13px;
+        line-height: 1.5;
+        color: #5e6078;
+        border-radius: 12px;
+        background: rgba(var(--vs-primary), .06);
 
-        .vs-checkbox {
+        &__icon {
+            display: grid;
+            place-items: center;
             flex-shrink: 0;
-            width: 20px !important;
-            height: 20px !important;
-            margin: 0 !important;
-            border-radius: 6px !important;
-        }
-
-        .con-slot-label {
-            font-size: 14px;
-            line-height: 20px;
-            color: #4b4d68;
-        }
-
-        /* Keyboard focus only (not shown for mouse clicks) */
-        &:has(:focus-visible) {
-            border-radius: 6px;
-            outline: 2px solid rgb(var(--vs-primary));
-            outline-offset: 4px;
+            width: 28px;
+            height: 28px;
+            color: rgb(var(--vs-primary));
+            border-radius: 9px;
+            background: rgba(var(--vs-primary), .12);
         }
     }
 
@@ -398,8 +405,9 @@ export default {
 }
 
 .theme-dark .login-jwt {
-    .login-remember .con-slot-label {
+    .login-session {
         color: #c2c6dc;
+        background: rgba(255, 255, 255, .04);
     }
 
     .login-field label {

@@ -1,15 +1,17 @@
 import jwt from "../../http/requests/auth/jwt/index.js"
 import router from '@/router'
+import { saveSessionExpiry } from '@/http/requests/auth/session.js'
 import { fetchMenu, homePath, DEFAULT_HOME } from '@/layouts/components/vertical-nav-menu/menuPermissions.js'
 
 export default {
     // Sign in with email / password against /api/auth/login (Laravel Passport)
     loginJWT({ commit }, payload) {
         return new Promise((resolve, reject) => {
-            jwt.login(payload.userDetails.email, payload.userDetails.password, payload.checkbox_remember_me)
+            jwt.login(payload.userDetails.email, payload.userDetails.password)
                 .then(response => {
                     if (response.data.userData) {
                         localStorage.setItem("accessToken", response.data.accessToken)
+                        saveSessionExpiry(response.data.expires_at) // 3 months from now
                         commit('UPDATE_USER_INFO', response.data.userData, {root: true})
                         commit("SET_BEARER", response.data.accessToken)
 

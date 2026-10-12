@@ -35,6 +35,9 @@ class SiteController extends Controller
             $site['website'] = 'https://'.$site['website'];
         }
 
+        // How long a sign-in lasts, for the sign-in page ("You stay signed in for 3 months")
+        $site['session_days'] = (int) config('auth.token_lifetime.days');
+
         return response()->json(['data' => $site]);
     }
 }

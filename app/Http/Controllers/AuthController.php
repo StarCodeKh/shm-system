@@ -45,13 +45,11 @@ class AuthController extends Controller
         ], 201);
     }
 
-    // Signs a token for $user. Lifetime: AUTH_TOKEN_HOURS on the web, AUTH_TOKEN_REMEMBER_DAYS with
-    // "remember me" and for the mobile app. The expiry is part of the token itself, so it is set before creating it.
-    protected function issueToken($user, bool $remember)
+    // Signs a token for $user, valid AUTH_TOKEN_DAYS (3 months by default) on every kind of sign-in: web, mobile, OTP.
+    // The expiry is part of the token itself, so it is set before creating it.
+    protected function issueToken($user)
     {
-        Passport::personalAccessTokensExpireIn($remember
-            ? now()->addDays(config('auth.token_lifetime.remember_days'))
-            : now()->addHours(config('auth.token_lifetime.hours')));
+        Passport::personalAccessTokensExpireIn(now()->addDays(config('auth.token_lifetime.days')));
 
         return $user->createToken('Personal Access Token');
     }
@@ -61,7 +59,6 @@ class AuthController extends Controller
      *
      * @param  [string] email
      * @param  [string] password
-     * @param  [boolean] remember_me
      * @return [string] access_token
      * @return [string] token_type
      * @return [string] expires_at
@@ -76,7 +73,7 @@ class AuthController extends Controller
             ], 200);
         }
         $user = $request->user();
-        $tokenResult = $this->issueToken($user, $request->boolean('remember_me'));
+        $tokenResult = $this->issueToken($user);
 
         return response()->json([
             'accessToken' => $tokenResult->accessToken,
@@ -105,7 +102,7 @@ class AuthController extends Controller
         // register user device
         $this->registerDevice($input, $user->id);
         // Create User Token Access
-        $tokenResult = $this->issueToken($user, true);
+        $tokenResult = $this->issueToken($user);
         $data = [
             'accessToken' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
@@ -161,7 +158,7 @@ class AuthController extends Controller
             // register user device
             $this->registerDeviceWithF2A($input, $user->id);
             // Create User Token Access
-            $tokenResult = $this->issueToken($user, true);
+            $tokenResult = $this->issueToken($user);
             $data = [
                 'accessToken' => $tokenResult->accessToken,
                 'token_type' => 'Bearer',

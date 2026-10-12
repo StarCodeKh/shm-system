@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { can } from '@/acl/access.js'
 import { homePath } from '@/layouts/components/vertical-nav-menu/menuPermissions.js'
+import { clearSession, hasSession, isSignedIn, sessionExpired } from '@/http/requests/auth/session.js'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -519,13 +520,13 @@ function currentUserId() {
     }
 }
 
-// As auth.isUserLoggedIn
-function isSignedIn() {
-    return Boolean(localStorage.getItem('accessToken') && localStorage.getItem('userInfo'))
-}
-
 router.beforeEach((to, from, next) => {
     // Pages marked authRequired need a signed-in user (the API checks every request as well)
+    // A sign-in whose time ran out (3 months): forget it here and say so on the sign-in page
+    if (hasSession() && sessionExpired()) {
+        clearSession()
+        if (to.meta.authRequired) return next({ path: '/pages/login', query: { to: to.path, expired: '1' } })
+    }
     const signedIn = isSignedIn()
     if (to.meta.authRequired && !signedIn) {
         return next({ path: '/pages/login', query: { to: to.path } })

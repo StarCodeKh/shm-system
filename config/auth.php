@@ -89,10 +89,10 @@ return [
     |
     */
 
-    // API sign-in tokens (App\Http\Controllers\AuthController::issueToken)
+    // API sign-in tokens (App\Http\Controllers\AuthController::issueToken): every sign-in (web, mobile, OTP)
+    // stays valid this many days, then the user signs in again. 90 days = 3 months.
     'token_lifetime' => [
-        'hours' => (int) env('AUTH_TOKEN_HOURS', 24),                 // web sign-in
-        'remember_days' => (int) env('AUTH_TOKEN_REMEMBER_DAYS', 30), // "remember me" and the mobile app
+        'days' => max(1, (int) env('AUTH_TOKEN_DAYS', 90)),
     ],
 
     'passwords' => [
