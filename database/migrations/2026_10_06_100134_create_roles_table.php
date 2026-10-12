@@ -14,6 +14,8 @@ return new class extends Migration
             $table->unsignedBigInteger('entity_id')->nullable();
             $table->string('name');
             $table->string('guard_name');
+            // Which records the role may see (App\Services\DataScope): all | entity | own | member
+            $table->string('data_scope', 20)->default('all');
             $table->string('remark', 255)->nullable();
             $table->integer('order_level')->nullable();
             $table->unsignedBigInteger('status')->nullable();

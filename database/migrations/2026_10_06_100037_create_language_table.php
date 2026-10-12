@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('image', 64)->nullable();
             $table->integer('order_level')->default(0);
             $table->unsignedBigInteger('status')->nullable()->default(1);
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('modified_by')->nullable();
             $table->timestamps();
             $table->index('status');
         });
