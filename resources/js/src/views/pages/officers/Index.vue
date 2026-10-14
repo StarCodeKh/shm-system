@@ -126,7 +126,7 @@ export default {
                 },
                 {
                     "name": "position",
-                    "type": "text",
+                    "type": "select",
                     "required": false
                 },
                 {

@@ -216,5 +216,4 @@ class EntityController extends Controller
 
         return response()->json($data, $status);
     }
-
 }

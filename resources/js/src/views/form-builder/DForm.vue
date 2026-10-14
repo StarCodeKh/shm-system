@@ -799,10 +799,13 @@ export default {
             return this.data ? this.data[name] : undefined
         },
         // A chosen { label, value } keeps the label it was picked with: take the one from the current list
+        // Only dropdowns: a text field keeps its text even when a list of the same name is around
         relabelChosen() {
             const attribute = this.form && this.form.attribute
             if (!attribute || !this.data) return
+            const selects = new Set((this.formAttributes || []).filter(f => f && f.type === 'select').map(f => f.name))
             Object.keys(attribute).forEach(name => {
+                if (!selects.has(name)) return
                 const choices = this.choicesFor(name)
                 if (!Array.isArray(choices)) return
                 const relabel = picked => {

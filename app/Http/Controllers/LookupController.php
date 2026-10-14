@@ -16,6 +16,7 @@ use App\Models\Settings\Language;
 use App\Models\Settings\LetterType;
 use App\Models\Settings\PaymentMethod;
 use App\Models\Settings\PaymentType;
+use App\Models\Settings\Position;
 use App\Models\Settings\RoleUser;
 use App\Models\Settings\Status;
 use App\Models\Settings\Title;
@@ -52,6 +53,8 @@ class LookupController extends Controller
             'bank' => fn () => Bank::getBankByName(),
             'bank_id' => fn () => $this->byId(Bank::class),
             'title' => fn () => Title::getSingleOpt(),
+            // Officer columns that store the position's name
+            'position' => fn () => CommonService::getSingleOpt(new Position, CommonService::getFilter([])),
             // Stored as their value ("male", "នៅលីវ"), shown in the user's language (Settings › Status)
             'gender' => fn () => Status::getValueOpt('GENDER'),
             'married_status' => fn () => Status::getValueOpt('MARRIED_STATUS'),

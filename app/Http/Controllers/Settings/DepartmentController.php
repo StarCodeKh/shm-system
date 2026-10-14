@@ -231,5 +231,4 @@ class DepartmentController extends Controller
 
         return response()->json($data, $status);
     }
-
 }
