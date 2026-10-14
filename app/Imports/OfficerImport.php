@@ -43,7 +43,9 @@ class OfficerImport implements Auditable, ToModel, WithHeadingRow
             }
 
             if (in_array($data['tables'][$i]->Field, ['register_date', 'dob', 'created_at', 'updated_at'])) {
-                if (is_numeric($value)) {
+                if ($value === null || $value === '') {
+                    $date = null; // an empty date stays empty (Carbon::parse(null) would be today)
+                } elseif (is_numeric($value)) {
                     // ONLY call this if it's a numeric Excel serial (e.g. 20150)
                     $date = Date::excelToDateTimeObject($value);
                 } else {

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Imports\OfficerIncentiveImport;
+use App\Http\Controllers\Concerns\ImportsFromTemplate;
 use App\Models\Officer;
 use App\Models\OfficerIncentive;
 use App\Models\Settings\Account;
@@ -20,6 +20,8 @@ use Illuminate\Http\Response;
 
 class OfficerIncentiveController extends Controller
 {
+    use ImportsFromTemplate;
+
     protected $PERMISSION_ACTION_LIST;
 
     protected $PERMISSION_ACTION_CREATE;
@@ -65,7 +67,7 @@ class OfficerIncentiveController extends Controller
                 'permissions' => CommonService::permission($this->db_table),
                 'role_permissions' => CommonService::getPermissionsViaRoles(),
                 'model_name' => $this->db_table->getTable(),
-                'data_fields' => $this->db_table::dataFields(),
+                'data_fields' => $this->db_table::listFields(),
                 'form_attributes' => $this->db_table::formAttributes(),
                 'form_payment_type' => PaymentType::formAttributes(),
                 'code' => Account::getAccountCode(['OE']),
@@ -268,8 +270,4 @@ class OfficerIncentiveController extends Controller
         return response()->json($data, $status);
     }
 
-    public function import(Request $request)
-    {
-        return CommonService::importSpreadsheet(new OfficerIncentiveImport, $request);
-    }
 }

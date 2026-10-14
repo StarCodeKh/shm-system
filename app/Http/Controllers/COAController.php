@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Imports\AccountImport;
+use App\Http\Controllers\Concerns\ImportsFromTemplate;
 use App\Models\coa;
 use App\Models\Settings\Account;
 use App\Models\Settings\AccountType;
@@ -14,6 +14,8 @@ use Illuminate\Http\Response;
 
 class COAController extends Controller
 {
+    use ImportsFromTemplate;
+
     protected $PERMISSION_ACTION_LIST;
 
     protected $PERMISSION_ACTION_CREATE;
@@ -240,8 +242,4 @@ class COAController extends Controller
         return response()->json($data, $status);
     }
 
-    public function import(Request $request)
-    {
-        return CommonService::importSpreadsheet(new AccountImport, $request);
-    }
 }

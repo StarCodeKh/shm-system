@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Settings;
 
+use App\Http\Controllers\Concerns\ImportsFromTemplate;
 use App\Http\Controllers\Controller;
 use App\Models\Settings\Bank;
 use App\Models\Settings\Status;
@@ -13,6 +14,8 @@ use Illuminate\Http\Response;
 
 class BankController extends Controller
 {
+    use ImportsFromTemplate;
+
     protected $PERMISSION_ACTION_LIST;
 
     protected $PERMISSION_ACTION_CREATE;

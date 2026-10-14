@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Settings;
 
+use App\Http\Controllers\Concerns\ImportsFromTemplate;
 use App\Http\Controllers\Controller;
-use App\Imports\PaymentTypeImport;
 use App\Models\Settings\Currency;
 use App\Models\Settings\PaymentType;
 use App\Models\Settings\Status;
@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 
 class PaymentTypeController extends Controller
 {
+    use ImportsFromTemplate;
+
     protected $PERMISSION_ACTION_LIST;
 
     protected $PERMISSION_ACTION_CREATE;
@@ -199,10 +201,6 @@ class PaymentTypeController extends Controller
         return response()->json($data, $status);
     }
 
-    public function import(Request $request)
-    {
-        return CommonService::importSpreadsheet(new PaymentTypeImport, $request);
-    }
 
     public function getAmountByPaymentType(Request $request)
     {

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Settings;
 
+use App\Http\Controllers\Concerns\ImportsFromTemplate;
 use App\Http\Controllers\Controller;
-use App\Imports\EntityImport;
 use App\Models\Settings\Department;
 use App\Models\Settings\Entity;
 use App\Models\Settings\Status;
@@ -15,6 +15,8 @@ use Illuminate\Http\Request;
 
 class EntityController extends Controller
 {
+    use ImportsFromTemplate;
+
     protected $db_table;
 
     protected $PERMISSION_ACTION_LIST;
@@ -217,10 +219,6 @@ class EntityController extends Controller
         return response()->json($data, $status);
     }
 
-    public function import(Request $request)
-    {
-        return CommonService::importSpreadsheet(new EntityImport, $request);
-    }
 
     public function getOptionByDept(Request $request)
     {

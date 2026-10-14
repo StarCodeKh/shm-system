@@ -27,6 +27,14 @@ class Status extends Model implements Auditable
 
     const PAID = 19;
 
+    const VOID = 16;     // officer payable cancelled
+
+    const COMPLETED = 8; // request / incentive done
+
+    const DEAD = 26;     // member status (group OFFICER)
+
+    const RETIRED = 27;
+
     protected $primaryKey = 'id';
 
     protected $fillable = [];

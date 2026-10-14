@@ -31,7 +31,11 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 class ImportController extends Controller
 {
     // Tables that have an import (the list's own /import endpoint does the actual import)
-    private const TABLES = ['officer', 'officer_payable', 'officer_incentive', 'account', 'department', 'entity', 'payment_type'];
+    private const TABLES = [
+        'officer', 'officer_payable', 'officer_payment', 'officer_incentive', 'account', 'department', 'entity', 'payment_type',
+        // lists with App\Http\Controllers\Concerns\ImportsFromTemplate
+        'title', 'position', 'bank', 'letter_type', 'account_type_group', 'account_type', 'account_group', 'mef_planning',
+    ];
 
     // Filled in by the server, never read from the file
     private const SERVER_COLUMNS = ['created_by', 'modified_by', 'updated_by', 'created_at', 'updated_at', 'deleted_at'];
@@ -39,6 +43,11 @@ class ImportController extends Controller
     // Columns a table's import never takes from a file (shown as ignored, never compared)
     private const NOT_IMPORTED = [
         'officer' => ['user_id'], // the login is linked from the member's own screen
+    ];
+
+    // Columns that look like identifiers (*_no) but may repeat
+    private const NOT_KEYS = [
+        'officer_payment' => ['receipt_no'], // one receipt can pay several years
     ];
 
     // Rows sent back for the table (all rows are still checked and counted)
@@ -53,6 +62,7 @@ class ImportController extends Controller
     private const STATUS_GROUPS = [
         'officer' => ['STATUS', 'OFFICER'],
         'officer_payable' => ['PAYMENT'],
+        'officer_payment' => ['PAYMENT'],
         'officer_incentive' => ['GERNAL'],
     ];
 
@@ -185,7 +195,10 @@ class ImportController extends Controller
                     if (! $column['known'] || $name === 'id') {
                         continue;
                     }
-                    if ((string) ($values[$name] ?? '') !== (string) ($current->$name ?? '')) {
+                    // Numbers as numbers: 2500000 in the file is the 2500000.0000 of a decimal column
+                    $new = $values[$name] ?? '';
+                    $old = $current->$name ?? '';
+                    if (is_numeric($new) && is_numeric($old) ? $new + 0 != $old + 0 : (string) $new !== (string) $old) {
                         $changed[] = $name;
                     }
                 }
@@ -272,9 +285,7 @@ class ImportController extends Controller
             return $denied;
         }
 
-        $schema = $this->schema($table);
-        $names = collect($schema)->reject(fn ($c, $name) => in_array($name, self::SERVER_COLUMNS, true))
-            ->sortByDesc(fn ($c, $name) => $name === 'id' ? 2 : (int) $c['required'])->keys()->all();
+        $names = array_keys(self::templateColumns($table));
 
         $book = new Spreadsheet;
         $sheet = $book->getActiveSheet();
@@ -467,7 +478,8 @@ class ImportController extends Controller
             ->map(fn ($index) => $index['columns'][0])->all();
         $keys = [];
         foreach ($columns as $i => $column) {
-            if (! $column['known'] || $column['name'] === 'id' || isset($choices[$i]) || isset($links[$i])) {
+            if (! $column['known'] || $column['name'] === 'id' || isset($choices[$i]) || isset($links[$i])
+                || in_array($column['name'], self::NOT_KEYS[$table] ?? [], true)) {
                 continue;
             }
             if (in_array($column['name'], $unique, true) || preg_match('/^(code|email|username)$|_no$/', $column['name'])) {
@@ -606,7 +618,14 @@ class ImportController extends Controller
     }
 
     /** Columns of the table: name => [type (number|date|text), required (must have a value in a new row)] */
-    private function schema(string $table): array
+    /** The template's columns, in its order (id, then the required ones): name => ['type', 'required'] */
+    public static function templateColumns(string $table): array
+    {
+        return collect(self::schema($table))->reject(fn ($c, $name) => in_array($name, self::SERVER_COLUMNS, true))
+            ->sortByDesc(fn ($c, $name) => $name === 'id' ? 2 : (int) $c['required'])->all();
+    }
+
+    private static function schema(string $table): array
     {
         $schema = [];
         foreach (Schema::getColumns($table) as $column) {

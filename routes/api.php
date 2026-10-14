@@ -156,6 +156,7 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
         Route::apiResource('incentive', OfficerIncentiveController::class);
 
         // Payment
+        Route::post('payment/import', [OfficerPaymentController::class, 'import']);
         Route::get('payment/get_field', [OfficerPaymentController::class, 'getField']);
         Route::post('payment/search', [OfficerPaymentController::class, 'index']);
         Route::apiResource('payment', OfficerPaymentController::class);
@@ -210,12 +211,15 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
     // Settings
     Route::prefix('setting')->group(function () {
 
+        Route::post('account_type_group/import', [AccountTypeGroupController::class, 'import']);
         Route::post('account_type_group/search', [AccountTypeGroupController::class, 'index']);
         Route::apiResource('account_type_group', AccountTypeGroupController::class);
 
+        Route::post('account_type/import', [AccountTypeController::class, 'import']);
         Route::post('account_type/search', [AccountTypeController::class, 'index']);
         Route::apiResource('account_type', AccountTypeController::class);
 
+        Route::post('account_group/import', [AccountGroupController::class, 'import']);
         Route::post('account_group/search', [AccountGroupController::class, 'index']);
         Route::apiResource('account_group', AccountGroupController::class);
 
@@ -234,9 +238,11 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
         Route::post('entity/search', [EntityController::class, 'index']);
         Route::apiResource('entity', EntityController::class);
 
+        Route::post('position/import', [PositionController::class, 'import']);
         Route::post('position/search', [PositionController::class, 'index']);
         Route::apiResource('position', PositionController::class);
 
+        Route::post('title/import', [TitleController::class, 'import']);
         Route::post('title/search', [TitleController::class, 'index']);
         Route::apiResource('title', TitleController::class);
 
@@ -252,6 +258,7 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
         Route::post('landing_content/search', [LandingContentController::class, 'index']);
         Route::apiResource('landing_content', LandingContentController::class);
 
+        Route::post('bank/import', [BankController::class, 'import']);
         Route::post('bank/search', [BankController::class, 'index']);
         Route::apiResource('bank', BankController::class);
 
@@ -259,6 +266,7 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
         Route::post('role/search', [RoleController::class, 'index']);
         Route::apiResource('role', RoleController::class);
 
+        Route::post('planning/import', [PlanningController::class, 'import']);
         Route::post('planning/search', [PlanningController::class, 'index']);
         Route::apiResource('planning', PlanningController::class);
 
@@ -266,6 +274,7 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
         Route::post('audit/clear', [AuditController::class, 'clear']);
         Route::apiResource('audit', AuditController::class);
 
+        Route::post('letter_type/import', [LetterTypeController::class, 'import']);
         Route::post('letter_type/search', [LetterTypeController::class, 'index']);
         Route::apiResource('letter_type', LetterTypeController::class);
 

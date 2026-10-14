@@ -9,6 +9,7 @@ return [
         3 => 'edit_bank',
         4 => 'update_bank',
         5 => 'delete_bank',
+        6 => 'import_bank',
     ],
     'position' => [
         0 => 'list_position',
@@ -17,6 +18,7 @@ return [
         3 => 'edit_position',
         4 => 'update_position',
         5 => 'delete_position',
+        6 => 'import_position',
     ],
     'currency' => [
         0 => 'list_currency',
@@ -264,6 +266,7 @@ return [
         3 => 'edit_letter_type',
         4 => 'update_letter_type',
         5 => 'delete_letter_type',
+        6 => 'import_letter_type',
     ],
     'menu' => [
         0 => 'list_menu',
@@ -280,6 +283,7 @@ return [
         3 => 'edit_account_type_group',
         4 => 'update_account_type_group',
         5 => 'delete_account_type_group',
+        6 => 'import_account_type_group',
     ],
     'account_group' => [
         0 => 'list_account_group',
@@ -288,6 +292,7 @@ return [
         3 => 'edit_account_group',
         4 => 'update_account_group',
         5 => 'delete_account_group',
+        6 => 'import_account_group',
     ],
     'title' => [
         0 => 'list_title',
@@ -296,6 +301,7 @@ return [
         3 => 'edit_title',
         4 => 'update_title',
         5 => 'delete_title',
+        6 => 'import_title',
     ],
     'mef_planning' => [
         0 => 'list_mef_planning',
@@ -304,6 +310,7 @@ return [
         3 => 'edit_mef_planning',
         4 => 'update_mef_planning',
         5 => 'delete_mef_planning',
+        6 => 'import_mef_planning',
     ],
     'language' => [
         0 => 'list_language',

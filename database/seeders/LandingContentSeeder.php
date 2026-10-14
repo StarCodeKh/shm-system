@@ -12,6 +12,7 @@ use Illuminate\Database\Seeder;
  *
  * Safe to run more than once: php artisan db:seed --class=LandingContentSeeder
  * Only adds content when a language has none yet; content already on a server is never changed.
+ * Runs StatusSeeder first.
  */
 class LandingContentSeeder extends Seeder
 {
@@ -54,6 +55,7 @@ class LandingContentSeeder extends Seeder
 
     public function run()
     {
+        $this->call(StatusSeeder::class, true);
         foreach (self::CONTENT as $code => $content) {
             if (LandingContent::where('language_code', $code)->where('status', '!=', Status::DELETED)->exists()) {
                 continue;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\ImportsFromTemplate;
 use App\Models\Officer;
 use App\Models\OfficerPayment;
 use App\Models\Settings\Account;
@@ -16,6 +17,8 @@ use Illuminate\Http\Response;
 
 class OfficerPaymentController extends Controller
 {
+    use ImportsFromTemplate;
+
     protected $PERMISSION_ACTION_LIST;
 
     protected $PERMISSION_ACTION_CREATE;
@@ -63,7 +66,7 @@ class OfficerPaymentController extends Controller
                 'permissions' => CommonService::permission($this->db_table),
                 'role_permissions' => CommonService::getPermissionsViaRoles(),
                 'model_name' => $this->db_table->getTable(),
-                'data_fields' => $this->db_table::dataFields(),
+                'data_fields' => $this->db_table::listFields(),
                 'form_attributes' => $this->db_table::formAttributes(),
                 'officer_id' => isset($filter['data']['officer_id']) ? Officer::getSingleOptById($filter['data']['officer_id']) : Officer::getSingleOpt(),
                 'currency_id' => Currency::getSingleOpt(),
@@ -240,6 +243,7 @@ class OfficerPaymentController extends Controller
 
         return response()->json($data, $status);
     }
+
 
     public function getField()
     {

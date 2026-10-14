@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Settings;
 
+use App\Http\Controllers\Concerns\ImportsFromTemplate;
 use App\Http\Controllers\Controller;
 use App\Models\Settings\AccountGroup;
 use App\Models\Settings\AccountType;
@@ -14,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 
 class AccountGroupController extends Controller
 {
+    use ImportsFromTemplate;
+
     protected $PERMISSION_ACTION_LIST;
 
     protected $PERMISSION_ACTION_CREATE;

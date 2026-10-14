@@ -2200,11 +2200,14 @@ export default {
                 case "notifiable_id":
                     return row["user"] ? row["user"]["username"]: null;
                     break;
-                default:
-                    return row[column];
-                    break;
+                default: {
+                    // A coded value with its list from the server (gender, married_status ...: Status::getValueOpt,
+                    // the lists with label_en): its name, not its code
+                    const options = this.dataTables && this.dataTables[column]
+                    const option = Array.isArray(options) ? options.find(o => o && o.label_en !== undefined && o.value == row[column]) : null
+                    return option ? option.label : row[column];
+                }
             }
-            return columnHeader;
         }
 
     },

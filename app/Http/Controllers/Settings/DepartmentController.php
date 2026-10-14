@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Settings;
 
+use App\Http\Controllers\Concerns\ImportsFromTemplate;
 use App\Http\Controllers\Controller;
-use App\Imports\DepartmentImport;
 use App\Models\Settings\Department;
 use App\Models\Settings\Status;
 use App\Services\FormSchema;
@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
 {
+    use ImportsFromTemplate;
+
     protected $db_table;
 
     protected $PERMISSION_ACTION_LIST;
@@ -230,8 +232,4 @@ class DepartmentController extends Controller
         return response()->json($data, $status);
     }
 
-    public function import(Request $request)
-    {
-        return CommonService::importSpreadsheet(new DepartmentImport, $request);
-    }
 }

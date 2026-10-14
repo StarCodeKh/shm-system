@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasDataScope;
+use App\Models\Concerns\HasListFields;
 use App\Models\Settings\Currency;
 use App\Models\Settings\PaymentMethod;
 use App\Models\Settings\Status;
@@ -14,7 +15,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 class OfficerPayment extends Model implements Auditable
 {
-    use HasDataScope, \OwenIt\Auditing\Auditable;
+    use HasDataScope, HasListFields, \OwenIt\Auditing\Auditable;
 
     protected $table = 'officer_payment';
 
@@ -50,6 +51,9 @@ class OfficerPayment extends Model implements Auditable
     {
         return $this->belongsTo(OfficerPayable::class);
     }
+
+    // Columns of the list screen, in order (HasListFields)
+    const LIST_FIELDS = ['receipt_no', 'officer_id', 'payment_date', 'amount', 'currency_id', 'status'];
 
     public static function dataFields()
     {

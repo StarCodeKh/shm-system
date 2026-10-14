@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasDataScope;
+use App\Models\Concerns\HasListFields;
 use App\Models\Settings\Department;
 use App\Models\Settings\Entity;
 use App\Models\Settings\Status;
@@ -14,7 +15,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Officer extends Model implements Auditable
 {
-    use HasDataScope,HasRoles, \OwenIt\Auditing\Auditable;
+    use HasDataScope, HasListFields, HasRoles, \OwenIt\Auditing\Auditable;
 
     protected $table = 'officer';
 
@@ -58,6 +59,9 @@ class Officer extends Model implements Auditable
     }
 
     // public static function
+    // Columns of the list screen, in order (HasListFields)
+    const LIST_FIELDS = ['identity_member_no', 'first_name', 'last_name', 'gender', 'entity_id', 'department_id', 'telephone_1', 'status'];
+
     public static function dataFields()
     {
         // Loop Data Field From Table to put in array for mapping data field to search data table

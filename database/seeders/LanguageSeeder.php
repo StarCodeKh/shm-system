@@ -12,6 +12,7 @@ use Illuminate\Database\Seeder;
  *
  * Safe to run more than once: php artisan db:seed --class=LanguageSeeder
  * A language is only added when its code is missing; ones already on a server are never changed.
+ * Runs StatusSeeder first.
  */
 class LanguageSeeder extends Seeder
 {
@@ -22,6 +23,7 @@ class LanguageSeeder extends Seeder
 
     public function run()
     {
+        $this->call(StatusSeeder::class, true);
         foreach (self::LANGUAGES as $language) {
             if (Language::where('code', $language['code'])->where('status', '!=', Status::DELETED)->doesntExist()) {
                 Language::create($language + ['status' => Status::ACTIVE]);

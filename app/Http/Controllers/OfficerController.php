@@ -66,7 +66,7 @@ class OfficerController extends BaseController
                 'permissions' => CommonService::permission($this->db_table),
                 'role_permissions' => CommonService::getPermissionsViaRoles(),
                 'model_name' => $this->db_table->getTable(),
-                'data_fields' => $this->db_table::dataFields(),
+                'data_fields' => $this->db_table::listFields(),
                 'form_attributes' => $this->db_table::formAttributes(),
                 'department_id' => Department::getSingleOpt(),
                 'entity_id' => [],
@@ -158,7 +158,7 @@ class OfficerController extends BaseController
             $data['data'] = $this->db_table::create($dataFields);
             if ($data['data']) {
                 // When Create Member will generate Payment Recurring Cus when the schedule run all Recurring payment will be due every time
-                $getPaymentTerm = PaymentTerm::where('status', 1)->where('is_default', 1)->first();
+                $getPaymentTerm = PaymentTerm::where('is_default', 1)->whereNotDeleted()->first();
                 OfficerPaymentRecurring::insert([
                     'officer_id' => $data['data']['id'],
                     'payment_term' => $getPaymentTerm->name_kh, //

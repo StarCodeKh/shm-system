@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Settings;
 
+use App\Http\Controllers\Concerns\ImportsFromTemplate;
 use App\Http\Controllers\Controller;
 use App\Models\Settings\Status;
 use App\Models\Settings\Title;
@@ -12,6 +13,8 @@ use Illuminate\Http\Request;
 
 class TitleController extends Controller
 {
+    use ImportsFromTemplate;
+
     protected $dbTable;
 
     public function __construct()

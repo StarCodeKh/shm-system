@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Settings;
 
+use App\Http\Controllers\Concerns\ImportsFromTemplate;
 use App\Http\Controllers\Controller;
 use App\Models\Settings\Planning;
 use App\Models\Settings\Status;
@@ -14,6 +15,8 @@ use Illuminate\Http\Response;
 
 class PlanningController extends Controller
 {
+    use ImportsFromTemplate;
+
     protected $PERMISSION_ACTION_LIST;
 
     protected $PERMISSION_ACTION_CREATE;

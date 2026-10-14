@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Settings\Status;
 use App\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 /**
  * One user per role, so a new server can be signed in to:
@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
  *
  * Only on a new install: when the users table already has accounts (a live or transferred server), it does nothing,
  * so running db:seed on every deploy never adds these accounts there.
- * Also adds the Active / Inactive user statuses when they are missing.
+ * Runs StatusSeeder and RolePermissionSeeder first (the users' status and roles).
  */
 class UserSeeder extends Seeder
 {
@@ -27,12 +27,7 @@ class UserSeeder extends Seeder
 
     public function run()
     {
-        foreach ([['Active', 'សកម្ម', 8], ['Inactive', 'អសកម្ម', 9]] as [$titleEn, $titleKh, $order]) {
-            if (DB::table('mef_status')->where('group', 'STATUS')->where('title_en', $titleEn)->exists()) {
-                continue;
-            }
-            DB::table('mef_status')->insert(['group' => 'STATUS', 'title_en' => $titleEn, 'title_kh' => $titleKh, 'order_level' => $order]);
-        }
+        $this->call([StatusSeeder::class, RolePermissionSeeder::class], true);
 
         if (User::query()->exists()) {
             return; // not a new install
@@ -44,8 +39,6 @@ class UserSeeder extends Seeder
 
             return;
         }
-        $active = DB::table('mef_status')->where('group', 'STATUS')->where('title_en', 'Active')->value('id');
-
         foreach (self::USERS as $row) {
             if (User::where('email', $row['email'])->orWhere('username', $row['username'])->exists()) {
                 continue;
@@ -56,7 +49,7 @@ class UserSeeder extends Seeder
                 'username' => $row['username'],
                 'email' => $row['email'],
                 'password' => bcrypt($password),
-                'status' => $active,
+                'status' => Status::ACTIVE,
             ]);
             $user->syncRoles([$row['role']]);
             $this->command?->info("{$row['role']}: {$row['email']}");

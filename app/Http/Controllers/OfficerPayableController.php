@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Imports\OfficerPayableImport;
+use App\Http\Controllers\Concerns\ImportsFromTemplate;
 use App\Models\Officer;
 use App\Models\OfficerPayable;
 use App\Models\OfficerPayment;
@@ -21,6 +21,8 @@ use Illuminate\Http\Response;
 
 class OfficerPayableController extends Controller
 {
+    use ImportsFromTemplate;
+
     protected $PERMISSION_ACTION_LIST;
 
     protected $PERMISSION_ACTION_CREATE;
@@ -76,7 +78,7 @@ class OfficerPayableController extends Controller
                 'permissions' => CommonService::permission($this->db_table),
                 'role_permissions' => CommonService::getPermissionsViaRoles(),
                 'model_name' => $this->db_table->getTable(),
-                'data_fields' => $this->db_table::dataFields(),
+                'data_fields' => $this->db_table::listFields(),
                 'form_attributes' => $this->db_table::formAttributes(),
                 'officer_id' => isset($filter['data']['officer_id']) ? Officer::getSingleOptById($filter['data']['officer_id']) : Officer::getSingleOpt(),
                 'department_id' => Department::getSingleOpt(),
@@ -370,10 +372,6 @@ class OfficerPayableController extends Controller
         return response()->json($data, $status);
     }
 
-    public function import(Request $request)
-    {
-        return CommonService::importSpreadsheet(new OfficerPayableImport, $request);
-    }
 
     public function getPayableInfoByOfficer(Request $request)
     {
