@@ -52,6 +52,10 @@ class LookupController extends Controller
             'bank' => fn () => Bank::getBankByName(),
             'bank_id' => fn () => $this->byId(Bank::class),
             'title' => fn () => Title::getSingleOpt(),
+            // Stored as their value ("male", "នៅលីវ"), shown in the user's language (Settings › Status)
+            'gender' => fn () => Status::getValueOpt('GENDER'),
+            'married_status' => fn () => Status::getValueOpt('MARRIED_STATUS'),
+            'emergency_relative' => fn () => Status::getValueOpt('RELATIONSHIP'),
             // ?entity_id= gives one unit's departments (dropdowns that follow the unit, see resources/js/src/dependentFields.js)
             'department_id' => fn () => request()->filled('entity_id')
                 ? Department::getOptionByEntity(request('entity_id'))

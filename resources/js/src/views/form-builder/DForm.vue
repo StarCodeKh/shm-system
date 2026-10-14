@@ -777,6 +777,22 @@ export default {
             if (!Array.isArray(choices) || value === null || value === undefined || value === '' || typeof value === 'object') return null
             return choices.find(o => o && typeof o === 'object' && String(o.value) === String(value)) || null
         },
+        // Dropdowns the page sent no choices for get them from the shared lookup (GET /api/v1/lookup/{field});
+        // a saved value already in the form then shows as its label (e.g. "male" -> ប្រុស)
+        loadLookups(attributes) {
+            const names = (attributes || []).map(field => field && field.name);
+            (attributes || []).filter(field => field && field.type === 'select').forEach(({ name, lookup }) => {
+                if (!this.data || Array.isArray(this.data[name])) return
+                if (names.includes(parentField(name))) return
+                this.lookupFields = [...(this.lookupFields || []).filter(f => f.name !== name), { name, lookup: lookup || name }]
+                lookupChoices(lookup || name, this.$i18n.locale).then(choices => {
+                    if (choices && this.data && !Array.isArray(this.data[name])) {
+                        this.data[name] = choices
+                        this.relabelChosen()
+                    }
+                })
+            })
+        },
         // A dropdown's choices: its own filtered list when it follows another dropdown, else the page's list
         choicesFor(name) {
             if (name in this.dependentOptions) return this.dependentOptions[name]
@@ -828,9 +844,10 @@ export default {
         if (this.offLocaleChange) this.offLocaleChange()
     },
     watch: {
-        // The page sent new choice lists (e.g. reloaded in another language)
+        // The page sent new choice lists (e.g. a record loaded): lists it left out come from the shared lookup again
         data() {
             this.relabelChosen()
+            this.loadLookups(this.formAttributes)
         },
         // Dropdowns the page sent no choices for get them from the shared lookup
         formAttributes: {
@@ -844,18 +861,7 @@ export default {
                 });
                 // Dropdowns that follow another one in this form load their own lists (dependentFields.js)
                 watchDependents(this, attributes, () => this.form.attribute)
-                const names = (attributes || []).map(field => field && field.name);
-                (attributes || []).filter(field => field && field.type === 'select').forEach(({ name, lookup }) => {
-                    if (!this.data || Array.isArray(this.data[name])) return
-                    if (names.includes(parentField(name))) return
-                    this.lookupFields = [...(this.lookupFields || []).filter(f => f.name !== name), { name, lookup: lookup || name }]
-                    lookupChoices(lookup || name, this.$i18n.locale).then(choices => {
-                        if (choices && this.data && !Array.isArray(this.data[name])) {
-                            this.data[name] = choices
-                            this.relabelChosen()
-                        }
-                    })
-                })
+                this.loadLookups(attributes)
             },
         },
     }
