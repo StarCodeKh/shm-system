@@ -28,7 +28,6 @@ export default {
     _apiAccount: "/api/v1/setting/account",
     _apiDepartment: "/api/v1/setting/department",
     _apiEntity: "/api/v1/setting/entity",
-    _apiEntityByDept: "/api/v1/setting/entity/get_entity_by_dept",
     _apiEntityMember: "/api/v1/setting/entity_member",
     _apiTitle: "/api/v1/setting/title",
     _apiPosition: "/api/v1/setting/position",

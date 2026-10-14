@@ -233,7 +233,6 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
         Route::post('entity_member/search', [EntityMemberController::class, 'index']);
         Route::apiResource('entity_member', EntityMemberController::class);
 
-        Route::post('entity/get_entity_by_dept', [EntityController::class, 'getOptionByDept']);
         Route::post('entity/import', [EntityController::class, 'import']);
         Route::post('entity/search', [EntityController::class, 'index']);
         Route::apiResource('entity', EntityController::class);

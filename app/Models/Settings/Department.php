@@ -21,17 +21,29 @@ class Department extends Model implements Auditable
 
     public $timestamps = false;
 
+    // A user tied to a unit (users.entity_id) only gets that unit's departments
     public static function getSingleOpt()
     {
-        $data = [];
-        $query = Department::whereNotDeleted();
-        $whereClause = $query;
-        $whereClause->orderByLevel();
-        if (Auth::user()->entity_id != 0 || Auth::user()->entity_id != null) {
-            $whereClause->where('id', Auth::user()->entity_id);
+        $entityId = Auth::user()?->entity_id;
+
+        return $entityId ? self::getOptionByEntity($entityId) : self::options(Department::whereNotDeleted());
+    }
+
+    // Sections of one general department: a section's code starts with its entity's code (entity 01 -> 010001, 010002...)
+    public static function getOptionByEntity($entityId)
+    {
+        $entityCode = Entity::where('id', $entityId)->value('code');
+        if (! $entityCode) {
+            return [];
         }
-        $queryResult = collect($whereClause->get());
-        foreach ($queryResult as $row) {
+
+        return self::options(Department::whereNotDeleted()->where('code', 'like', $entityCode.'%'));
+    }
+
+    private static function options($query)
+    {
+        $data = [];
+        foreach ($query->orderByLevel()->get() as $row) {
             $data[] = [
                 'label' => $row->code.'-'.$row->name_kh,
                 'value' => $row->id,

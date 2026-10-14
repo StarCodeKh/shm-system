@@ -42,14 +42,14 @@
                                 <v-select
                                     v-on:input="onInitChange($event, formAttribute.filterObj, formAttribute.name, formAttribute.api)"
                                     v-validate="''" v-model="form.attribute[formAttribute.name]" :name="formAttribute.name"
-                                    :options="data[formAttribute.name]" :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
+                                    :options="choicesFor(formAttribute.name)" :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                                 <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
                                     $tRequired(formAttribute.name)
                                 }}</span>
                             </template>
                             <template v-else>
                                 <v-select v-validate="''" v-model="form.attribute[formAttribute.name]"
-                                    :name="formAttribute.name" :options="data[formAttribute.name]"
+                                    :name="formAttribute.name" :options="choicesFor(formAttribute.name)"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                                 <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
                                     $tRequired(formAttribute.name)
@@ -61,11 +61,11 @@
                                 <v-select v-validate="''"
                                     v-on:input="onInitChange($event, formAttribute.filterObj, formAttribute.name, formAttribute.api)"
                                     v-model="form.attribute[formAttribute.name]" :name="formAttribute.name"
-                                    :options="data[formAttribute.name]" :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
+                                    :options="choicesFor(formAttribute.name)" :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                             </template>
                             <template v-else>
                                 <v-select v-validate="''" v-model="form.attribute[formAttribute.name]"
-                                    :name="formAttribute.name" :options="data[formAttribute.name]"
+                                    :name="formAttribute.name" :options="choicesFor(formAttribute.name)"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                             </template>
                         </span>
@@ -109,6 +109,7 @@
 import { gridClass } from "@/formGrid.js";
 
 import axios from "@/axios.js"
+import { watchDependents } from "@/dependentFields.js"
 import vSelect from 'vue-select'
 import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
@@ -138,6 +139,7 @@ export default {
             form: {
                 attribute: []
             },
+            dependentOptions: {}, // lists of dropdowns that follow another one (dependentFields.js)
         }
     },
     computed: {
@@ -162,6 +164,11 @@ export default {
         }
     },
     methods: {
+        // A dropdown's choices: its own filtered list when it follows another dropdown, else the page's list
+        choicesFor(name) {
+            if (name in this.dependentOptions) return this.dependentOptions[name]
+            return this.data ? this.data[name] : undefined
+        },
         onInitChange($event, _formAttribute, _formName, _apiRequest) {
             let _data = {
                 autocomplete: true,
@@ -222,6 +229,15 @@ export default {
     },
     created() {
         this.styleClass = gridClass(this.rowDisplay);
+    },
+    watch: {
+        // Dropdowns that follow another one in this form load their own lists (dependentFields.js)
+        formAttributes: {
+            immediate: true,
+            handler(attributes) {
+                watchDependents(this, attributes, () => this.form.attribute)
+            },
+        },
     }
 }
 

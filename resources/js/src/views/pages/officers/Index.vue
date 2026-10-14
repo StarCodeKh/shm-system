@@ -130,16 +130,12 @@ export default {
                     "required": false
                 },
                 {
-                    "name": "department_id",
+                    "name": "entity_id",
                     "type": "select",
-                    "required": true,
-                    "hasFilter": true,
-                    "hasFormData": false,
-                    "filterObj": "entity_id",
-                    "api": apiConfig._apiEntityByDept,
+                    "required": true
                 },
                 {
-                    "name": "entity_id",
+                    "name": "department_id",
                     "type": "select",
                     "required": true
                 },

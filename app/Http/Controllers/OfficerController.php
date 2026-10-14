@@ -6,7 +6,7 @@ use App\Imports\OfficerImport;
 use App\Models\Officer;
 use App\Models\OfficerPaymentRecurring;
 use App\Models\Settings\Bank;
-use App\Models\Settings\Department;
+use App\Models\Settings\Entity;
 use App\Models\Settings\PaymentTerm;
 use App\Models\Settings\Position;
 use App\Models\Settings\Status;
@@ -68,8 +68,8 @@ class OfficerController extends BaseController
                 'model_name' => $this->db_table->getTable(),
                 'data_fields' => $this->db_table::listFields(),
                 'form_attributes' => $this->db_table::formAttributes(),
-                'department_id' => Department::getSingleOpt(),
-                'entity_id' => [],
+                'entity_id' => Entity::getSingleOpt(),
+                'department_id' => [],
                 'position' => CommonService::getSingleOpt(new Position, $filter),
                 'bank' => CommonService::getSingleOpt(new Bank, $filter),
                 'title' => CommonService::getSingleOpt(new Title, $filter),
@@ -107,8 +107,8 @@ class OfficerController extends BaseController
             $data = [
                 'data_fields' => $this->db_table::dataFields(),
                 'form_attributes' => $this->db_table::formAttributes(),
-                'department_id' => Department::getSingleOpt(),
-                'entity_id' => [],
+                'entity_id' => Entity::getSingleOpt(),
+                'department_id' => [],
                 'position' => CommonService::getSingleOpt(new Position, $filter),
                 'bank' => CommonService::getSingleOpt(new Bank, $filter),
                 'title' => CommonService::getSingleOpt(new Title, $filter),
@@ -214,8 +214,8 @@ class OfficerController extends BaseController
                 $boolen = true;
                 $message = trans('common.msg_successfully');
                 $data['data'] = Officer::getData($filter)[0];
-                $data['department_id'] = Department::getSingleOpt();
-                $data['entity_id'] = [];
+                $data['entity_id'] = Entity::getSingleOpt();
+                $data['department_id'] = [];
                 $data['position'] = CommonService::getSingleOpt(new Position, $filter);
                 $data['bank'] = CommonService::getSingleOpt(new Bank, $filter);
                 $data['title'] = CommonService::getSingleOpt(new Title, $filter);

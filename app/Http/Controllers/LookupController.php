@@ -52,7 +52,10 @@ class LookupController extends Controller
             'bank' => fn () => Bank::getBankByName(),
             'bank_id' => fn () => $this->byId(Bank::class),
             'title' => fn () => Title::getSingleOpt(),
-            'department_id' => fn () => Department::getSingleOpt(),
+            // ?entity_id= gives one unit's departments (dropdowns that follow the unit, see resources/js/src/dependentFields.js)
+            'department_id' => fn () => request()->filled('entity_id')
+                ? Department::getOptionByEntity(request('entity_id'))
+                : Department::getSingleOpt(),
             'entity_id' => fn () => Entity::getSingleOpt(),
             'role_id' => fn () => RoleUser::getSingleOpt(),
             // Users store their role by name (Spatie role)

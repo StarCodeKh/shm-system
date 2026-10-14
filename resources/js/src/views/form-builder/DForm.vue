@@ -82,7 +82,7 @@
                             <v-select :placeholder="fieldHint(formAttribute, 'select')"
                                 v-on:input="onInitChange($event, formAttribute.filterObj, formAttribute.name, formAttribute.api)"
                                 v-validate="'required'" v-model="form.attribute[formAttribute.name]"
-                                :name="formAttribute.name" :options="data[formAttribute.name]"
+                                :name="formAttribute.name" :options="choicesFor(formAttribute.name)"
                                 :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                             <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
                                 requiredMessage(formAttribute.name)
@@ -90,7 +90,7 @@
                         </template>
                         <template v-else>
                             <v-select :placeholder="fieldHint(formAttribute, 'select')" v-validate="'required'" :name="formAttribute.name"
-                                v-model="form.attribute[formAttribute.name]" :options="data[formAttribute.name]"
+                                v-model="form.attribute[formAttribute.name]" :options="choicesFor(formAttribute.name)"
                                 :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-1 w-full" />
                             <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
                                 requiredMessage(formAttribute.name)
@@ -100,7 +100,7 @@
                             <v-select :placeholder="fieldHint(formAttribute, 'select')" v-validate="''"
                                 v-on:input="onInitFormData($event, formAttribute.filterObj, formAttribute.name, formAttribute.api)"
                                 v-model="form.attribute[formAttribute.name]" :name="formAttribute.name"
-                                :options="data[formAttribute.name]" :dir="$vs.rtl ? 'rtl' : 'ltr'"
+                                :options="choicesFor(formAttribute.name)" :dir="$vs.rtl ? 'rtl' : 'ltr'"
                                 class="mt-2 w-full" />
                         </template>
                     </span>
@@ -109,12 +109,12 @@
                             <v-select :placeholder="fieldHint(formAttribute, 'select')" v-validate="''"
                                 v-on:input="onInitChange($event, formAttribute.filterObj, formAttribute.name, formAttribute.api)"
                                 v-model="form.attribute[formAttribute.name]" :name="formAttribute.name"
-                                :options="data[formAttribute.name]" :dir="$vs.rtl ? 'rtl' : 'ltr'"
+                                :options="choicesFor(formAttribute.name)" :dir="$vs.rtl ? 'rtl' : 'ltr'"
                                 class="mt-2 w-full" />
                         </template>
                         <template v-else>
                             <v-select :placeholder="fieldHint(formAttribute, 'select')" v-validate="''" :name="formAttribute.name"
-                                v-model="form.attribute[formAttribute.name]" :options="data[formAttribute.name]"
+                                v-model="form.attribute[formAttribute.name]" :options="choicesFor(formAttribute.name)"
                                 :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-1 w-full" />
                         </template>
                     </span>
@@ -137,7 +137,7 @@
                         <v-select :placeholder="fieldHint(formAttribute, 'select')" v-validate="''"
                             v-on:input="onInitFormData($event, formAttribute.filterObj, formAttribute.name, formAttribute.api)"
                             v-model="form.attribute[formAttribute.name]" :name="formAttribute.name"
-                            :options="data[formAttribute.name]" :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
+                            :options="choicesFor(formAttribute.name)" :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                     </template>
                     <span v-else>
                         <vs-select :name="formAttribute.name" @change="onChangeElement($event, formAttribute.name)"
@@ -357,6 +357,7 @@ function forgetLookup(field) {
     Object.keys(lookupRequests).filter(key => key.endsWith(`:${field}`)).forEach(key => delete lookupRequests[key])
 }
 import { quickAddSource, savedRecord, optionForRecord, optionFromRecord } from "@/quickAdd.js"
+import { parentField, chosenValue, dependentChoices, forgetDependentChoices, watchDependents } from "@/dependentFields.js"
 import vSelect from 'vue-select';
 import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
@@ -392,6 +393,7 @@ export default {
             saving: false, // a save is in flight: further clicks / Enter are ignored
             quickAdd: null, // { field, api, fields, data } while the "+ Add" popup is up
             quickAddOpen: false,
+            dependentOptions: {}, // lists of dropdowns that follow another one (dependentFields.js)
             dataTables: [],
             dataAttributes: "",
             formAttribute: "",
@@ -501,12 +503,17 @@ export default {
             if (!field) return
             const row = savedRecord(answer)
             forgetLookup(field)
-            const current = Array.isArray(this.data[field]) ? this.data[field] : []
-            let choices = (await lookupChoices(field, this.$i18n.locale)) || current.slice()
+            forgetDependentChoices(field)
+            const dependent = field in this.dependentOptions
+            const current = Array.isArray(this.choicesFor(field)) ? this.choicesFor(field) : []
+            let choices = dependent
+                ? await dependentChoices(field, chosenValue(this.form.attribute[parentField(field)]), this.$i18n.locale)
+                : (await lookupChoices(field, this.$i18n.locale)) || current.slice()
             // What was just created is always offered here, even when the shared list leaves it out
             // (e.g. departments are limited to the user's own): the one who added it gets to use it
             if (row && !optionForRecord(choices, row)) choices = [...choices, optionFromRecord(field, row, choices.length ? choices : current)]
-            this.data[field] = choices
+            if (dependent) this.dependentOptions[field] = choices
+            else this.data[field] = choices
             const option = optionForRecord(choices, row)
             if (option) this.form.attribute[field] = option
         },
@@ -772,16 +779,21 @@ export default {
         },
         // The option of a saved / default value in the field's current list, if it is there
         optionFor(name, value) {
-            const choices = this.data && this.data[name]
+            const choices = this.choicesFor(name)
             if (!Array.isArray(choices) || value === null || value === undefined || value === '' || typeof value === 'object') return null
             return choices.find(o => o && typeof o === 'object' && String(o.value) === String(value)) || null
+        },
+        // A dropdown's choices: its own filtered list when it follows another dropdown, else the page's list
+        choicesFor(name) {
+            if (name in this.dependentOptions) return this.dependentOptions[name]
+            return this.data ? this.data[name] : undefined
         },
         // A chosen { label, value } keeps the label it was picked with: take the one from the current list
         relabelChosen() {
             const attribute = this.form && this.form.attribute
             if (!attribute || !this.data) return
             Object.keys(attribute).forEach(name => {
-                const choices = this.data[name]
+                const choices = this.choicesFor(name)
                 if (!Array.isArray(choices)) return
                 const relabel = picked => {
                     if (picked === null || picked === undefined || picked === '') return picked
@@ -836,8 +848,12 @@ export default {
                         this.form.attribute[field.name] = field.default
                     }
                 });
+                // Dropdowns that follow another one in this form load their own lists (dependentFields.js)
+                watchDependents(this, attributes, () => this.form.attribute)
+                const names = (attributes || []).map(field => field && field.name);
                 (attributes || []).filter(field => field && field.type === 'select').forEach(({ name, lookup }) => {
                     if (!this.data || Array.isArray(this.data[name])) return
+                    if (names.includes(parentField(name))) return
                     this.lookupFields = [...(this.lookupFields || []).filter(f => f.name !== name), { name, lookup: lookup || name }]
                     lookupChoices(lookup || name, this.$i18n.locale).then(choices => {
                         if (choices && this.data && !Array.isArray(this.data[name])) {

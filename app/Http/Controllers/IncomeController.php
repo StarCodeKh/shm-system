@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Income;
 use App\Models\Settings\Account;
 use App\Models\Settings\Currency;
-use App\Models\Settings\Department;
 use App\Models\Settings\Entity;
 use App\Models\Settings\PaymentMethod;
 use App\Models\Settings\Status;
@@ -61,8 +60,8 @@ class IncomeController extends BaseController
                 'data_fields' => $this->db_table::dataFields(),
                 'form_attributes' => $this->db_table::formAttributes(),
                 'currency_id' => Currency::getSingleOpt(),
-                'department_id' => Department::getSingleOpt(),
-                'entity_id' => [],
+                'entity_id' => Entity::getSingleOpt(),
+                'department_id' => [],
                 'payment_method_id' => PaymentMethod::getSingleOpt(),
                 'account_code' => Account::getAccountCodeList(),
                 'status' => Status::getSingleOpt('STATUS'),

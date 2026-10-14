@@ -73,8 +73,8 @@
                         </div>
 
                         <div class="form-group">
-                            <label>{{ $t('of_nationality') }}</label>
-                            <vs-input v-model="officer.nationality" :placeholder="$tHint('of_nationality')" :name="'nationality'" class="mt-1 w-full" />
+                            <label>{{ $tField('nationality') }}</label>
+                            <vs-input v-model="officer.nationality" :placeholder="$tHint('nationality')" :name="'nationality'" class="mt-1 w-full" />
                         </div>
 
                         <div class="form-group">
@@ -92,22 +92,6 @@
                     <div class="form-grid">
 
                         <div class="form-group">
-                            <label>{{ $t('of_department') }} <span class="required"></span></label>
-                            <div class="input-icon">
-                                <i class="fas fa-envelope"></i>
-                                <v-select :placeholder="$tHint('of_department', 'select')"
-                                    v-on:input="onInitChange($event, '', '', apiEntityByDept)"
-                                    v-validate="'required'" v-model="officer.department_id"
-                                    name="department_id" :options="departments"
-                                    :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
-                                    <span class="text-danger text-sm" v-show="errors.has('department_id')">{{
-                                        $tRequired('department_id')
-                                        }}</span>
-                                <!-- <input type="email" placeholder="example@email.com"> -->
-                            </div>
-                        </div>
-
-                        <div class="form-group">
                             <label>{{ $t('of_entity') }} <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-phone"></i>
@@ -120,11 +104,26 @@
                                         }}</span>
                             </div>
                         </div>
+
                         <div class="form-group">
-                            <label>{{ $t('of_title') }} <span class="required"></span></label>
+                            <label>{{ $tField('department_id') }} <span class="required"></span></label>
+                            <div class="input-icon">
+                                <i class="fas fa-envelope"></i>
+                                <v-select :placeholder="$tHint('department_id', 'select')"
+                                    v-validate="'required'" v-model="officer.department_id"
+                                    name="department_id" :options="dependentOptions.department_id || []"
+                                    :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
+                                    <span class="text-danger text-sm" v-show="errors.has('department_id')">{{
+                                        $tRequired('department_id')
+                                        }}</span>
+                                <!-- <input type="email" placeholder="example@email.com"> -->
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>{{ $tField('title') }} <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-phone"></i>
-                                <v-select :placeholder="$tHint('of_title', 'select')"
+                                <v-select :placeholder="$tHint('title', 'select')"
                                     v-validate="'required'" v-model="officer.title"
                                     name="title" :options="titles"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
@@ -260,8 +259,8 @@
                         </div>
 
                         <div class="form-group">
-                            <label>{{ $t('of_status') }} <span class="required"></span></label>
-                            <v-select :placeholder="$tHint('of_status', 'select')"
+                            <label>{{ $tField('status') }} <span class="required"></span></label>
+                            <v-select :placeholder="$tHint('status', 'select')"
                                     v-validate="'required'" v-model="officer.status"
                                     name="status" :options="statuses"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
@@ -294,6 +293,7 @@ import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
 import vSelect from 'vue-select';
 import DFileManager from '@/views/form-builder/DFileManager.vue';
+import { watchDependents } from "@/dependentFields.js";
 
 export default {
     components: {
@@ -314,7 +314,6 @@ export default {
                 { key: 'status', icon: 'CheckCircleIcon', titleKey: 'of_tab_status' },
             ],
             api: apiConfig._apiOfficer,
-            apiEntityByDept: apiConfig._apiEntityByDept,
             selected: [],
             products: [],
             itemsPerPage: 4,
@@ -362,6 +361,7 @@ export default {
             genders: [],
             titles: [],
             entities: [],
+            dependentOptions: {}, // departments of the chosen unit (dependentFields.js)
             positions: [],
             nssfs: [],
             statuses: [],
@@ -423,51 +423,6 @@ export default {
             this.officer.social_media_alt = null;
             this.officer.remark = null;
         },
-        onInitChange($event, _formAttribute, _formName, _apiRequest) {
-            this.entities = [];
-            this.officer.entity_id = null;
-            let _data = {
-                type: "autocomplete",
-                param: $event
-            };
-
-            return new Promise((resolve, reject) => {
-                axios.post(_apiRequest, _data)
-                    .then((response) => {
-                        this.$vs.notify({
-                            title: 'Message',
-                            text: 'msg.loading',
-                            iconPack: 'feather',
-                            icon: 'icon-check-circle',
-                            color: 'primary',
-                            position: 'top-right'
-                        });
-
-                        switch (_formAttribute) {
-                            case "amount":
-                                this.form.attribute["amount"] = response["data"]["data"];
-                            break;
-                            default:
-                                for (let i = 0; i < response["data"]["data"].length; i++) {
-                                    this.entities.push(response["data"]["data"][i]);
-                                }
-                            break;
-                        }
-
-                    }).catch((error) => {
-                        reject(error)
-                        this.$vs.notify({
-                            title: 'Message',
-                            text: 'msg.save_failed',
-                            iconPack: 'feather',
-                            icon: 'icon-check-circle',
-                            color: 'danger',
-                            position: 'top-right'
-                        })
-                        this.$vs.loading.close();
-                    })
-            })
-        },
         initPassProps(props) {
             switch (props.data.type) {
                 case "xlsx":
@@ -503,7 +458,7 @@ export default {
             return new Promise((resolve, reject) => {
                 axios.get(this.api+"/form")
                     .then((response) => {
-                        this.departments = response.data.data.department_id;
+                        this.entities = response.data.data.entity_id;
                         this.positions = response.data.data.position;
                         this.titles = response.data.data.title;
                         this.genders = response.data.data.gender;
@@ -620,6 +575,7 @@ export default {
     },
     created() {
         this.getData();
+        watchDependents(this, ['entity_id', 'department_id'], () => this.officer);
     },
     mounted() {
         this.isMounted = true;

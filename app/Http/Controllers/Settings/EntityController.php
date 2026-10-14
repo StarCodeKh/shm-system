@@ -219,18 +219,4 @@ class EntityController extends Controller
         return response()->json($data, $status);
     }
 
-
-    public function getOptionByDept(Request $request)
-    {
-        $input = $request->all();
-        $deptId = $input['param']['value'];
-        $status = 200;
-        $boolen = true;
-        $data = [
-            'data' => Entity::getOptionByDept($deptId),
-            'success' => $boolen,
-        ];
-
-        return response()->json($data, $status);
-    }
 }

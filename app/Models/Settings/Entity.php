@@ -54,23 +54,6 @@ class Entity extends Model implements Auditable
         return $data;
     }
 
-    public static function getOptionByDept($deptId)
-    {
-        $data = [];
-        $query = Entity::where('department_id', $deptId);
-        $whereClause = $query;
-        $whereClause->orderByLevel();
-        $queryResult = collect($whereClause->get());
-        foreach ($queryResult as $row) {
-            $data[] = [
-                'label' => $row->code.'-'.$row->name_kh,
-                'value' => $row->id,
-            ];
-        }
-
-        return $data;
-    }
-
     public static function checkQuery($filter)
     {
         $whereClause = '';
