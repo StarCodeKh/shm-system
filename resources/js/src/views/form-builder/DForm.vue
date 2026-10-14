@@ -357,6 +357,7 @@ function forgetLookup(field) {
     Object.keys(lookupRequests).filter(key => key.endsWith(`:${field}`)).forEach(key => delete lookupRequests[key])
 }
 import { quickAddSource, savedRecord, optionForRecord, optionFromRecord } from "@/quickAdd.js"
+import { saveForm, formPayload } from "@/formSave.js"
 import { parentField, chosenValue, dependentChoices, forgetDependentChoices, watchDependents } from "@/dependentFields.js"
 import vSelect from 'vue-select';
 import flatPickr from 'vue-flatpickr-component';
@@ -740,49 +741,29 @@ export default {
             }
             return this.fieldHint(attribute, 'select')
         },
+        // The field's message: its own check's or the server's, else the standard "required" one
         requiredMessage(name) {
-            return requiredMessage(name) // shared with every screen ($tRequired): see i18n.js
+            return this.errors.first(name) || requiredMessage(name) // shared with every screen ($tRequired): see i18n.js
         },
         // Save the form: validate, send once, keep the spinner until the server answers,
         // then show the server's message (or its validation errors) in the user's language.
         async submitForm() {
-            if (this.saving) return
-            const payload = this.formAttributes.map(({ type, name }) => {
-                const value = this.form.attribute[name]
-                return { [name]: type == "select" && value && typeof value === "object" && "value" in value ? value.value : value }
-            })
+            const payload = formPayload(this.formAttributes.map(({ name }) => name), this.form.attribute)
             this.dataFields = payload
-
-            if (!(await this.$validator.validateAll())) {
-                this.notify(this.$t('form_check_fields'), 'danger')
-                this.$nextTick(() => {
-                    const field = this.$el.querySelector('.d-field input[aria-invalid="true"], .d-field .is-invalid, .d-field .text-danger:not([style*="display: none"])')
-                    if (field) field.closest('.d-field').scrollIntoView({ behavior: 'smooth', block: 'center' })
-                })
-                return
-            }
-
-            this.saving = true
-            this.$vs.loading()
-            try {
-                const id = this.dataInfo && this.dataInfo.id
-                const { data } = id
-                    ? await axios.put(this.api + '/' + id, payload)
-                    : await axios.post(this.api, payload)
-                if (data && data.success === false) {
-                    this.notify(this.serverMessage(data) || this.$t('form_save_failed'), 'danger')
-                } else {
-                    this.notify(this.serverMessage(data) || this.$t('form_save'), 'primary')
+            const id = this.dataInfo && this.dataInfo.id
+            await saveForm(this, () => (id ? axios.put(this.api + '/' + id, payload) : axios.post(this.api, payload)), {
+                onInvalid: () => this.scrollToFirstError(),
+                onSaved: data => {
                     this.$emit('saved', data) // the server's answer, with the saved row
                     this.$emit('clickForm', '')
-                }
-            } catch (error) {
-                const data = error.response && error.response.data
-                this.notify(this.serverMessage(data) || this.$t('form_save_failed'), 'danger')
-            } finally {
-                this.saving = false
-                this.$vs.loading.close()
-            }
+                },
+            })
+        },
+        scrollToFirstError() {
+            this.$nextTick(() => {
+                const field = this.$el.querySelector('.d-field input[aria-invalid="true"], .d-field .is-invalid, .d-field .text-danger:not([style*="display: none"])')
+                if (field) field.closest('.d-field').scrollIntoView({ behavior: 'smooth', block: 'center' })
+            })
         },
         serverMessage(data) {
             const message = data && (data.errors || data.message)

@@ -15,6 +15,8 @@ use Auth;
 use CommonService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class OfficerController extends BaseController
@@ -155,6 +157,7 @@ class OfficerController extends BaseController
             $input = $request->all();
             $input[] = ['identity_member_no' => rand(100000000, 9999999999)];
             $dataFields = $this->dataForm($input);
+            $this->checkMember($dataFields, true);
             $data['data'] = $this->db_table::create($dataFields);
             if ($data['data']) {
                 // When Create Member will generate Payment Recurring Cus when the schedule run all Recurring payment will be due every time
@@ -253,6 +256,7 @@ class OfficerController extends BaseController
         if (isset(CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_UPDATE]) && CommonService::permission($this->db_table->getTable())[$this->PERMISSION_ACTION_UPDATE] == true) {
             $input = $request->all();
             $dataFields = $this->dataForm($input);
+            $this->checkMember($dataFields, false);
             $table = $table = $this->db_table::find($id);
             $table->update($dataFields);
             if ($table) {
@@ -277,6 +281,34 @@ class OfficerController extends BaseController
         ];
 
         return response()->json($data, $status);
+    }
+
+    /**
+     * A member as saved: a new one needs what the member form marks required; any save needs a known unit,
+     * a department of that unit and real dates. Fails with 422 { errors: { field: [message] } }:
+     * the form shows each message under its field.
+     * Edits don't require the rest: members brought over from the old system may not have it.
+     */
+    private function checkMember(array $fields, bool $creating): void
+    {
+        $required = $creating ? 'required' : 'nullable';
+        Validator::make($fields, [
+            'first_name' => "{$required}|string|max:150",
+            'last_name' => "{$required}|string|max:150",
+            'latin' => "{$required}|string|max:150",
+            'gender' => $required,
+            'dob' => "{$required}|date",
+            'register_date' => "{$required}|date",
+            'title' => $required,
+            'position' => $required,
+            'telephone_1' => "{$required}|string|max:45",
+            'is_nssf_member' => $required,
+            'status' => $required,
+            'email' => 'nullable|email|max:255',
+            'entity_id' => [$required, 'integer', Rule::exists('entity', 'id')],
+            // Only a department of the chosen unit (department.entity_id)
+            'department_id' => [$required, 'integer', Rule::exists('department', 'id')->where('entity_id', $fields['entity_id'] ?? null)],
+        ])->validate();
     }
 
     public function dataForm($input)

@@ -20,8 +20,7 @@
                             <div class="input-icon">
                                 <i class="fas fa-user"></i>
                                 <vs-input v-validate="'required'" v-model="officer.first_name" :placeholder="$tHint('first_name')" :name="'first_name'" class="mt-1 w-full" />
-                                <span class="text-danger text-sm" v-show="errors.has('first_name')">{{ $tRequired('first_name')
-                                }}</span>
+                                <span class="text-danger text-sm" v-show="errors.has('first_name')">{{ errors.first('first_name') }}</span>
                             </div>
                         </div>
 
@@ -30,8 +29,7 @@
                             <div class="input-icon">
                                 <i class="fas fa-user"></i>
                                  <vs-input v-validate="'required'" v-model="officer.last_name" :placeholder="$tHint('last_name')" :name="'last_name'" class="mt-1 w-full" />
-                                <span class="text-danger text-sm" v-show="errors.has('last_name')">{{ $tRequired('last_name')
-                                }}</span>
+                                <span class="text-danger text-sm" v-show="errors.has('last_name')">{{ errors.first('last_name') }}</span>
                             </div>
                         </div>
 
@@ -40,8 +38,7 @@
                             <div class="input-icon">
                                 <i class="fas fa-user"></i>
                                  <vs-input v-validate="'required'" v-model="officer.latin" :placeholder="$tHint('latin')" :name="'latin'" class="mt-1 w-full" />
-                                <span class="text-danger text-sm" v-show="errors.has('latin')">{{ $tRequired('latin')
-                                }}</span>
+                                <span class="text-danger text-sm" v-show="errors.has('latin')">{{ errors.first('latin') }}</span>
                             </div>
                         </div>
 
@@ -51,17 +48,14 @@
                                     v-validate="'required'" v-model="officer.gender"
                                     name="gender" :options="translated(genders)"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
-                                    <span class="text-danger text-sm" v-show="errors.has('gender')">{{
-                                        $tRequired('gender')
-                                        }}</span>
+                                    <span class="text-danger text-sm" v-show="errors.has('gender')">{{ errors.first('gender') }}</span>
                         </div>
 
                         <div class="form-group">
                             <label>{{ $t('of_dob') }} <span class="required"></span></label>
                              <flat-pickr :placeholder="$tHint('of_dob', 'date')" v-validate="'required'" name="dob"
                                 v-model="officer.dob" class="mt-1 w-full" />
-                            <span class="text-danger text-sm" v-show="errors.has('dob')">{{ $tRequired('dob')
-                            }}</span>
+                            <span class="text-danger text-sm" v-show="errors.has('dob')">{{ errors.first('dob') }}</span>
                         </div>
 
                         <div class="form-group">
@@ -99,9 +93,7 @@
                                     v-validate="'required'" v-model="officer.entity_id"
                                     name="entity_id" :options="entities"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
-                                    <span class="text-danger text-sm" v-show="errors.has('entity_id')">{{
-                                        $tRequired('entity_id')
-                                        }}</span>
+                                    <span class="text-danger text-sm" v-show="errors.has('entity_id')">{{ errors.first('entity_id') }}</span>
                             </div>
                         </div>
 
@@ -113,9 +105,7 @@
                                     v-validate="'required'" v-model="officer.department_id"
                                     name="department_id" :options="dependentOptions.department_id || []"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
-                                    <span class="text-danger text-sm" v-show="errors.has('department_id')">{{
-                                        $tRequired('department_id')
-                                        }}</span>
+                                    <span class="text-danger text-sm" v-show="errors.has('department_id')">{{ errors.first('department_id') }}</span>
                                 <!-- <input type="email" placeholder="example@email.com"> -->
                             </div>
                         </div>
@@ -127,9 +117,7 @@
                                     v-validate="'required'" v-model="officer.title"
                                     name="title" :options="titles"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
-                                    <span class="text-danger text-sm" v-show="errors.has('title')">{{
-                                        $tRequired('title')
-                                        }}</span>
+                                    <span class="text-danger text-sm" v-show="errors.has('title')">{{ errors.first('title') }}</span>
                             </div>
                         </div>
 
@@ -141,9 +129,7 @@
                                     v-validate="'required'" v-model="officer.position"
                                     name="position" :options="positions"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
-                                    <span class="text-danger text-sm" v-show="errors.has('position')">{{
-                                        $tRequired('position')
-                                        }}</span>
+                                    <span class="text-danger text-sm" v-show="errors.has('position')">{{ errors.first('position') }}</span>
                             </div>
                         </div>
 
@@ -158,8 +144,7 @@
                             <div class="input-icon">
                                 <i class="fas fa-phone"></i>
                                 <vs-input v-validate="'required'" v-model="officer.telephone_1" :placeholder="$tHint('of_phone')" :name="'telephone_1'" class="mt-1 w-full" />
-                                <span class="text-danger text-sm" v-show="errors.has('telephone_1')">{{ $tRequired('telephone_1')
-                                }}</span>
+                                <span class="text-danger text-sm" v-show="errors.has('telephone_1')">{{ errors.first('telephone_1') }}</span>
                             </div>
                         </div>
 
@@ -244,8 +229,7 @@
                             <label>{{ $t('of_register_date') }} <span class="required"></span></label>
                                 <flat-pickr :placeholder="$tHint('of_register_date', 'date')" v-validate="'required'" name="register_date"
                                 v-model="officer.register_date" class="mt-1 w-full" />
-                            <span class="text-danger text-sm" v-show="errors.has('register_date')">{{ $tRequired('register_date')
-                            }}</span>
+                            <span class="text-danger text-sm" v-show="errors.has('register_date')">{{ errors.first('register_date') }}</span>
                         </div>
                         <div class="form-group">
                             <label>{{ $t('of_nssf') }} <span class="required"></span></label>
@@ -253,9 +237,7 @@
                                     v-validate="'required'" v-model="officer.is_nssf_member"
                                     name="is_nssf_member" :options="nssfs"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
-                                    <span class="text-danger text-sm" v-show="errors.has('is_nssf_member')">{{
-                                        $tRequired('is_nssf_member')
-                                        }}</span>
+                                    <span class="text-danger text-sm" v-show="errors.has('is_nssf_member')">{{ errors.first('is_nssf_member') }}</span>
                         </div>
 
                         <div class="form-group">
@@ -264,9 +246,7 @@
                                     v-validate="'required'" v-model="officer.status"
                                     name="status" :options="statuses"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
-                                    <span class="text-danger text-sm" v-show="errors.has('status')">{{
-                                        $tRequired('status')
-                                        }}</span>
+                                    <span class="text-danger text-sm" v-show="errors.has('status')">{{ errors.first('status') }}</span>
                         </div>
 
                     </div>
@@ -278,7 +258,7 @@
                     <feather-icon icon="RotateCcwIcon" svgClasses="h-4 w-4" />
                     <span>{{ $t('form_reset') }}</span>
                 </button>
-                <button type="button" class="d-tabform__btn d-tabform__btn--primary" @click="submitForm">
+                <button type="button" class="d-tabform__btn d-tabform__btn--primary" :disabled="saving" @click="submitForm">
                     <feather-icon icon="SaveIcon" svgClasses="h-4 w-4" />
                     <span>{{ $t("btn_process") }}</span>
                 </button>
@@ -294,6 +274,7 @@ import 'flatpickr/dist/flatpickr.css';
 import vSelect from 'vue-select';
 import DFileManager from '@/views/form-builder/DFileManager.vue';
 import { watchDependents } from "@/dependentFields.js";
+import { saveForm, formPayload } from "@/formSave.js";
 
 export default {
     components: {
@@ -318,42 +299,44 @@ export default {
             products: [],
             itemsPerPage: 4,
             isMounted: false,
-            officer: [
-                { photo: null},
-                { first_name: null},
-                { last_name: null},
-                { latin: null},
-                { gender: null},
-                { dob: null},
-                { identity_no: null},
-                { register_date: null},
-                { nationality: null},
-                { title: null},
-                { duty: null},
-                { department_id: null},
-                { entity_id: null},
-                { address: null},
-                { email: null},
-                { bank: null},
-                { bank_code: null},
-                { bank_account_no: null},
-                { updated_bank_acc: null},
-                { position: null},
-                { telephone_1: null},
-                { emergency_person: null},
-                { emergency_relative: null},
-                { telephone_2: null},
-                { is_nssf_member: null},
-                { nssf_card_no: null},
-                { order_level: null},
-                { married_status: null},
-                { status: null},
-                { social_media_fb: null},
-                { social_media_telegram: null},
-                { social_media_whatsapp: null},
-                { social_media_alt: null},
-                { remark: null},
-            ],
+            // Every field of the form, sent as it is (a picked choice sends its value)
+            officer: {
+                photo: null,
+                first_name: null,
+                last_name: null,
+                latin: null,
+                gender: null,
+                dob: null,
+                identity_no: null,
+                register_date: null,
+                nationality: null,
+                title: null,
+                duty: null,
+                department_id: null,
+                entity_id: null,
+                address: null,
+                email: null,
+                bank: null,
+                bank_code: null,
+                bank_account_no: null,
+                updated_bank_acc: null,
+                position: null,
+                telephone_1: null,
+                emergency_person: null,
+                emergency_relative: null,
+                telephone_2: null,
+                is_nssf_member: null,
+                nssf_card_no: null,
+                order_level: null,
+                married_status: null,
+                status: null,
+                social_media_fb: null,
+                social_media_telegram: null,
+                social_media_whatsapp: null,
+                social_media_alt: null,
+                remark: null,
+            },
+            saving: false, // a save is in flight: further clicks are ignored
                 iconExcel: "../images/file-icons/xls.png",
                 iconDoc: "../images/file-icons/doc.png",
                 iconPDF: "../images/file-icons/pdf.png",
@@ -386,42 +369,12 @@ export default {
             const en = this.$i18n.locale === 'en'
             return (options || []).map(option => en && option.label_en ? { ...option, label: option.label_en } : option)
         },
-        clearForm(){
-            this.iconThumnail = null;
-            this.officer.photo = null;
-            this.officer.first_name = null;
-            this.officer.last_name = null;
-            this.officer.latin = null;
-            this.officer.gender = null;
-            this.officer.dob = null;
-            this.officer.identity_no = null;
-            this.officer.register_date = null;
-            this.officer.nationality = null;
-            this.officer.title = null;
-            this.officer.duty = null;
-            this.officer.department_id = null;
-            this.officer.entity_id = null;
-            this.officer.address = null;
-            this.officer.email = null;
-            this.officer.bank = null;
-            this.officer.bank_code = null;
-            this.officer.bank_account_no = null;
-            this.officer.updated_bank_acc = null;
-            this.officer.position = null;
-            this.officer.telephone_1 = null;
-            this.officer.emergency_person = null;
-            this.officer.emergency_relative = null;
-            this.officer.telephone_2 = null;
-            this.officer.is_nssf_member = null;
-            this.officer.nssf_card_no = null;
-            this.officer.order_level = null;
-            this.officer.married_status = null;
-            this.officer.status = null;
-            this.officer.social_media_fb = null;
-            this.officer.social_media_telegram = null;
-            this.officer.social_media_whatsapp = null;
-            this.officer.social_media_alt = null;
-            this.officer.remark = null;
+        // Empty form again: every field, no messages, back at the first step
+        clearForm() {
+            Object.keys(this.officer).forEach(name => { this.officer[name] = null })
+            this.iconThumnail = null
+            this.tab = this.sections[0].key
+            this.$nextTick(() => this.$validator.reset())
         },
         initPassProps(props) {
             switch (props.data.type) {
@@ -475,103 +428,14 @@ export default {
                     });
             });
         },
+        // The standard save (formSave.js): a step with a problem is opened, the form empties after saving
         submitForm() {
-            let _data = [
-                {photo: this.officer.photo},
-                {first_name: this.officer.first_name},
-                {last_name: this.officer.last_name},
-                {latin: this.officer.latin},
-                {gender: this.officer.gender?this.officer.gender.value: null},
-                {dob: this.officer.dob},
-                {identity_no: this.officer.identity_no},
-                {register_date: this.officer.register_date},
-                {nationality: this.officer.nationality},
-                {title: this.officer.title?this.officer.title.value:null},
-                {duty: this.officer.duty},
-                {department_id: this.officer.department_id?this.officer.department_id.value:null},
-                {entity_id: this.officer.entity_id?this.officer.entity_id.value:null},
-                {address: this.officer.address},
-                {email: this.officer.email},
-                {bank: this.officer.bank},
-                {bank_code: this.officer.bank_code},
-                {bank_account_no: this.officer.bank_account_no},
-                {updated_bank_acc: this.officer.updated_bank_acc},
-                {position: this.officer.position?this.officer.position.value:null},
-                {telephone_1: this.officer.telephone_1},
-                {emergency_person: this.officer.emergency_person},
-                {emergency_relative: this.officer.emergency_relative?this.officer.emergency_relative.value:null},
-                {telephone_2: this.officer.telephone_2},
-                {is_nssf_member: this.officer.is_nssf_member?this.officer.is_nssf_member.value:null},
-                {nssf_card_no: this.officer.nssf_card_no},
-                {order_level: this.officer.order_level},
-                {married_status: this.officer.married_status?this.officer.married_status.value:null},
-                {status: this.officer.status?this.officer.status.value:null},
-                {social_media_fb: this.officer.social_media_fb},
-                {social_media_telegram: this.officer.social_media_telegram},
-                {social_media_whatsapp: this.officer.social_media_whatsapp},
-                {social_media_alt: this.officer.social_media_alt},
-                {remark: this.officer.remark},
-            ];
-            this.$validator.validateAll().then(result => {
-                setTimeout(() => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }, 100); // ពន្យារពេល ១០០
-                if (result) {
-                    this.$vs.loading();
-                    return new Promise((resolve, reject) => {
-                        axios.post(this.api, _data)
-                            .then((response) => {
-                                if (response.data.success) {
-                                    this.$vs.notify({
-                                        title: 'ការជូនដំណឹង',
-                                        text: response.data.message,
-                                        iconPack: 'feather',
-                                        icon: 'icon-check-circle',
-                                        color: 'primary',
-                                        position: 'top-right'
-                                    });
-                                    this.clearForm();
-                                    this.officer_id = null;
-                                    this.paymentHistories = [];
-                                    this.$vs.loading.close();
-                                }else{
-                                    this.$vs.notify({
-                                        title: 'ការជូនដំណឹង',
-                                        text: response.data.message,
-                                        iconPack: 'feather',
-                                        icon: 'icon-check-circle',
-                                        color: 'danger',
-                                        position: 'top-right'
-                                    })
-                                    this.$vs.loading.close();
-                                }
-                            }).catch((error) => {
-                                reject(error)
-                                this.$vs.notify({
-                                    title: 'Message',
-                                    text: 'msg.action_failed',
-                                    iconPack: 'feather',
-                                    icon: 'icon-check-circle',
-                                    color: 'danger',
-                                    position: 'top-right'
-                                })
-                                this.$vs.loading.close();
-                            })
-                        });
-                }else{
-                    this.$refs.tabs.focusFirstError();
-                    this.$vs.notify({
-                        title: 'ការជូនដំណឹង',
-                        text: 'msg.incomplete',
-                        iconPack: 'feather',
-                        icon: 'icon-check-circle',
-                        color: 'danger',
-                        position: 'top-right'
-                    });
-                    this.$vs.loading.close();
-                }
-            });
-        }
+            const payload = formPayload(Object.keys(this.officer), this.officer)
+            return saveForm(this, () => axios.post(this.api, payload), {
+                onInvalid: () => this.$refs.tabs.focusFirstError(),
+                onSaved: () => this.clearForm(),
+            })
+        },
     },
     created() {
         this.getData();

@@ -19,7 +19,7 @@
                                     :filterable="false" :placeholder="$t('pay_search_member_hint')" :dir="$vs.rtl ? 'rtl' : 'ltr'">
                                     <template #no-options>{{ $t('pay_search_member_empty') }}</template>
                                 </v-select>
-                                <span class="text-danger" v-show="errors.has('officer_id')">{{ $t('payable_required_officer') }}</span>
+                                <span class="text-danger" v-show="errors.has('officer_id')">{{ serverError(errors, 'officer_id') || $t('payable_required_officer') }}</span>
                             </div>
                             <div class="form-group">
                                 <label>{{ $t('pay_member_no') }}</label>
@@ -45,7 +45,7 @@
                                     v-model="payable" @input="onSelectPayable($event)" :filterable="false"
                                     :placeholder="$t('form_select_field', { field: $t('pay_year_owed') })"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" />
-                                <span class="text-danger" v-show="errors.has('payable')">{{ $t('payable_required_year') }}</span>
+                                <span class="text-danger" v-show="errors.has('payable')">{{ serverError(errors, 'payable') || $t('payable_required_year') }}</span>
                             </div>
                             <div class="form-group">
                                 <label>{{ $t('pay_amount_total') }}</label>
@@ -55,7 +55,7 @@
                                 <label>{{ $t('pay_date') }} <span class="required"></span></label>
                                 <flat-pickr v-model="payment_date" name="payment_date" v-validate="'required'" class="w-full"
                                     :placeholder="$t('form_pick_date')" />
-                                <span class="text-danger" v-show="errors.has('payment_date')">{{ $t('payable_required_date') }}</span>
+                                <span class="text-danger" v-show="errors.has('payment_date')">{{ serverError(errors, 'payment_date') || $t('payable_required_date') }}</span>
                             </div>
                             <div class="form-group">
                                 <label>{{ $t('pay_method') }} <span class="required"></span></label>
@@ -63,14 +63,14 @@
                                     :options="paymentMethods" v-model="payment_method_id" :filterable="false"
                                     :placeholder="$t('form_select_field', { field: $t('pay_method') })"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" />
-                                <span class="text-danger" v-show="errors.has('payment_method_id')">{{ $t('payable_required_method') }}</span>
+                                <span class="text-danger" v-show="errors.has('payment_method_id')">{{ serverError(errors, 'payment_method_id') || $t('payable_required_method') }}</span>
                             </div>
                             <div class="form-group">
                                 <label>{{ $t('pay_status') }} <span class="required"></span></label>
                                 <v-select label="label" name="status" v-validate="'required'" :options="paymentStatus"
                                     v-model="status" :filterable="false" :dir="$vs.rtl ? 'rtl' : 'ltr'"
                                     :placeholder="$t('form_select_field', { field: $t('pay_status') })" />
-                                <span class="text-danger" v-show="errors.has('status')">{{ $t('payable_required_status') }}</span>
+                                <span class="text-danger" v-show="errors.has('status')">{{ serverError(errors, 'status') || $t('payable_required_status') }}</span>
                             </div>
                         </div>
                     </div>
@@ -96,7 +96,7 @@
                         <feather-icon icon="RotateCcwIcon" svgClasses="h-4 w-4" />
                         <span>{{ $t('form_reset') }}</span>
                     </button>
-                    <button type="button" class="d-tabform__btn d-tabform__btn--primary" @click="submitForm">
+                    <button type="button" class="d-tabform__btn d-tabform__btn--primary" :disabled="saving" @click="submitForm">
                         <feather-icon icon="SaveIcon" svgClasses="h-4 w-4" />
                         <span>{{ $t("btn_process") }}</span>
                     </button>
@@ -141,10 +141,12 @@ import axios from "@/axios.js";
 import apiConfig from "@/apiConfig.js";
 import vSelect from 'vue-select';
 import DFileManager from '@/views/form-builder/DFileManager.vue';
+import { saveForm, serverError } from "@/formSave.js";
 export default {
     data() {
         return {
             tab: 'member',
+            saving: false, // a save is in flight: further clicks are ignored
             sections: [
                 { key: 'member', icon: 'UserIcon', titleKey: 'pay_tab_member' },
                 { key: 'payment', icon: 'CreditCardIcon', titleKey: 'pay_tab_payment' },
@@ -308,69 +310,22 @@ export default {
             this.tab = 'member';
             this.$nextTick(() => this.$validator.reset());
         },
+        // The standard save (formSave.js): a step with a problem is opened, the form empties after saving
         submitForm() {
-            let _data = [
-                {officer_id: this.officer_id["value"]},
-                {account_id: 0},
-                {payment_method_id: this.payment_method_id["value"]},
-                {payment_date: this.payment_date},
-                {status: this.status["value"]},
-                {remark: this.remark},
-            ];
-            this.$validator.validateAll().then(result => {
-                if (result) {
-                    this.$vs.loading();
-                    return new Promise((resolve, reject) => {
-                        axios.put(this.apiPayable+"/"+this.payable["id"], _data)
-                            .then((response) => {
-                                if (response.data.success) {
-                                    this.$vs.notify({
-                                        title: 'Message',
-                                        text: response.data.message,
-                                        iconPack: 'feather',
-                                        icon: 'icon-check-circle',
-                                        color: 'primary',
-                                        position: 'top-right'
-                                    })
-                                    this.resetAll();
-                                    this.$vs.loading.close();
-                                }else{
-                                    this.$vs.notify({
-                                        title: 'Message',
-                                        text: response.data.message || 'msg.check_criteria',
-                                        iconPack: 'feather',
-                                        icon: 'icon-check-circle',
-                                        color: 'danger',
-                                        position: 'top-right'
-                                    })
-                                    this.$vs.loading.close();
-                                }
-                            }).catch((error) => {
-                                reject(error)
-                                this.$vs.notify({
-                                    title: 'Message',
-                                    text: 'msg.action_failed',
-                                    iconPack: 'feather',
-                                    icon: 'icon-check-circle',
-                                    color: 'danger',
-                                    position: 'top-right'
-                                })
-                                this.$vs.loading.close();
-                            })
-                        });
-                }else{
-                    this.$refs.tabs.focusFirstError();
-                    this.$vs.notify({
-                        title: 'Message',
-                        text: 'msg.check_criteria',
-                        iconPack: 'feather',
-                        icon: 'icon-check-circle',
-                        color: 'danger',
-                        position: 'top-right'
-                    })
-                }
-            });
-        }
+            const payload = [
+                { officer_id: this.officer_id && this.officer_id.value },
+                { account_id: 0 },
+                { payment_method_id: this.payment_method_id && this.payment_method_id.value },
+                { payment_date: this.payment_date },
+                { status: this.status && this.status.value },
+                { remark: this.remark },
+            ]
+            return saveForm(this, () => axios.put(this.apiPayable + "/" + this.payable.id, payload), {
+                onInvalid: () => this.$refs.tabs.focusFirstError(),
+                onSaved: () => this.resetAll(),
+            })
+        },
+        serverError,
     },
     created() {
         let _search = null;

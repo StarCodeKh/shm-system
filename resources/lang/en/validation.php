@@ -153,6 +153,13 @@ return [
         'landing_icon' => 'icon',
         'landing_stat' => 'number shown',
         'order_level' => 'order',
+        'dob' => 'date of birth',
+        'entity_id' => 'unit',
+        'department_id' => 'department',
+        'latin' => 'Latin name',
+        'telephone_1' => 'phone number',
+        'register_date' => 'membership date',
+        'is_nssf_member' => 'NSSF card',
     ],
 
 ];

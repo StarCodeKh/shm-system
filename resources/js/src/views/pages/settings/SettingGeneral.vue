@@ -19,7 +19,7 @@
                         <vs-input v-validate="'required'" v-model="form.attribute[formAttribute.name]"
                             :placeholder="$tField(formAttribute.name)" :name="formAttribute.name" class="mt-1 w-full" />
                         <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
-                            $tRequired(formAttribute.name)
+                            errors.first(formAttribute.name)
                         }}</span>
                     </span>
                     <vs-input v-else v-validate="''" :placeholder="$tField(formAttribute.name)"
@@ -38,7 +38,7 @@
                             v-model="form.attribute[formAttribute.name]" :placeholder="secretHint(formAttribute.name)"
                             autocomplete="new-password" :name="formAttribute.name" class="mt-1 w-full" />
                         <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
-                            $tRequired(formAttribute.name)
+                            errors.first(formAttribute.name)
                         }}</span>
                     </span>
                     <vs-input type="password" v-else v-validate="''" :placeholder="secretHint(formAttribute.name)"
@@ -53,7 +53,7 @@
                             v-model="form.attribute[formAttribute.name]" icon-inc="expand_less" icon-dec="expand_more"
                             class="mt-1 w-full" />
                         <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">
-                            {{ $tRequired(formAttribute.name) }}
+                            {{ errors.first(formAttribute.name) }}
                         </span>
                     </span>
                     <vs-input type="number" v-validate="''" v-else :name="formAttribute.name"
@@ -78,7 +78,7 @@
                                 :name="formAttribute.name" :options="data[formAttribute.name]"
                                 :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
                             <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
-                                $tRequired(formAttribute.name)
+                                errors.first(formAttribute.name)
                             }}</span>
                         </template>
                         <template v-if="formAttribute.hasFormData">
@@ -93,7 +93,7 @@
                                 v-model="form.attribute[formAttribute.name]" :options="data[formAttribute.name]"
                                 :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-1 w-full" />
                             <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
-                                $tRequired(formAttribute.name)
+                                errors.first(formAttribute.name)
                             }}</span>
                         </template>
                     </span>
@@ -122,7 +122,7 @@
                             <vs-select-item :key="index" :value="item.value" :text="item.label"
                                 v-for="(item, index) in data[formAttribute.name]" />
                         </vs-select>
-                        <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{ $tRequired(formAttribute.name)
+                        <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{ errors.first(formAttribute.name)
                             }}</span>
                     </span>
                     <template v-if="formAttribute.hasFormData">
@@ -162,7 +162,7 @@
                     <span v-if="formAttribute.required">
                         <vs-textarea v-validate="'required'" class="mt-1 w-full"
                             v-model="form.attribute[formAttribute.name]" />
-                        <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{ $tRequired(formAttribute.name)
+                        <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{ errors.first(formAttribute.name)
                             }}</span>
                     </span>
                     <span v-else>
@@ -176,7 +176,7 @@
                     <span v-if="formAttribute.required">
                         <flat-pickr v-validate="'required'" :name="formAttribute.name"
                             v-model="form.attribute[formAttribute.name]" class="mt-1 w-full" />
-                        <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{ $tRequired(formAttribute.name)
+                        <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{ errors.first(formAttribute.name)
                             }}</span>
                     </span>
                     <span v-else>
@@ -202,7 +202,7 @@
                                         class="mt-1 w-full" />
                                     <span class="text-danger text-sm"
                                         v-show="errors.has(childformAttribute.name)">{{
-                                            $tRequired(childformAttribute.name)
+                                            errors.first(childformAttribute.name)
                                         }}</span>
                                 </span>
                                 <vs-input v-else :placeholder="$tField(childformAttribute.name)"
@@ -218,7 +218,7 @@
                                         v-model="form.attribute[childformAttribute.name]" icon-inc="expand_less"
                                         icon-dec="expand_more" class="mt-1 w-full" />
                                     <span class="text-danger text-sm" v-show="errors.has(childformAttribute.name)">{{
-                                        $tRequired(childformAttribute.name)
+                                        errors.first(childformAttribute.name)
                                     }}</span>
                                 </span>
                                 <vs-input-number v-else :name="childformAttribute.name"
@@ -236,7 +236,7 @@
                                             v-for="(item, index) in data[childformAttribute.name]" />
                                     </vs-select>
                                     <span class="text-danger text-sm" v-show="errors.has(childformAttribute.name)">{{
-                                        $tRequired(childformAttribute.name)
+                                        errors.first(childformAttribute.name)
                                     }}</span>
                                 </span>
                                 <span v-else>
@@ -269,7 +269,7 @@
                                     <vs-textarea v-validate="'required'" class="mt-1 w-full"
                                         v-model="form.attribute[childformAttribute.name]" />
                                     <span class="text-danger text-sm" v-show="errors.has(childformAttribute.name)">{{
-                                        $tRequired(childformAttribute.name)
+                                        errors.first(childformAttribute.name)
                                     }}</span>
                                 </span>
                                 <span v-else>
@@ -285,7 +285,7 @@
                                     <flat-pickr v-validate="'required'" :name="childformAttribute.name"
                                         v-model="form.attribute[childformAttribute.name]" class="mt-1 w-full" />
                                     <span class="text-danger text-sm" v-show="errors.has(childformAttribute.name)">{{
-                                        $tRequired(childformAttribute.name)
+                                        errors.first(childformAttribute.name)
                                     }}</span>
                                 </span>
                                 <span v-else>
@@ -320,7 +320,7 @@
         </fieldset>
 
         <span v-if="canUpdate" class="pull-right">
-            <vs-button type="filled" @click.prevent="submitForm" class="mt-5 block">{{
+            <vs-button type="filled" :disabled="saving" @click.prevent="submitForm" class="mt-5 block">{{
                 $t("btn_save") }}</vs-button>
         </span>
 
@@ -332,6 +332,7 @@
 <script>
 import { gridClass } from "@/formGrid.js";
 import axios from "@/axios.js"
+import { saveForm, formPayload } from "@/formSave.js"
 import { loadSite } from "@/site.js"
 import vSelect from 'vue-select';
 import apiConfig from "@/apiConfig.js"
@@ -345,6 +346,7 @@ export default {
     },
     data() {
         return {
+            saving: false, // a save is in flight: further clicks are ignored
             data: {
                 config_country: []
             },
@@ -803,72 +805,15 @@ this.$vs.notify({
     secretHint(name) {
         return this.secretKeys.includes(name) ? this.$t('setting_secret_keep') : this.$tField(name);
     },
+    // The standard save (formSave.js): every field checked, one save at a time, the server's field errors under their fields
     submitForm() {
-        let _d;
-        this.dataFields = [];
-        let _formAttribute = this.formAttributes;
-        this.formAttributes.forEach(_formAttribute => {
-            if (_formAttribute["type"] == "select") {
-                try {
-                    _d = {
-                        // [_formAttribute["name"]]: this.form.attribute[_formAttribute["name"]]
-                        [_formAttribute["name"]]: this.form.attribute[_formAttribute["name"]].value
-                    }
-                } catch (e) {
-                    _d = {
-                        [_formAttribute["name"]]: this.form.attribute[_formAttribute["name"]]
-                    }
-                }
-            } else {
-                _d = {
-                    [_formAttribute["name"]]: this.form.attribute[_formAttribute["name"]]
-                }
-            }
-            this.dataFields.push(_d);
-        });
-        this.$validator.validateAll().then(result => {
-            if (result) {
-                let _data = this.dataFields;
-                return new Promise((resolve, reject) => {
-                    axios.put(this.api + '/' + "update", _data)
-                        .then((response) => {
-                            if (response.data.success == false) {
-                                this.$vs.notify({
-                                    title: 'Message',
-                                    text: response.data.message,
-                                    iconPack: 'feather',
-                                    icon: 'icon-check-circle',
-                                    color: 'danger',
-                                    position: 'top-right'
-                                })
-                            } else {
-                                this.$vs.notify({
-                                    title: 'Message',
-                                    text: response.data.message,
-                                    iconPack: 'feather',
-                                    icon: 'icon-check-circle',
-                                    color: 'primary',
-                                    position: 'top-right'
-                                })
-                                loadSite(true) // the footer shows the new name / organisation right away
-                                this.$emit('clickForm', '');
-                            }
-                        }).catch((error) => {
-                            reject(error)
-                            this.$vs.notify({
-                                title: 'Message',
-                                text: 'msg.action_failed',
-                                iconPack: 'feather',
-                                icon: 'icon-check-circle',
-                                color: 'danger',
-                                position: 'top-right'
-                            })
-                            this.$vs.loading.close();
-                        })
-                })
-
-            }
-            this.$vs.loading.close();
+        const payload = formPayload(this.formAttributes.map(({ name }) => name), this.form.attribute)
+        this.dataFields = payload
+        return saveForm(this, () => axios.put(this.api + '/update', payload), {
+            onSaved: () => {
+                loadSite(true) // the footer shows the new name / organisation right away
+                this.$emit('clickForm', '')
+            },
         })
     }
     },

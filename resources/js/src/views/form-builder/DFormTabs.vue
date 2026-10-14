@@ -392,6 +392,13 @@ export default {
             display: flex;
         }
 
+        /* Saving: the button waits for the answer */
+        &:disabled {
+            opacity: .6;
+            cursor: wait;
+            pointer-events: none;
+        }
+
         &:hover {
             color: rgb(var(--vs-primary));
             border-color: rgba(var(--vs-primary), .5);

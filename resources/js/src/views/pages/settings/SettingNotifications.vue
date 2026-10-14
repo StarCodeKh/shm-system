@@ -35,7 +35,7 @@
         <!-- Save & Reset Button -->
         <div v-if="canUpdate" class="flex flex-wrap items-center justify-end mt-base">
             <span class="pull-right">
-                <vs-button type="filled" @click.prevent="submitForm" class="mt-5 block">{{ $t("btn_save") }}</vs-button>
+                <vs-button type="filled" :disabled="saving" @click.prevent="submitForm" class="mt-5 block">{{ $t("btn_save") }}</vs-button>
             </span>
         </div>
 
@@ -44,10 +44,12 @@
 
 <script>
 import axios from "@/axios.js"
+import { saveForm, formPayload } from "@/formSave.js"
 import apiConfig from "@/apiConfig.js"
 export default {
     data() {
         return {
+            saving: false, // a save is in flight: further clicks are ignored
             api: apiConfig._apiConfiguration,
             canUpdate: true, // from the API: may this role save the notification switches
             form: {
@@ -170,70 +172,14 @@ export default {
             }
             this.getDataTable(_search_criteria);
         },
+        // The standard save (formSave.js): every field checked, one save at a time, the server's field errors under their fields
         submitForm() {
-            let _d;
-            this.dataFields = [];
-            let _formAttribute = this.formAttributes;
-            this.formAttributes.forEach(_formAttribute => {
-                if (_formAttribute["type"] == "select") {
-                    try {
-                        _d = {
-                            [_formAttribute["name"]]: this.form.attribute[_formAttribute["name"]].value
-                        }
-                    } catch (e) {
-                        _d = {
-                            [_formAttribute["name"]]: this.form.attribute[_formAttribute["name"]]
-                        }
-                    }
-                } else {
-                    _d = {
-                        [_formAttribute["name"]]: this.form.attribute[_formAttribute["name"]]
-                    }
-                }
-                this.dataFields.push(_d);
-            });
-
-            this.$validator.validateAll().then(result => {
-                if (result) {
-                    let _data = this.dataFields;
-                    return new Promise((resolve, reject) => {
-                        axios.put(this.api + '/' + "update", _data)
-                            .then((response) => {
-                                if (response.data.success == false) {
-                                    this.$vs.notify({
-                                        title: 'Message',
-                                        text: response.data.message,
-                                        iconPack: 'feather',
-                                        icon: 'icon-check-circle',
-                                        color: 'danger',
-                                        position: 'top-right'
-                                    })
-                                } else {
-                                    this.$vs.notify({
-                                        title: 'Message',
-                                        text: response.data.message,
-                                        iconPack: 'feather',
-                                        icon: 'icon-check-circle',
-                                        color: 'primary',
-                                        position: 'top-right'
-                                    })
-                                    this.$emit('clickForm', '');
-                                }
-                            }).catch((error) => {
-                                reject(error)
-                                this.$vs.notify({
-                                    title: 'Message',
-                                    text: 'msg.action_failed',
-                                    iconPack: 'feather',
-                                    icon: 'icon-check-circle',
-                                    color: 'danger',
-                                    position: 'top-right'
-                                })
-                                this.$vs.loading.close();
-                            })
-                    })
-                }
-                this.$vs.loading.close();
+            const payload = formPayload(this.formAttributes.map(({ name }) => name), this.form.attribute)
+            this.dataFields = payload
+            return saveForm(this, () => axios.put(this.api + '/update', payload), {
+                onSaved: () => {
+                    this.$emit('clickForm', '')
+                },
             })
         }
     },
