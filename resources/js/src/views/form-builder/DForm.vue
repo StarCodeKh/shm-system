@@ -79,7 +79,7 @@
                     </button>
                     <span v-if="formAttribute.required">
                         <template v-if="formAttribute.hasFilter">
-                            <v-select :placeholder="fieldHint(formAttribute, 'select')"
+                            <v-select :placeholder="selectHint(formAttribute)"
                                 v-on:input="onInitChange($event, formAttribute.filterObj, formAttribute.name, formAttribute.api)"
                                 v-validate="'required'" v-model="form.attribute[formAttribute.name]"
                                 :name="formAttribute.name" :options="choicesFor(formAttribute.name)"
@@ -89,7 +89,7 @@
                                 }}</span>
                         </template>
                         <template v-else>
-                            <v-select :placeholder="fieldHint(formAttribute, 'select')" v-validate="'required'" :name="formAttribute.name"
+                            <v-select :placeholder="selectHint(formAttribute)" v-validate="'required'" :name="formAttribute.name"
                                 v-model="form.attribute[formAttribute.name]" :options="choicesFor(formAttribute.name)"
                                 :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-1 w-full" />
                             <span class="text-danger text-sm" v-show="errors.has(formAttribute.name)">{{
@@ -97,7 +97,7 @@
                                 }}</span>
                         </template>
                         <template v-if="formAttribute.hasFormData">
-                            <v-select :placeholder="fieldHint(formAttribute, 'select')" v-validate="''"
+                            <v-select :placeholder="selectHint(formAttribute)" v-validate="''"
                                 v-on:input="onInitFormData($event, formAttribute.filterObj, formAttribute.name, formAttribute.api)"
                                 v-model="form.attribute[formAttribute.name]" :name="formAttribute.name"
                                 :options="choicesFor(formAttribute.name)" :dir="$vs.rtl ? 'rtl' : 'ltr'"
@@ -106,14 +106,14 @@
                     </span>
                     <span v-else>
                         <template v-if="formAttribute.hasFilter">
-                            <v-select :placeholder="fieldHint(formAttribute, 'select')" v-validate="''"
+                            <v-select :placeholder="selectHint(formAttribute)" v-validate="''"
                                 v-on:input="onInitChange($event, formAttribute.filterObj, formAttribute.name, formAttribute.api)"
                                 v-model="form.attribute[formAttribute.name]" :name="formAttribute.name"
                                 :options="choicesFor(formAttribute.name)" :dir="$vs.rtl ? 'rtl' : 'ltr'"
                                 class="mt-2 w-full" />
                         </template>
                         <template v-else>
-                            <v-select :placeholder="fieldHint(formAttribute, 'select')" v-validate="''" :name="formAttribute.name"
+                            <v-select :placeholder="selectHint(formAttribute)" v-validate="''" :name="formAttribute.name"
                                 v-model="form.attribute[formAttribute.name]" :options="choicesFor(formAttribute.name)"
                                 :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-1 w-full" />
                         </template>
@@ -134,7 +134,7 @@
                         }}</span>
                     </span>
                     <template v-if="formAttribute.hasFormData">
-                        <v-select :placeholder="fieldHint(formAttribute, 'select')" v-validate="''"
+                        <v-select :placeholder="selectHint(formAttribute)" v-validate="''"
                             v-on:input="onInitFormData($event, formAttribute.filterObj, formAttribute.name, formAttribute.api)"
                             v-model="form.attribute[formAttribute.name]" :name="formAttribute.name"
                             :options="choicesFor(formAttribute.name)" :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />
@@ -488,6 +488,11 @@ export default {
                     return
                 }
             }
+            // A dropdown that follows another one (dependentFields.js): its new choice starts under the one picked here,
+            // e.g. a department added next to the unit field belongs to that unit
+            const parent = parentField(field)
+            const parentValue = parent && chosenValue(this.form.attribute[parent])
+            if (parentValue) fields = fields.map(f => (f && f.name === parent ? { ...f, default: parentValue } : f))
             // Its own dropdowns start from this form's lists; missing ones come from the shared lookup
             this.quickAdd = { field, api: source.api, fields, data: { ...(this.data || {}) }, key: Date.now() } // a blank form each time
             // Vuesax puts every popup first in <body> when it is created, and equal z-index stacks by page order:
@@ -726,6 +731,14 @@ export default {
         // Never the label again (it's already shown above the field).
         fieldHint(attribute, kind = 'text') {
             return fieldHint(attribute && attribute.name, kind) // shared with every screen ($tHint): see i18n.js
+        },
+        // A dropdown that follows another one says which to pick first while it has nothing to list
+        selectHint(attribute) {
+            const parent = parentField(attribute && attribute.name)
+            if (parent && attribute.name in this.dependentOptions && !chosenValue(this.form.attribute[parent])) {
+                return this.$t('form_select_parent_first', { field: fieldLabel(parent) })
+            }
+            return this.fieldHint(attribute, 'select')
         },
         requiredMessage(name) {
             return requiredMessage(name) // shared with every screen ($tRequired): see i18n.js

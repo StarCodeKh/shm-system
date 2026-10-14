@@ -20,8 +20,8 @@ return new class extends Migration
         Schema::table('account', function (Blueprint $table) {
             $table->foreign('status', 'tbl_account_status_foreign')->references('id')->on('mef_status');
         });
-        Schema::table('entity', function (Blueprint $table) {
-            $table->foreign('department_id', 'tbl_entity_department_id_foreign')->references('id')->on('department');
+        Schema::table('department', function (Blueprint $table) {
+            $table->foreign('entity_id', 'tbl_department_entity_id_foreign')->references('id')->on('entity');
         });
         Schema::table('entity_member', function (Blueprint $table) {
             $table->foreign('entity_id', 'tbl_entity_member_entity_id_foreign')->references('id')->on('entity');
@@ -93,8 +93,8 @@ return new class extends Migration
         Schema::table('account', function (Blueprint $table) {
             $table->dropForeign('tbl_account_status_foreign');
         });
-        Schema::table('entity', function (Blueprint $table) {
-            $table->dropForeign('tbl_entity_department_id_foreign');
+        Schema::table('department', function (Blueprint $table) {
+            $table->dropForeign('tbl_department_entity_id_foreign');
         });
         Schema::table('entity_member', function (Blueprint $table) {
             $table->dropForeign('tbl_entity_member_entity_id_foreign');

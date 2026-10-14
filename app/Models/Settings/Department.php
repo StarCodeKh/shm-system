@@ -21,6 +21,12 @@ class Department extends Model implements Auditable
 
     public $timestamps = false;
 
+    // The unit (អង្គភាព) the department belongs to
+    public function entity()
+    {
+        return $this->belongsTo(Entity::class, 'entity_id');
+    }
+
     // A user tied to a unit (users.entity_id) only gets that unit's departments
     public static function getSingleOpt()
     {
@@ -29,15 +35,10 @@ class Department extends Model implements Auditable
         return $entityId ? self::getOptionByEntity($entityId) : self::options(Department::whereNotDeleted());
     }
 
-    // Sections of one general department: a section's code starts with its entity's code (entity 01 -> 010001, 010002...)
+    // The departments of one unit (department.entity_id)
     public static function getOptionByEntity($entityId)
     {
-        $entityCode = Entity::where('id', $entityId)->value('code');
-        if (! $entityCode) {
-            return [];
-        }
-
-        return self::options(Department::whereNotDeleted()->where('code', 'like', $entityCode.'%'));
+        return self::options(Department::whereNotDeleted()->where('entity_id', $entityId));
     }
 
     private static function options($query)
@@ -56,7 +57,7 @@ class Department extends Model implements Auditable
     public static function checkQuery($filter)
     {
         $whereClause = '';
-        $query = Department::orderByFilter($filter);
+        $query = Department::with('entity')->orderByFilter($filter);
         $whereClause = $query;
         if ($filter['search_field']) {
             $arraySingle = call_user_func_array('array_merge', $filter['search_field']);

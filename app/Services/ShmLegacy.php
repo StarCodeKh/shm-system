@@ -42,6 +42,42 @@ class ShmLegacy
         return is_readable($file) && str_contains((string) file_get_contents($file, false, null, 0, 200), 'PostgreSQL database dump');
     }
 
+    /**
+     * The id of an old operating unit in $departments (code => id), or null when unknown.
+     * Some old codes carry an extra zero (HD0001 for HD001): matched on their letters and number.
+     */
+    public static function departmentId(array $departments, ?string $code): ?int
+    {
+        if (isset($departments[$code])) {
+            return $departments[$code];
+        }
+        $key = fn ($code) => preg_match('/^(\D+)(\d+)$/', (string) $code, $m) ? $m[1].(int) $m[2] : null;
+        if ($key($code) === null) {
+            return null;
+        }
+        foreach ($departments as $known => $id) {
+            if ($key($known) === $key($code)) {
+                return $id;
+            }
+        }
+
+        return null;
+    }
+
+    /** The id of the unit in $entities (code => id) whose code a department code starts with (the longest one), or null */
+    public static function entityId(array $entities, ?string $departmentCode): ?int
+    {
+        $found = null;
+        foreach ($entities as $code => $id) {
+            $code = (string) $code;
+            if ($code !== '' && str_starts_with((string) $departmentCode, $code) && ($found === null || strlen($code) > strlen($found))) {
+                $found = $code;
+            }
+        }
+
+        return $found === null ? null : $entities[$found];
+    }
+
     /** A member; $entityId / $departmentId: the ids of its old business / operating unit (null when unknown) */
     public function officer(array $row, ?int $entityId, ?int $departmentId): array
     {

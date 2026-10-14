@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Concerns\ImportsFromTemplate;
 use App\Http\Controllers\Controller;
-use App\Models\Settings\Department;
 use App\Models\Settings\Entity;
 use App\Models\Settings\Status;
 use App\Services\FormSchema;
@@ -70,7 +69,6 @@ class EntityController extends Controller
                 'model_name' => $this->db_table->getTable(),
                 'data_fields' => $this->dataFields(),
                 'status' => Status::getSingleOpt('STATUS'),
-                'department_id' => Department::getSingleOpt(),
             ];
             $status = 200;
             $data['is_display'] = true;

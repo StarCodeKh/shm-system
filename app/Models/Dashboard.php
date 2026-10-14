@@ -1014,7 +1014,6 @@ class Dashboard extends Model implements Auditable
                 'id',
                 'parent_id',
                 'code',
-                'department_id',
                 'name_kh',
                 'name_en'
             )

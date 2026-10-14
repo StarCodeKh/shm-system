@@ -21,8 +21,8 @@ use Illuminate\Support\Facades\DB;
  *
  *   00_old_system.xlsx         every old table and column: where it went, or why it is not needed
  *   00_mapping.xlsx            every new column: where it comes from (old table.column) and how it is converted
- *   01_department.xlsx         Settings > Department          (old operating units)
- *   02_entity.xlsx             Settings > Entity              (old business units)
+ *   01_entity.xlsx             Settings > Entity              (old business units)
+ *   02_department.xlsx         Settings > Department          (old operating units; each names its entity)
  *   03_payment_type.xlsx       Settings > Payment Type        (old benefit types)
  *   04_officer.xlsx            Member                         (old customers)
  *   05_officer_payable_NN.xlsx Member > Payable               (old receipt lines; cancelled ones are Void)
@@ -53,14 +53,6 @@ class ExportShmExcel extends Command
 
     // file => [column => [old source, how]]; columns not listed are left empty
     private const MAPPING = [
-        'department' => [
-            'id' => ['', 'id of the department with this code, else a new id'],
-            'code' => ['master_data_operatingunit.operating_unit', 'as is (first 2 digits = its entity\'s code)'],
-            'name_en' => ['master_data_operatingunit.description', 'the Khmer name (no English in the old system)'],
-            'name_kh' => ['master_data_operatingunit.description', 'as is'],
-            'order_level' => ['', 'order of the codes'],
-            'status' => ['master_data_operatingunit.eff_status', 'A -> 13 Active'],
-        ],
         'entity' => [
             'id' => ['', 'id of the entity with this code, else a new id'],
             'code' => ['master_data_businessunit.business_unit', 'as is'],
@@ -70,6 +62,15 @@ class ExportShmExcel extends Command
             'order_level' => ['', 'order of the codes'],
             'status' => ['master_data_businessunit.eff_status', 'A -> 13 Active'],
             'is_active' => ['', '1'],
+        ],
+        'department' => [
+            'id' => ['', 'id of the department with this code, else a new id'],
+            'code' => ['master_data_operatingunit.operating_unit', 'as is (first 2 digits = its entity\'s code)'],
+            'entity_id' => ['master_data_operatingunit.operating_unit', 'id of the entity whose code it starts with'],
+            'name_en' => ['master_data_operatingunit.description', 'the Khmer name (no English in the old system)'],
+            'name_kh' => ['master_data_operatingunit.description', 'as is'],
+            'order_level' => ['', 'order of the codes'],
+            'status' => ['master_data_operatingunit.eff_status', 'A -> 13 Active'],
         ],
         'payment_type' => [
             'id' => ['', 'id of the payment type with this Khmer name, else a new id'],
@@ -277,8 +278,9 @@ class ExportShmExcel extends Command
 
         $this->oldSystem();
         $this->mapping();
-        $departments = $this->units('department', 'master_data_operatingunit', 'operating_unit', '01_department');
-        $entities = $this->units('entity', 'master_data_businessunit', 'business_unit', '02_entity', ['parent_id' => 0, 'is_active' => 1]);
+        $entities = $this->units('entity', 'master_data_businessunit', 'business_unit', '01_entity', fn () => ['parent_id' => 0, 'is_active' => 1]);
+        $departments = $this->units('department', 'master_data_operatingunit', 'operating_unit', '02_department',
+            fn ($code) => ['entity_id' => ShmLegacy::entityId($entities, $code)]);
         $this->paymentTypes();
         $members = $this->officers($entities, $departments);
         $this->receipts($members);
@@ -338,8 +340,8 @@ class ExportShmExcel extends Command
         $this->write('00_mapping', 'mapping', self::textColumns('file', 'column', 'from', 'how'), $rows);
     }
 
-    /** Departments / entities from the old units. @return array old code => id */
-    private function units(string $table, string $source, string $codeColumn, string $file, array $extra = []): array
+    /** Departments / entities from the old units; $extra(code): more columns of a row. @return array old code => id */
+    private function units(string $table, string $source, string $codeColumn, string $file, ?callable $extra = null): array
     {
         $ids = DB::table($table)->whereNotNull('code')->pluck('id', 'code')->all();
         $next = self::nextId($table);
@@ -348,7 +350,7 @@ class ExportShmExcel extends Command
         foreach ($old as $i => $unit) {
             $code = $unit[$codeColumn];
             $ids[$code] ??= $next++;
-            $rows[] = $extra + [
+            $rows[] = ($extra ? $extra($code) : []) + [
                 'id' => $ids[$code],
                 'code' => $code,
                 'name_en' => trim($unit['description']),
@@ -394,7 +396,7 @@ class ExportShmExcel extends Command
             $code = (string) $row['cus_code'];
             $members[$row['id']] = $ids[$code] ??= $next++;
             $rows[] = ['id' => $members[$row['id']]]
-                + $this->dump->officer($row, $entities[$row['business_unit']] ?? null, $departments[$row['operating_unit']] ?? null);
+                + $this->dump->officer($row, $entities[$row['business_unit']] ?? null, ShmLegacy::departmentId($departments, $row['operating_unit']));
         }
         $this->write('04_officer', 'officer', ImportController::templateColumns('officer'), $rows);
 

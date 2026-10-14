@@ -34,7 +34,7 @@ return new class extends Migration
             $table->string('updated_bank_acc', 45)->nullable();
             $table->string('position', 255)->nullable();
             $table->string('telephone_1', 45)->nullable();
-            $table->string('is_nssf_member', 100);
+            $table->string('is_nssf_member', 100)->nullable(); // optional on the member form; old-system members have no answer
             $table->string('nssf_card_no', 100)->nullable();
             $table->string('married_status', 100)->nullable();
             $table->text('social_media_fb')->nullable();

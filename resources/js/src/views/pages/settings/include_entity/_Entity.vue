@@ -27,7 +27,6 @@ export default {
                 header3: "code",
                 header4: "name_en",
                 header5: "name_kh",
-                header1: "department_id",
                 header6: "abbreviation",
                 header7: "order_level",
             },

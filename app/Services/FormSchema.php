@@ -34,6 +34,7 @@ class FormSchema
     // Columns the database lets be empty but a form must have
     private const REQUIRED = [
         'language' => ['code'], // the language switch goes by it
+        'department' => ['entity_id'], // every department belongs to a unit: the member forms list departments by unit
         'landing_content' => ['landing_section', 'language_code', 'headline'],
     ];
 

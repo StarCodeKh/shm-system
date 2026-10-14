@@ -25,6 +25,7 @@ export default {
             },
             dataHeaders: {
                 header1: "code",
+                header2: "entity_id",
                 header4: "name_en",
                 header5: "name_kh",
                 header6: "order_level",

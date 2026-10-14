@@ -12,6 +12,7 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->id();
             $table->string('code', 50)->nullable();
+            $table->unsignedBigInteger('entity_id')->nullable(); // the unit it belongs to
             $table->string('name_en');
             $table->string('name_kh')->nullable();
             $table->integer('order_level')->nullable();
@@ -19,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('modified_by')->nullable();
             $table->timestamps();
+            $table->index('entity_id');
             $table->index('status');
         });
     }

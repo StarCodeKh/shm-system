@@ -21,16 +21,6 @@ class Entity extends Model implements Auditable
 
     public $timestamps = true;
 
-    public function department()
-    {
-        return $this->belongsTo(Department::class, 'department_id');
-    }
-
-    public function Entity()
-    {
-        return $this->belongsTo('App\Models\Entity', 'department_id');
-    }
-
     public static function getSingleOpt()
     {
         $data = [];
@@ -57,7 +47,7 @@ class Entity extends Model implements Auditable
     public static function checkQuery($filter)
     {
         $whereClause = '';
-        $query = Entity::with('department')->orderByFilter($filter);
+        $query = Entity::orderByFilter($filter);
         $whereClause = $query;
         if ($filter['search_field']) {
             $arraySingle = call_user_func_array('array_merge', $filter['search_field']);

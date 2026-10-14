@@ -107,7 +107,7 @@ class ImportShmDump extends Command
             if (isset($existing[$code])) {
                 continue;
             }
-            $new[] = $this->dump->officer($row, $entities[$row['business_unit']] ?? null, $departments[$row['operating_unit']] ?? null);
+            $new[] = $this->dump->officer($row, $entities[$row['business_unit']] ?? null, ShmLegacy::departmentId($departments, $row['operating_unit']));
             if ($file = $this->dump->document($row)) {
                 $files[$code] = $file;
             }

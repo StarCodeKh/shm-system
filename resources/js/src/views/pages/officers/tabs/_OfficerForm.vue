@@ -109,7 +109,7 @@
                             <label>{{ $tField('department_id') }} <span class="required"></span></label>
                             <div class="input-icon">
                                 <i class="fas fa-envelope"></i>
-                                <v-select :placeholder="$tHint('department_id', 'select')"
+                                <v-select :placeholder="officer.entity_id ? $tHint('department_id', 'select') : $t('form_select_parent_first', { field: $tField('entity_id') })"
                                     v-validate="'required'" v-model="officer.department_id"
                                     name="department_id" :options="dependentOptions.department_id || []"
                                     :dir="$vs.rtl ? 'rtl' : 'ltr'" class="mt-2 w-full" />

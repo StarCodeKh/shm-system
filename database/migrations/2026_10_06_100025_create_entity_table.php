@@ -13,7 +13,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->string('code', 45)->nullable();
-            $table->unsignedBigInteger('department_id')->nullable();
             $table->string('name_en')->nullable();
             $table->string('name_kh')->nullable();
             $table->string('color', 50)->nullable();
@@ -28,7 +27,6 @@ return new class extends Migration
             $table->unsignedBigInteger('modified_by')->nullable();
             $table->timestamps();
             $table->index('parent_id');
-            $table->index('department_id');
             $table->index('status');
         });
     }
