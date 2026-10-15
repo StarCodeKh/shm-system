@@ -63,19 +63,19 @@
         <div v-if="access.balance || access.payments" class="vx-row">
             <div v-if="access.balance" class="vx-col w-full mb-base" :class="access.payments ? 'lg:w-2/3' : ''">
                 <vx-card :title="$t('dash_monthly_income_expense')" class="h-full">
-                    <template v-if="links.income" #actions>
-                        <router-link :to="links.income" class="card-link">
+                    <template v-if="links.payments" #actions>
+                        <router-link :to="links.payments" class="card-link">
                             {{ $t('dash_view_all') }}
                             <feather-icon icon="ChevronRightIcon" svgClasses="h-4 w-4" />
                         </router-link>
                     </template>
                     <div v-if="summary">
-                        <vue-apex-charts type="bar" height="300" :class="{ 'is-clickable': links.income || links.expense }" :options="monthlyOptions" :series="monthlySeries" />
+                        <vue-apex-charts type="bar" height="300" :class="{ 'is-clickable': links.payments || links.allowances }" :options="monthlyOptions" :series="monthlySeries" />
                         <div class="quarter-strip">
                             <div v-for="q in quarters" :key="q.label" class="quarter-strip__item">
                                 <span class="quarter-strip__label">{{ q.label }}</span>
-                                <dash-link :to="links.income" class="text-success">+{{ money(q.income) }}</dash-link>
-                                <dash-link :to="links.expense" class="text-danger">−{{ money(q.expense) }}</dash-link>
+                                <dash-link :to="links.payments" class="text-success">+{{ money(q.income) }}</dash-link>
+                                <dash-link :to="links.allowances" class="text-danger">−{{ money(q.expense) }}</dash-link>
                             </div>
                         </div>
                     </div>
@@ -241,10 +241,11 @@ const updatePresetFades = (bar) => {
 }
 // Where each dashboard item leads. A target only becomes a link when the user can see
 // that page in the sidebar menu, so the dashboard follows the same role permissions.
+// Income / expense totals include member payments and benefits (most of the money), so those
+// cards and the monthly chart open the payment and benefit lists; the income list is for the entity chart.
 const TARGETS = {
     members: "/officer",
     income: "/account/income",
-    expense: "/account/expense",
     balance: "/account/chart-account",
     payments: "/account/officer-payment",
     allowances: "/incentive",
@@ -345,12 +346,12 @@ export default {
                 {
                     key: "income", label: this.$t("dash_total_income"), icon: "TrendingUpIcon", color: this.tone.success,
                     value: this.money(pick(s.totalIncome, "total_in_khr", "total_in_usd")),
-                    sub: this.$t("dash_total_income_sub"), trend: this.trend.income, to: this.links.income,
+                    sub: this.$t("dash_total_income_sub"), trend: this.trend.income, to: this.links.payments,
                 },
                 {
                     key: "expense", label: this.$t("dash_total_expense"), icon: "TrendingDownIcon", color: this.tone.danger,
                     value: this.money(pick(s.totalExpense, "total_in_khr", "total_in_usd")),
-                    sub: this.$t("dash_total_expense_sub"), trend: this.trend.expense, to: this.links.expense,
+                    sub: this.$t("dash_total_expense_sub"), trend: this.trend.expense, to: this.links.allowances,
                 },
                 {
                     key: "balance", label: this.$t("dash_cash_balance"), icon: "DollarSignIcon", color: this.tone.warning,
@@ -374,7 +375,7 @@ export default {
             return {
                 chart: {
                     foreColor: this.tone.text, toolbar: { show: false }, fontFamily: "inherit",
-                    events: { click: (e, chart, { seriesIndex }) => seriesIndex >= 0 && this.go(seriesIndex === 1 ? this.links.expense : this.links.income) },
+                    events: { click: (e, chart, { seriesIndex }) => seriesIndex >= 0 && this.go(seriesIndex === 1 ? this.links.allowances : this.links.payments) },
                 },
                 colors: [this.tone.success, this.tone.danger],
                 plotOptions: { bar: { columnWidth: "45%", borderRadius: 4 } },
