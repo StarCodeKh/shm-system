@@ -16,14 +16,14 @@ use Illuminate\Support\Facades\DB;
 /**
  * Imports the members, contributions and benefits of the old SHM system (Django, PostgreSQL) from its pg_dump file,
  * straight into the database. The dump is read directly: no PostgreSQL server is needed.
- * (db:export-shm gives the same data as Excel files for the list imports instead.)
  *
  *   php artisan db:import-shm /path/to/shm-mef.sql --dry-run    (check and count, save nothing)
  *   php artisan db:import-shm /path/to/shm-mef.sql
  *
  * What maps to what: App\Services\ShmLegacy. Each member also gets a yearly officer_payment_recurring, like one
  * added in the app. Business / operating units, benefit types, statuses and the chart of accounts come from the
- * seeders run first; imported contributions are linked to account 4100 (yearly) or 4200 (registration fee).
+ * seeders run first; contributions are booked on account 4100 (yearly) or 4200 (registration fee), benefits on
+ * their type's account (ShmLegacy::ACCOUNTS).
  * Old logins, permissions, sessions, logs and the *_bk / tmp_rec copies are not imported.
  *
  * Safe to run more than once: members are matched on their member number (cus_code -> identity_member_no) and
@@ -74,7 +74,6 @@ class ImportShmDump extends Command
             $members = $this->importMembers();
             $this->importReceipts($members);
             $this->importBenefits($members);
-            $this->linkAccounts();
         } catch (\Throwable $e) {
             DB::rollBack();
             $this->error('Nothing was saved: '.$e->getMessage());
@@ -252,32 +251,6 @@ class ImportShmDump extends Command
         }
 
         $this->line("  <info>ok</info>    receipts: {$count['paid']} paid (payable + payment), {$count['void']} cancelled (Void payable)");
-    }
-
-    /** Imported records without an account get one: contributions 4100 / 4200, benefits their type's 51xx; also fixes ones imported before */
-    private function linkAccounts(): void
-    {
-        $accounts = DB::table('account')->whereIn('code', ['4100', '4200'])->pluck('id', 'code');
-        $linked = 0;
-        foreach (['Yearly' => '4100', 'Register' => '4200'] as $term => $code) {
-            $payables = DB::table('officer_payable')->where('code', self::CODE)->where('payment_term', $term)->whereNull('account_id');
-            $linked += DB::table('officer_payment')->whereIn('ref_payable_id', (clone $payables)->select('id'))->whereNull('account_id')
-                ->update(['account_id' => $accounts[$code]]);
-            $payables->update(['account_id' => $accounts[$code]]);
-        }
-
-        // Benefits: the account of their benefit type (5101-5110, named like the type)
-        $benefits = DB::table('account')->where('parent_code', '5000')->pluck('id', 'name_kh');
-        foreach ($benefits as $name => $id) {
-            $linked += DB::table('officer_incentive')->where('code', 'like', self::CODE.'-%')->where('request_title', $name)
-                ->whereNull('account_id')->update(['account_id' => $id]);
-        }
-        $left = DB::table('officer_incentive')->where('code', 'like', self::CODE.'-%')->whereNull('account_id')->count();
-        if ($left) {
-            $this->warnings[] = "{$left} imported benefits have a type with no account under 5000: account left empty.";
-        }
-
-        $this->line("  <info>ok</info>    accounts: {$linked} payments and benefits linked (4100 / 4200, 5101-5110)");
     }
 
     private function importBenefits(array $members): void

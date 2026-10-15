@@ -6,6 +6,7 @@ use App\Models\Concerns\HasDataScope;
 use App\Models\Concerns\HasListFields;
 use App\Models\Settings\Account;
 use App\Models\Settings\Currency;
+use App\Models\Settings\PaymentMethod;
 use App\Models\Settings\Status;
 use App\Services\DataScope;
 use CommonService;

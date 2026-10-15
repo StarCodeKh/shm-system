@@ -73,7 +73,7 @@ Scheduled jobs (`app/Console/Kernel.php`): `payables:generate` on the 1st of eac
 ```
 app/Http/Controllers/        API controllers (Settings/ for setup screens)
 app/Models/                  Eloquent models
-app/Console/Commands/        Scheduled commands, db:import-shm, db:export-shm
+app/Console/Commands/        Scheduled commands, db:import-shm
 app/Services/ShmLegacy.php   Old SHM dump → new tables (the whole mapping in one file)
 database/migrations/         The schema (one file per table)
 database/seeders/            Defaults; data/*.php holds settings, permissions, roles, menu
@@ -144,7 +144,6 @@ php artisan db:import-shm /path/to/shm-mef.sql
 - **Not migrated:** logins, permissions, sessions and logs, plus the `*_bk` / `tmp_rec` backup copies (already in the live table).
 - **Photos and scans are not in a dump:** copy the old server's `img/` and `doc/` folders to `public/images/uploads/legacy/`.
 - `income` / `expense` stay empty: the dashboard counts member payments and benefits from their own tables.
-- Prefer Excel? `php artisan db:export-shm /path/to/shm-mef.sql` writes the same data as files for each list's Import screen.
 
 ## Security
 

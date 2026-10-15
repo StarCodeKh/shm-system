@@ -9,8 +9,8 @@ use Illuminate\Database\Seeder;
  * system's categories (it had no account codes of its own):
  *   INC  4000 member contributions: 4100 yearly contribution, 4200 registration fee
  *   EXP  5000 benefits paid to members: 5101-5110, one per benefit type (payment_type, same order)
- * db:import-shm links the imported contributions (officer_payable / officer_payment.account_id) to 4100 / 4200
- * and the imported benefits (officer_incentive.account_id) to the account of their type.
+ * The old system's records are booked on them by db:import-shm (ShmLegacy): contributions on
+ * 4100 / 4200, benefits on the account of their type (matched on the Khmer name).
  *
  * Safe to run more than once: php artisan db:seed --class=AccountSeeder
  * Matched on their code: only missing rows are added, existing ones are never changed. Runs StatusSeeder first.

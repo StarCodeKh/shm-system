@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Mobile\Incentive;
-use App\Models\Mobile\TaxableSalary;
+use App\Models\TaxableSalary;
 use App\Models\Settings\CurrencyExchange;
 use App\Models\Settings\Status;
 use Auth;

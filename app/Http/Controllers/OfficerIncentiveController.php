@@ -8,7 +8,6 @@ use App\Models\OfficerIncentive;
 use App\Models\Settings\Account;
 use App\Models\Settings\Bank;
 use App\Models\Settings\Currency;
-use App\Models\Settings\Department;
 use App\Models\Settings\Entity;
 use App\Models\Settings\PaymentMethod;
 use App\Models\Settings\PaymentType;
@@ -255,19 +254,6 @@ class OfficerIncentiveController extends Controller
             '0' => '០', '1' => '១', '2' => '២', '3' => '៣', '4' => '៤',
             '5' => '៥', '6' => '៦', '7' => '៧', '8' => '៨', '9' => '៩',
         ]);
-    }
-
-    public function getField()
-    {
-        $data = [
-            'form_attributes' => $this->db_table::formAttributes(),
-            'officer_id' => isset($filter['data']['officer_id']) ? Officer::getSingleOptById($filter['data']['officer_id']) : Officer::getSingleOpt(),
-            'department_id' => Department::getSingleOpt(),
-            'entity_id' => [],
-        ];
-        $status = 200;
-
-        return response()->json($data, $status);
     }
 
 }

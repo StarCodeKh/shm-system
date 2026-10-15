@@ -7,7 +7,6 @@ use App\Models\OfficerRequest;
 use App\Models\Settings\Account;
 use App\Models\Settings\Bank;
 use App\Models\Settings\Currency;
-use App\Models\Settings\Department;
 use App\Models\Settings\PaymentMethod;
 use App\Models\Settings\PaymentType;
 use App\Models\Settings\Status;
@@ -309,22 +308,6 @@ class OfficerRequestController extends Controller
             'success' => $boolen,
             'message' => $message,
         ];
-
-        return response()->json($data, $status);
-    }
-
-    public function getField()
-    {
-        $data = [
-            'form_attributes' => $this->db_table::formAttributes(),
-            'officer_id' => isset($filter['data']['officer_id']) ? Officer::getSingleOptById($filter['data']['officer_id']) : Officer::getSingleOpt(),
-            'currency_id' => Currency::getSingleOpt(),
-            'payment_method_id' => PaymentMethod::getSingleOpt(),
-            'status' => Status::getSingleOpt('GERNAL'),
-            'department_id' => Department::getSingleOpt(),
-            'entity_id' => [],
-        ];
-        $status = 200;
 
         return response()->json($data, $status);
     }

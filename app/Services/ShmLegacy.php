@@ -5,15 +5,15 @@ namespace App\Services;
 use App\Models\Settings\Currency;
 use App\Models\Settings\Status;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /**
  * The old SHM system (Django, PostgreSQL): reads its pg_dump file and maps its rows to this system's tables.
- * Used by db:import-shm (straight into the database) and db:export-shm (Excel files for the list imports),
- * so both give the same data.
+ * Used by db:import-shm, which writes the rows straight into the database.
  *
  *   customer_customer   -> officer (+ officer_document for the scanned file)
- *   customer_receive    -> officer_payable, + officer_payment when the receipt was not cancelled
- *   customer_payment    -> officer_incentive (benefit paid, titled by its customer_paymenttype)
+ *   customer_receive    -> officer_payable, + officer_payment when the receipt was not cancelled (account 4100 / 4200)
+ *   customer_payment    -> officer_incentive (benefit paid, titled by its customer_paymenttype, on its type's account)
  *   auth_user           -> users, for the staff who entered receipts or benefits (inactive, no password)
  *
  * The rows below hold every mapped column; ids, created_by and the marking code are added by the caller.
@@ -21,6 +21,16 @@ use Carbon\Carbon;
 class ShmLegacy
 {
     const GENDERS = ['ប្រុស' => 'male', 'ស្រី' => 'female'];
+
+    // Accounts the records are booked on (AccountSeeder): contributions by payment term (account code),
+    // benefits on the account under BENEFIT_ACCOUNTS named like their type
+    const ACCOUNTS = ['Yearly' => '4100', 'Register' => '4200'];
+
+    const BENEFIT_ACCOUNTS = '5000';
+
+    private ?array $accounts = null;
+
+    private ?array $benefitAccounts = null;
 
     private ?array $types = null;
 
@@ -169,6 +179,7 @@ class ShmLegacy
             'officer_id' => $officerId,
             'amount' => $row['price'],
             'currency_id' => $this->khr(),
+            'account_id' => $this->contributionAccount($row),
             'payment_term' => $register ? 'Register' : 'Yearly',
             'payment_date' => substr($paidAt, 0, 10),
             'due_date' => "{$row['year']}-01-01",
@@ -192,6 +203,7 @@ class ShmLegacy
             'officer_id' => $officerId,
             'ref_payable_id' => $payableId,
             'receipt_no' => $row['receipt_id'],
+            'account_id' => $this->contributionAccount($row),
             'amount' => $row['price'],
             'payment_date' => $paidAt,
             'issue_date' => $paidAt,
@@ -209,12 +221,14 @@ class ShmLegacy
         $this->types ??= collect($this->rows('customer_paymenttype'))->mapWithKeys(fn ($type) => [$type['id'] => trim($type['description'])])->all();
         $paidAt = $this->paidAt($row['payment_date'], $row['entry_date'], "Benefit {$row['payment_id']}");
         $enteredAt = $this->dateTime($row['entry_date']);
+        $title = $this->types[$row['payment_type']] ?? 'ការឧបត្ថម្ភ';
         $note = self::clean($row['description']);
         $remark = ($note !== '' ? "{$note} " : '')."ឧបត្ថម្ភដោយ {$row['record_by']}".$this->unitThen($row, 'bu', 'ou');
 
         return [
             'officer_id' => $officerId,
-            'request_title' => $this->types[$row['payment_type']] ?? 'ការឧបត្ថម្ភ',
+            'account_id' => $this->benefitAccount($title),
+            'request_title' => $title,
             'amount' => $row['amount'],
             'currency_id' => $this->khr(),
             'request_date' => $paidAt,
@@ -228,21 +242,6 @@ class ShmLegacy
             'created_at' => $enteredAt,
             'updated_at' => $enteredAt,
         ];
-    }
-
-    /** Every table in the dump with its columns: table => [column, ...] */
-    public function tables(): array
-    {
-        $tables = [];
-        $handle = fopen($this->file, 'r');
-        while (($line = fgets($handle)) !== false) {
-            if (preg_match('/^COPY public\.(\w+) \((.*)\) FROM stdin;/', $line, $m)) {
-                $tables[$m[1]] = array_map(fn ($name) => trim($name, ' "'), explode(',', $m[2]));
-            }
-        }
-        fclose($handle);
-
-        return $tables;
     }
 
     /** Rows of one table's COPY block, as column => value (NULL as null, booleans stay 't' / 'f') */
@@ -349,6 +348,29 @@ class ShmLegacy
         }
 
         return Carbon::parse($value)->setTimezone(config('app.timezone'))->format('Y-m-d H:i:s');
+    }
+
+    /** The account of a receipt line: registration fee or yearly contribution (ACCOUNTS) */
+    private function contributionAccount(array $row): ?int
+    {
+        $this->accounts ??= DB::table('account')->whereIn('code', self::ACCOUNTS)->pluck('id', 'code')->all();
+        $code = self::ACCOUNTS[$row['is_register'] === 't' ? 'Register' : 'Yearly'];
+        if (! isset($this->accounts[$code])) {
+            $this->warnings[] = "Account {$code} is not in the chart of accounts (AccountSeeder): contributions left without an account.";
+        }
+
+        return $this->accounts[$code] ?? null;
+    }
+
+    /** The account of a benefit type: the one under BENEFIT_ACCOUNTS with the type's Khmer name */
+    private function benefitAccount(string $title): ?int
+    {
+        $this->benefitAccounts ??= DB::table('account')->where('parent_code', self::BENEFIT_ACCOUNTS)->pluck('id', 'name_kh')->all();
+        if (! isset($this->benefitAccounts[$title])) {
+            $this->warnings[] = "Benefit type {$title} has no account under ".self::BENEFIT_ACCOUNTS.': its benefits are left without an account.';
+        }
+
+        return $this->benefitAccounts[$title] ?? null;
     }
 
     private function khr(): ?int

@@ -140,24 +140,20 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
         Route::post('payable/officer_data_payable', [OfficerPayableController::class, 'getGeneralDataForPayable']);
         Route::post('payable/officer_info', [OfficerPayableController::class, 'getPayableInfoByOfficer']);
         Route::post('payable/import', [OfficerPayableController::class, 'import']);
-        Route::get('payable/get_field', [OfficerPayableController::class, 'getField']);
         Route::post('payable/search', [OfficerPayableController::class, 'index']);
         Route::apiResource('payable', OfficerPayableController::class);
 
         // Request
-        Route::get('request/get_field', [OfficerRequestController::class, 'getField']);
         Route::post('request/search', [OfficerRequestController::class, 'index']);
         Route::apiResource('request', OfficerRequestController::class);
 
         // Incentive
         Route::post('incentive/import', [OfficerIncentiveController::class, 'import']);
-        Route::get('incentive/get_field', [OfficerIncentiveController::class, 'getField']);
         Route::post('incentive/search', [OfficerIncentiveController::class, 'index']);
         Route::apiResource('incentive', OfficerIncentiveController::class);
 
         // Payment
         Route::post('payment/import', [OfficerPaymentController::class, 'import']);
-        Route::get('payment/get_field', [OfficerPaymentController::class, 'getField']);
         Route::post('payment/search', [OfficerPaymentController::class, 'index']);
         Route::apiResource('payment', OfficerPaymentController::class);
 
@@ -183,12 +179,10 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
     Route::apiResource('account/chart_account', COAController::class);
 
     // Expense
-    Route::get('expense/get_field', [ExpenseController::class, 'getField']);
     Route::post('expense/search', [ExpenseController::class, 'index']);
     Route::apiResource('expense', ExpenseController::class);
 
     // Income
-    Route::get('income/get_field', [IncomeController::class, 'getField']);
     Route::post('income/search', [IncomeController::class, 'index']);
     Route::apiResource('income', IncomeController::class);
 
