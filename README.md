@@ -62,7 +62,6 @@ Their password is `SEED_USER_PASSWORD`; outside production it defaults to `Passw
 | `npm run dev` / `npm run build` | Vite dev server / production build into `public/build/` |
 | `php artisan migrate --seed` | Create or update the schema and fill in missing defaults (safe to repeat) |
 | `php artisan db:seed` | Add missing settings, permissions, roles and menu items only; never overwrites edits |
-| `php artisan db:transfer-legacy <old_db>` | Copy an old database into a new, migrated one (see [Upgrading](#upgrading-an-old-database)) |
 | `php artisan db:import-shm <dump.sql>` | Import the old SHM system's PostgreSQL dump (see [Migrating](#migrating-from-the-old-shm-system)) |
 | `php artisan optimize:clear` | Clear config, route and view caches |
 | `php artisan schedule:work` | Run the scheduler locally |
@@ -74,7 +73,7 @@ Scheduled jobs (`app/Console/Kernel.php`): `payables:generate` on the 1st of eac
 ```
 app/Http/Controllers/        API controllers (Settings/ for setup screens)
 app/Models/                  Eloquent models
-app/Console/Commands/        Scheduled commands, db:transfer-legacy, db:import-shm
+app/Console/Commands/        Scheduled commands, db:import-shm, db:export-shm
 app/Services/ShmLegacy.php   Old SHM dump → new tables (the whole mapping in one file)
 database/migrations/         The schema (one file per table)
 database/seeders/            Defaults; data/*.php holds settings, permissions, roles, menu
@@ -121,21 +120,10 @@ Back up the database and `storage/app/public/` first. After any `.env` change ru
 
 **nginx** does not read `public/.htaccess`: route requests to `index.php` (`try_files $uri $uri/ /index.php?$query_string;`), set `client_max_body_size 20M`, and refuse scripts in `storage/uploads`, `images/uploads` and `upload`.
 
-## Upgrading an old database
-
-Build a clean database from the migrations, then copy the old data in. The old database is only read.
-
-```bash
-mysqldump <old_db> > backup.sql
-DB_DATABASE=<new_db> php artisan migrate --force
-DB_DATABASE=<new_db> php artisan db:transfer-legacy <old_db>
-```
-
-The transfer creates the standard roles and permissions, gives each user one of the three roles, leaves out the removed budget module and unused tables, and stops with `FAIL` / `CHECK` instead of cutting data. Then point `DB_DATABASE` at the new database and run `php artisan optimize`.
-
 ## Migrating from the old SHM system
 
-The old Django system's production `pg_dump` (`shm-mef.sql`) is read directly; no PostgreSQL server is needed.
+The only data source is the old Django system's production `pg_dump` (`shm-mef.sql`), read directly; no PostgreSQL server is needed.
+Settings and lists (units, benefit types, accounts, statuses, roles) come from the seeders; the dump brings members and their money.
 
 ```bash
 php artisan migrate --force
@@ -156,6 +144,7 @@ php artisan db:import-shm /path/to/shm-mef.sql
 - **Not migrated:** logins, permissions, sessions and logs, plus the `*_bk` / `tmp_rec` backup copies (already in the live table).
 - **Photos and scans are not in a dump:** copy the old server's `img/` and `doc/` folders to `public/images/uploads/legacy/`.
 - `income` / `expense` stay empty: the dashboard counts member payments and benefits from their own tables.
+- Prefer Excel? `php artisan db:export-shm /path/to/shm-mef.sql` writes the same data as files for each list's Import screen.
 
 ## Security
 
