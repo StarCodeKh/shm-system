@@ -7,6 +7,7 @@ use App\Models\Concerns\HasListFields;
 use App\Models\Settings\Department;
 use App\Models\Settings\Entity;
 use App\Models\Settings\Status;
+use App\Services\ListLink;
 use CommonService;
 use DB;
 use Illuminate\Database\Eloquent\Model;
@@ -202,6 +203,7 @@ class Officer extends Model implements Auditable
         } else {
             $whereClause->whereNotDeleted();
         }
+        ListLink::apply($whereClause, 'officer', $filter['data']['link'] ?? null); // opened from a dashboard figure
 
         return $whereClause;
     }

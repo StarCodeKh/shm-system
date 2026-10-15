@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Settings\Currency;
 use App\Models\Settings\Status;
 use App\Services\DataScope;
+use CommonService;
 use DB;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -84,7 +85,7 @@ class Dashboard extends Model implements Auditable
                 WHERE issue_date BETWEEN ? AND ?
                 UNION ALL
                 SELECT amount, currency_id FROM '.self::table('officer_incentive').'
-                WHERE issue_date BETWEEN ? AND ?
+                WHERE issue_date BETWEEN ? AND ? AND status <> '.Status::DELETED.' -- deleted benefits are not money paid
             ) AS total_expense_khr
         ', [
             $start_date.' 00:00:00',
@@ -193,7 +194,7 @@ class Dashboard extends Model implements Auditable
                     UNION ALL
 
                     SELECT amount, currency_id FROM '.self::table('officer_incentive').'
-                    WHERE issue_date BETWEEN ? AND ?
+                    WHERE issue_date BETWEEN ? AND ? AND status <> '.Status::DELETED.' -- deleted benefits are not money paid
                 ) AS expense_all
             ) AS B
         ', [
@@ -213,12 +214,60 @@ class Dashboard extends Model implements Auditable
         ];
     }
 
-    public static function getTotalIncentiveByCategory()
+    /**
+     * Income per institution (entity) in the period, in riel, largest first: member payments (by the member's
+     * institution) plus income records. Each role sees only its own scope (DataScope).
+     * Returns ['incomes' => [amount, ...], 'departments' => [institution name, ...]] (the keys the dashboard reads).
+     */
+    public static function getIncomeByEntity($start_date = null, $end_date = null): array
     {
+        if (empty($start_date) || empty($end_date)) {
+            $year = date('Y');
+            $start_date = "$year-01-01";
+            $end_date = "$year-12-31";
+        }
+        $range = [$start_date.' 00:00:00', $end_date.' 23:59:59'];
+        $khr = Currency::idOf(Currency::KHR);
+        $prefix = DB::getTablePrefix(); // aliases are prefixed too (tbl_p) in raw SQL
+
+        $payments = DB::table('officer_payment as p')->join('officer as o', 'o.id', '=', 'p.officer_id')
+            ->where('p.currency_id', $khr)->whereBetween('p.issue_date', $range)
+            ->tap(fn ($query) => DataScope::where($query, 'officer_payment', 'p'))
+            ->groupBy('o.entity_id')->select('o.entity_id')->selectRaw("SUM({$prefix}p.amount) AS amount")->pluck('amount', 'entity_id');
+        $incomes = DB::table('income as i')
+            ->where('i.currency_id', $khr)->whereBetween('i.issue_date', $range)
+            ->tap(fn ($query) => DataScope::where($query, 'income', 'i'))
+            ->groupBy('i.entity_id')->select('i.entity_id')->selectRaw("SUM({$prefix}i.amount) AS amount")->pluck('amount', 'entity_id');
+
+        $totals = [];
+        foreach ([$payments, $incomes] as $list) {
+            foreach ($list as $entity => $amount) {
+                $totals[$entity] = ($totals[$entity] ?? 0) + (float) $amount;
+            }
+        }
+        arsort($totals);
+        $names = DB::table('entity')->whereIn('id', array_keys($totals))->get(['id', 'name_kh', 'name_en'])->keyBy('id');
+
+        return [
+            'ids' => array_map(fn ($id) => $id === '' ? null : (int) $id, array_keys($totals)), // institution of each bar: the list filter (ListLink)
+            'incomes' => array_values($totals),
+            'departments' => array_map(fn ($id) => isset($names[$id]) ? CommonService::localName($names[$id]) : '-', array_keys($totals)),
+        ];
+    }
+
+    /** Benefits paid in the period, by benefit type (matched on the type's Khmer name, which every benefit stores as its title) */
+    public static function getTotalIncentiveByCategory($start_date = null, $end_date = null)
+    {
+        if (empty($start_date) || empty($end_date)) {
+            $year = date('Y');
+            $start_date = "$year-01-01";
+            $end_date = "$year-12-31";
+        }
         $result = '
             SELECT
                 B.id AS payment_type_id,
-                B.name_en AS payment_type_name,
+                B.name_kh,
+                B.name_en,
                 -- Total KHR
                 SUM(
                     CASE
@@ -236,17 +285,21 @@ class Dashboard extends Model implements Auditable
             FROM
                 '.self::table('officer_incentive', 'A').' 
             INNER JOIN
-                '.self::table('payment_type', 'B').'  ON A.request_title = B.name_en -- should join by payment request id (need to add new field)
+                '.self::table('payment_type', 'B').' ON A.request_title = B.name_kh
+            WHERE
+                A.issue_date BETWEEN ? AND ?
+                AND A.status <> '.Status::DELETED.'
             GROUP BY
-                B.id, B.name_en
+                B.id, B.name_kh, B.name_en
             ORDER BY
                 B.id
         ';
 
-        return collect(DB::select($result))->map(function ($item) {
+        return collect(DB::select($result, [$start_date.' 00:00:00', $end_date.' 23:59:59']))->map(function ($item) {
             return [
                 'payment_type_id' => (int) $item->payment_type_id,
-                'payment_type_name' => $item->payment_type_name,
+                'payment_type_name' => CommonService::localName($item),
+                'payment_type_key' => $item->name_kh, // what benefits store as their title: the list filter (ListLink)
                 'total_amount_khr' => (float) $item->total_amount_khr,
                 'total_amount_usd' => (float) $item->total_amount_usd,
             ];
@@ -287,10 +340,11 @@ class Dashboard extends Model implements Auditable
             ) AS Q
         LEFT JOIN
             (
-                -- Unified data per record (no conversion)
+                -- Unified data per record (no conversion), by the date the money moved (issue_date), like the
+                -- dashboard cards and monthly chart; created_at is only when it was typed in
                 SELECT
-                    QUARTER(created_at) AS quarter,
-                    YEAR(created_at) AS year,
+                    QUARTER(issue_date) AS quarter,
+                    YEAR(issue_date) AS year,
                     -- Income separated by currency
                     CASE WHEN src = 'income' AND currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END AS income_khr,
                     CASE WHEN src = 'income' AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END AS income_usd,
@@ -299,15 +353,15 @@ class Dashboard extends Model implements Auditable
                     CASE WHEN src = 'expense' AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END AS expense_usd
                 FROM (
                     -- Combine all data
-                    SELECT amount, currency_id AS currency_id, created_at, 'income' AS src FROM ".self::table('income')."
+                    SELECT amount, currency_id AS currency_id, issue_date, 'income' AS src FROM ".self::table('income')."
                     UNION ALL
-                    SELECT amount, currency_id, created_at, 'income' AS src FROM ".self::table('officer_payment')."
+                    SELECT amount, currency_id, issue_date, 'income' AS src FROM ".self::table('officer_payment')."
                     UNION ALL
-                    SELECT amount, currency_id AS currency_id, created_at, 'expense' AS src FROM ".self::table('expense')."
+                    SELECT amount, currency_id AS currency_id, issue_date, 'expense' AS src FROM ".self::table('expense')."
                     UNION ALL
-                    SELECT amount, currency_id, created_at, 'expense' AS src FROM ".self::table('officer_incentive')."
+                    SELECT amount, currency_id, issue_date, 'expense' AS src FROM ".self::table('officer_incentive').' WHERE status <> '.Status::DELETED."
                 ) AS all_data
-                WHERE YEAR(created_at) = ? -- Bind to $year (1st param)
+                WHERE YEAR(issue_date) = ? -- Bind to $year (1st param)
             ) AS d
             ON Q.Q = d.quarter AND d.year = ? -- Bind to $year (2nd param)
         WHERE (? IS NULL OR Q.Q = ? ) -- Bind to $quarter (3rd & 4th params)
@@ -391,9 +445,11 @@ class Dashboard extends Model implements Auditable
             $end_date = "$year-12-31";
         }
 
-        $sumByMonth = function (array $tables) use ($start_date, $end_date) {
+        // Deleted benefits are not money paid (same as the expense total and the benefit list)
+        $only = [self::table('officer_incentive') => ' AND status <> '.Status::DELETED];
+        $sumByMonth = function (array $tables) use ($start_date, $end_date, $only) {
             $union = implode(' UNION ALL ', array_map(
-                fn ($table) => "SELECT issue_date, amount, currency_id FROM $table WHERE issue_date BETWEEN ? AND ?",
+                fn ($table) => "SELECT issue_date, amount, currency_id FROM $table WHERE issue_date BETWEEN ? AND ?".($only[$table] ?? ''),
                 $tables
             ));
             $bindings = [];

@@ -265,6 +265,15 @@
             </div>
         </div>
 
+        <!-- Opened from a dashboard figure: what the list is limited to (the same records the figure counts), and a way back to all -->
+        <div v-if="routeLink" class="dt-link-filter">
+            <feather-icon icon="FilterIcon" svgClasses="h-4 w-4" />
+            <span class="dt-link-filter__text"><b>{{ $t('dt_link_filter') }}:</b> {{ $route.query.label || '' }}</span>
+            <button type="button" class="dt-link-filter__clear" @click="clearRouteLink">
+                <feather-icon icon="XIcon" svgClasses="h-4 w-4" />
+                <span>{{ $t('dt_link_clear') }}</span>
+            </button>
+        </div>
 
         <template v-if="!isHidden">
             <d-search v-if="!dataAttributes.hideSearchBar" @searchQuery="searchQuery" @clicked="initTableData"
@@ -1643,6 +1652,7 @@
 import vSelect from 'vue-select'
 import axios from "@/axios.js";
 import { onLocaleChange } from "@/i18n/i18n.js";
+import { LINK_KEYS, linkFromRoute } from "@/listLink.js";
 import DSearch from '@/views/form-builder/DSearch.vue';
 import DModalForm from '@/views/form-builder/DModalForm.vue';
 import DFileManager from '@/views/form-builder/DFileManager.vue';
@@ -1781,6 +1791,10 @@ export default {
         StatisticsCardLine
     },
     computed: {
+        // The dashboard filter in the page URL (listLink.js), sent by the page with its search
+        routeLink() {
+            return linkFromRoute(this.$route)
+        },
         // Totals for the cards above the table; empty until the list has loaded
         summary() {
             return (this.dataTables && this.dataTables.summary) || {}
@@ -1816,6 +1830,12 @@ export default {
         },
     },
     methods: {
+        // Drop the dashboard filter from the URL: the page reloads the whole list
+        clearRouteLink() {
+            const query = { ...this.$route.query }
+            LINK_KEYS.concat('label').forEach(key => delete query[key])
+            this.$router.replace({ query }).catch(() => {})
+        },
         isFileColumn(header) {
             return ['photo', 'image', 'thumbnail', 'attach', 'file'].includes(header);
         },
@@ -1883,6 +1903,7 @@ export default {
                 const { data } = await axios.post(this.api + '/search', {
                     sort: 'id', order: '', page_number: 1, limit: 1000,
                     search_field: search.map(([k, v]) => ({ [k]: v })),
+                    ...(this.routeLink ? { link: this.routeLink } : {}), // the same records as on screen
                 })
                 rows = data.data || rows
                 total = Number(data.total) || rows.length
@@ -1897,7 +1918,10 @@ export default {
                 title: this.$t(this.title),
                 columns: headers.map(h => ({ key: h, label: this.$tField(h), numeric: this.isAmountColumn(h), date: this.isDateColumn(h) })),
                 rows: rows.map(row => Object.fromEntries(headers.map(h => [h, cell(row, h)]))),
-                filters: Object.fromEntries(search.map(([k, v]) => [this.$tField(k), String(value(v))])),
+                filters: {
+                    ...(this.routeLink ? { [this.$t('dt_link_filter')]: this.$route.query.label || '' } : {}),
+                    ...Object.fromEntries(search.map(([k, v]) => [this.$tField(k), String(value(v))])),
+                },
                 total,
             }
         },

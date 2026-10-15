@@ -2402,6 +2402,43 @@ input.vs-input--input.large {
         }
     }
 
+    /* A list opened from a dashboard figure: what it is limited to, and a button back to all */
+    .dt-link-filter {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        margin: -6px 0 16px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        background: rgba(var(--vs-primary), .08);
+        color: #2c2e45;
+        font-size: .88rem;
+
+        > .feather-icon { color: rgb(var(--vs-primary)); }
+
+        &__text {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        &__clear {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            color: rgb(var(--vs-primary));
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+
+            &:hover { background: rgba(var(--vs-primary), .12); }
+        }
+    }
+
     /* "Add new": bolder, and its "+" turns a quarter on hover */
     .dt-toolbar .dt-btn--primary {
         font-weight: var(--btn-font-weight);
@@ -2612,6 +2649,7 @@ input.vs-input--input.large {
 
 .theme-dark .dt-list {
     .dt-toolbar__title h3 { color: #fff; }
+    .dt-link-filter { color: #c2c6dc; background: rgba(var(--vs-primary), .14); }
     .dt-action {
         color: #c2c6dc;
         border-color: #414561;

@@ -11,6 +11,7 @@ use App\Models\Settings\Entity;
 use App\Models\Settings\PaymentMethod;
 use App\Models\Settings\Status;
 use App\Services\DataScope;
+use App\Services\ListLink;
 use CommonService;
 use DB;
 use Illuminate\Database\Eloquent\Model;
@@ -154,6 +155,7 @@ class OfficerPayable extends Model implements Auditable
             }
         }
         $whereClause->whereIn('status', [Status::UNPAID, Status::PAID]);
+        ListLink::apply($whereClause, 'officer_payable', $filter['data']['link'] ?? null); // opened from a dashboard figure
         $whereClause = $query;
 
         return $whereClause;

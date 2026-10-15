@@ -63,8 +63,8 @@
         <div v-if="access.balance || access.payments" class="vx-row">
             <div v-if="access.balance" class="vx-col w-full mb-base" :class="access.payments ? 'lg:w-2/3' : ''">
                 <vx-card :title="$t('dash_monthly_income_expense')" class="h-full">
-                    <template v-if="links.payments" #actions>
-                        <router-link :to="links.payments" class="card-link">
+                    <template v-if="targets.income" #actions>
+                        <router-link :to="targets.income" class="card-link">
                             {{ $t('dash_view_all') }}
                             <feather-icon icon="ChevronRightIcon" svgClasses="h-4 w-4" />
                         </router-link>
@@ -74,8 +74,8 @@
                         <div class="quarter-strip">
                             <div v-for="q in quarters" :key="q.label" class="quarter-strip__item">
                                 <span class="quarter-strip__label">{{ q.label }}</span>
-                                <dash-link :to="links.payments" class="text-success">+{{ money(q.income) }}</dash-link>
-                                <dash-link :to="links.allowances" class="text-danger">−{{ money(q.expense) }}</dash-link>
+                                <dash-link :to="q.incomeTo" class="text-success">+{{ money(q.income) }}</dash-link>
+                                <dash-link :to="q.expenseTo" class="text-danger">−{{ money(q.expense) }}</dash-link>
                             </div>
                         </div>
                     </div>
@@ -85,28 +85,28 @@
 
             <div v-if="access.payments" class="vx-col w-full mb-base" :class="access.balance ? 'lg:w-1/3' : ''">
                 <vx-card :title="$t('dash_member_payments')" class="h-full">
-                    <template v-if="links.payments" #actions>
-                        <router-link :to="links.payments" class="card-link">
+                    <template v-if="targets.payables" #actions>
+                        <router-link :to="targets.payables" class="card-link">
                             {{ $t('dash_view_all') }}
                             <feather-icon icon="ChevronRightIcon" svgClasses="h-4 w-4" />
                         </router-link>
                     </template>
                     <template v-if="summary">
-                        <dash-link :to="links.payments" tag="div" class="block">
+                        <dash-link :to="targets.payables" tag="div" class="block">
                             <vue-apex-charts type="radialBar" height="240" :class="{ 'is-clickable': links.payments }" :options="paymentOptions" :series="[payment.percent]" />
                         </dash-link>
                         <div class="flex text-center payment-split">
-                            <dash-link :to="links.payments" tag="div" class="w-1/2 stat-link">
+                            <dash-link :to="targets.paid" tag="div" class="w-1/2 stat-link">
                                 <p class="text-grey">{{ $t('dash_paid') }}</p>
                                 <h3 class="text-success">{{ number(payment.paid) }}</h3>
                             </dash-link>
-                            <dash-link :to="links.payments" tag="div" class="w-1/2 stat-link">
+                            <dash-link :to="targets.unpaid" tag="div" class="w-1/2 stat-link">
                                 <p class="text-grey">{{ $t('dash_unpaid') }}</p>
                                 <h3 class="text-danger">{{ number(payment.unpaid) }}</h3>
                             </dash-link>
                         </div>
                         <p v-if="payment.unpaidAmount" class="text-center text-grey mt-3">
-                            {{ $t('dash_unpaid_amount') }}: <b class="text-danger">{{ money(payment.unpaidAmount) }}</b>
+                            {{ $t('dash_unpaid_amount') }}: <dash-link :to="targets.unpaidAmount" tag="b" class="text-danger">{{ money(payment.unpaidAmount) }}</dash-link>
                         </p>
                     </template>
                     <div v-else class="skeleton-block" style="height: 330px"></div>
@@ -148,8 +148,8 @@
         <div v-if="access.incentives || access.income" class="vx-row">
             <div v-if="access.incentives" class="vx-col w-full mb-base" :class="access.income ? 'lg:w-1/3' : ''">
                 <vx-card :title="$t('dash_allowance_by_type')" class="h-full">
-                    <template v-if="links.allowances" #actions>
-                        <router-link :to="links.allowances" class="card-link">
+                    <template v-if="targets.expense" #actions>
+                        <router-link :to="targets.expense" class="card-link">
                             {{ $t('dash_view_all') }}
                             <feather-icon icon="ChevronRightIcon" svgClasses="h-4 w-4" />
                         </router-link>
@@ -158,13 +158,13 @@
                         <template v-if="incentives.length">
                             <vue-apex-charts type="donut" height="240" :class="{ 'is-clickable': links.allowances }" :options="incentiveOptions" :series="incentives.map(i => i.amount)" />
                             <ul class="legend-list">
-                                <li v-for="(item, i) in incentives" :key="item.name">
-                                    <dash-link :to="links.allowances" tag="div" class="legend-row">
+                                <li v-for="item in incentives" :key="item.name">
+                                    <dash-link :to="item.to" tag="div" class="legend-row">
                                         <span class="flex items-center">
-                                            <span class="legend-dot" :style="{ backgroundColor: palette[i % palette.length] }"></span>
+                                            <span class="legend-dot" :style="{ backgroundColor: item.color }"></span>
                                             {{ item.name }}
                                         </span>
-                                        <b>{{ money(item.amount) }}</b>
+                                        <span class="legend-value"><b>{{ money(item.amount) }}</b><small>{{ item.share }}%</small></span>
                                     </dash-link>
                                 </li>
                             </ul>
@@ -179,14 +179,14 @@
             </div>
             <div v-if="access.income" class="vx-col w-full mb-base" :class="access.incentives ? 'lg:w-2/3' : ''">
                 <vx-card :title="$t('dash_income_by_entity') + ' (៛)'" class="h-full">
-                    <template v-if="links.income" #actions>
-                        <router-link :to="links.income" class="card-link">
+                    <template v-if="targets.income" #actions>
+                        <router-link :to="targets.income" class="card-link">
                             {{ $t('dash_view_all') }}
                             <feather-icon icon="ChevronRightIcon" svgClasses="h-4 w-4" />
                         </router-link>
                     </template>
                     <template v-if="summary">
-                        <vue-apex-charts v-if="entityIncome.length" type="bar" :class="{ 'is-clickable': links.income }" :height="Math.max(220, entityIncome.length * 42)" :options="entityOptions" :series="[{ name: $t('dash_income'), data: entityIncome.map(e => e.amount) }]" />
+                        <vue-apex-charts v-if="entityIncome.length" type="bar" :class="{ 'is-clickable': links.payments }" :height="Math.max(220, entityIncome.length * 42)" :options="entityOptions" :series="[{ name: $t('dash_income'), data: entityIncome.map(e => e.amount) }]" />
                         <div v-else class="empty-state">
                             <feather-icon icon="BarChart2Icon" svgClasses="h-8 w-8" />
                             <p>{{ $t('dash_no_income') }}</p>
@@ -208,6 +208,7 @@ import "flatpickr/dist/flatpickr.css"
 import axios from "@/axios.js"
 import router from "@/router"
 import { hasMenuUrl } from "@/layouts/components/vertical-nav-menu/menuActive.js"
+import { linkRoute } from "@/listLink.js"
 
 const MONTHS = {
     kh: ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"],
@@ -232,6 +233,13 @@ const PRESETS = {
     dash_range_last_year: (t) => [new Date(t.getFullYear() - 1, 0, 1), new Date(t.getFullYear() - 1, 11, 31)],
 }
 const presetRange = (key) => PRESETS[key](new Date()).map(ymd)
+// The last day of a "YYYY-MM" month as Y-m-d
+const monthEnd = (month) => {
+    const [y, m] = month.split("-").map(Number)
+    return ymd(new Date(y, m, 0))
+}
+// Member status ids (App\Models\Settings\Status, fixed by StatusSeeder) of the member status chart
+const MEMBER_STATUS = { active: 13, inactive: 14, retired: 27, dead: 26 }
 // The dashboard opens on this range, and goes back to it when the picker is cleared
 const DEFAULT_PRESET = "dash_range_this_year"
 // The quick-range row scrolls sideways: fade the edge on each side that has more buttons
@@ -242,10 +250,9 @@ const updatePresetFades = (bar) => {
 // Where each dashboard item leads. A target only becomes a link when the user can see
 // that page in the sidebar menu, so the dashboard follows the same role permissions.
 // Income / expense totals include member payments and benefits (most of the money), so those
-// cards and the monthly chart open the payment and benefit lists; the income list is for the entity chart.
+// cards, the monthly chart and the income-by-institution chart open the payment and benefit lists.
 const TARGETS = {
     members: "/officer",
-    income: "/account/income",
     balance: "/account/chart-account",
     payments: "/account/officer-payment",
     allowances: "/incentive",
@@ -302,9 +309,13 @@ export default {
             }
         },
         // Categorical charts (e.g. allowance by type)
+        // Categorical colors in a fixed order, checked with the dataviz palette validator (lightness band,
+        // color-blind and normal-vision separation of neighbours, incl. the donut's wrap-around) for each mode's
+        // card. Six slots: charts show at most six categories, the rest fold into "Other" (tone.muted).
         palette() {
-            const t = this.tone
-            return [t.primary, t.navy, t.warning, t.danger, t.info, t.gold, "#F35588"]
+            return this.tone.mode === "dark"
+                ? ["#00A953", "#636DD7", "#D16E00", "#009FB5", "#B18400", "#9B59D0"]
+                : ["#28C76F", "#3F42A8", "#F08A24", "#00AFC6", "#C4961C", "#9B59D0"]
         },
         range() {
             const value = Array.isArray(this.dateRange) ? this.dateRange : String(this.dateRange || "").split(" to ")
@@ -331,6 +342,19 @@ export default {
         kpiWidth() {
             return { 1: 'xl:w-full', 2: 'xl:w-1/2', 3: 'xl:w-1/3' }[this.kpiCards.length] || 'xl:w-1/4'
         },
+        // Where each figure leads: the list filtered to exactly the records it counts (App\Services\ListLink
+        // mirrors each dashboard query), so the list shows the same number. null when the role can't open that list.
+        targets() {
+            const p = this.period()
+            return {
+                income: this.to("payments", { status: "paid", ...p }, this.periodLabel(this.$t("dash_total_income"), p)),
+                expense: this.to("allowances", p, this.periodLabel(this.$t("dash_total_expense"), p)),
+                payables: this.to("payments", p, this.periodLabel(this.$t("dash_member_payments"), p)),
+                paid: this.to("members", { payment: "paid", ...p }, this.periodLabel(this.$t("dash_paid"), p)),
+                unpaid: this.to("members", { payment: "unpaid", ...p }, this.periodLabel(this.$t("dash_unpaid"), p)),
+                unpaidAmount: this.to("payments", { status: "unpaid", ...p }, this.periodLabel(this.$t("dash_unpaid_amount"), p)),
+            }
+        },
         kpiCards() {
             const s = this.summary
             if (!s) return [1, 2, 3, 4].map(key => ({ key }))
@@ -346,12 +370,12 @@ export default {
                 {
                     key: "income", label: this.$t("dash_total_income"), icon: "TrendingUpIcon", color: this.tone.success,
                     value: this.money(pick(s.totalIncome, "total_in_khr", "total_in_usd")),
-                    sub: this.$t("dash_total_income_sub"), trend: this.trend.income, to: this.links.payments,
+                    sub: this.$t("dash_total_income_sub"), trend: this.trend.income, to: this.targets.income,
                 },
                 {
                     key: "expense", label: this.$t("dash_total_expense"), icon: "TrendingDownIcon", color: this.tone.danger,
                     value: this.money(pick(s.totalExpense, "total_in_khr", "total_in_usd")),
-                    sub: this.$t("dash_total_expense_sub"), trend: this.trend.expense, to: this.links.allowances,
+                    sub: this.$t("dash_total_expense_sub"), trend: this.trend.expense, to: this.targets.expense,
                 },
                 {
                     key: "balance", label: this.$t("dash_cash_balance"), icon: "DollarSignIcon", color: this.tone.warning,
@@ -375,7 +399,8 @@ export default {
             return {
                 chart: {
                     foreColor: this.tone.text, toolbar: { show: false }, fontFamily: "inherit",
-                    events: { click: (e, chart, { seriesIndex }) => seriesIndex >= 0 && this.go(seriesIndex === 1 ? this.links.allowances : this.links.payments) },
+                    // A bar opens the income (payments) or expense (benefits) of its month
+                    events: { dataPointSelection: (e, chart, { seriesIndex, dataPointIndex }) => this.go(this.monthTarget(seriesIndex, this.trend.months[dataPointIndex])) },
                 },
                 colors: [this.tone.success, this.tone.danger],
                 plotOptions: { bar: { columnWidth: "45%", borderRadius: 4 } },
@@ -392,11 +417,19 @@ export default {
             this.trend.months.forEach((month, i) => {
                 const label = `Q${Math.ceil(Number(month.slice(5, 7)) / 3)} ${month.slice(0, 4)}`
                 let q = result.find(r => r.label === label)
-                if (!q) result.push((q = { label, income: 0, expense: 0 }))
+                if (!q) result.push((q = { label, income: 0, expense: 0, first: month }))
+                q.last = month
                 q.income += this.trend.income[i]
                 q.expense += this.trend.expense[i]
             })
-            return result
+            return result.map(q => {
+                const p = this.period(`${q.first}-01`, monthEnd(q.last))
+                return {
+                    ...q,
+                    incomeTo: this.to("payments", { status: "paid", ...p }, this.periodLabel(`${this.$t("dash_income")} ${q.label}`, p)),
+                    expenseTo: this.to("allowances", p, this.periodLabel(`${this.$t("dash_expense")} ${q.label}`, p)),
+                }
+            })
         },
         payment() {
             const p = (this.summary && this.summary.officerPaymentInfo) || {}
@@ -429,15 +462,15 @@ export default {
         memberStatus() {
             const m = (this.summary && this.summary.totalMember) || {}
             return [
-                { label: this.$t("dash_status_active"), value: toNumber(m.activeMembers) },
-                { label: this.$t("dash_status_inactive"), value: toNumber(m.inactiveMembers) },
-                { label: this.$t("dash_status_retired"), value: toNumber(m.retiredMembers) },
-                { label: this.$t("dash_status_deceased"), value: toNumber(m.deadMembers) },
-            ]
+                { label: this.$t("dash_status_active"), value: toNumber(m.activeMembers), status: MEMBER_STATUS.active },
+                { label: this.$t("dash_status_inactive"), value: toNumber(m.inactiveMembers), status: MEMBER_STATUS.inactive },
+                { label: this.$t("dash_status_retired"), value: toNumber(m.retiredMembers), status: MEMBER_STATUS.retired },
+                { label: this.$t("dash_status_deceased"), value: toNumber(m.deadMembers), status: MEMBER_STATUS.dead },
+            ].map(s => ({ ...s, to: this.to("members", { status: s.status }, `${this.$t("dash_member_status")} · ${s.label}`) }))
         },
         memberStatusOptions() {
             return {
-                chart: { foreColor: this.tone.text, fontFamily: "inherit", events: { click: () => this.go(this.links.members) } },
+                chart: { foreColor: this.tone.text, fontFamily: "inherit", events: { dataPointSelection: (e, chart, { dataPointIndex }) => this.go((this.memberStatus[dataPointIndex] || {}).to) } },
                 labels: this.memberStatus.map(s => s.label),
                 colors: [this.tone.success, this.tone.warning, this.tone.info, this.tone.muted],
                 legend: { position: "bottom" },
@@ -456,7 +489,15 @@ export default {
         },
         growthOptions() {
             return {
-                chart: { foreColor: this.tone.text, toolbar: { show: false }, fontFamily: "inherit", events: { click: () => this.go(this.links.members) } },
+                chart: {
+                    foreColor: this.tone.text, toolbar: { show: false }, fontFamily: "inherit",
+                    events: {
+                        dataPointSelection: (e, chart, { dataPointIndex }) => {
+                            const year = ((this.summary && this.summary.officerStatisticYears) || [])[dataPointIndex]
+                            if (year) this.go(this.to("members", { registered: year }, `${this.$t("dash_new_members")} ${year}`))
+                        },
+                    },
+                },
                 colors: [this.tone.primary],
                 plotOptions: { bar: { columnWidth: "45%", borderRadius: 4, dataLabels: { position: "top" } } },
                 dataLabels: { enabled: true, offsetY: -20, style: { colors: [this.tone.text], fontWeight: 500 } },
@@ -468,33 +509,75 @@ export default {
         },
         incentives() {
             const list = (this.summary && this.summary.totalIncentive) || []
-            return list
-                .map(i => ({ name: i.payment_type_name, amount: toNumber(this.isKhr ? i.total_amount_khr : i.total_amount_usd) }))
+            const items = list
+                .map(i => ({ name: i.payment_type_name, keys: [i.payment_type_key], amount: toNumber(this.isKhr ? i.total_amount_khr : i.total_amount_usd) }))
                 .filter(i => i.amount > 0)
+                .sort((a, b) => b.amount - a.amount)
+            // At most six slices: past that, the five largest stay and the rest fold into "Other"
+            const max = this.palette.length
+            const shown = items.length > max
+                ? [...items.slice(0, max - 1), {
+                    name: this.$t("other"), other: true,
+                    keys: items.slice(max - 1).flatMap(i => i.keys),
+                    amount: items.slice(max - 1).reduce((sum, i) => sum + i.amount, 0),
+                }]
+                : items
+            const total = shown.reduce((sum, i) => sum + i.amount, 0)
+            const p = this.period()
+            return shown.map((item, i) => ({
+                ...item,
+                color: item.other ? this.tone.muted : this.palette[i],
+                share: total ? Math.round((item.amount / total) * 100) : 0,
+                to: this.to("allowances", { ...p, type: item.keys }, this.periodLabel(item.name, p)),
+            }))
         },
         incentiveOptions() {
             return {
-                chart: { foreColor: this.tone.text, fontFamily: "inherit", events: { click: () => this.go(this.links.allowances) } },
+                chart: { foreColor: this.tone.text, fontFamily: "inherit", events: { dataPointSelection: (e, chart, { dataPointIndex }) => this.go((this.incentives[dataPointIndex] || {}).to) } },
                 labels: this.incentives.map(i => i.name),
-                colors: this.palette,
+                colors: this.incentives.map(i => i.color),
                 legend: { show: false },
                 dataLabels: { enabled: false },
-                plotOptions: { pie: { donut: { size: "65%" } } },
+                stroke: { width: 2, colors: [this.tone.mode === "dark" ? "#10163A" : "#ffffff"] }, // 2px gap in the card's color
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            size: "68%",
+                            // The total in the middle; a hovered slice shows its own name and amount there
+                            labels: {
+                                show: true,
+                                name: { color: this.tone.text, fontSize: "13px" },
+                                value: { color: this.tone.mode === "dark" ? "#EBEEFD" : "#2c2c2c", fontSize: "18px", fontWeight: 700, formatter: v => this.money(toNumber(v)) },
+                                total: { show: true, label: this.$t("dash_total"), color: this.tone.text, fontSize: "13px", formatter: () => this.money(this.incentives.reduce((sum, i) => sum + i.amount, 0)) },
+                            },
+                        },
+                    },
+                },
                 tooltip: { theme: this.tone.mode, y: { formatter: this.money } },
             }
         },
         entityIncome() {
             const data = (this.summary && this.summary.incomeByDepartments) || {}
             const names = data.departments || []
+            const ids = data.ids || []
             return (data.incomes || [])
-                .map((amount, i) => ({ name: names[i] || "-", amount: toNumber(amount) }))
+                .map((amount, i) => ({ id: ids[i], name: names[i] || "-", amount: toNumber(amount) }))
                 .sort((a, b) => b.amount - a.amount)
                 .slice(0, 10)
         },
         entityOptions() {
             return {
-                chart: { foreColor: this.tone.text, toolbar: { show: false }, fontFamily: "inherit", events: { click: () => this.go(this.links.income) } },
-                colors: [this.tone.navy],
+                chart: {
+                    foreColor: this.tone.text, toolbar: { show: false }, fontFamily: "inherit",
+                    events: {
+                        dataPointSelection: (e, chart, { dataPointIndex }) => {
+                            const entity = this.entityIncome[dataPointIndex]
+                            const p = this.period()
+                            if (entity) this.go(this.to("payments", { status: "paid", ...p, entity: entity.id }, this.periodLabel(entity.name, p)))
+                        },
+                    },
+                },
+                colors: [this.palette[1]], // one series: the brand navy step that reads on this mode's card
                 plotOptions: { bar: { horizontal: true, barHeight: "55%", borderRadius: 4 } },
                 dataLabels: { enabled: true, formatter: this.compact, style: { fontWeight: 500 } },
                 grid: { borderColor: this.tone.grid, strokeDashArray: 4 },
@@ -596,8 +679,27 @@ export default {
                 updatePresetFades(bar)
             })
         },
-        go(path) {
-            if (path && this.$route.path !== path) this.$router.push(path).catch(() => {})
+        go(to) {
+            if (to) this.$router.push(to).catch(() => {})
+        },
+        // The list of `target` filtered by `link`, or null when the role can't open that list
+        to(target, link = {}, label = "") {
+            return this.links[target] ? linkRoute(this.links[target], link, label) : null
+        },
+        // The dashboard's period, or part of it (a month, a quarter), as list filter dates
+        period(from = this.range.start, to = this.range.end) {
+            return { from: from < this.range.start ? this.range.start : from, to: to > this.range.end ? this.range.end : to }
+        },
+        periodLabel(title, p) {
+            return `${title} · ${this.formatDate(p.from)} – ${this.formatDate(p.to)}`
+        },
+        // A bar of the monthly chart: series 0 is income (paid payments), 1 is expense (benefits)
+        monthTarget(series, month) {
+            if (!month || series < 0) return null
+            const p = this.period(`${month}-01`, monthEnd(month))
+            return series === 1
+                ? this.to("allowances", p, this.periodLabel(this.$t("dash_expense"), p))
+                : this.to("payments", { status: "paid", ...p }, this.periodLabel(this.$t("dash_income"), p))
         },
         number(value) {
             return toNumber(value).toLocaleString("en-US")
@@ -858,7 +960,21 @@ export default {
     }
 }
 
+.legend-value {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    white-space: nowrap;
+
+    small {
+        min-width: 2.5rem;
+        text-align: right;
+        color: #8a8d93;
+    }
+}
+
 .legend-dot {
+    flex-shrink: 0;
     width: 0.7rem;
     height: 0.7rem;
     border-radius: 50%;

@@ -194,9 +194,9 @@ class OfficerPayment extends Model implements Auditable
         $query = DB::table('officer_payment as op')
             ->select('op.*', 'ms.title_kh as status', 'c.name_kh as currency_id', DB::raw("CONCAT(first_name, ' ', last_name, '-', identity_member_no) AS officer_id"), 'pm.name_kh as payment_method_id')
             ->Join('officer as f', 'op.officer_id', '=', 'f.id')
-            ->Join('payment_method as pm', 'pm.id', '=', 'op.payment_method_id')
-            ->Join('mef_status as ms', 'ms.id', '=', 'op.status')
-            ->Join('currency as c', 'c.id', '=', 'op.currency_id')
+            ->LeftJoin('payment_method as pm', 'pm.id', '=', 'op.payment_method_id') // optional: old-system receipts have none
+            ->LeftJoin('mef_status as ms', 'ms.id', '=', 'op.status')
+            ->LeftJoin('currency as c', 'c.id', '=', 'op.currency_id')
             ->where('op.status', Status::PAID);
         $whereClause = $query;
         DataScope::where($whereClause, 'officer_payment', 'op'); // only what the role may see

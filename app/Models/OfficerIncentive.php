@@ -9,6 +9,7 @@ use App\Models\Settings\Currency;
 use App\Models\Settings\PaymentMethod;
 use App\Models\Settings\Status;
 use App\Services\DataScope;
+use App\Services\ListLink;
 use CommonService;
 use DB;
 use Illuminate\Database\Eloquent\Model;
@@ -131,6 +132,7 @@ class OfficerIncentive extends Model implements Auditable
         }
 
         $whereClause->whereNotIn('status', [Status::DELETED]);
+        ListLink::apply($whereClause, 'officer_incentive', $filter['data']['link'] ?? null); // opened from a dashboard figure
 
         return $whereClause;
     }
@@ -159,9 +161,9 @@ class OfficerIncentive extends Model implements Auditable
         $query = DB::table('officer as f')
             ->select('oi.*', 'ms.title_kh as status', 'c.name_kh as currency_id', DB::raw("CONCAT(first_name, ' ', last_name, '-', identity_member_no) AS officer_id"), 'pm.name_kh as payment_method_id')
             ->Join('officer_incentive as oi', 'oi.officer_id', '=', 'f.id')
-            ->Join('payment_method as pm', 'pm.id', '=', 'oi.payment_method_id')
-            ->Join('mef_status as ms', 'ms.id', '=', 'oi.status')
-            ->Join('currency as c', 'c.id', '=', 'oi.currency_id');
+            ->LeftJoin('payment_method as pm', 'pm.id', '=', 'oi.payment_method_id') // optional: old-system benefits have none
+            ->LeftJoin('mef_status as ms', 'ms.id', '=', 'oi.status')
+            ->LeftJoin('currency as c', 'c.id', '=', 'oi.currency_id');
         $whereClause = $query;
         DataScope::where($whereClause, 'officer_incentive', 'oi'); // only what the role may see
         if (isset($filter['data']['officer_id'])) {

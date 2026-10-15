@@ -8,6 +8,7 @@
 import axios from "@/axios.js";
 import apiConfig from "@/apiConfig.js";
 import DTableList from '@/views/form-builder/DTableList.vue';
+import { linkFromRoute } from "@/listLink.js";
 
 export default {
     data() {
@@ -228,6 +229,10 @@ export default {
                 };
             }
 
+            // Opened from a dashboard figure: only the records it counts (App\Services\ListLink)
+            const link = linkFromRoute(this.$route);
+            if (link) _params.link = link;
+
             return new Promise(() => {
                 axios.post(this.api + "/search", _params)
                     .then((response) => {
@@ -271,6 +276,21 @@ export default {
             this.getDataTable(_search_criteria);
             return false;
         }
+    },
+    computed: {
+        // The dashboard filter in the URL (other query keys, e.g. a member page's tab, don't reload the list)
+        routeLink() {
+            return JSON.stringify(linkFromRoute(this.$route));
+        },
+    },
+    watch: {
+        routeLink() {
+            const table = this.$refs.refInitPage;
+            this.$vs.loading();
+            // Back to page 1: the table's page watcher reloads, or reload here when already there
+            if (table && table.current_page !== 1) table.current_page = 1;
+            else this.getData();
+        },
     },
     created() {
         this.$vs.loading();

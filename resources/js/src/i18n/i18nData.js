@@ -385,6 +385,8 @@ export default {
         // List pages
         dt_records: 'កំណត់ត្រាសរុប {n}',
         dt_filter: 'តម្រង',
+        dt_link_filter: 'បង្ហាញតាមផ្ទាំងគ្រប់គ្រង',
+        dt_link_clear: 'បង្ហាញទាំងអស់',
         dt_print: 'បោះពុម្ព',
         dt_import: 'នាំចូល',
         dt_download: 'ទាញយក Excel',
@@ -1473,6 +1475,8 @@ export default {
         // List pages
         dt_records: '{n} records',
         dt_filter: 'Filter',
+        dt_link_filter: 'From the dashboard',
+        dt_link_clear: 'Show all',
         dt_print: 'Print',
         dt_import: 'Import',
         dt_download: 'Download Excel',

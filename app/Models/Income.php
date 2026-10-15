@@ -157,38 +157,6 @@ class Income extends Model implements Auditable
         return $total;
     }
 
-    public static function checkQueryIncomeByDpts($fieldName) // Dpt stand for Department
-    {$query = DB::table('department as d')
-            ->select('d.*', 'i.amount', 'i.currency_id')
-            ->join('income as i', 'i.department_id', '=', 'd.id')
-            ->tap(fn ($query) => DataScope::where($query, 'income', 'i'))
-            ->groupBy(
-                DB::raw('id'),
-            )
-            ->orderBy('id')
-            ->get();
-        $data = [];
-        foreach ($query as $row) {
-            $data[] = $row->$fieldName;
-        }
-
-        return $data;
-    }
-
-    public static function getIncomeByDpts()
-    {
-        $result = Income::checkQueryIncomeByDpts('amount');
-
-        return $result;
-    }
-
-    public static function getDptsByIncome()
-    {
-        $result = Income::checkQueryIncomeByDpts('name_kh');
-
-        return $result;
-    }
-
     public static function getMonthlyIncome()
     {
         $results = DB::table('income')

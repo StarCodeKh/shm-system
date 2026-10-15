@@ -178,10 +178,7 @@ class DashboardController extends BaseController
                 $totalIncome->total_in_khr = CommonService::formatDoubleNum($totalIncome->total_in_khr);
                 $totalIncome->total_in_usd = CommonService::formatDoubleNum($totalIncome->total_in_usd);
                 $data['totalIncome'] = $totalIncome;
-                $data['incomeByDepartments'] = [
-                    'incomes' => Income::getIncomeByDpts(),
-                    'departments' => Income::getDptsByIncome(),
-                ];
+                $data['incomeByDepartments'] = Dashboard::getIncomeByEntity($start_date, $end_date);
                 $data['monthlyIncomes'] = Income::getMonthlyIncome();
             }
 
@@ -210,7 +207,7 @@ class DashboardController extends BaseController
             }
 
             if ($access['incentives']) {
-                $data['totalIncentive'] = Dashboard::getTotalIncentiveByCategory()->map(function ($item) use ($khr) {
+                $data['totalIncentive'] = Dashboard::getTotalIncentiveByCategory($start_date, $end_date)->map(function ($item) use ($khr) {
                     $item['total_amount_khr_kh'] = $khr($item['total_amount_khr']);
                     $item['total_amount_khr'] = CommonService::formatDoubleNum($item['total_amount_khr']);
                     $item['total_amount_usd'] = CommonService::formatDoubleNum($item['total_amount_usd']);
