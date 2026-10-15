@@ -37,6 +37,8 @@ class SeedData
         'position' => ['all', ['name_kh'], 'តំណែង (positions)'],
         'bank' => ['all', ['name_kh'], 'Banks of the member\'s bank account'],
         'letter_type' => ['all', ['name_kh'], 'Letter types of incentives and requests'],
+        'account_type' => ['all', ['type_code'], 'Account types of the chart of accounts (account.account_type)'],
+        'account' => ['all', ['code'], 'Chart of accounts, from the old SHM system\'s categories (contributions and benefit types)'],
     ];
 
     public static function path(string $table): string

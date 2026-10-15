@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Settings\Currency;
 use App\Models\Settings\Status;
 use App\Services\ShmLegacy;
+use Database\Seeders\AccountSeeder;
 use Database\Seeders\CurrencySeeder;
 use Database\Seeders\OrganizationSeeder;
 use Database\Seeders\PaymentSettingSeeder;
@@ -21,13 +22,15 @@ use Illuminate\Support\Facades\DB;
  *   php artisan db:import-shm /path/to/shm-mef.sql
  *
  * What maps to what: App\Services\ShmLegacy. Each member also gets a yearly officer_payment_recurring, like one
- * added in the app. Business / operating units, benefit types and statuses come from the seeders run first.
+ * added in the app. Business / operating units, benefit types, statuses and the chart of accounts come from the
+ * seeders run first; imported contributions are linked to account 4100 (yearly) or 4200 (registration fee).
  * Old logins, permissions, sessions, logs and the *_bk / tmp_rec copies are not imported.
  *
  * Safe to run more than once: members are matched on their member number (cus_code -> identity_member_no) and
  * existing ones are left as they are. Receipts and benefits are imported once (marked with code OLD);
  * --fresh deletes the imported ones and imports them again. Payables and payments made in the app are never touched.
- * Staff are linked as created_by when a user with the same username exists in the app.
+ * Staff who entered receipts or benefits are added as inactive users without a password (they cannot sign in),
+ * matched on username, and linked as created_by. To bring the staff in on data imported before, use --fresh.
  * Photos and scanned files are not in the dump: copy the old media folder (img/, doc/) to public{--media-url}.
  */
 class ImportShmDump extends Command
@@ -62,14 +65,16 @@ class ImportShmDump extends Command
 
         DB::beginTransaction();
         try {
-            foreach ([StatusSeeder::class, CurrencySeeder::class, PaymentSettingSeeder::class, OrganizationSeeder::class] as $seeder) {
+            foreach ([StatusSeeder::class, CurrencySeeder::class, PaymentSettingSeeder::class, OrganizationSeeder::class, AccountSeeder::class] as $seeder) {
                 $this->callSilent('db:seed', ['--class' => $seeder, '--force' => true]);
             }
+            $this->importStaff();
             $this->users = DB::table('users')->pluck('id', 'username')->all();
 
             $members = $this->importMembers();
             $this->importReceipts($members);
             $this->importBenefits($members);
+            $this->linkAccounts();
         } catch (\Throwable $e) {
             DB::rollBack();
             $this->error('Nothing was saved: '.$e->getMessage());
@@ -89,6 +94,40 @@ class ImportShmDump extends Command
         }
 
         return 0;
+    }
+
+    /** The old staff who entered receipts or benefits, as users; ones already here (same username) are left as they are */
+    private function importStaff(): void
+    {
+        $makers = [];
+        foreach (['customer_receive', 'customer_payment'] as $table) {
+            foreach ($this->dump->rows($table) as $row) {
+                $makers[$row['create_by']] = true;
+            }
+        }
+        $names = collect($this->dump->rows('home_profile'))->pluck('username_kh', 'user_id')->all();
+        $existing = DB::table('users')->pluck('id', 'username')->all();
+        $emails = DB::table('users')->pluck('id', 'email')->all();
+
+        $added = 0;
+        foreach ($this->dump->rows('auth_user') as $row) {
+            if (! isset($makers[$row['username']]) || isset($existing[$row['username']])) {
+                continue;
+            }
+            $user = $this->dump->staff($row, $names[$row['id']] ?? null);
+            if (isset($emails[$user['email']])) {
+                $user['email'] = "{$row['username']}@legacy.shm";
+            }
+            DB::table('users')->insert($user);
+            $emails[$user['email']] = true;
+            $added++;
+        }
+        $missing = array_diff(array_keys($makers), DB::table('users')->pluck('username')->all());
+        foreach ($missing as $username) {
+            $this->warnings[] = "Staff {$username} entered records but has no login in the dump: created_by left empty.";
+        }
+
+        $this->line('  <info>ok</info>    staff: '.count($makers)." entered records, {$added} added as inactive users");
     }
 
     /** @return array old customer id => officer id */
@@ -213,6 +252,32 @@ class ImportShmDump extends Command
         }
 
         $this->line("  <info>ok</info>    receipts: {$count['paid']} paid (payable + payment), {$count['void']} cancelled (Void payable)");
+    }
+
+    /** Imported records without an account get one: contributions 4100 / 4200, benefits their type's 51xx; also fixes ones imported before */
+    private function linkAccounts(): void
+    {
+        $accounts = DB::table('account')->whereIn('code', ['4100', '4200'])->pluck('id', 'code');
+        $linked = 0;
+        foreach (['Yearly' => '4100', 'Register' => '4200'] as $term => $code) {
+            $payables = DB::table('officer_payable')->where('code', self::CODE)->where('payment_term', $term)->whereNull('account_id');
+            $linked += DB::table('officer_payment')->whereIn('ref_payable_id', (clone $payables)->select('id'))->whereNull('account_id')
+                ->update(['account_id' => $accounts[$code]]);
+            $payables->update(['account_id' => $accounts[$code]]);
+        }
+
+        // Benefits: the account of their benefit type (5101-5110, named like the type)
+        $benefits = DB::table('account')->where('parent_code', '5000')->pluck('id', 'name_kh');
+        foreach ($benefits as $name => $id) {
+            $linked += DB::table('officer_incentive')->where('code', 'like', self::CODE.'-%')->where('request_title', $name)
+                ->whereNull('account_id')->update(['account_id' => $id]);
+        }
+        $left = DB::table('officer_incentive')->where('code', 'like', self::CODE.'-%')->whereNull('account_id')->count();
+        if ($left) {
+            $this->warnings[] = "{$left} imported benefits have a type with no account under 5000: account left empty.";
+        }
+
+        $this->line("  <info>ok</info>    accounts: {$linked} payments and benefits linked (4100 / 4200, 5101-5110)");
     }
 
     private function importBenefits(array $members): void

@@ -12,6 +12,7 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->id();
             $table->unsignedBigInteger('officer_id')->nullable();
+            $table->unsignedBigInteger('account_id')->nullable(); // account.id of its benefit type (5101-5110), like officer_payment.account_id
             $table->unsignedBigInteger('ref_request_id')->nullable();
             $table->string('code', 50)->nullable();
             $table->string('request_title', 255);
@@ -33,6 +34,7 @@ return new class extends Migration
             $table->unsignedBigInteger('modified_by')->nullable();
             $table->timestamps();
             $table->index('officer_id');
+            $table->index('account_id');
             $table->index('ref_request_id');
             $table->index('currency_id');
             $table->index('payment_method_id');

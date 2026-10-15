@@ -14,6 +14,7 @@ use Carbon\Carbon;
  *   customer_customer   -> officer (+ officer_document for the scanned file)
  *   customer_receive    -> officer_payable, + officer_payment when the receipt was not cancelled
  *   customer_payment    -> officer_incentive (benefit paid, titled by its customer_paymenttype)
+ *   auth_user           -> users, for the staff who entered receipts or benefits (inactive, no password)
  *
  * The rows below hold every mapped column; ids, created_by and the marking code are added by the caller.
  */
@@ -112,6 +113,27 @@ class ShmLegacy
             'remark' => $remark,
             'created_at' => $row['created_date'],
             'updated_at' => $row['modified_on'],
+        ];
+    }
+
+    /**
+     * An old staff login, only so the records it entered keep who entered them (created_by): inactive and
+     * without a password, so it cannot sign in. $nameKh: the Khmer name from home_profile.
+     */
+    public function staff(array $row, ?string $nameKh): array
+    {
+        $latin = self::clean("{$row['first_name']} {$row['last_name']}") ?: $row['username'];
+        $joined = $this->dateTime($row['date_joined']);
+
+        return [
+            'fullname' => self::clean($nameKh) ?: $latin,
+            'latin' => mb_strtoupper($latin),
+            'username' => $row['username'],
+            'email' => trim($row['email']) ?: "{$row['username']}@legacy.shm",
+            'password' => null,
+            'status' => Status::INACTIVE,
+            'created_at' => $joined,
+            'updated_at' => $joined,
         ];
     }
 

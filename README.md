@@ -63,6 +63,7 @@ Their password is `SEED_USER_PASSWORD`; outside production it defaults to `Passw
 | `php artisan migrate --seed` | Create or update the schema and fill in missing defaults (safe to repeat) |
 | `php artisan db:seed` | Add missing settings, permissions, roles and menu items only; never overwrites edits |
 | `php artisan db:transfer-legacy <old_db>` | Copy an old database into a new, migrated one (see [Upgrading](#upgrading-an-old-database)) |
+| `php artisan db:import-shm <dump.sql>` | Import the old SHM system's PostgreSQL dump (see [Migrating](#migrating-from-the-old-shm-system)) |
 | `php artisan optimize:clear` | Clear config, route and view caches |
 | `php artisan schedule:work` | Run the scheduler locally |
 
@@ -73,7 +74,8 @@ Scheduled jobs (`app/Console/Kernel.php`): `payables:generate` on the 1st of eac
 ```
 app/Http/Controllers/        API controllers (Settings/ for setup screens)
 app/Models/                  Eloquent models
-app/Console/Commands/        Scheduled commands, db:transfer-legacy
+app/Console/Commands/        Scheduled commands, db:transfer-legacy, db:import-shm
+app/Services/ShmLegacy.php   Old SHM dump → new tables (the whole mapping in one file)
 database/migrations/         The schema (one file per table)
 database/seeders/            Defaults; data/*.php holds settings, permissions, roles, menu
 resources/js/src/            Vue app: router.js, apiConfig.js, views/pages/, i18n/
@@ -130,6 +132,30 @@ DB_DATABASE=<new_db> php artisan db:transfer-legacy <old_db>
 ```
 
 The transfer creates the standard roles and permissions, gives each user one of the three roles, leaves out the removed budget module and unused tables, and stops with `FAIL` / `CHECK` instead of cutting data. Then point `DB_DATABASE` at the new database and run `php artisan optimize`.
+
+## Migrating from the old SHM system
+
+The old Django system's production `pg_dump` (`shm-mef.sql`) is read directly; no PostgreSQL server is needed.
+
+```bash
+php artisan migrate --force
+php artisan db:import-shm /path/to/shm-mef.sql --dry-run   # check and count, saves nothing
+php artisan db:import-shm /path/to/shm-mef.sql
+```
+
+| Old table | → New table |
+|---|---|
+| `customer_customer` | `officer` + `officer_document`, a yearly `officer_payment_recurring` each |
+| `customer_receive` | `officer_payable` + `officer_payment` (cancelled → Void payable only), account 4100 / 4200 |
+| `customer_payment` | `officer_incentive`, account 5101–5110 by benefit type |
+| `auth_user` (staff who entered records) | `users`, **inactive with no password**, linked as `created_by` |
+| business / operating units, benefit types | `entity`, `department`, `payment_type` (seeders) |
+
+- **Chart of accounts** (`AccountSeeder`): `4000` contributions (`4100` yearly, `4200` registration) and `5000` benefits (`5101`–`5110`). The old system had no account codes, so these are ours.
+- **Safe to repeat:** members are matched on their member number; imported records carry code `OLD`. `--fresh` re-imports them.
+- **Not migrated:** logins, permissions, sessions and logs, plus the `*_bk` / `tmp_rec` backup copies (already in the live table).
+- **Photos and scans are not in a dump:** copy the old server's `img/` and `doc/` folders to `public/images/uploads/legacy/`.
+- `income` / `expense` stay empty: the dashboard counts member payments and benefits from their own tables.
 
 ## Security
 

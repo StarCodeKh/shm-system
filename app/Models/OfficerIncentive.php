@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\HasDataScope;
 use App\Models\Concerns\HasListFields;
+use App\Models\Settings\Account;
 use App\Models\Settings\Currency;
 use App\Models\Settings\Status;
 use App\Services\DataScope;
@@ -44,6 +45,11 @@ class OfficerIncentive extends Model implements Auditable
     public function paymentMethod()
     {
         return $this->belongsTo(PaymentMethod::class, 'payment_method_id');
+    }
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class, 'account_id');
     }
 
     // Columns of the list screen, in order (HasListFields)

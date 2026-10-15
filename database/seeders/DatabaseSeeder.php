@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             CurrencySeeder::class,
             PaymentSettingSeeder::class,
             OrganizationSeeder::class,
+            AccountSeeder::class,
             ListSeeder::class,
             LanguageSeeder::class,
             LandingContentSeeder::class,
