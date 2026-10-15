@@ -9,11 +9,9 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
-        "barryvdh/laravel-dompdf": "^3.1",
         "google/auth": "^1.55",
         "guzzlehttp/guzzle": "^7.9",
         "kreait/laravel-firebase": "^7.0",
-        "laravel-notification-channels/fcm": "^6.0",
         "laravel/framework": "^13.0",
         "laravel/passport": "^13.0",
         "laravel/tinker": "^3.0",

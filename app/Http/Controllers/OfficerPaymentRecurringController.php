@@ -263,44 +263,4 @@ class OfficerPaymentRecurringController extends Controller
             return response()->json($data, $status);
         }
     }
-
-    public function executePayable(Request $request)
-    {
-        $data = [];
-        $input = $request->all();
-        $executePaymentRecurring = OfficerPaymentRecurring::executePayables($input);
-        if ($executePaymentRecurring) {
-            $status = 200;
-            $boolen = true;
-            $message = trans('common.msg_successfully');
-            $data = [
-                'success' => $boolen,
-                'message' => $message,
-            ];
-
-            return response()->json($data, $status);
-        }
-    }
-
-    /* Start Flow to generate payable process
-        1.
-
-    #End Process*/
-    public function executePayableOfficers(Request $request)
-    {
-        $data = [];
-        $input = $request->all();
-        $executePaymentRecurring = OfficerPaymentRecurring::executePayableOfficers($input);
-        if ($executePaymentRecurring) {
-            $status = 200;
-            $boolen = true;
-            $message = trans('common.msg_successfully');
-            $data = [
-                'success' => $boolen,
-                'message' => $message,
-            ];
-
-            return response()->json($data, $status);
-        }
-    }
 }

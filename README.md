@@ -53,7 +53,7 @@ On a new install (empty users table) the seeders create one user per role: `supe
 Their password is `SEED_USER_PASSWORD`; outside production it defaults to `Password@123`. Change it after the first sign-in.
 
 > **"Vite manifest not found"** — start `npm run dev`, or run `npm run build` once.
-> Secrets (`.env`, `service-account-key.json`, `storage/firebase/`, `storage/oauth-*.key`) are git-ignored; never commit them.
+> Secrets (`.env`, `storage/firebase/`, `storage/oauth-*.key`) are git-ignored; never commit them.
 
 ## Common commands
 
@@ -100,7 +100,7 @@ php artisan storage:link
 php artisan optimize
 ```
 
-Copy by hand, never through git: `service-account-key.json`, `storage/firebase/firebase_credentials.json` and the Passport keys `storage/oauth-*.key` (keep the same keys across deploys, or every user is signed out).
+Copy by hand, never through git: `storage/firebase/firebase_credentials.json` and the Passport keys `storage/oauth-*.key` (keep the same keys across deploys, or every user is signed out).
 The web server user needs write access to `storage/` and `bootstrap/cache/` only.
 Cron: `* * * * * cd /path/to/shm-system && php artisan schedule:run >> /dev/null 2>&1`
 

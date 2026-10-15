@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Jobs\InsertDataJob;
 use App\Models\Settings\Currency;
 use App\Models\Settings\PaymentTerm;
 use App\Models\Settings\Status;
@@ -240,56 +239,6 @@ class OfficerPaymentRecurring extends Model implements Auditable
             ];
             OfficerPayable::create($data);
         }
-
-        return true;
-    }
-
-    // Use this to execute payable
-    // Step to Execute Payable By Running from Schedules
-    public static function executePayableOfficers()
-    {
-        $query = Officer::where('status', Status::ACTIVE)->get();
-
-    }
-
-    public static function executePayables($request)
-    {
-        $input = $request;
-        $excecutePayables = DB::table('officer as f')
-            ->select('pr.*')
-            ->Join('officer_payment_recurring as pr', 'f.id', '=', 'pr.officer_id')
-            ->groupBy('pr.officer_id')
-            ->orderBy('pr.id', 'desc')
-            ->where('pr.status', Status::ACTIVE)
-            ->whereNotIn('f.status', [26, 27, 14, 20, 4])
-            ->get();
-        $data = [];
-        foreach ($excecutePayables as $excecutePayable) {
-            $currentDate = date('Y');
-            $officerPayable = OfficerPayable::where('officer_id', $excecutePayable->officer_id)
-                ->whereRaw("DATE_FORMAT(payment_date, '%Y') LIKE ?", $currentDate)
-                ->first();
-            if (! $officerPayable) {
-                $data[] = [
-                    'code' => rand(100000000, 999999999),
-                    'officer_id' => $excecutePayable->officer_id,
-                    'account_id' => '',
-                    'payment_method_id' => '',
-                    'amount' => $excecutePayable->recurring_amount,
-                    'currency_id' => $excecutePayable->currency_id,
-                    'payment_term' => $excecutePayable->payment_term,
-                    'payment_date' => date('Y-m-d'),
-                    'status' => Status::UNPAID, // status=15 means unpaid
-                    'remark' => '',
-                    'attach' => '',
-                    'created_by' => Auth::user()->id,
-                ];
-            }
-        }
-
-        collect($data)->chunk(500)->each(function ($chunk) {
-            InsertDataJob::dispatch($chunk->toArray());
-        });
 
         return true;
     }
