@@ -359,6 +359,19 @@ class OfficerPayableController extends Controller
         ]);
     }
 
+    public function getField()
+    {
+        $data = [
+            'form_attributes' => $this->db_table::formAttributes(),
+            'officer_id' => isset($filter['data']['officer_id']) ? Officer::getSingleOptById($filter['data']['officer_id']) : Officer::getSingleOpt(),
+            'department_id' => Department::getSingleOpt(),
+            'entity_id' => [],
+        ];
+        $status = 200;
+
+        return response()->json($data, $status);
+    }
+
 
     public function getPayableInfoByOfficer(Request $request)
     {

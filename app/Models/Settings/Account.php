@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Account extends Model
 {
+    // Accounts contributions are booked on, by payment term (account codes from AccountSeeder)
+    const CONTRIBUTIONS = ['Yearly' => '4100', 'Monthly' => '4100', 'Register' => '4200'];
+
+    // Parent of the benefit accounts: one child per benefit type, named like the type
+    const BENEFITS = '5000';
+
     protected $table = 'account';
 
     protected $primaryKey = 'id';
@@ -25,6 +31,16 @@ class Account extends Model
     ];
 
     public $timestamps = false;
+
+    /** The id of the contribution account for a payment term (CONTRIBUTIONS), or null when it isn't seeded */
+    public static function contributionId(?string $paymentTerm): ?int
+    {
+        static $ids = null;
+        $ids ??= self::whereIn('code', array_unique(self::CONTRIBUTIONS))->pluck('id', 'code')->all();
+        $code = self::CONTRIBUTIONS[$paymentTerm] ?? null;
+
+        return $code ? ($ids[$code] ?? null) : null;
+    }
 
     public static function getSingleOpt()
     {

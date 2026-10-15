@@ -136,6 +136,7 @@ php artisan db:import-shm /path/to/shm-mef.sql
 | `customer_customer` | `officer` + `officer_document`, a yearly `officer_payment_recurring` each |
 | `customer_receive` | `officer_payable` + `officer_payment` (cancelled → Void payable only), account 4100 / 4200 |
 | `customer_payment` | `officer_incentive`, account 5101–5110 by benefit type |
+| years not paid (active members) | `officer_payable` **Unpaid**, priced by `master_data_setprice` (36,000 → 60,000), so they show as owing and can pay |
 | `auth_user` (staff who entered records) | `users`, **inactive with no password**, linked as `created_by` |
 | business / operating units, benefit types | `entity`, `department`, `payment_type` (seeders) |
 

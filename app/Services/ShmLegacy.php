@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Settings\Account;
 use App\Models\Settings\Currency;
 use App\Models\Settings\Status;
 use Carbon\Carbon;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\DB;
  *
  *   customer_customer   -> officer (+ officer_document for the scanned file)
  *   customer_receive    -> officer_payable, + officer_payment when the receipt was not cancelled (account 4100 / 4200)
+ *   (years not paid)    -> officer_payable Unpaid, priced by master_data_setprice, so members who owe can pay
  *   customer_payment    -> officer_incentive (benefit paid, titled by its customer_paymenttype, on its type's account)
  *   auth_user           -> users, for the staff who entered receipts or benefits (inactive, no password)
  *
@@ -22,15 +24,9 @@ class ShmLegacy
 {
     const GENDERS = ['ប្រុស' => 'male', 'ស្រី' => 'female'];
 
-    // Accounts the records are booked on (AccountSeeder): contributions by payment term (account code),
-    // benefits on the account under BENEFIT_ACCOUNTS named like their type
-    const ACCOUNTS = ['Yearly' => '4100', 'Register' => '4200'];
-
-    const BENEFIT_ACCOUNTS = '5000';
-
-    private ?array $accounts = null;
-
     private ?array $benefitAccounts = null;
+
+    private ?array $fees = null;
 
     private ?array $types = null;
 
@@ -350,24 +346,73 @@ class ShmLegacy
         return Carbon::parse($value)->setTimezone(config('app.timezone'))->format('Y-m-d H:i:s');
     }
 
-    /** The account of a receipt line: registration fee or yearly contribution (ACCOUNTS) */
-    private function contributionAccount(array $row): ?int
+    /** A year the member has not paid: an Unpaid yearly payable, priced by the old fee table (fee()) */
+    public function owed(int $officerId, int $year): array
     {
-        $this->accounts ??= DB::table('account')->whereIn('code', self::ACCOUNTS)->pluck('id', 'code')->all();
-        $code = self::ACCOUNTS[$row['is_register'] === 't' ? 'Register' : 'Yearly'];
-        if (! isset($this->accounts[$code])) {
-            $this->warnings[] = "Account {$code} is not in the chart of accounts (AccountSeeder): contributions left without an account.";
-        }
-
-        return $this->accounts[$code] ?? null;
+        return [
+            'officer_id' => $officerId,
+            'amount' => $this->fee($year),
+            'currency_id' => $this->khr(),
+            'account_id' => $this->account('Yearly'),
+            'payment_term' => 'Yearly',
+            'due_date' => "{$year}-01-01",
+            'status' => Status::UNPAID,
+            'remark' => "វិភាគទានឆ្នាំ{$year} (មិនទាន់បង់)",
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
     }
 
-    /** The account of a benefit type: the one under BENEFIT_ACCOUNTS with the type's Khmer name */
+    /** The first year the old system charged a yearly fee (master_data_setprice) */
+    public function firstFeeYear(): int
+    {
+        $this->fees ??= $this->feeTable();
+
+        return (int) min(array_keys($this->fees));
+    }
+
+    /** The yearly fee of a year from master_data_setprice; a year past the table takes the default payment term's */
+    public function fee(int $year): float
+    {
+        $this->fees ??= $this->feeTable();
+        if (! isset($this->fees[$year])) {
+            $this->fees[$year] = (float) (DB::table('payment_term')->where('is_default', true)->value('recurring_amount') ?? end($this->fees));
+            $this->warnings[] = "Year {$year} is not in the old fee table: charged {$this->fees[$year]} (default payment term).";
+        }
+
+        return $this->fees[$year];
+    }
+
+    /** year => fee of the active rows of master_data_setprice */
+    private function feeTable(): array
+    {
+        return collect($this->rows('master_data_setprice'))->where('is_active', 't')
+            ->mapWithKeys(fn ($row) => [(int) $row['year'] => (float) $row['price']])->all();
+    }
+
+    /** The account of a receipt line: registration fee or yearly contribution */
+    private function contributionAccount(array $row): ?int
+    {
+        return $this->account($row['is_register'] === 't' ? 'Register' : 'Yearly');
+    }
+
+    /** The contribution account of a payment term (Account::CONTRIBUTIONS) */
+    private function account(string $paymentTerm): ?int
+    {
+        $id = Account::contributionId($paymentTerm);
+        if ($id === null) {
+            $this->warnings[] = 'Account '.Account::CONTRIBUTIONS[$paymentTerm].' is not in the chart of accounts (AccountSeeder): contributions left without an account.';
+        }
+
+        return $id;
+    }
+
+    /** The account of a benefit type: the one under Account::BENEFITS with the type's Khmer name */
     private function benefitAccount(string $title): ?int
     {
-        $this->benefitAccounts ??= DB::table('account')->where('parent_code', self::BENEFIT_ACCOUNTS)->pluck('id', 'name_kh')->all();
+        $this->benefitAccounts ??= DB::table('account')->where('parent_code', Account::BENEFITS)->pluck('id', 'name_kh')->all();
         if (! isset($this->benefitAccounts[$title])) {
-            $this->warnings[] = "Benefit type {$title} has no account under ".self::BENEFIT_ACCOUNTS.': its benefits are left without an account.';
+            $this->warnings[] = "Benefit type {$title} has no account under ".Account::BENEFITS.': its benefits are left without an account.';
         }
 
         return $this->benefitAccounts[$title] ?? null;

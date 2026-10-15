@@ -6,6 +6,7 @@ namespace App\Console\Commands;
 
 use App\Models\OfficerPayable;
 use App\Models\OfficerPaymentRecurring;
+use App\Models\Settings\Account;
 use App\Models\Settings\Status;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
@@ -46,7 +47,7 @@ class GenerateMonthlyPayables extends Command
                             DB::transaction(function () use ($schedule, $expectedDueDate, &$count) {
                                 OfficerPayable::create([
                                     'officer_id' => $schedule->officer_id,
-                                    'account_id' => 0,
+                                    'account_id' => Account::contributionId($schedule->payment_term),
                                     'payment_method_id' => 0,
                                     'amount' => $schedule->recurring_amount,
                                     'currency_id' => $schedule->currency_id,

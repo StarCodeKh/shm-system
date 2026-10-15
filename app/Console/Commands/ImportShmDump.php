@@ -23,8 +23,10 @@ use Illuminate\Support\Facades\DB;
  * What maps to what: App\Services\ShmLegacy. Each member also gets a yearly officer_payment_recurring, like one
  * added in the app. Business / operating units, benefit types, statuses and the chart of accounts come from the
  * seeders run first; contributions are booked on account 4100 (yearly) or 4200 (registration fee), benefits on
- * their type's account (ShmLegacy::ACCOUNTS).
+ * their type's account (Account::CONTRIBUTIONS, Account::BENEFITS).
  * Old logins, permissions, sessions, logs and the *_bk / tmp_rec copies are not imported.
+ *
+ * Years an active member has not paid become Unpaid payables (priced by the old fee table), so they show as owing.
  *
  * Safe to run more than once: members are matched on their member number (cus_code -> identity_member_no) and
  * existing ones are left as they are. Receipts and benefits are imported once (marked with code OLD);
@@ -73,6 +75,7 @@ class ImportShmDump extends Command
 
             $members = $this->importMembers();
             $this->importReceipts($members);
+            $this->importOwed($members);
             $this->importBenefits($members);
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -251,6 +254,40 @@ class ImportShmDump extends Command
         }
 
         $this->line("  <info>ok</info>    receipts: {$count['paid']} paid (payable + payment), {$count['void']} cancelled (Void payable)");
+    }
+
+    /**
+     * Every year an active member has not paid, from their registration year (not before the first year of the old
+     * fee table) to this year, as an Unpaid yearly payable: they show as owing and can pay it in the payment form.
+     * A year that already has a paid or unpaid yearly payable is left as it is, so this is safe to run again.
+     * Later years come from the schedule (payables:generate), which continues after the latest payable.
+     */
+    private function importOwed(array $members): void
+    {
+        $officers = DB::table('officer')->whereIn('id', array_values($members))->where('status', Status::ACTIVE)->get(['id', 'register_date']);
+        $have = DB::table('officer_payable')->where('payment_term', 'Yearly')->whereIn('status', [Status::PAID, Status::UNPAID])
+            ->selectRaw('officer_id, year(due_date) as y')->get()
+            ->groupBy('officer_id')->map(fn ($rows) => $rows->pluck('y')->flip()->all())->all();
+        $first = $this->dump->firstFeeYear();
+        $now = (int) date('Y');
+
+        $rows = [];
+        $owing = 0;
+        foreach ($officers as $officer) {
+            $from = max($first, (int) substr($officer->register_date ?? (string) $now, 0, 4));
+            $before = count($rows);
+            for ($year = $from; $year <= $now; $year++) {
+                if (! isset($have[$officer->id][$year])) {
+                    $rows[] = ['code' => self::CODE] + $this->dump->owed($officer->id, $year);
+                }
+            }
+            $owing += count($rows) > $before ? 1 : 0;
+        }
+        foreach (array_chunk($rows, self::CHUNK) as $chunk) {
+            DB::table('officer_payable')->insert($chunk);
+        }
+
+        $this->line('  <info>ok</info>    owed: '.count($rows)." unpaid years for {$owing} active members ({$first}-{$now})");
     }
 
     private function importBenefits(array $members): void

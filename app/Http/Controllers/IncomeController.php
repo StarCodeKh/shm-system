@@ -278,4 +278,18 @@ class IncomeController extends BaseController
             return $this->errorResponse(__('common.error_msg'), 500);
         }
     }
+
+    public function getField()
+    {
+        $data = [
+            'form_attributes' => $this->db_table::formAttributes(),
+            'currency_id' => Currency::getSingleOpt(),
+            'payment_method_id' => PaymentMethod::getSingleOpt(),
+            'account_code' => Account::getAccountCodeList(),
+            'status' => Status::getSingleOpt('STATUS'),
+        ];
+        $status = 200;
+
+        return response()->json($data, $status);
+    }
 }
