@@ -62,22 +62,27 @@
         <!-- Monthly income vs expense + payment progress -->
         <div v-if="access.balance || access.payments" class="vx-row">
             <div v-if="access.balance" class="vx-col w-full mb-base" :class="access.payments ? 'lg:w-2/3' : ''">
-                <vx-card :title="$t('dash_monthly_income_expense')" class="h-full">
+                <vx-card :title="$t(byYear ? 'dash_yearly_income_expense' : 'dash_monthly_income_expense')" class="h-full">
                     <template v-if="targets.income" #actions>
                         <router-link :to="targets.income" class="card-link">
                             {{ $t('dash_view_all') }}
                             <feather-icon icon="ChevronRightIcon" svgClasses="h-4 w-4" />
                         </router-link>
                     </template>
-                    <div v-if="summary">
+                    <div v-if="summary && hasMonthly">
                         <vue-apex-charts type="bar" height="300" :class="{ 'is-clickable': links.payments || links.allowances }" :options="monthlyOptions" :series="monthlySeries" />
-                        <div class="quarter-strip">
+                        <div v-if="!byYear" class="quarter-strip">
                             <div v-for="q in quarters" :key="q.label" class="quarter-strip__item">
                                 <span class="quarter-strip__label">{{ q.label }}</span>
                                 <dash-link :to="q.incomeTo" class="text-success">+{{ money(q.income) }}</dash-link>
                                 <dash-link :to="q.expenseTo" class="text-danger">−{{ money(q.expense) }}</dash-link>
                             </div>
                         </div>
+                    </div>
+                    <div v-else-if="summary" class="empty-state" style="height: 360px">
+                        <span class="empty-state__icon"><feather-icon icon="BarChartIcon" svgClasses="h-7 w-7" /></span>
+                        <p class="empty-state__title">{{ $t('dash_no_data_period') }}</p>
+                        <small>{{ $t('dash_empty_hint') }}</small>
                     </div>
                     <div v-else class="skeleton-block" style="height: 360px"></div>
                 </vx-card>
@@ -91,7 +96,7 @@
                             <feather-icon icon="ChevronRightIcon" svgClasses="h-4 w-4" />
                         </router-link>
                     </template>
-                    <template v-if="summary">
+                    <template v-if="summary && hasPayables">
                         <dash-link :to="targets.payables" tag="div" class="block">
                             <vue-apex-charts type="radialBar" height="240" :class="{ 'is-clickable': links.payments }" :options="paymentOptions" :series="[payment.percent]" />
                         </dash-link>
@@ -109,14 +114,19 @@
                             {{ $t('dash_unpaid_amount') }}: <dash-link :to="targets.unpaidAmount" tag="b" class="text-danger">{{ money(payment.unpaidAmount) }}</dash-link>
                         </p>
                     </template>
+                    <div v-else-if="summary" class="empty-state" style="height: 330px">
+                        <span class="empty-state__icon"><feather-icon icon="CreditCardIcon" svgClasses="h-7 w-7" /></span>
+                        <p class="empty-state__title">{{ $t('dash_no_payables') }}</p>
+                        <small>{{ $t('dash_empty_hint') }}</small>
+                    </div>
                     <div v-else class="skeleton-block" style="height: 330px"></div>
                 </vx-card>
             </div>
         </div>
 
-        <!-- Members -->
-        <div v-if="access.members" class="vx-row">
-            <div class="vx-col w-full lg:w-1/2 mb-base">
+        <!-- Members + requests -->
+        <div v-if="access.members || access.requests" class="vx-row">
+            <div v-if="access.members" class="vx-col w-full mb-base" :class="memberColWidth">
                 <vx-card :title="$t('dash_member_status')" class="h-full">
                     <template v-if="links.members" #actions>
                         <router-link :to="links.members" class="card-link">
@@ -124,13 +134,17 @@
                             <feather-icon icon="ChevronRightIcon" svgClasses="h-4 w-4" />
                         </router-link>
                     </template>
-                    <template v-if="summary">
+                    <template v-if="summary && memberTotal">
                         <vue-apex-charts type="donut" height="300" :class="{ 'is-clickable': links.members }" :options="memberStatusOptions" :series="memberStatus.map(s => s.value)" />
                     </template>
+                    <div v-else-if="summary" class="empty-state" style="height: 300px">
+                        <span class="empty-state__icon"><feather-icon icon="UsersIcon" svgClasses="h-7 w-7" /></span>
+                        <p class="empty-state__title">{{ $t('dash_no_members') }}</p>
+                    </div>
                     <div v-else class="skeleton-block" style="height: 300px"></div>
                 </vx-card>
             </div>
-            <div class="vx-col w-full lg:w-1/2 mb-base">
+            <div v-if="access.members" class="vx-col w-full mb-base" :class="memberColWidth">
                 <vx-card :title="$t('dash_new_members_by_year')" class="h-full">
                     <template v-if="links.members" #actions>
                         <router-link :to="links.members" class="card-link">
@@ -138,7 +152,45 @@
                             <feather-icon icon="ChevronRightIcon" svgClasses="h-4 w-4" />
                         </router-link>
                     </template>
-                    <vue-apex-charts v-if="summary" type="bar" height="300" :class="{ 'is-clickable': links.members }" :options="growthOptions" :series="[{ name: $t('dash_new_members'), data: summary.officerStatisticSeries || [] }]" />
+                    <vue-apex-charts v-if="summary && hasGrowth" type="bar" height="300" :class="{ 'is-clickable': links.members }" :options="growthOptions" :series="[{ name: $t('dash_new_members'), data: summary.officerStatisticSeries || [] }]" />
+                    <div v-else-if="summary" class="empty-state" style="height: 300px">
+                        <span class="empty-state__icon"><feather-icon icon="UserPlusIcon" svgClasses="h-7 w-7" /></span>
+                        <p class="empty-state__title">{{ $t('dash_no_new_members') }}</p>
+                    </div>
+                    <div v-else class="skeleton-block" style="height: 300px"></div>
+                </vx-card>
+            </div>
+            <div v-if="access.requests" class="vx-col w-full mb-base" :class="memberColWidth">
+                <vx-card :title="$t('dash_requests')" class="h-full">
+                    <template v-if="links.requests" #actions>
+                        <router-link :to="links.requests" class="card-link">
+                            {{ $t('dash_view_all') }}
+                            <feather-icon icon="ChevronRightIcon" svgClasses="h-4 w-4" />
+                        </router-link>
+                    </template>
+                    <template v-if="summary">
+                        <div v-if="requests.pending || requests.approved" class="request-stats">
+                            <dash-link :to="links.requests" tag="div" class="request-stat stat-link">
+                                <span class="request-stat__icon is-warning"><feather-icon icon="ClockIcon" svgClasses="h-6 w-6" /></span>
+                                <div>
+                                    <p class="text-grey">{{ $t('dash_request_pending') }}</p>
+                                    <h3 class="text-warning">{{ number(requests.pending) }}</h3>
+                                </div>
+                            </dash-link>
+                            <dash-link :to="links.requests" tag="div" class="request-stat stat-link">
+                                <span class="request-stat__icon is-success"><feather-icon icon="CheckCircleIcon" svgClasses="h-6 w-6" /></span>
+                                <div>
+                                    <p class="text-grey">{{ $t('dash_request_approved') }}</p>
+                                    <h3 class="text-success">{{ number(requests.approved) }}</h3>
+                                </div>
+                            </dash-link>
+                        </div>
+                        <div v-else class="empty-state" style="height: 300px">
+                            <span class="empty-state__icon"><feather-icon icon="InboxIcon" svgClasses="h-7 w-7" /></span>
+                            <p class="empty-state__title">{{ $t('dash_no_requests') }}</p>
+                            <small>{{ $t('dash_no_requests_hint') }}</small>
+                        </div>
+                    </template>
                     <div v-else class="skeleton-block" style="height: 300px"></div>
                 </vx-card>
             </div>
@@ -170,8 +222,9 @@
                             </ul>
                         </template>
                         <div v-else class="empty-state">
-                            <feather-icon icon="GiftIcon" svgClasses="h-8 w-8" />
-                            <p>{{ $t('dash_no_allowance') }}</p>
+                            <span class="empty-state__icon"><feather-icon icon="GiftIcon" svgClasses="h-7 w-7" /></span>
+                            <p class="empty-state__title">{{ $t('dash_no_allowance') }}</p>
+                            <small>{{ $t('dash_empty_hint') }}</small>
                         </div>
                     </template>
                     <div v-else class="skeleton-block" style="height: 300px"></div>
@@ -188,8 +241,9 @@
                     <template v-if="summary">
                         <vue-apex-charts v-if="entityIncome.length" type="bar" :class="{ 'is-clickable': links.payments }" :height="Math.max(220, entityIncome.length * 42)" :options="entityOptions" :series="[{ name: $t('dash_income'), data: entityIncome.map(e => e.amount) }]" />
                         <div v-else class="empty-state">
-                            <feather-icon icon="BarChart2Icon" svgClasses="h-8 w-8" />
-                            <p>{{ $t('dash_no_income') }}</p>
+                            <span class="empty-state__icon"><feather-icon icon="BarChart2Icon" svgClasses="h-7 w-7" /></span>
+                            <p class="empty-state__title">{{ $t('dash_no_income') }}</p>
+                            <small>{{ $t('dash_empty_hint') }}</small>
                         </div>
                     </template>
                     <div v-else class="skeleton-block" style="height: 300px"></div>
@@ -231,8 +285,15 @@ const PRESETS = {
     dash_range_this_quarter: (t) => [new Date(t.getFullYear(), Math.floor(t.getMonth() / 3) * 3, 1), t],
     dash_range_this_year: (t) => [new Date(t.getFullYear(), 0, 1), t],
     dash_range_last_year: (t) => [new Date(t.getFullYear() - 1, 0, 1), new Date(t.getFullYear() - 1, 11, 31)],
+    // From the first record (firstDate, sent by the API) to today; this year until that is known
+    dash_range_all_time: (t, first) => [first ? parseYmd(first) : new Date(t.getFullYear(), 0, 1), t],
 }
-const presetRange = (key) => PRESETS[key](new Date()).map(ymd)
+// A Y-m-d as a local calendar day (new Date("Y-m-d") would read it as UTC)
+const parseYmd = (value) => {
+    const [y, m, d] = value.split("-").map(Number)
+    return new Date(y, m - 1, d)
+}
+const presetRange = (key, first = null) => PRESETS[key](new Date(), first).map(ymd)
 // The last day of a "YYYY-MM" month as Y-m-d
 const monthEnd = (month) => {
     const [y, m] = month.split("-").map(Number)
@@ -256,6 +317,7 @@ const TARGETS = {
     balance: "/account/chart-account",
     payments: "/account/officer-payment",
     allowances: "/incentive",
+    requests: "/request",
 }
 
 // A router link when `to` is set, otherwise the same content in a plain `tag`
@@ -275,6 +337,7 @@ export default {
             updatedAt: "",
             currency: "KHR",
             dateRange: presetRange(DEFAULT_PRESET),
+            firstDate: null, // first money record, where "All time" starts (from the API)
             dateConfig: {
                 mode: "range",
                 dateFormat: "Y-m-d",
@@ -338,6 +401,28 @@ export default {
             const all = { members: true, income: true, expense: true, balance: true, incentives: true, payments: true, requests: true }
             return (this.summary && this.summary.access) || all
         },
+        // Member charts and the request card share their row: two or three columns
+        memberColWidth() {
+            return this.access.members && this.access.requests ? 'lg:w-1/3' : 'lg:w-1/2'
+        },
+        // Each chart shows an empty state instead of a blank chart when it has nothing to draw
+        hasMonthly() {
+            return this.trend.income.some(v => v) || this.trend.expense.some(v => v)
+        },
+        hasPayables() {
+            return this.payment.paid + this.payment.unpaid > 0 || this.payment.unpaidAmount > 0
+        },
+        memberTotal() {
+            return this.memberStatus.reduce((total, s) => total + s.value, 0)
+        },
+        hasGrowth() {
+            return ((this.summary && this.summary.officerStatisticSeries) || []).some(v => v)
+        },
+        // Requests waiting for a decision (in review / in progress) and approved, all time (App\Models\Dashboard::getRequestInfo)
+        requests() {
+            const r = (this.summary && this.summary.requestInfo) || {}
+            return { pending: toNumber(r.pending_request), approved: toNumber(r.completed_request) }
+        },
         // KPI cards share the row evenly whatever their number
         kpiWidth() {
             return { 1: 'xl:w-full', 2: 'xl:w-1/2', 3: 'xl:w-1/3' }[this.kpiCards.length] || 'xl:w-1/4'
@@ -384,30 +469,44 @@ export default {
                 },
             ].filter(card => this.access[card.key])
         },
-        monthLabels() {
+        // Long ranges (all time) would draw hundreds of thin monthly bars: past two years, one bar per year
+        byYear() {
+            return this.trend.months.length > 24
+        },
+        // The bars of the income / expense chart: one per month, or per year (byYear), with the months each covers
+        bars() {
             const multiYear = new Set(this.trend.months.map(m => m.slice(0, 4))).size > 1
             const names = MONTHS[this.$i18n.locale] || MONTHS.en
-            return this.trend.months.map(m => names[Number(m.slice(5, 7)) - 1] + (multiYear ? ` ${m.slice(2, 4)}` : ""))
+            const bars = []
+            this.trend.months.forEach((month, i) => {
+                const label = this.byYear ? month.slice(0, 4) : names[Number(month.slice(5, 7)) - 1] + (multiYear ? ` ${month.slice(2, 4)}` : "")
+                let bar = bars[bars.length - 1]
+                if (!bar || bar.label !== label) bars.push((bar = { label, first: month, income: 0, expense: 0 }))
+                bar.last = month
+                bar.income += this.trend.income[i]
+                bar.expense += this.trend.expense[i]
+            })
+            return bars
         },
         monthlySeries() {
             return [
-                { name: this.$t("dash_income"), data: this.trend.income },
-                { name: this.$t("dash_expense"), data: this.trend.expense },
+                { name: this.$t("dash_income"), data: this.bars.map(b => b.income) },
+                { name: this.$t("dash_expense"), data: this.bars.map(b => b.expense) },
             ]
         },
         monthlyOptions() {
             return {
                 chart: {
                     foreColor: this.tone.text, toolbar: { show: false }, fontFamily: "inherit",
-                    // A bar opens the income (payments) or expense (benefits) of its month
-                    events: { dataPointSelection: (e, chart, { seriesIndex, dataPointIndex }) => this.go(this.monthTarget(seriesIndex, this.trend.months[dataPointIndex])) },
+                    // A bar opens the income (payments) or expense (benefits) of its month or year
+                    events: { dataPointSelection: (e, chart, { seriesIndex, dataPointIndex }) => this.go(this.barTarget(seriesIndex, this.bars[dataPointIndex])) },
                 },
                 colors: [this.tone.success, this.tone.danger],
                 plotOptions: { bar: { columnWidth: "45%", borderRadius: 4 } },
                 dataLabels: { enabled: false },
                 legend: { position: "top", horizontalAlign: "right" },
                 grid: { borderColor: this.tone.grid, strokeDashArray: 4 },
-                xaxis: { categories: this.monthLabels, axisBorder: { show: false }, axisTicks: { show: false } },
+                xaxis: { categories: this.bars.map(b => b.label), axisBorder: { show: false }, axisTicks: { show: false } },
                 yaxis: { labels: { formatter: this.compact } },
                 tooltip: { theme: this.tone.mode, y: { formatter: this.money } },
             }
@@ -625,6 +724,7 @@ export default {
                 })
                 if (response.data.errorCode !== "000") throw new Error(response.data.errorMessage)
                 this.summary = response.data.data
+                this.firstDate = this.summary.firstDate || null
                 this.updatedAt = new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
             } catch (e) {
                 this.error = true
@@ -644,7 +744,7 @@ export default {
                 // Keep focus in the input so flatpickr doesn't treat the click as "outside"
                 button.addEventListener("mousedown", (e) => e.preventDefault())
                 button.addEventListener("click", () => {
-                    fp.setDate(presetRange(key), true)
+                    fp.setDate(presetRange(key, this.firstDate), true)
                     fp.close()
                 })
                 bar.appendChild(button)
@@ -667,7 +767,7 @@ export default {
             const [start, end] = fp.selectedDates.map(ymd)
             let active = null
             bar.querySelectorAll("button").forEach((button) => {
-                const [presetStart, presetEnd] = presetRange(button.dataset.preset)
+                const [presetStart, presetEnd] = presetRange(button.dataset.preset, this.firstDate)
                 const on = presetStart === start && presetEnd === end
                 button.textContent = this.$t(button.dataset.preset)
                 button.classList.toggle("active", on)
@@ -693,10 +793,10 @@ export default {
         periodLabel(title, p) {
             return `${title} · ${this.formatDate(p.from)} – ${this.formatDate(p.to)}`
         },
-        // A bar of the monthly chart: series 0 is income (paid payments), 1 is expense (benefits)
-        monthTarget(series, month) {
-            if (!month || series < 0) return null
-            const p = this.period(`${month}-01`, monthEnd(month))
+        // A bar of the income / expense chart: series 0 is income (paid payments), 1 is expense (benefits)
+        barTarget(series, bar) {
+            if (!bar || series < 0) return null
+            const p = this.period(`${bar.first}-01`, monthEnd(bar.last))
             return series === 1
                 ? this.to("allowances", p, this.periodLabel(this.$t("dash_expense"), p))
                 : this.to("payments", { status: "paid", ...p }, this.periodLabel(this.$t("dash_income"), p))
@@ -981,16 +1081,75 @@ export default {
     margin-right: 0.5rem;
 }
 
+/* A card with nothing to show: soft icon, message, and a hint when another date range may help */
 .empty-state {
     height: 260px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 0 1rem;
+    text-align: center;
     color: #b0b5c1;
 
-    p {
-        margin-top: 0.75rem;
+    &__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: rgba(var(--vs-primary), .08);
+        color: rgb(var(--vs-primary));
+    }
+
+    &__title {
+        margin-top: 0.9rem;
+        font-weight: 600;
+        color: #626262;
+    }
+
+    small {
+        margin-top: 0.25rem;
+    }
+}
+
+.request-stats {
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.request-stat {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid #eef0f4;
+
+    h3 {
+        margin: 0;
+    }
+
+    &__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+
+        &.is-warning {
+            background: rgba(255, 159, 67, .12);
+            color: #FF9F43;
+        }
+
+        &.is-success {
+            background: rgba(40, 199, 111, .12);
+            color: #28C76F;
+        }
     }
 }
 
@@ -1029,6 +1188,8 @@ export default {
     .payment-split,
     .legend-list li { border-color: #414561; }
     .empty-state { color: #676d7d; }
+    .empty-state__title { color: #c2c6dc; }
+    .request-stat { border-color: #414561; }
     .skeleton,
     .skeleton-block { background: linear-gradient(90deg, #262c49 25%, #2f365a 37%, #262c49 63%); background-size: 400% 100%; }
 }

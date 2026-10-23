@@ -155,7 +155,7 @@ class DashboardController extends BaseController
             ];
             $access['balance'] = $access['income'] && $access['expense']; // balance, quarters and monthly trend
             $khr = fn ($value) => $this->convertToKhmerNumber(CommonService::formatDoubleNum($value));
-            $data = ['access' => $access];
+            $data = ['access' => $access, 'firstDate' => Dashboard::getFirstDate()]; // start of the "All time" range
 
             if ($access['members']) {
                 $growthData = Dashboard::getOfficerGrowth();

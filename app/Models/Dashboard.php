@@ -40,6 +40,18 @@ class Dashboard extends Model implements Auditable
         return "(SELECT * FROM $table scoped WHERE $condition) ".($alias ?: $table);
     }
 
+    /** The day of the first money record (income, member payments, expenses, benefits) as Y-m-d, or null: where "All time" starts */
+    public static function getFirstDate(): ?string
+    {
+        $first = collect(['income', 'officer_payment', 'expense', 'officer_incentive'])
+            ->map(fn ($name) => DB::selectOne('SELECT MIN(issue_date) AS first FROM '.self::table($name)
+                .($name === 'officer_incentive' ? ' WHERE status <> '.Status::DELETED : ''))->first)
+            ->filter()
+            ->min();
+
+        return $first ? substr($first, 0, 10) : null;
+    }
+
     public static function getOfficerGrowth()
     {
         $query = '
