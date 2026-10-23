@@ -1822,6 +1822,26 @@ select:disabled {
     color: #c2c6dc;
 }
 
+/* Social link field: the brand icon sits inside the input, on the left */
+.d-form .d-social {
+    position: relative;
+
+    .d-social__icon {
+        position: absolute;
+        top: 50%;
+        left: 14px;
+        z-index: 1;
+        display: flex;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+
+    input.vs-input--input,
+    input.vs-input--input.normal {
+        padding-left: 44px !important;
+    }
+}
+
 /* --- NATIVE FILE INPUTS: same dashed row as <d-file-picker> --- */
 input[type="file"] {
     width: 100%;

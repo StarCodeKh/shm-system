@@ -26,6 +26,18 @@
                         v-model="form.attribute[formAttribute.name]" :name="formAttribute.name" class="mt-1 w-full" />
                 </div>
 
+                <!-- Social link: brand icon inside the input -->
+                <div v-if="formAttribute.type == 'social'" :class="styleClass" class="d-field" dclass="mt-4">
+                    <label class="mb-2">{{ $tField(formAttribute.name) }}</label>
+                    <div class="d-social">
+                        <span class="d-social__icon" :style="{ color: formAttribute.color }">
+                            <feather-icon :icon="formAttribute.icon" svgClasses="h-5 w-5" />
+                        </span>
+                        <vs-input type="url" v-validate="''" v-model="form.attribute[formAttribute.name]"
+                            :placeholder="formAttribute.placeholder" :name="formAttribute.name" class="w-full" />
+                    </div>
+                </div>
+
                 <!-- Form Input Number -->
                     <input v-if="formAttribute.type == 'hidden' && formAttribute.required" type="hidden"
                         v-model="form.attribute[formAttribute.name]" :name="formAttribute.name" />
@@ -547,41 +559,10 @@ export default {
                     type: "textarea",
                     required: false
                 },
-                {
-                    name: "config_social_facebook",
-                    type: "textarea",
-                    required: false
-                },
-                {
-                    name: "config_social_linkedin",
-                    type: "textarea",
-                    required: false
-                },
-                {
-                    name: "config_social_youtube",
-                    type: "textarea",
-                    required: false
-                },
-                {
-                    name: "config_social_twitter",
-                    type: "textarea",
-                    required: false
-                },
-                {
-                    name: "config_social_instagram",
-                    type: "textarea",
-                    required: false
-                },
-                {
-                    name: "config_social_telegram",
-                    type: "textarea",
-                    required: false
-                },
-                {
-                    name: "config_social_pinterest",
-                    type: "textarea",
-                    required: false
-                },
+                // Social links: brand icon inside the input, one row of three
+                { name: "config_social_facebook", type: "social", icon: "FacebookIcon", color: "#1877F2", placeholder: "https://facebook.com/...", required: false },
+                { name: "config_social_telegram", type: "social", icon: "SendIcon", color: "#229ED9", placeholder: "https://t.me/...", required: false },
+                { name: "config_social_youtube", type: "social", icon: "YoutubeIcon", color: "#FF0000", placeholder: "https://youtube.com/@...", required: false },
             ],
             showFileManager: false,
             notFoundFile: "/images/not_found.png",
@@ -656,12 +637,8 @@ export default {
                 attribute: { config_offset: "" },
                 attribute: { config_open_time: "" },
                 attribute: { config_social_facebook: "" },
-                attribute: { config_social_linkedin: "" },
                 attribute: { config_social_youtube: "" },
-                attribute: { config_social_twitter: "" },
-                attribute: { config_social_instagram: "" },
                 attribute: { config_social_telegram: "" },
-                attribute: { config_social_pinterest: "" },
                 attribute: { config_google_map: "" },
             },
             dataAttributes: [{
