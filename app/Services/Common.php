@@ -262,15 +262,18 @@ class Common
 
     public static function getLen($var)
     {
-        $tmp = explode('.', $var);
+        // Significant decimals only: SQL sums come back as "54727000.0000", which should read 54,727,000
+        $tmp = explode('.', (string) $var);
         if (count($tmp) > 1) {
-            return strlen($tmp[1]);
+            return strlen(rtrim($tmp[1], '0'));
         }
+
+        return 0;
     }
 
     public static function formatDoubleNum($num)
     {
-        $n = number_format($num, Common::getLen($num));
+        $n = number_format((float) $num, Common::getLen($num)); // SUM of no rows is NULL: 0
 
         return $n;
     }

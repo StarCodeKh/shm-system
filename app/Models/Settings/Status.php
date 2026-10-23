@@ -31,6 +31,12 @@ class Status extends Model implements Auditable
 
     const COMPLETED = 8; // request / incentive done
 
+    const IN_REVIEW = 1;    // officer request submitted, not yet looked at
+
+    const APPROVED = 3;     // officer request approved: becomes a benefit (officer_incentive)
+
+    const IN_PROGRESS = 11; // officer request waiting for a decision
+
     const DEAD = 26;     // member status (group OFFICER)
 
     const RETIRED = 27;

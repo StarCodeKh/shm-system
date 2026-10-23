@@ -105,12 +105,12 @@ class Dashboard extends Model implements Auditable
         $result = DB::select('
             SELECT 
             (
-                SELECT COUNT(*) FROM '.self::table('officer_request')." WHERE status = '11'
+                SELECT COUNT(*) FROM '.self::table('officer_request').' WHERE status IN ('.Status::IN_REVIEW.', '.Status::IN_PROGRESS.') -- pending: not yet decided
             ) AS pending_request,
             (
-            SELECT COUNT(*) FROM ".self::table('officer_request')." WHERE status = '3'
+            SELECT COUNT(*) FROM '.self::table('officer_request').' WHERE status = '.Status::APPROVED.'
             ) AS completed_request
-        ");
+        ');
 
         return $result[0] ?? (object) [
             'pending_request' => 0,
