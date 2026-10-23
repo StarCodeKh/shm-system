@@ -145,17 +145,21 @@ class DashboardController extends BaseController
 
             // Each block of the dashboard needs the list permission of the module it comes from;
             // blocks the role may not see are neither computed nor sent ("access" tells the page which to show)
+            // Income adds income records and member payments, expense adds expenses and benefits: each total adds
+            // only the tables the role may list, and shows when there is at least one
+            $incomeTables = Dashboard::visible(Dashboard::INCOME_SOURCES);
+            $expenseTables = Dashboard::visible(Dashboard::EXPENSE_SOURCES);
             $access = [
                 'members' => CommonService::can('list_officer'),
-                'income' => CommonService::can('list_income'),
-                'expense' => CommonService::can('list_expense'),
+                'income' => (bool) $incomeTables,
+                'expense' => (bool) $expenseTables,
                 'incentives' => CommonService::can('list_officer_incentive'),
                 'payments' => CommonService::can('list_officer_payable') || CommonService::can('list_officer_payment'),
                 'requests' => CommonService::can('list_officer_request'),
             ];
             $access['balance'] = $access['income'] && $access['expense']; // balance, quarters and monthly trend
             $khr = fn ($value) => $this->convertToKhmerNumber(CommonService::formatDoubleNum($value));
-            $data = ['access' => $access, 'firstDate' => Dashboard::getFirstDate()]; // start of the "All time" range
+            $data = ['access' => $access, 'firstDate' => Dashboard::getFirstDate(array_merge($incomeTables, $expenseTables))]; // start of the "All time" range
 
             if ($access['members']) {
                 $growthData = Dashboard::getOfficerGrowth();
@@ -165,7 +169,7 @@ class DashboardController extends BaseController
             }
 
             if ($access['expense']) {
-                $totalExpense = Dashboard::getTotalExpenseKHR($start_date, $end_date);
+                $totalExpense = Dashboard::getTotalExpenseKHR($start_date, $end_date, $expenseTables);
                 $totalExpense->total_in_khr_kh = $khr($totalExpense->total_in_khr);
                 $totalExpense->total_in_khr = CommonService::formatDoubleNum($totalExpense->total_in_khr);
                 $totalExpense->total_in_usd = CommonService::formatDoubleNum($totalExpense->total_in_usd);
@@ -173,23 +177,23 @@ class DashboardController extends BaseController
             }
 
             if ($access['income']) {
-                $totalIncome = Dashboard::getTotalIncomeKHR($start_date, $end_date);
+                $totalIncome = Dashboard::getTotalIncomeKHR($start_date, $end_date, $incomeTables);
                 $totalIncome->total_in_khr_kh = $khr($totalIncome->total_in_khr);
                 $totalIncome->total_in_khr = CommonService::formatDoubleNum($totalIncome->total_in_khr);
                 $totalIncome->total_in_usd = CommonService::formatDoubleNum($totalIncome->total_in_usd);
                 $data['totalIncome'] = $totalIncome;
-                $data['incomeByDepartments'] = Dashboard::getIncomeByEntity($start_date, $end_date);
-                $data['monthlyIncomes'] = Income::getMonthlyIncome();
+                $data['incomeByDepartments'] = Dashboard::getIncomeByEntity($start_date, $end_date, $incomeTables);
+                $data['monthlyIncomes'] = CommonService::can('list_income') ? Income::getMonthlyIncome() : [];
             }
 
             if ($access['balance']) {
-                $totalRemaining = Dashboard::getTotalRemainingBalanceKHR($start_date, $end_date);
+                $totalRemaining = Dashboard::getTotalRemainingBalanceKHR($start_date, $end_date, $incomeTables, $expenseTables);
                 $totalRemaining->remaining_balance_khr_kh = $khr($totalRemaining->remaining_balance_khr);
                 $totalRemaining->remaining_balance_khr = CommonService::formatDoubleNum($totalRemaining->remaining_balance_khr);
                 $totalRemaining->remaining_balance_usd = CommonService::formatDoubleNum($totalRemaining->remaining_balance_usd);
                 $data['totalRemainingBalance'] = $totalRemaining;
 
-                $data['quarterlySummary'] = collect(Dashboard::getQuarterlyIncomeExpense($year, $quarter))->map(function ($item) use ($khr) {
+                $data['quarterlySummary'] = collect(Dashboard::getQuarterlyIncomeExpense($year, $quarter, $incomeTables, $expenseTables))->map(function ($item) use ($khr) {
                     $item->total_income_khr_kh = $khr($item->total_income_khr);
                     $item->total_expense_khr_kh = $khr($item->total_expense_khr);
                     $item->remaining_balance_khr_kh = $khr($item->remaining_balance_khr);
@@ -199,10 +203,10 @@ class DashboardController extends BaseController
 
                     return $item;
                 });
-                $data['monthlyTrend'] = Dashboard::getMonthlyTrend($start_date, $end_date);
+                $data['monthlyTrend'] = Dashboard::getMonthlyTrend($start_date, $end_date, $incomeTables, $expenseTables);
                 $data['incomeExpComparations'] = [
-                    'income' => Income::getMonthlyIncome(),
-                    'expense' => Expense::getMonthlyExpense(),
+                    'income' => CommonService::can('list_income') ? Income::getMonthlyIncome() : [],
+                    'expense' => CommonService::can('list_expense') ? Expense::getMonthlyExpense() : [],
                 ];
             }
 

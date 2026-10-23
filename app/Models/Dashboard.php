@@ -40,14 +40,53 @@ class Dashboard extends Model implements Auditable
         return "(SELECT * FROM $table scoped WHERE $condition) ".($alias ?: $table);
     }
 
-    /** The day of the first money record (income, member payments, expenses, benefits) as Y-m-d, or null: where "All time" starts */
-    public static function getFirstDate(): ?string
+    /** Money in (income records, member payments) and out (expenses, benefits): each table with the list permission that shows it */
+    const INCOME_SOURCES = ['income' => 'list_income', 'officer_payment' => 'list_officer_payment'];
+
+    const EXPENSE_SOURCES = ['expense' => 'list_expense', 'officer_incentive' => 'list_officer_incentive'];
+
+    /** The tables of $sources the signed-in user may list: the dashboard adds up only those */
+    public static function visible(array $sources): array
     {
-        $first = collect(['income', 'officer_payment', 'expense', 'officer_incentive'])
-            ->map(fn ($name) => DB::selectOne('SELECT MIN(issue_date) AS first FROM '.self::table($name)
-                .($name === 'officer_incentive' ? ' WHERE status <> '.Status::DELETED : ''))->first)
-            ->filter()
-            ->min();
+        return array_keys(array_filter($sources, fn ($permission) => CommonService::can($permission)));
+    }
+
+    /**
+     * The money tables' rows (amount, currency_id, issue_date) as one derived table, issued between $from and $to
+     * (no dates: every row), deleted benefits left out. Returns [sql, bindings]; no tables gives no rows.
+     */
+    protected static function money(array $tables, $from = null, $to = null): array
+    {
+        $parts = [];
+        $bindings = [];
+        foreach ($tables as $name) {
+            $where = [];
+            if ($from && $to) {
+                $where[] = 'issue_date BETWEEN ? AND ?';
+                array_push($bindings, $from.' 00:00:00', $to.' 23:59:59');
+            }
+            if ($name === 'officer_incentive') {
+                $where[] = 'status <> '.Status::DELETED; // deleted benefits are not money paid
+            }
+            $parts[] = 'SELECT amount, currency_id, issue_date FROM '.self::table($name).($where ? ' WHERE '.implode(' AND ', $where) : '');
+        }
+        $sql = $parts ? implode(' UNION ALL ', $parts) : 'SELECT NULL AS amount, NULL AS currency_id, NULL AS issue_date FROM DUAL WHERE 1 = 0';
+
+        return ["($sql)", $bindings];
+    }
+
+    /** SUM of the rows' amounts in riel and in dollars, as $khr and $usd */
+    protected static function sums(string $khr, string $usd): string
+    {
+        return 'SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::KHR).' THEN amount ELSE 0 END) AS '.$khr.',
+                SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::USD).' THEN amount ELSE 0 END) AS '.$usd;
+    }
+
+    /** The day of the first money record (income, member payments, expenses, benefits) as Y-m-d, or null: where "All time" starts */
+    public static function getFirstDate(?array $tables = null): ?string
+    {
+        [$rows] = self::money($tables ?? array_merge(array_keys(self::INCOME_SOURCES), array_keys(self::EXPENSE_SOURCES)));
+        $first = DB::selectOne("SELECT MIN(issue_date) AS first FROM $rows AS t")->first;
 
         return $first ? substr($first, 0, 10) : null;
     }
@@ -80,7 +119,8 @@ class Dashboard extends Model implements Auditable
         });
     }
 
-    public static function getTotalExpenseKHR($start_date = null, $end_date = null)
+    /** Expenses and benefits in the period ($tables: the ones to add, default both) */
+    public static function getTotalExpenseKHR($start_date = null, $end_date = null, ?array $tables = null)
     {
         // Auto default date handling
         if (empty($start_date) || empty($end_date)) {
@@ -88,23 +128,8 @@ class Dashboard extends Model implements Auditable
             $start_date = "$year-01-01";
             $end_date = "$year-12-31";
         }
-        $result = DB::select('
-            SELECT 
-                SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::KHR).' THEN amount ELSE 0 END) AS total_in_khr,
-                SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::USD).' THEN amount ELSE 0 END) AS total_in_usd
-            FROM (
-                SELECT amount, currency_id AS currency_id FROM '.self::table('expense').'
-                WHERE issue_date BETWEEN ? AND ?
-                UNION ALL
-                SELECT amount, currency_id FROM '.self::table('officer_incentive').'
-                WHERE issue_date BETWEEN ? AND ? AND status <> '.Status::DELETED.' -- deleted benefits are not money paid
-            ) AS total_expense_khr
-        ', [
-            $start_date.' 00:00:00',
-            $end_date.' 23:59:59',
-            $start_date.' 00:00:00',
-            $end_date.' 23:59:59',
-        ]);
+        [$rows, $bindings] = self::money($tables ?? array_keys(self::EXPENSE_SOURCES), $start_date, $end_date);
+        $result = DB::select('SELECT '.self::sums('total_in_khr', 'total_in_usd').' FROM '.$rows.' AS total_expense_khr', $bindings);
 
         return $result[0] ?? (object) [
             'total_in_khr' => 0,
@@ -130,7 +155,8 @@ class Dashboard extends Model implements Auditable
         ];
     }
 
-    public static function getTotalIncomeKHR($start_date = null, $end_date = null)
+    /** Income records and member payments in the period ($tables: the ones to add, default both) */
+    public static function getTotalIncomeKHR($start_date = null, $end_date = null, ?array $tables = null)
     {
         // Auto default date handling
         if (empty($start_date) || empty($end_date)) {
@@ -138,33 +164,17 @@ class Dashboard extends Model implements Auditable
             $start_date = "$year-01-01";
             $end_date = "$year-12-31";
         }
-        $result = DB::select('
-            SELECT 
-                SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::KHR).' THEN amount ELSE 0 END) AS total_in_khr,
-                SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::USD).' THEN amount ELSE 0 END) AS total_in_usd
-            FROM (
-                SELECT amount, currency_id as currency_id FROM '.self::table('income').'
-                WHERE issue_date BETWEEN ? AND ?
-                UNION ALL
-                SELECT amount, currency_id FROM '.self::table('officer_payment').'
-                WHERE issue_date BETWEEN ? AND ?
-            ) AS total_income_khr
-        ', [
-            $start_date.' 00:00:00',
-            $end_date.' 23:59:59',
-            $start_date.' 00:00:00',
-            $end_date.' 23:59:59',
-        ]);
+        [$rows, $bindings] = self::money($tables ?? array_keys(self::INCOME_SOURCES), $start_date, $end_date);
+        $result = DB::select('SELECT '.self::sums('total_in_khr', 'total_in_usd').' FROM '.$rows.' AS total_income_khr', $bindings);
 
         return $result[0] ?? (object) [
             'total_in_khr' => 0,
             'total_in_usd' => 0,
         ];
-
-        return $results[0] ?? null;
     }
 
-    public static function getTotalRemainingBalanceKHR($start_date = null, $end_date = null)
+    /** Income minus expense in the period, each from its tables (default all) */
+    public static function getTotalRemainingBalanceKHR($start_date = null, $end_date = null, ?array $incomeTables = null, ?array $expenseTables = null)
     {
         // Auto default date handling
         if (empty($start_date) || empty($end_date)) {
@@ -172,53 +182,16 @@ class Dashboard extends Model implements Auditable
             $start_date = "$year-01-01";
             $end_date = "$year-12-31";
         }
+        [$income, $incomeBindings] = self::money($incomeTables ?? array_keys(self::INCOME_SOURCES), $start_date, $end_date);
+        [$expense, $expenseBindings] = self::money($expenseTables ?? array_keys(self::EXPENSE_SOURCES), $start_date, $end_date);
 
         $result = DB::select('
             SELECT
                 COALESCE(A.khr,0) - COALESCE(B.khr,0) AS remaining_balance_khr,
                 COALESCE(A.usd,0) - COALESCE(B.usd,0) AS remaining_balance_usd
-            FROM
-            (
-                -- income totals by currency
-                SELECT
-                    SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::KHR).' THEN amount ELSE 0 END) AS khr,
-                    SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::USD).' THEN amount ELSE 0 END) AS usd
-                FROM (
-                    SELECT amount, currency_id FROM '.self::table('income').'
-                    WHERE issue_date BETWEEN ? AND ?
-
-                    UNION ALL
-
-                    SELECT amount, currency_id FROM '.self::table('officer_payment').'
-                    WHERE issue_date BETWEEN ? AND ?
-                ) AS income_all
-            ) AS A
-            CROSS JOIN
-            (
-                -- expense totals by currency
-                SELECT
-                    SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::KHR).' THEN amount ELSE 0 END) AS khr,
-                    SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::USD).' THEN amount ELSE 0 END) AS usd
-                FROM (
-                    SELECT amount, currency_id FROM '.self::table('expense').'
-                    WHERE issue_date BETWEEN ? AND ?
-
-                    UNION ALL
-
-                    SELECT amount, currency_id FROM '.self::table('officer_incentive').'
-                    WHERE issue_date BETWEEN ? AND ? AND status <> '.Status::DELETED.' -- deleted benefits are not money paid
-                ) AS expense_all
-            ) AS B
-        ', [
-            $start_date.' 00:00:00',
-            $end_date.' 23:59:59',
-            $start_date.' 00:00:00',
-            $end_date.' 23:59:59',
-            $start_date.' 00:00:00',
-            $end_date.' 23:59:59',
-            $start_date.' 00:00:00',
-            $end_date.' 23:59:59',
-        ]);
+            FROM (SELECT '.self::sums('khr', 'usd').' FROM '.$income.' AS income_all) AS A
+            CROSS JOIN (SELECT '.self::sums('khr', 'usd').' FROM '.$expense.' AS expense_all) AS B
+        ', array_merge($incomeBindings, $expenseBindings));
 
         return $result[0] ?? (object) [
             'remaining_balance_khr' => 0,
@@ -231,8 +204,9 @@ class Dashboard extends Model implements Auditable
      * institution) plus income records. Each role sees only its own scope (DataScope).
      * Returns ['incomes' => [amount, ...], 'departments' => [institution name, ...]] (the keys the dashboard reads).
      */
-    public static function getIncomeByEntity($start_date = null, $end_date = null): array
+    public static function getIncomeByEntity($start_date = null, $end_date = null, ?array $tables = null): array
     {
+        $tables = $tables ?? array_keys(self::INCOME_SOURCES);
         if (empty($start_date) || empty($end_date)) {
             $year = date('Y');
             $start_date = "$year-01-01";
@@ -242,11 +216,11 @@ class Dashboard extends Model implements Auditable
         $khr = Currency::idOf(Currency::KHR);
         $prefix = DB::getTablePrefix(); // aliases are prefixed too (tbl_p) in raw SQL
 
-        $payments = DB::table('officer_payment as p')->join('officer as o', 'o.id', '=', 'p.officer_id')
+        $payments = ! in_array('officer_payment', $tables, true) ? collect() : DB::table('officer_payment as p')->join('officer as o', 'o.id', '=', 'p.officer_id')
             ->where('p.currency_id', $khr)->whereBetween('p.issue_date', $range)
             ->tap(fn ($query) => DataScope::where($query, 'officer_payment', 'p'))
             ->groupBy('o.entity_id')->select('o.entity_id')->selectRaw("SUM({$prefix}p.amount) AS amount")->pluck('amount', 'entity_id');
-        $incomes = DB::table('income as i')
+        $incomes = ! in_array('income', $tables, true) ? collect() : DB::table('income as i')
             ->where('i.currency_id', $khr)->whereBetween('i.issue_date', $range)
             ->tap(fn ($query) => DataScope::where($query, 'income', 'i'))
             ->groupBy('i.entity_id')->select('i.entity_id')->selectRaw("SUM({$prefix}i.amount) AS amount")->pluck('amount', 'entity_id');
@@ -323,10 +297,12 @@ class Dashboard extends Model implements Auditable
      * @param  int|null  $quarter  Specific quarter (1-4) to filter by, or null for all.
      * @return array
      */
-    public static function getQuarterlyIncomeExpense($year = null, $quarter = null)
+    public static function getQuarterlyIncomeExpense($year = null, $quarter = null, ?array $incomeTables = null, ?array $expenseTables = null)
     {
         // Default to current year if not provided
         $year = $year ?? date('Y');
+        [$income] = self::money($incomeTables ?? array_keys(self::INCOME_SOURCES));
+        [$expense] = self::money($expenseTables ?? array_keys(self::EXPENSE_SOURCES));
 
         // Build SQL with positional '?' parameters
         $sql = "
@@ -364,14 +340,10 @@ class Dashboard extends Model implements Auditable
                     CASE WHEN src = 'expense' AND currency_id = ".Currency::idOf(Currency::KHR)." THEN amount ELSE 0 END AS expense_khr,
                     CASE WHEN src = 'expense' AND currency_id = ".Currency::idOf(Currency::USD)." THEN amount ELSE 0 END AS expense_usd
                 FROM (
-                    -- Combine all data
-                    SELECT amount, currency_id AS currency_id, issue_date, 'income' AS src FROM ".self::table('income')."
+                    -- Combine all data (only the tables the role may list)
+                    SELECT amount, currency_id, issue_date, 'income' AS src FROM $income AS income_all
                     UNION ALL
-                    SELECT amount, currency_id, issue_date, 'income' AS src FROM ".self::table('officer_payment')."
-                    UNION ALL
-                    SELECT amount, currency_id AS currency_id, issue_date, 'expense' AS src FROM ".self::table('expense')."
-                    UNION ALL
-                    SELECT amount, currency_id, issue_date, 'expense' AS src FROM ".self::table('officer_incentive').' WHERE status <> '.Status::DELETED."
+                    SELECT amount, currency_id, issue_date, 'expense' AS src FROM $expense AS expense_all
                 ) AS all_data
                 WHERE YEAR(issue_date) = ? -- Bind to $year (1st param)
             ) AS d
@@ -449,7 +421,7 @@ class Dashboard extends Model implements Auditable
      * Income and expense per month for the date range, split by currency.
      * Uses the same sources as the dashboard totals: income + member payments, expense + incentives.
      */
-    public static function getMonthlyTrend($start_date = null, $end_date = null)
+    public static function getMonthlyTrend($start_date = null, $end_date = null, ?array $incomeTables = null, ?array $expenseTables = null)
     {
         if (empty($start_date) || empty($end_date)) {
             $year = date('Y');
@@ -457,29 +429,18 @@ class Dashboard extends Model implements Auditable
             $end_date = "$year-12-31";
         }
 
-        // Deleted benefits are not money paid (same as the expense total and the benefit list)
-        $only = [self::table('officer_incentive') => ' AND status <> '.Status::DELETED];
-        $sumByMonth = function (array $tables) use ($start_date, $end_date, $only) {
-            $union = implode(' UNION ALL ', array_map(
-                fn ($table) => "SELECT issue_date, amount, currency_id FROM $table WHERE issue_date BETWEEN ? AND ?".($only[$table] ?? ''),
-                $tables
-            ));
-            $bindings = [];
-            foreach ($tables as $table) {
-                array_push($bindings, $start_date.' 00:00:00', $end_date.' 23:59:59');
-            }
+        $sumByMonth = function (array $tables) use ($start_date, $end_date) {
+            [$rows, $bindings] = self::money($tables, $start_date, $end_date);
 
             return collect(DB::select("
-                SELECT DATE_FORMAT(issue_date, '%Y-%m') AS month,
-                    SUM(CASE WHEN currency_id = ".Currency::idOf(Currency::KHR).' THEN amount ELSE 0 END) AS khr,
-                    SUM(CASE WHEN currency_id = '.Currency::idOf(Currency::USD)." THEN amount ELSE 0 END) AS usd
-                FROM ($union) AS t
+                SELECT DATE_FORMAT(issue_date, '%Y-%m') AS month, ".self::sums('khr', 'usd')."
+                FROM $rows AS t
                 GROUP BY month
             ", $bindings))->keyBy('month');
         };
 
-        $income = $sumByMonth([self::table('income'), self::table('officer_payment')]);
-        $expense = $sumByMonth([self::table('expense'), self::table('officer_incentive')]);
+        $income = $sumByMonth($incomeTables ?? array_keys(self::INCOME_SOURCES));
+        $expense = $sumByMonth($expenseTables ?? array_keys(self::EXPENSE_SOURCES));
 
         $months = [];
         $end = new \DateTime($end_date);
