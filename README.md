@@ -208,7 +208,10 @@ Laravel runs through PHP-FPM: no `proxy_pass`, no port, no `php artisan serve`.
 ls /run/php/                                     # the socket must match fastcgi_pass
 sudo systemctl enable --now php8.5-fpm
 sudo ln -sf /etc/nginx/sites-available/app-v2.shm-mef.org /etc/nginx/sites-enabled/
-sudo nginx -t && sudo systemctl reload nginx     # a failed test leaves every site running as before
+ls -l /etc/nginx/sites-enabled/                  # only the sites that should be live, each a link
+sudo nginx -t                                    # must say "syntax is ok" and "test is successful"
+sudo systemctl enable --now nginx                # start now and after every reboot
+sudo systemctl reload nginx                      # a failed test leaves every site running as before
 ```
 
 If the domain still shows "Welcome to nginx!", the `default` site is catching it: `sudo rm /etc/nginx/sites-enabled/default` (it serves no real site).
@@ -239,6 +242,9 @@ The domain is behind Cloudflare: set *SSL/TLS › Overview* to **Full (strict)**
 | `View path not found` on `optimize` | `storage/framework/views` is missing (step 3) |
 | `Another route has already been assigned name [...]` on `route:cache` | Two routes share a name; give one `->names('prefix.resource')` |
 | `Welcome to nginx!` | No site file for the domain yet, or the `default` site catches it (step 4) |
+| `Job for nginx.service failed` on reload | nginx is stopped: `sudo nginx -t`, then `sudo systemctl start nginx`. If the test fails, the error names the file (check `conf.d/` too) |
+| `bind() ... (98: Address already in use)` | Another program holds port 80/443: `sudo ss -ltnp \| grep -E ':80 \|:443 '` |
+| `no "ssl_certificate" is defined` | An enabled site has `listen 443 ssl` without certificate lines: rerun Certbot for it or disable it |
 | 502 Bad Gateway | PHP-FPM socket in nginx does not match the installed version: `ls /run/php/` |
 | 500 error | `tail -f storage/logs/laravel.log` and `/var/log/nginx/app-v2.error.log` |
 
