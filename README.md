@@ -120,6 +120,117 @@ Back up the database and `storage/app/public/` first. After any `.env` change ru
 
 **nginx** does not read `public/.htaccess`: route requests to `index.php` (`try_files $uri $uri/ /index.php?$query_string;`), set `client_max_body_size 20M`, and refuse scripts in `storage/uploads`, `images/uploads` and `upload`.
 
+## Server setup (Ubuntu + nginx + Cloudflare)
+
+One-time setup of a fresh Ubuntu server, e.g. `app-v2.shm-mef.org` in `/var/www/html/app-v2/shm-system`. Then follow [Deployment](#deployment).
+
+**1. PHP, Composer, Node.js**
+
+```bash
+sudo add-apt-repository ppa:ondrej/php -y && sudo apt update
+sudo apt install -y php8.5 php8.5-cli php8.5-fpm php8.5-mbstring php8.5-xml php8.5-curl \
+  php8.5-zip php8.5-gd php8.5-mysql php8.5-bcmath php8.5-intl unzip
+sudo update-alternatives --set php /usr/bin/php8.5
+
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php composer-setup.php && sudo mv composer.phar /usr/local/bin/composer && rm composer-setup.php
+
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - && sudo apt install -y nodejs
+```
+
+If a package does not support PHP 8.5 yet, install `php8.4-*` the same way and switch with `update-alternatives`.
+
+**2. Database user**: Ubuntu's MySQL `root` signs in through the socket only (error `1698 Access denied`), so give the app its own user:
+
+```sql
+-- sudo mysql
+CREATE DATABASE shm_system_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'shm_user'@'localhost' IDENTIFIED BY 'a-strong-password';
+GRANT ALL PRIVILEGES ON shm_system_db.* TO 'shm_user'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+Set `DB_USERNAME=shm_user` and `DB_PASSWORD` in `.env`, then `php artisan config:clear`.
+
+**3. Owner and permissions**: your login user owns the files and `www-data` (nginx / PHP-FPM) is the group. Never run `composer` or `npm` with `sudo`.
+
+```bash
+cd /var/www/html/app-v2/shm-system
+sudo chown -R $USER:www-data .
+mkdir -p storage/framework/{views,cache/data,sessions} storage/logs bootstrap/cache
+sudo chmod -R 775 storage bootstrap/cache
+chmod 640 .env
+```
+
+**4. nginx**: `/etc/nginx/sites-available/app-v2.shm-mef.org`
+
+```nginx
+server {
+    listen 80;
+    server_name app-v2.shm-mef.org;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name app-v2.shm-mef.org;
+    root /var/www/html/app-v2/shm-system/public;
+    index index.php;
+    charset utf-8;
+    client_max_body_size 20M;
+
+    ssl_certificate     /etc/ssl/cloudflare/app-v2.shm-mef.org.pem;
+    ssl_certificate_key /etc/ssl/cloudflare/app-v2.shm-mef.org.key;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # uploads are never executed
+    location ~ ^/(storage/uploads|images/uploads|upload)/.*\.php$ { deny all; }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.5-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_hide_header X-Powered-By;
+    }
+
+    location ~ /\.(?!well-known) { deny all; }
+
+    access_log /var/log/nginx/app-v2.access.log;
+    error_log  /var/log/nginx/app-v2.error.log;
+}
+```
+
+```bash
+sudo ln -s /etc/nginx/sites-available/app-v2.shm-mef.org /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default      # otherwise "Welcome to nginx!" is served
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+**5. HTTPS through Cloudflare**: in Cloudflare, *SSL/TLS › Origin Server › Create Certificate*, save the certificate and key to `/etc/ssl/cloudflare/` (key `chmod 600`), and set *SSL/TLS › Overview* to **Full (strict)**. "Flexible" causes redirect loops.
+
+**6. Cron**: `crontab -e` as the login user (runs the scheduler and the queue worker):
+
+```
+* * * * * cd /var/www/html/app-v2/shm-system && php artisan schedule:run >> /dev/null 2>&1
+```
+
+**Troubleshooting**
+
+| Error | Fix |
+|---|---|
+| `composer: command not found` | Install Composer (step 1) |
+| `vendor does not exist and could not be created`, npm `EACCES` | Wrong owner (step 3) |
+| `1698 Access denied for user 'root'@'localhost'` | Use the app's own DB user (step 2), then `php artisan config:clear` |
+| `View path not found` on `optimize` | `storage/framework/views` is missing (step 3) |
+| `Another route has already been assigned name [...]` on `route:cache` | Two routes share a name; give one `->names('prefix.resource')` |
+| `Welcome to nginx!` | Default site still enabled (step 4) |
+| 502 Bad Gateway | PHP-FPM socket in nginx does not match the installed version: `ls /run/php/` |
+| 500 error | `tail -f storage/logs/laravel.log` and `/var/log/nginx/app-v2.error.log` |
+
 ## Migrating from the old SHM system
 
 The only data source is the old Django system's production `pg_dump` (`shm-mef.sql`), read directly; no PostgreSQL server is needed.
