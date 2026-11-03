@@ -84,10 +84,10 @@ Route::prefix('auth')->group(function () {
 
 // Mobile app
 Route::prefix('v1/mobile')->middleware(['auth:api', 'module_permission'])->group(function () {
-    Route::resource('department', DepartmentController::class)->only(['index', 'show']);
-    Route::resource('incentive', MobileIncentiveController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
+    Route::resource('department', DepartmentController::class)->only(['index', 'show'])->names('mobile.department');
+    Route::resource('incentive', MobileIncentiveController::class)->only(['index', 'show', 'edit', 'update', 'destroy'])->names('mobile.incentive');
     Route::get('summary', [MobileIncentiveController::class, 'summary']);
-    Route::resource('notification', NotificationController::class);
+    Route::resource('notification', NotificationController::class)->names('mobile.notification');
     Route::post('FCMregisterDevice', [AuthController::class, 'registerDevice']);
 
     Route::controller(DashboardController::class)->group(function () {
@@ -153,7 +153,7 @@ Route::prefix('v1')->middleware(['auth:api', 'cors', 'module_permission'])->grou
         Route::post('incentive/import', [OfficerIncentiveController::class, 'import']);
         Route::get('incentive/get_field', [OfficerIncentiveController::class, 'getField']);
         Route::post('incentive/search', [OfficerIncentiveController::class, 'index']);
-        Route::apiResource('incentive', OfficerIncentiveController::class);
+        Route::apiResource('incentive', OfficerIncentiveController::class)->names('officer.incentive');
 
         // Payment
         Route::post('payment/import', [OfficerPaymentController::class, 'import']);
