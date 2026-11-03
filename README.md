@@ -50,7 +50,7 @@ php artisan storage:link           # serves uploaded files at /storage/...
 Run it in two terminals: `php artisan serve` (http://127.0.0.1:8000) and `npm run dev`.
 
 On a new install (empty users table) the seeders create one user per role: `superadmin@system.com`, `admin@system.com`, `user@system.com`.
-Their password is `SEED_USER_PASSWORD`; outside production it defaults to `Password@123`. Change it after the first sign-in.
+Their password is `SEED_USER_PASSWORD`; outside production it defaults to `SHM!Password-2026`. Change it after the first sign-in.
 
 > **"Vite manifest not found"** — start `npm run dev`, or run `npm run build` once.
 > Secrets (`.env`, `storage/firebase/`, `storage/oauth-*.key`) are git-ignored; never commit them.

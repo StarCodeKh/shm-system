@@ -10,7 +10,7 @@ use Illuminate\Database\Seeder;
  * One user per role, so a new server can be signed in to:
  *   superadmin@system.com (Super Admin), admin@system.com (Admin), user@system.com (Normal User)
  *
- * Password: SEED_USER_PASSWORD in .env. Only outside production it falls back to "Password@123",
+ * Password: SEED_USER_PASSWORD in .env. Only outside production it falls back to "SHM!Password-2026",
  * so a known password never reaches a live server by accident. Change it after the first sign-in.
  *
  * Only on a new install: when the users table already has accounts (a live or transferred server), it does nothing,
@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
             return; // not a new install
         }
 
-        $password = env('SEED_USER_PASSWORD') ?: (app()->environment('production') ? null : 'Password@123');
+        $password = env('SEED_USER_PASSWORD') ?: (app()->environment('production') ? null : 'SHM!Password-2026');
         if (! $password) {
             $this->command?->warn('Users not created: set SEED_USER_PASSWORD in .env, then run: php artisan db:seed --class=UserSeeder');
 
