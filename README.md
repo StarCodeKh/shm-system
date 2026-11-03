@@ -164,6 +164,13 @@ chmod 640 .env
 
 **4. nginx**: each site has its own file in `/etc/nginx/sites-available/`. The old system `app.shm-mef.org` (proxied to port 8088) keeps its file untouched; this app gets a new one, `/etc/nginx/sites-available/app-v2.shm-mef.org`. Start with port 80 only; Certbot adds HTTPS in step 5.
 
+```bash
+sudo cp -r /etc/nginx/sites-available ~/nginx-backup-$(date +%F)   # backup first
+sudo nano /etc/nginx/sites-available/app-v2.shm-mef.org
+```
+
+Paste this, save with `Ctrl+O` `Enter`, exit with `Ctrl+X`:
+
 ```nginx
 server {
     listen 80;
@@ -198,8 +205,9 @@ server {
 Laravel runs through PHP-FPM: no `proxy_pass`, no port, no `php artisan serve`.
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/app-v2.shm-mef.org /etc/nginx/sites-enabled/
 ls /run/php/                                     # the socket must match fastcgi_pass
+sudo systemctl enable --now php8.5-fpm
+sudo ln -sf /etc/nginx/sites-available/app-v2.shm-mef.org /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx     # a failed test leaves every site running as before
 ```
 
