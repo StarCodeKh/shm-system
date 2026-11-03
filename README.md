@@ -260,7 +260,19 @@ php artisan optimize
 sudo systemctl reload php8.5-fpm                               # drop PHP's cached code (OPcache)
 ```
 
-Open https://app-v2.shm-mef.org: the sign-in page means the setup is done. A plain "500 Server Error" page: read `tail -30 storage/logs/laravel.log`.
+**8. First users** (new install only): in production the seeder needs a password from `.env`; it never uses a default there.
+
+```bash
+echo 'SEED_USER_PASSWORD="Your-Strong-Password-2026"' >> .env   # no spaces around =
+php artisan config:clear                                       # a cached config hides .env from the seeder
+php artisan tinker --execute="var_dump(env('SEED_USER_PASSWORD'));"   # must print string(...), not NULL
+php artisan db:seed --class=UserSeeder --force                  # prints the 3 accounts it created
+php artisan optimize
+```
+
+Sign in at https://app-v2.shm-mef.org as `superadmin@system.com`, change the three passwords in the app, then empty `SEED_USER_PASSWORD=` in `.env` and run `php artisan optimize`. The seeder only creates users while the users table is empty.
+
+A plain "500 Server Error" page: read `tail -30 storage/logs/laravel.log`.
 
 **Troubleshooting**
 
@@ -272,6 +284,7 @@ Open https://app-v2.shm-mef.org: the sign-in page means the setup is done. A pla
 | `View path not found` on `optimize` | `storage/framework/views` is missing (step 3) |
 | `Please provide a valid cache path` (500) | `storage/framework/*` folders are missing or not writable (step 3), then `php artisan optimize` |
 | `Key file ... oauth-public.key permissions are not correct` (500 on every API call, nobody can sign in) | `chmod 660 storage/oauth-*.key` (step 3) |
+| `Users not created: set SEED_USER_PASSWORD in .env` | Add the line, then `php artisan config:clear` before seeding (step 8) |
 | Laravel error page with code and paths visible to everyone | `APP_DEBUG=true` on the server: set `APP_DEBUG=false`, then `php artisan optimize` |
 | `Another route has already been assigned name [...]` on `route:cache` | Two routes share a name; give one `->names('prefix.resource')` |
 | `Welcome to nginx!` or `404 Not Found` | The app-v2 file is not loaded yet: `sudo nginx -t`, fix the error it names, reload (step 5) |
