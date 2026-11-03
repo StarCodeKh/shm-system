@@ -122,7 +122,7 @@ Back up the database and `storage/app/public/` first. After any `.env` change ru
 
 ## Server setup (Ubuntu + nginx + Cloudflare)
 
-One-time setup of a fresh Ubuntu server, e.g. `app-v2.shm-mef.org` in `/var/www/html/app-v2/shm-system`. Then follow [Deployment](#deployment).
+One-time setup of an Ubuntu server, also one that already hosts other sites, e.g. `app-v2.shm-mef.org` in `/var/www/html/app-v2/shm-system`. Then follow [Deployment](#deployment).
 
 **1. PHP, Composer, Node.js**
 
@@ -162,26 +162,20 @@ sudo chmod -R 775 storage bootstrap/cache
 chmod 640 .env
 ```
 
-**4. nginx**: `/etc/nginx/sites-available/app-v2.shm-mef.org`
+**4. nginx**: each site has its own file in `/etc/nginx/sites-available/`. The old system `app.shm-mef.org` (proxied to port 8088) keeps its file untouched; this app gets a new one, `/etc/nginx/sites-available/app-v2.shm-mef.org`. Start with port 80 only; Certbot adds HTTPS in step 5.
 
 ```nginx
 server {
     listen 80;
     server_name app-v2.shm-mef.org;
-    return 301 https://$host$request_uri;
-}
 
-server {
-    listen 443 ssl;
-    http2 on;
-    server_name app-v2.shm-mef.org;
     root /var/www/html/app-v2/shm-system/public;
     index index.php;
     charset utf-8;
     client_max_body_size 20M;
 
-    ssl_certificate     /etc/ssl/cloudflare/app-v2.shm-mef.org.pem;
-    ssl_certificate_key /etc/ssl/cloudflare/app-v2.shm-mef.org.key;
+    access_log /var/log/nginx/app-v2-access.log;
+    error_log  /var/log/nginx/app-v2-error.log;
 
     location / {
         try_files $uri $uri/ /index.php?$query_string;
@@ -198,19 +192,28 @@ server {
     }
 
     location ~ /\.(?!well-known) { deny all; }
-
-    access_log /var/log/nginx/app-v2.access.log;
-    error_log  /var/log/nginx/app-v2.error.log;
 }
 ```
 
+Laravel runs through PHP-FPM: no `proxy_pass`, no port, no `php artisan serve`.
+
 ```bash
 sudo ln -s /etc/nginx/sites-available/app-v2.shm-mef.org /etc/nginx/sites-enabled/
-sudo rm -f /etc/nginx/sites-enabled/default      # otherwise "Welcome to nginx!" is served
-sudo nginx -t && sudo systemctl reload nginx
+ls /run/php/                                     # the socket must match fastcgi_pass
+sudo nginx -t && sudo systemctl reload nginx     # a failed test leaves every site running as before
 ```
 
-**5. HTTPS through Cloudflare**: in Cloudflare, *SSL/TLS › Origin Server › Create Certificate*, save the certificate and key to `/etc/ssl/cloudflare/` (key `chmod 600`), and set *SSL/TLS › Overview* to **Full (strict)**. "Flexible" causes redirect loops.
+If the domain still shows "Welcome to nginx!", the `default` site is catching it: `sudo rm /etc/nginx/sites-enabled/default` (it serves no real site).
+
+**5. HTTPS**: Let's Encrypt through Certbot, for this domain only, so other sites' files are not touched. Choose *redirect* when asked.
+
+```bash
+sudo certbot --nginx -d app-v2.shm-mef.org
+curl -I https://app-v2.shm-mef.org               # Laravel answers
+curl -I https://app.shm-mef.org                  # old system still answers
+```
+
+The domain is behind Cloudflare: set *SSL/TLS › Overview* to **Full (strict)**; "Flexible" causes redirect loops. Certbot renews by itself (`sudo certbot renew --dry-run` to check).
 
 **6. Cron**: `crontab -e` as the login user (runs the scheduler and the queue worker):
 
@@ -227,7 +230,7 @@ sudo nginx -t && sudo systemctl reload nginx
 | `1698 Access denied for user 'root'@'localhost'` | Use the app's own DB user (step 2), then `php artisan config:clear` |
 | `View path not found` on `optimize` | `storage/framework/views` is missing (step 3) |
 | `Another route has already been assigned name [...]` on `route:cache` | Two routes share a name; give one `->names('prefix.resource')` |
-| `Welcome to nginx!` | Default site still enabled (step 4) |
+| `Welcome to nginx!` | No site file for the domain yet, or the `default` site catches it (step 4) |
 | 502 Bad Gateway | PHP-FPM socket in nginx does not match the installed version: `ls /run/php/` |
 | 500 error | `tail -f storage/logs/laravel.log` and `/var/log/nginx/app-v2.error.log` |
 
