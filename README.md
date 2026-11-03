@@ -162,7 +162,19 @@ sudo chmod -R 775 storage bootstrap/cache
 chmod 640 .env
 ```
 
-**4. nginx**: each site has its own file in `/etc/nginx/sites-available/`. The old system `app.shm-mef.org` (proxied to port 8088) keeps its file untouched; this app gets a new one, `/etc/nginx/sites-available/app-v2.shm-mef.org`. Start with port 80 only; Certbot adds HTTPS in step 5.
+**4. Certificate**: HTTPS on this server uses the certificate for `*.shm-mef.org` (`/etc/ssl/certs/shm-mef.org.pem`, the same one `www` and `dbadmin` use). There is no Let's Encrypt / Certbot on this server. Put its two lines in one shared file that every site can include:
+
+```bash
+sudo openssl x509 -noout -subject -enddate -ext subjectAltName -in /etc/ssl/certs/shm-mef.org.pem   # must list *.shm-mef.org, date in the future
+sudo grep -E "^\s*ssl_certificate(_key)?\s" /etc/nginx/sites-available/www.shm-mef.org | sed 's/^\s*//' | sudo tee /etc/nginx/sites-available/00-fallback-ssl
+sudo ln -sf /etc/nginx/sites-available/00-fallback-ssl /etc/nginx/sites-enabled/00-fallback-ssl
+```
+
+Enabled, it is also the fallback for older sites whose `listen 443 ssl` has its certificate lines commented out (`app`, `meeting`, `pensioner`); without it nginx refuses to load any change (`no "ssl_certificate" is defined`). Their own files stay untouched.
+
+In Cloudflare, *SSL/TLS › Overview* must be **Full (strict)**; "Flexible" causes redirect loops.
+
+**5. nginx**: each site has its own file in `/etc/nginx/sites-available/`. The old system `app.shm-mef.org` (proxied to port 8088) keeps its file untouched; this app gets `/etc/nginx/sites-available/app-v2.shm-mef.org`.
 
 ```bash
 sudo cp -r /etc/nginx/sites-available ~/nginx-backup-$(date +%F)   # backup first
@@ -175,6 +187,15 @@ Paste this, save with `Ctrl+O` `Enter`, exit with `Ctrl+X`:
 server {
     listen 80;
     server_name app-v2.shm-mef.org;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name app-v2.shm-mef.org;
+
+    # same *.shm-mef.org certificate as www / dbadmin (step 4)
+    include /etc/nginx/sites-available/00-fallback-ssl;
 
     root /var/www/html/app-v2/shm-system/public;
     index index.php;
@@ -202,7 +223,7 @@ server {
 }
 ```
 
-Laravel runs through PHP-FPM: no `proxy_pass`, no port, no `php artisan serve`.
+Laravel runs through PHP-FPM: no `proxy_pass`, no port, no `php artisan serve`. The `443` block is required: Cloudflare connects over HTTPS, and without it the request lands on another site's 443 block.
 
 ```bash
 ls /run/php/                                     # the socket must match fastcgi_pass
@@ -210,21 +231,13 @@ sudo systemctl enable --now php8.5-fpm
 sudo ln -sf /etc/nginx/sites-available/app-v2.shm-mef.org /etc/nginx/sites-enabled/
 ls -l /etc/nginx/sites-enabled/                  # only the sites that should be live, each a link
 sudo nginx -t                                    # must say "syntax is ok" and "test is successful"
-sudo systemctl enable --now nginx                # start now and after every reboot
-sudo systemctl reload nginx                      # a failed test leaves every site running as before
+sudo systemctl reload nginx                      # only after a successful test; a failed one changes nothing
+sudo nginx -T 2>/dev/null | grep -c "app-v2.shm-mef.org"   # 1 or more = loaded
+curl -s -o /dev/null -w "app-v2: %{http_code}\n" -m 10 https://app-v2.shm-mef.org
+curl -s -o /dev/null -w "app: %{http_code}\n"    -m 10 https://app.shm-mef.org   # old system still answers
 ```
 
-If the domain still shows "Welcome to nginx!", the `default` site is catching it: `sudo rm /etc/nginx/sites-enabled/default` (it serves no real site).
-
-**5. HTTPS**: Let's Encrypt through Certbot, for this domain only, so other sites' files are not touched. Choose *redirect* when asked.
-
-```bash
-sudo certbot --nginx -d app-v2.shm-mef.org
-curl -I https://app-v2.shm-mef.org               # Laravel answers
-curl -I https://app.shm-mef.org                  # old system still answers
-```
-
-The domain is behind Cloudflare: set *SSL/TLS › Overview* to **Full (strict)**; "Flexible" causes redirect loops. Certbot renews by itself (`sudo certbot renew --dry-run` to check).
+Never `restart` or `stop` nginx on this server while `nginx -t` fails: every site would go down.
 
 **6. Cron**: `crontab -e` as the login user (runs the scheduler and the queue worker):
 
@@ -241,10 +254,12 @@ The domain is behind Cloudflare: set *SSL/TLS › Overview* to **Full (strict)**
 | `1698 Access denied for user 'root'@'localhost'` | Use the app's own DB user (step 2), then `php artisan config:clear` |
 | `View path not found` on `optimize` | `storage/framework/views` is missing (step 3) |
 | `Another route has already been assigned name [...]` on `route:cache` | Two routes share a name; give one `->names('prefix.resource')` |
-| `Welcome to nginx!` | No site file for the domain yet, or the `default` site catches it (step 4) |
+| `Welcome to nginx!` or `404 Not Found` | The app-v2 file is not loaded yet: `sudo nginx -t`, fix the error it names, reload (step 5) |
 | `Job for nginx.service failed` on reload | nginx is stopped: `sudo nginx -t`, then `sudo systemctl start nginx`. If the test fails, the error names the file (check `conf.d/` too) |
 | `bind() ... (98: Address already in use)` | Another program holds port 80/443: `sudo ss -ltnp \| grep -E ':80 \|:443 '` |
-| `no "ssl_certificate" is defined` | An enabled site has `listen 443 ssl` without certificate lines: rerun Certbot for it or disable it |
+| `no "ssl_certificate" is defined` | An enabled site has `listen 443 ssl` without certificate lines: enable `00-fallback-ssl` (step 4) |
+| `unknown directive "http2"` | Older nginx: use `listen 443 ssl http2;` and no separate `http2 on;` line |
+| Django `Bad Request (400)` on app-v2 | The app-v2 file has no `listen 443 ssl` block, so the old system answers (step 5) |
 | 502 Bad Gateway | PHP-FPM socket in nginx does not match the installed version: `ls /run/php/` |
 | 500 error | `tail -f storage/logs/laravel.log` and `/var/log/nginx/app-v2.error.log` |
 
