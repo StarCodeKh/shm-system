@@ -253,6 +253,8 @@ Never `restart` or `stop` nginx on this server while `nginx -t` fails: every sit
 | `vendor does not exist and could not be created`, npm `EACCES` | Wrong owner (step 3) |
 | `1698 Access denied for user 'root'@'localhost'` | Use the app's own DB user (step 2), then `php artisan config:clear` |
 | `View path not found` on `optimize` | `storage/framework/views` is missing (step 3) |
+| `Please provide a valid cache path` (500) | `storage/framework/*` folders are missing or not writable (step 3), then `php artisan optimize` |
+| Laravel error page with code and paths visible to everyone | `APP_DEBUG=true` on the server: set `APP_DEBUG=false`, then `php artisan optimize` |
 | `Another route has already been assigned name [...]` on `route:cache` | Two routes share a name; give one `->names('prefix.resource')` |
 | `Welcome to nginx!` or `404 Not Found` | The app-v2 file is not loaded yet: `sudo nginx -t`, fix the error it names, reload (step 5) |
 | `Job for nginx.service failed` on reload | nginx is stopped: `sudo nginx -t`, then `sudo systemctl start nginx`. If the test fails, the error names the file (check `conf.d/` too) |
