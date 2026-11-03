@@ -159,7 +159,9 @@ cd /var/www/html/app-v2/shm-system
 sudo chown -R $USER:www-data .
 mkdir -p storage/framework/{views,cache/data,sessions} storage/logs bootstrap/cache
 sudo chmod -R 775 storage bootstrap/cache
-chmod 660 storage/oauth-*.key      # Passport refuses keys readable by others (after every chmod -R)
+php artisan passport:keys          # first install only, if storage/oauth-*.key do not exist
+sudo chmod 660 storage/oauth-*.key # Passport refuses keys readable by others (after every chmod -R)
+ls -l storage/oauth-*.key          # -rw-rw---- soengsouy www-data
 chmod 640 .env
 ```
 
@@ -255,6 +257,7 @@ grep -E '^(APP_ENV|APP_DEBUG|APP_URL|DB_USERNAME)=' .env    # production, false,
 php artisan config:clear
 php artisan migrate --force
 php artisan optimize
+sudo systemctl reload php8.5-fpm                               # drop PHP's cached code (OPcache)
 ```
 
 Open https://app-v2.shm-mef.org: the sign-in page means the setup is done. A plain "500 Server Error" page: read `tail -30 storage/logs/laravel.log`.
