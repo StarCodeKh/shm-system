@@ -245,6 +245,19 @@ Never `restart` or `stop` nginx on this server while `nginx -t` fails: every sit
 * * * * * cd /var/www/html/app-v2/shm-system && php artisan schedule:run >> /dev/null 2>&1
 ```
 
+**7. App settings**: production values in `.env`, then rebuild the caches. Run after every `.env` change.
+
+```bash
+cd /var/www/html/app-v2/shm-system
+sed -i 's/^APP_DEBUG=.*/APP_DEBUG=false/; s/^APP_ENV=.*/APP_ENV=production/; s|^APP_URL=.*|APP_URL=https://app-v2.shm-mef.org|' .env
+grep -E '^(APP_ENV|APP_DEBUG|APP_URL|DB_USERNAME)=' .env    # production, false, https://..., shm_user
+php artisan config:clear
+php artisan migrate --force
+php artisan optimize
+```
+
+Open https://app-v2.shm-mef.org: the sign-in page means the setup is done. A plain "500 Server Error" page: read `tail -30 storage/logs/laravel.log`.
+
 **Troubleshooting**
 
 | Error | Fix |
