@@ -159,6 +159,7 @@ cd /var/www/html/app-v2/shm-system
 sudo chown -R $USER:www-data .
 mkdir -p storage/framework/{views,cache/data,sessions} storage/logs bootstrap/cache
 sudo chmod -R 775 storage bootstrap/cache
+chmod 660 storage/oauth-*.key      # Passport refuses keys readable by others (after every chmod -R)
 chmod 640 .env
 ```
 
@@ -267,6 +268,7 @@ Open https://app-v2.shm-mef.org: the sign-in page means the setup is done. A pla
 | `1698 Access denied for user 'root'@'localhost'` | Use the app's own DB user (step 2), then `php artisan config:clear` |
 | `View path not found` on `optimize` | `storage/framework/views` is missing (step 3) |
 | `Please provide a valid cache path` (500) | `storage/framework/*` folders are missing or not writable (step 3), then `php artisan optimize` |
+| `Key file ... oauth-public.key permissions are not correct` (500 on every API call, nobody can sign in) | `chmod 660 storage/oauth-*.key` (step 3) |
 | Laravel error page with code and paths visible to everyone | `APP_DEBUG=true` on the server: set `APP_DEBUG=false`, then `php artisan optimize` |
 | `Another route has already been assigned name [...]` on `route:cache` | Two routes share a name; give one `->names('prefix.resource')` |
 | `Welcome to nginx!` or `404 Not Found` | The app-v2 file is not loaded yet: `sudo nginx -t`, fix the error it names, reload (step 5) |
