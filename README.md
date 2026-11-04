@@ -295,17 +295,44 @@ A plain "500 Server Error" page: read `tail -30 storage/logs/laravel.log`.
 | Django `Bad Request (400)` on app-v2 | The app-v2 file has no `listen 443 ssl` block, so the old system answers (step 5) |
 | 502 Bad Gateway | PHP-FPM socket in nginx does not match the installed version: `ls /run/php/` |
 | 500 error | `tail -f storage/logs/laravel.log` and `/var/log/nginx/app-v2.error.log` |
+| `error: cannot open '.git/FETCH_HEAD': Permission denied` | `.git` belongs to root: `sudo chown -R $USER:www-data .git`, then `git pull` |
+| `... is not a readable PostgreSQL dump.` | The file is missing, unreadable or not the PostgreSQL dump (e.g. a `mysqldump`): check `ls -lh` and `head -c 60` ([Migrating](#migrating-from-the-old-shm-system)) |
+| `bad decrypt` from `openssl` | Wrong password; the output file is garbage, run the decrypt again |
 
 ## Migrating from the old SHM system
 
-The only data source is the old Django system's production `pg_dump` (`shm-mef.sql`), read directly; no PostgreSQL server is needed.
+The only data source is the old Django system's production `pg_dump` (`shm-mef.sql`, 49 MB, starts with `-- PostgreSQL database dump`), read directly; no PostgreSQL server is needed.
 Settings and lists (units, benefit types, accounts, statuses, roles) come from the seeders; the dump brings members and their money.
 
+The MySQL database `shm_mef_db` on the server is **not** a source: it belongs to the old website (`tbl_document`, `tbl_sys_var`, `tbl_token`) and has no members. A `mysqldump` of it is rejected (`is not a readable PostgreSQL dump`).
+
+The dump holds members' personal data, so it is committed only encrypted (`database/shm-mef.sql.enc`); the password is never committed. The decrypted copy goes in `storage/app/import/`, which git ignores.
+
+**Encrypt** (on a computer that has `shm-mef.sql`, once):
+
 ```bash
-php artisan migrate --force
-php artisan db:import-shm /path/to/shm-mef.sql --dry-run   # check and count, saves nothing
-php artisan db:import-shm /path/to/shm-mef.sql
+openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -md sha256 -salt -in shm-mef.sql -out database/shm-mef.sql.enc
+git add database/shm-mef.sql.enc && git commit -m "Encrypted old SHM dump" && git push
 ```
+
+**Import** (on the server, one command at a time; stop at the first error):
+
+```bash
+cd /var/www/html/app-v2/shm-system
+git pull                                            # Permission denied on .git: sudo chown -R $USER:www-data .git
+ls -lh database/shm-mef.sql.enc                     # about 49M
+mkdir -p storage/app/import
+openssl enc -d -aes-256-cbc -pbkdf2 -iter 100000 -md sha256 -in database/shm-mef.sql.enc -out storage/app/import/shm-mef.sql
+head -c 60 storage/app/import/shm-mef.sql           # -- PostgreSQL database dump
+php artisan migrate --force
+php artisan db:import-shm storage/app/import/shm-mef.sql --dry-run   # check and count, saves nothing
+php artisan db:import-shm storage/app/import/shm-mef.sql             # writes into DB_DATABASE (shm_system_db)
+rm storage/app/import/shm-mef.sql                   # remove the decrypted copy
+```
+
+A full import prints about 8,310 members, 62,962 paid and 1,401 cancelled receipts, and 2,777 benefits, then `Import finished.` Warnings about impossible dates (`0023-02-03` read as `2023-02-03`, birth dates like `0001-01-01` left empty) are expected.
+
+Once the server is imported, remove the encrypted file from the tree: `git rm database/shm-mef.sql.enc`, commit, push (it stays in history, encrypted).
 
 | Old table | → New table |
 |---|---|
