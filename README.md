@@ -211,6 +211,10 @@ server {
     access_log /var/log/nginx/app-v2-access.log;
     error_log  /var/log/nginx/app-v2-error.log;
 
+    # compress JSON / JS / CSS
+    gzip on;
+    gzip_types application/json application/javascript text/css image/svg+xml;
+
     location / {
         try_files $uri $uri/ /index.php?$query_string;
     }
@@ -220,10 +224,8 @@ server {
         expires 1y;
         add_header Cache-Control "public, immutable";
         access_log off;
+        try_files $uri =404;
     }
-
-    gzip on;
-    gzip_types application/json application/javascript text/css image/svg+xml;
 
     # uploads are never executed
     location ~ ^/(storage/uploads|images/uploads|upload)/.*\.php$ { deny all; }
@@ -251,6 +253,7 @@ sudo systemctl reload nginx                      # only after a successful test;
 sudo nginx -T 2>/dev/null | grep -c "app-v2.shm-mef.org"   # 1 or more = loaded
 curl -s -o /dev/null -w "app-v2: %{http_code}\n" -m 10 https://app-v2.shm-mef.org
 curl -s -o /dev/null -w "app: %{http_code}\n"    -m 10 https://app.shm-mef.org   # old system still answers
+curl -sI https://app-v2.shm-mef.org/build/manifest.json | grep -i cache-control  # public, immutable
 ```
 
 Never `restart` or `stop` nginx on this server while `nginx -t` fails: every site would go down.
