@@ -113,10 +113,13 @@ composer install --no-dev --optimize-autoloader
 npm ci && npm run build
 php artisan migrate --force && php artisan db:seed --force
 php artisan optimize && php artisan queue:restart
+sudo systemctl reload php8.5-fpm   # drop PHP's cached code (OPcache), or the old code keeps running
 php artisan up
 ```
 
 Back up the database and `storage/app/public/` first. After any `.env` change run `php artisan optimize`.
+
+**Speed**: production must run with the caches built (`php artisan optimize`), `APP_DEBUG=false` and OPcache on (`php-fpm8.5 -i | grep -E "^opcache.enable "` → `On`). The indexes for the dashboard, reports and lists come with `migrate`; with the old SHM data in, the dashboard answers in about 0.15 s.
 
 **nginx** does not read `public/.htaccess`: route requests to `index.php` (`try_files $uri $uri/ /index.php?$query_string;`), set `client_max_body_size 20M`, and refuse scripts in `storage/uploads`, `images/uploads` and `upload`.
 
@@ -211,6 +214,16 @@ server {
     location / {
         try_files $uri $uri/ /index.php?$query_string;
     }
+
+    # Vite output: file names change with each build, so browsers keep them for a year
+    location /build/ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        access_log off;
+    }
+
+    gzip on;
+    gzip_types application/json application/javascript text/css image/svg+xml;
 
     # uploads are never executed
     location ~ ^/(storage/uploads|images/uploads|upload)/.*\.php$ { deny all; }

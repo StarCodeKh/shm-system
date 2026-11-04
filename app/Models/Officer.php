@@ -99,7 +99,9 @@ class Officer extends Model implements Auditable
 
     public static function getSingleOpt()
     {
-        $query = Officer::orderByLevel()->whereNotDeleted()->get();
+        // Every member (8,000+): only the columns of the label, as plain rows (no models)
+        $query = Officer::select(['id', 'first_name', 'last_name', 'identity_member_no'])
+            ->orderByLevel()->whereNotDeleted()->toBase()->get();
         $data = [];
         foreach ($query as $row) {
             $data[] = [
